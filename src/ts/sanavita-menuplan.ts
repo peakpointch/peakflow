@@ -2,7 +2,7 @@
 import EditableCanvas from '@library/canvas';
 import Pdf from '@library/pdf';
 import { FilterCollection } from '@library/wfcollection';
-import { RenderData, RenderElement, RenderField } from '@library/renderer';
+import { RenderData, RenderDataArray, RenderElement, RenderField } from '@library/renderer';
 import { CalendarweekComponent, FilterForm, filterFormSelector } from '@library/form';
 
 // Utility functions
@@ -44,8 +44,8 @@ const sowOptions: StartOfWeekOptions = {
   locale: de,
 }
 
-function setMinMaxDate(form: FilterForm<FieldIds>, data: RenderData): Date[] {
-  const dates = data.map(weekday => weekday.date.getTime());
+function setMinMaxDate(form: FilterForm<FieldIds>, data: ): Date[] {
+  const dates = weekdays.map(weekday => weekday.date.getTime());
   let minDate = new Date(Math.min(...dates));
   let maxDate = new Date(Math.max(...dates));
   if (startOfWeek(minDate, sowOptions).getTime() !== minDate.getTime()) {
@@ -141,12 +141,18 @@ function initialize(): void {
 
   // Initialize collection list
   const filterCollection = new FilterCollection(filterCollectionListElement, 'Tagesmenus', 'pdf');
+  filterCollection.debug = true;
   filterCollection.renderer.addFilterAttributes({ 'weekly-hit-boolean': 'boolean' });
   filterCollection.readData();
 
   // Initialize drink-lists collection list
   const drinksCollection = new FilterCollection(drinkLists_collectionListElement, 'Getränke', 'pdf');
-  drinksCollection.renderer.addFilterAttributes({ 'start-date': 'date', 'end-date': 'date' });
+  drinksCollection.debug = true;
+  drinksCollection.renderer.addFilterAttributes({
+    'start-date': 'date',
+    'end-date': 'date',
+    'hide-categories': 'boolean',
+  });
   drinksCollection.readData();
 
   const pdf = new Pdf(pdfContainer);
@@ -210,7 +216,7 @@ function initialize(): void {
     const renderCollections: RenderElement[] = [
       {
         element: 'drink-list-collection',
-        fields: drinksCollection.filterByDateRange(startDate, endDate),
+        children: drinksCollection.filterByDateRange(startDate, endDate),
         visibility: true,
       }
     ]

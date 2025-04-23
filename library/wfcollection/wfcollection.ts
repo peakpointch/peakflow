@@ -10,7 +10,7 @@ type GlobalCollection = Array<object>;
 class CollectionList {
   public container: HTMLElement;
   public renderer: Renderer;
-  public collectionData: RenderData = [];
+  public collectionData: RenderData = new Map();
   public debug: boolean = false;
   private listElement: HTMLElement;
   private items: HTMLElement[];
@@ -44,11 +44,11 @@ class CollectionList {
 
   public readData(): void {
     if (this.isEmpty()) {
-      this.collectionData = [];
+      this.collectionData = new Map();
       return;
     }
     this.collectionData = this.renderer.read(this.listElement);
-    this.log('Data:', this.collectionData);
+    this.log('Data:', Object.fromEntries(this.collectionData));
   }
 
   public getData(): RenderData {

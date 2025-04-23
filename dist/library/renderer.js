@@ -3894,8 +3894,7 @@ var Renderer = class _Renderer {
     this._render(data, canvas);
   }
   _render(data, canvas = this.canvas) {
-    this.data = data;
-    this.data.forEach((renderItem) => {
+    data.forEach((renderItem) => {
       if (_Renderer.isRenderElement(renderItem)) {
         this.renderElement(renderItem, canvas);
       }
@@ -4018,6 +4017,11 @@ var Renderer = class _Renderer {
       }
     }
   }
+  read(node, stopRecursionMatches = []) {
+    this.data = /* @__PURE__ */ new Map();
+    this._read(node, stopRecursionMatches);
+    return this.data;
+  }
   /**
    * Recursively reads the DOM node and its descendants to build a structured RenderData.
    * It identifies elements with `data-${elementAttr}-element` and `data-${fieldAttr}-field` attributes,
@@ -4026,24 +4030,31 @@ var Renderer = class _Renderer {
    * @param node The root node to start reading from.
    * @returns `RenderData` An array of RenderElement and RenderField objects representing the node structure.
    */
-  read(node, stopRecursionMatches = []) {
-    const renderData = [];
+  _read(node, stopRecursionMatches = []) {
+    const childrenIds = [];
     Array.from(node.children).forEach((child) => {
       if (stopRecursionMatches.some((selector) => child.matches(selector))) {
         return;
       }
       if (child.hasAttribute(this.elementAttr)) {
-        renderData.push(this.readRenderElement(child, stopRecursionMatches));
+        const id = this.setNode(this.readRenderElement(child, stopRecursionMatches));
+        childrenIds.push(id);
       } else if (child.hasAttribute(this.fieldAttr)) {
-        renderData.push(this.readRenderField(child));
+        const id = this.setNode(this.readRenderField(child));
+        childrenIds.push(id);
       } else {
         const hasRenderableChild = child.querySelectorAll(`[${this.elementAttr}], [${this.fieldAttr}]`).length > 0;
         if (hasRenderableChild) {
-          renderData.push(...this.read(child, stopRecursionMatches));
+          this._read(child, stopRecursionMatches);
         }
       }
     });
-    return renderData;
+    return childrenIds;
+  }
+  setNode(node) {
+    const id = _Renderer.index();
+    this.data.set(id, node);
+    return id;
   }
   clear(node = this.canvas) {
     const collections = node.querySelectorAll(`${this.elementSelector()}[${this.collectionAttr}]`);
@@ -4068,10 +4079,10 @@ var Renderer = class _Renderer {
   readRenderElement(child, stopRecursionAttributes) {
     const elementName = child.getAttribute(this.elementAttr);
     const instance = child.getAttribute(`data-${elementName}-instance`);
-    const fields = this.read(child, stopRecursionAttributes);
+    const children = this._read(child, stopRecursionAttributes);
     const element = {
       element: elementName,
-      fields,
+      children,
       visibility: true
     };
     element.instance = instance || void 0;
@@ -4248,9 +4259,15 @@ var Renderer = class _Renderer {
   instanceSelector(element, instanceId) {
     return `[data-${element}-instance="${instanceId}"]`;
   }
+  static {
+    this.count = 0;
+  }
+  static index(prefix = "node") {
+    return `${prefix}${_Renderer.count++}`;
+  }
   // Type Guard for RenderElement
   static isRenderElement(item) {
-    return item.fields !== void 0;
+    return item.children !== void 0;
   }
   // Type Guard for RenderField
   static isRenderField(item) {

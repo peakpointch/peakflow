@@ -23288,8 +23288,7 @@
       this._render(data, canvas);
     }
     _render(data, canvas = this.canvas) {
-      this.data = data;
-      this.data.forEach((renderItem) => {
+      data.forEach((renderItem) => {
         if (_Renderer.isRenderElement(renderItem)) {
           this.renderElement(renderItem, canvas);
         }
@@ -23412,6 +23411,11 @@
         }
       }
     }
+    read(node2, stopRecursionMatches = []) {
+      this.data = /* @__PURE__ */ new Map();
+      this._read(node2, stopRecursionMatches);
+      return this.data;
+    }
     /**
      * Recursively reads the DOM node and its descendants to build a structured RenderData.
      * It identifies elements with `data-${elementAttr}-element` and `data-${fieldAttr}-field` attributes,
@@ -23420,24 +23424,31 @@
      * @param node The root node to start reading from.
      * @returns `RenderData` An array of RenderElement and RenderField objects representing the node structure.
      */
-    read(node2, stopRecursionMatches = []) {
-      const renderData = [];
+    _read(node2, stopRecursionMatches = []) {
+      const childrenIds = [];
       Array.from(node2.children).forEach((child) => {
         if (stopRecursionMatches.some((selector) => child.matches(selector))) {
           return;
         }
         if (child.hasAttribute(this.elementAttr)) {
-          renderData.push(this.readRenderElement(child, stopRecursionMatches));
+          const id = this.setNode(this.readRenderElement(child, stopRecursionMatches));
+          childrenIds.push(id);
         } else if (child.hasAttribute(this.fieldAttr)) {
-          renderData.push(this.readRenderField(child));
+          const id = this.setNode(this.readRenderField(child));
+          childrenIds.push(id);
         } else {
           const hasRenderableChild = child.querySelectorAll(`[${this.elementAttr}], [${this.fieldAttr}]`).length > 0;
           if (hasRenderableChild) {
-            renderData.push(...this.read(child, stopRecursionMatches));
+            this._read(child, stopRecursionMatches);
           }
         }
       });
-      return renderData;
+      return childrenIds;
+    }
+    setNode(node2) {
+      const id = _Renderer.index();
+      this.data.set(id, node2);
+      return id;
     }
     clear(node2 = this.canvas) {
       const collections = node2.querySelectorAll(`${this.elementSelector()}[${this.collectionAttr}]`);
@@ -23462,10 +23473,10 @@
     readRenderElement(child, stopRecursionAttributes) {
       const elementName = child.getAttribute(this.elementAttr);
       const instance = child.getAttribute(`data-${elementName}-instance`);
-      const fields = this.read(child, stopRecursionAttributes);
+      const children = this._read(child, stopRecursionAttributes);
       const element = {
         element: elementName,
-        fields,
+        children,
         visibility: true
       };
       element.instance = instance || void 0;
@@ -23642,9 +23653,15 @@
     instanceSelector(element, instanceId) {
       return `[data-${element}-instance="${instanceId}"]`;
     }
+    static {
+      this.count = 0;
+    }
+    static index(prefix = "node") {
+      return `${prefix}${_Renderer.count++}`;
+    }
     // Type Guard for RenderElement
     static isRenderElement(item) {
-      return item.fields !== void 0;
+      return item.children !== void 0;
     }
     // Type Guard for RenderField
     static isRenderField(item) {
@@ -32061,7 +32078,7 @@ Page:`, page);
     constructor(container, name = "", rendererName = "wf") {
       this.name = name;
       this.rendererName = rendererName;
-      this.collectionData = [];
+      this.collectionData = /* @__PURE__ */ new Map();
       this.debug = false;
       if (!container || !container.classList.contains("w-dyn-list")) throw new Error(`Container can't be undefined.`);
       this.container = container;
@@ -32083,11 +32100,11 @@ Page:`, page);
     }
     readData() {
       if (this.isEmpty()) {
-        this.collectionData = [];
+        this.collectionData = /* @__PURE__ */ new Map();
         return;
       }
       this.collectionData = this.renderer.read(this.listElement);
-      this.log("Data:", this.collectionData);
+      this.log("Data:", Object.fromEntries(this.collectionData));
     }
     getData() {
       return this.collectionData;

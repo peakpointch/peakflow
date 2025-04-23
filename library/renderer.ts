@@ -6,6 +6,8 @@ import { de } from "date-fns/locale";
 type VisibilityControl = boolean | 'emptyState';
 type UnparsedBoolean<T> = Exclude<T, boolean> | "true" | "false";
 
+type ItemId = string;
+
 type RenderField = {
   element: string;
   instance?: string;
@@ -18,17 +20,18 @@ type RenderField = {
 type RenderElement = {
   element: string;
   instance?: string;
-  fields: RenderData;
+  children: ItemId[];
   visibility: boolean;
   [key: string]: any;
 };
 
-type RenderData = Array<RenderElement | RenderField>;
+type RenderData = Map<ItemId, RenderElement | RenderField>;
+type RenderDataArray = Array<RenderElement | RenderField>;
 type FilterAttribute = Record<string, "string" | "number" | "date" | "boolean">;
 
 class Renderer {
   private canvas: HTMLElement;
-  private data: RenderData;
+  public data: RenderData;
   private fieldAttr: string;
   private elementAttr: string;
   private emptyStateAttr: string;
@@ -52,9 +55,7 @@ class Renderer {
   }
 
   private _render(data: RenderData, canvas: HTMLElement = this.canvas): void {
-    this.data = data;
-
-    this.data.forEach((renderItem) => {
+    data.forEach((renderItem) => {
       // Render Elements
       if (Renderer.isRenderElement(renderItem)) {
         this.renderElement(renderItem, canvas);
@@ -195,6 +196,14 @@ class Renderer {
     }
   }
 
+  public read(node: HTMLElement, stopRecursionMatches: string[] = []): RenderData {
+    this.data = new Map() as RenderData;
+
+    this._read(node, stopRecursionMatches)
+
+    return this.data;
+  }
+
   /**
    * Recursively reads the DOM node and its descendants to build a structured RenderData.
    * It identifies elements with `data-${elementAttr}-element` and `data-${fieldAttr}-field` attributes,
@@ -203,8 +212,8 @@ class Renderer {
    * @param node The root node to start reading from.
    * @returns `RenderData` An array of RenderElement and RenderField objects representing the node structure.
    */
-  public read(node: HTMLElement, stopRecursionMatches: string[] = []): RenderData {
-    const renderData: RenderData = [];
+  private _read(node: HTMLElement, stopRecursionMatches: string[] = []): ItemId[] {
+    const childrenIds: ItemId[] = [];
 
     Array.from(node.children).forEach((child) => {
       if (stopRecursionMatches.some(selector => child.matches(selector))) {
@@ -213,11 +222,13 @@ class Renderer {
 
       // If it's a RenderElement
       if (child.hasAttribute(this.elementAttr)) {
-        renderData.push(this.readRenderElement(child as HTMLElement, stopRecursionMatches));
+        const id = this.setNode(this.readRenderElement(child as HTMLElement, stopRecursionMatches));
+        childrenIds.push(id);
       }
       // If it's a RenderField
       else if (child.hasAttribute(this.fieldAttr)) {
-        renderData.push(this.readRenderField(child as HTMLElement));
+        const id = this.setNode(this.readRenderField(child as HTMLElement));
+        childrenIds.push(id);
       }
       // If it's neither, check if any descendants are renderable
       else {
@@ -225,12 +236,18 @@ class Renderer {
 
         // If there are renderable children, recurse on this child
         if (hasRenderableChild) {
-          renderData.push(...this.read(child as HTMLElement, stopRecursionMatches));
+          this._read(child as HTMLElement, stopRecursionMatches);
         }
       }
     });
 
-    return renderData;
+    return childrenIds;
+  }
+
+  private setNode(node: RenderElement | RenderField): ItemId {
+    const id = Renderer.index();
+    this.data.set(id, node);
+    return id;
   }
 
   public clear(node: HTMLElement = this.canvas): void {
@@ -261,11 +278,11 @@ class Renderer {
     const instance = child.getAttribute(`data-${elementName}-instance`);
 
     // Recursively read child elements
-    const fields = this.read(child as HTMLElement, stopRecursionAttributes); // Recurse on children
+    const children = this._read(child as HTMLElement, stopRecursionAttributes); // Recurse on children
 
     const element: RenderElement = {
       element: elementName!,
-      fields,
+      children,
       visibility: true,
     };
 
@@ -483,9 +500,21 @@ class Renderer {
     return `[data-${element}-instance="${instanceId}"]`;
   }
 
+  public getElementsByType(...types: string[]): Array<RenderElement | RenderField> {
+    return Array.from(this.data.values()).filter((value) => {
+      return types.some(type => value.element === type);
+    });
+  }
+
+  private static count = 0;
+
+  public static index(prefix = 'node'): ItemId {
+    return `${prefix}${Renderer.count++}`;
+  }
+
   // Type Guard for RenderElement
   private static isRenderElement(item: RenderElement | RenderField): item is RenderElement {
-    return (item as RenderElement).fields !== undefined;
+    return (item as RenderElement).children !== undefined;
   }
 
   // Type Guard for RenderField
@@ -495,4 +524,4 @@ class Renderer {
 }
 
 export default Renderer;
-export type { RenderData, RenderElement, RenderField };
+export type { RenderData, RenderDataArray, RenderElement, RenderField };
