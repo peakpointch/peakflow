@@ -85,4 +85,5 @@ function fieldFromInput(input: HTMLFormInput, index): FormField {
   return field;
 }
 
-export { FieldData, FormField, fieldFromInput }
+export type { FieldData };
+export { FormField, fieldFromInput }

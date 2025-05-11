@@ -28,12 +28,14 @@ export class CalendarweekComponent {
 
   constructor(container: HTMLElement, mode?: UXMode) {
     this.container = container;
-    this.weekInput = container.querySelector<HTMLInputElement>(CalendarweekComponent.select("week"));
-    this.yearInput = container.querySelector<HTMLInputElement>(CalendarweekComponent.select("year"));
+    const weekInput = container.querySelector<HTMLInputElement>(CalendarweekComponent.select("week"));
+    const yearInput = container.querySelector<HTMLInputElement>(CalendarweekComponent.select("year"));
 
-    if (!this.weekInput || !this.yearInput) {
+    if (!weekInput || !yearInput) {
       throw new Error(`Couldn't find required "week" or "year" input element. Check the attribute selector "${CalendarweekComponent.select()}"`);
     }
+    this.weekInput = weekInput;
+    this.yearInput = yearInput;
 
     // Read the mode from a data attribute (defaults to 'continuous' if not set)
     if (!mode) {
@@ -111,8 +113,8 @@ export class CalendarweekComponent {
       this.minDate = null;
       this.minDateYear = null;
       this.minDateWeek = null;
-      this.yearInput.min = null;
-      this.container.dataset.minDate = null;
+      this.yearInput.min = '';
+      this.container.dataset.minDate = '';
     }
 
     if (newMaxDate instanceof Date && !isNaN(newMaxDate.getTime())) {
@@ -125,8 +127,8 @@ export class CalendarweekComponent {
       this.maxDate = null;
       this.maxDateYear = null;
       this.maxDateWeek = null;
-      this.yearInput.max = null;
-      this.container.dataset.maxDate = null;
+      this.yearInput.max = '';
+      this.container.dataset.maxDate = '';
     }
 
     this.updateWeekMinMax();

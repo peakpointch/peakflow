@@ -32,14 +32,14 @@ const attr: AttrObject = {
 }
 
 export function parseDateflow(element: HTMLElement): Date {
-  const dateString: string = element.getAttribute(attr.date);
+  const dateString: string | null = element.getAttribute(attr.date);
+  if (!dateString) {
+    throw new Error(`Date string is empty.`);
+  }
   const time: number = parseFloat(element.getAttribute(attr.time) || "0.00");
   const [year, month, day] = dateString.split("-").map(Number);
   const hour = Math.floor(time);
   const minute = Math.round(time * 100) % 10 ** 2;
-  if (!dateString) {
-    throw new Error(`Date string is empty.`);
-  }
   const date = new Date(year, month - 1, day, hour, minute);
   if (!(date instanceof Date) || isNaN(date.getTime())) {
     throw new Error(`Invalid date string "${dateString}" or invalid time string "${time}".`);
@@ -62,11 +62,15 @@ export function dateflow(locale: Locale, ...containers: ElementsArg): void {
       try {
         date = parseDateflow(element);
       } catch (error) {
-        console.warn(`Failed to parse date #${i}. ${error.message} Skipping date.`);
+        if (error instanceof Error) {
+          console.warn(`Failed to parse date #${i}. ${error.message} Skipping date.`);
+        } else {
+          console.warn(`Failed to parse date #${i}. Unknown error: ${String(error)} Skipping date.`);
+        }
         return;
       }
 
-      const formatString: string = element.getAttribute(attr.format);
+      const formatString: string | null = element.getAttribute(attr.format);
       // debug here
       if (!formatString) {
         console.warn(`Format string #${i} is empty. Perhaps you missed the "dateflow-format" attribute?`);

@@ -1,7 +1,7 @@
 import type { GlobalCal } from "@calcom/embed-core";
 
 export async function loadCal(namespace: string): Promise<GlobalCal> {
-  if (typeof window.Cal !== "undefined") return;
+  if (typeof window.Cal !== "undefined") return window.Cal;
 
   (function (windw: any, embedJS: string, action: string) {
     const p = (api: any, args: any) => {
@@ -27,6 +27,7 @@ export async function loadCal(namespace: string): Promise<GlobalCal> {
           p(api, arguments);
         };
         const namespace = ar[1];
+        //@ts-ignore
         api.q = api.q || [];
 
         if (typeof namespace === "string") {

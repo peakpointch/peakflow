@@ -11,10 +11,10 @@ type AttributeMatchTypeMap = {
 };
 type AttributeSelector<T = string> = (name?: T, type?: AttributeMatchType) => string;
 
-interface AttributeOptions<T> {
-  defaultType?: AttributeMatchType;
-  defaultValue?: T;
-  exclusions?: string[];
+interface AttributeOptions<T extends string> {
+  defaultType: AttributeMatchType;
+  defaultValue: T | undefined;
+  exclusions: string[];
 }
 
 const attrMatchTypes: AttributeMatchTypeMap = {
@@ -59,7 +59,7 @@ function exclude(selector: string, ...exclusions: string[]): string {
  * @param options - Options to configure selector generation.
  * @returns A function that generates the selector string based on the provided name and match type.
  */
-const createAttribute = <T>(
+const createAttribute = <T extends string = string>(
   attrName: string,
   options: AttributeOptions<T> = {
     defaultType: 'exact',
