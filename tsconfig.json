@@ -2,15 +2,34 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@library/*": [ "library/*" ],
-      "~/types/*": [ "types/*" ],
-      "html2pdf.js": [ "node_modules/html2pdf.js/dist/html2pdf.bundle.min.js" ]
+      "@library/*": [
+        "src/*"
+      ],
+      "~/types/*": [
+        "types/*"
+      ],
+      "html2pdf.js": [
+        "node_modules/html2pdf.js/dist/html2pdf.bundle.min.js"
+      ]
     },
-    "target": "ES2015",
-    "lib": [ "ES2020", "DOM" ],
-    "esModuleInterop": true,
+    "target": "ES2020",
+    "module": "ESNext",
     "declaration": true,
     "emitDeclarationOnly": false,
-    "moduleResolution": "node"
-  }
+    "declarationDir": "./dist",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "moduleResolution": "Bundler",
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
 }

@@ -1,23 +1,30 @@
 {
-  "name": "webflow",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "peakflow",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "A TypeScript based Webflow library",
+  "author": "Lukas Manuel Graf",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "serve",
-    "build-vimeo": "esbuild js-library/vimeo-component.ts --bundle --outfile=dist/vimeo-component.js",
-    "build": "node builder.js",
+    "build": "tsc && node builder.js",
     "livereload": "node esbuild.config.js"
   },
-  "author": "",
   "license": "ISC",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./form/fieldgroup": {
+      "import": "./dist/form/fieldgroup.js",
+      "types": "./dist/form/fieldgroup.d.ts"
+    }
+  },
   "devDependencies": {
     "@types/html2canvas": "^0.5.35",
     "@types/jspdf": "^1.3.3",
     "@types/validator": "^13.15.0",
     "esbuild": "^0.25.2",
-    "serve": "^14.2.4",
     "typescript": "^5.8.3"
   },
   "dependencies": {
