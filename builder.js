@@ -1,10 +1,9 @@
 import esbuild from "esbuild";
-import fs from "fs";
-import path from "path";
+import fg from "fast-glob";
 
 // Build all files inside src/
 async function buildLibrary() {
-  const files = await glob("src/**/*.ts");
+  const files = await fg("src/**/*.ts");
 
   await esbuild.build({
     entryPoints: files,

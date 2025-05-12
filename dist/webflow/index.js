@@ -1,2 +1,5 @@
 export * from "./webflow";
-export { wf as default } from "./webflow";
+import { wf } from "./webflow";
+export {
+  wf as default
+};

@@ -1,54 +1,36 @@
 const attrMatchTypes = {
-    startsWith: '^',
-    endsWith: '$',
-    includes: '*',
-    whitespace: '~',
-    hyphen: '|',
-    exact: ''
+  startsWith: "^",
+  endsWith: "$",
+  includes: "*",
+  whitespace: "~",
+  hyphen: "|",
+  exact: ""
 };
-/**
- * Converts a human-friendly `AttributeType` to a CSS `AttributeOperator`.
- */
 function getOperator(type) {
-    return attrMatchTypes[type] || '';
+  return attrMatchTypes[type] || "";
 }
-/**
- * Excludes a CSS selector from a CSS selector.
- *
- * @param selector The original selector that should exclude specific elements.
- * @param exclusions The selectors to exclude from the original selector.
- * @returns A CSS selector.
- */
 function exclude(selector, ...exclusions) {
-    if (exclusions.length === 0)
-        return selector;
-    return selector.split(', ').reduce((acc, str) => {
-        let separator = acc === "" ? "" : ', ';
-        return acc + separator + `${str}:not(${exclusions.join(', ')})`;
-    }, "");
+  if (exclusions.length === 0) return selector;
+  return selector.split(", ").reduce((acc, str) => {
+    let separator = acc === "" ? "" : ", ";
+    return acc + separator + `${str}:not(${exclusions.join(", ")})`;
+  }, "");
 }
-/**
- * Creates a selector function based on the provided attribute name.
- * The returned selector function can be used to generate a string selector for the given name.
- * If no name is provided, it will return a selector with just the attribute name.
- *
- * @template T - The type of the name that will be passed to the generated selector function (e.g., string).
- * @param attrName - The name of the attribute that will be used in the selector.
- * @param options - Options to configure selector generation.
- * @returns A function that generates the selector string based on the provided name and match type.
- */
 const createAttribute = (attrName, options = {
-    defaultType: 'exact',
-    defaultValue: undefined,
-    exclusions: [],
+  defaultType: "exact",
+  defaultValue: void 0,
+  exclusions: []
 }) => {
-    return (name = options.defaultValue, type = options.defaultType) => {
-        if (!name) {
-            return exclude(`[${attrName}]`, ...options.exclusions);
-        }
-        const value = String(name); // Ensure it's a string for selector use
-        const selector = `[${attrName}${getOperator(type)}="${value}"]`;
-        return exclude(selector, ...(options.exclusions ?? []));
-    };
+  return (name = options.defaultValue, type = options.defaultType) => {
+    if (!name) {
+      return exclude(`[${attrName}]`, ...options.exclusions);
+    }
+    const value = String(name);
+    const selector = `[${attrName}${getOperator(type)}="${value}"]`;
+    return exclude(selector, ...options.exclusions ?? []);
+  };
 };
-export default createAttribute;
+var attributeselector_default = createAttribute;
+export {
+  attributeselector_default as default
+};
