@@ -1,4 +1,4 @@
-import Renderer, { RenderData } from "src/renderer";
+import Renderer, { RenderData } from "./renderer";
 import html2canvas from 'html2canvas';
 import jsPDF, { Html2CanvasOptions } from 'jspdf';
 import createAttribute from "src/attributeselector";

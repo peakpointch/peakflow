@@ -1,4 +1,4 @@
-import wf from "src/webflow";
+import wf from "../webflow";
 import { validateFields } from "./utility";
 import { FormMessage } from "./formmessage";
 /**

@@ -1,4 +1,6 @@
-import { FieldGroup, HTMLFormInput, fieldFromInput } from "src/form";
+import { fieldFromInput } from "./formfield";
+import { FieldGroup } from "./fieldgroup";
+import { HTMLFormInput } from "./utility";
 import createAttribute from "src/attributeselector";
 import wf from "src/webflow";
 

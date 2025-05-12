@@ -1,5 +1,5 @@
-import createAttribute from "src/attributeselector";
-import wf from "src/webflow";
+import createAttribute from "../attributeselector";
+import wf from "../webflow";
 // Form selector functions
 const formElementSelector = createAttribute('data-form-element');
 const filterFormSelector = createAttribute('data-filter-form');

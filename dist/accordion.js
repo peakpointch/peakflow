@@ -1,4 +1,4 @@
-import createAttribute from "src/attributeselector";
+import createAttribute from "./attributeselector";
 const modalSelector = createAttribute('data-modal-element');
 export default class Accordion {
     constructor(component) {

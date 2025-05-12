@@ -1,10 +1,10 @@
-import { WfFormData } from "~/types/webflow";
+import { WfFormData } from "../../types/webflow";
 type HTMLFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 type CustomValidator = () => boolean;
 type FormComponentElement = 'component' | 'success' | 'error' | 'submit' | 'modal';
 type FilterFormElement = 'component' | 'field';
-declare const formElementSelector: import("src/attributeselector").AttributeSelector<FormComponentElement>;
-declare const filterFormSelector: import("src/attributeselector").AttributeSelector<FilterFormElement>;
+declare const formElementSelector: import("../attributeselector").AttributeSelector<FormComponentElement>;
+declare const filterFormSelector: import("../attributeselector").AttributeSelector<FilterFormElement>;
 /**
  * Check if a FormElement is a radio input.
  * @param {HTMLFormInput} input - The input that is to be checked.

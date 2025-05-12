@@ -1,4 +1,4 @@
-import Renderer, { RenderData } from "src/renderer";
+import Renderer, { RenderData } from "./renderer";
 export type PdfElement = 'container' | 'scale' | 'page' | 'page-wrapper' | 'weekday' | 'dish';
 export type PdfFieldName = string | 'dishName' | 'dishDescription' | 'price' | 'priceSmall';
 export type PdfFormat = 'a3' | 'a4' | 'a5';

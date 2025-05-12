@@ -1,6 +1,6 @@
-import createAttribute from "src/attributeselector";
-import wf from "src/webflow";
-import { WfFormData } from "~/types/webflow";
+import createAttribute from "../attributeselector";
+import wf from "../webflow";
+import { WfFormData } from "../../types/webflow";
 
 // Types
 type HTMLFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;

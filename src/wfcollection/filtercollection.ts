@@ -1,5 +1,5 @@
-import { CollectionList } from 'src/wfcollection';
-import { RenderData, RenderElement, RenderField } from 'src/renderer';
+import { CollectionList } from './wfcollection';
+import { RenderData, RenderElement, RenderField } from '../renderer';
 
 type MenuDataCondition = ((menuData: RenderElement | RenderField) => boolean);
 

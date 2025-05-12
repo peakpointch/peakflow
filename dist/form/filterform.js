@@ -1,4 +1,5 @@
-import { FieldGroup, fieldFromInput } from "src/form";
+import { fieldFromInput } from "./formfield";
+import { FieldGroup } from "./fieldgroup";
 import createAttribute from "src/attributeselector";
 import wf from "src/webflow";
 export class FilterForm {

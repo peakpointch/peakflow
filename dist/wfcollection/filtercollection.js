@@ -1,4 +1,4 @@
-import { CollectionList } from 'src/wfcollection';
+import { CollectionList } from './wfcollection';
 export class FilterCollection extends CollectionList {
     constructor(container, name = '', rendererName = 'wf') {
         super(container, name, rendererName);

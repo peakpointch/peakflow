@@ -1,5 +1,5 @@
-import { isCheckboxInput, isRadioInput } from "src/form";
-import { parameterize } from "src/parameterize";
+import { isCheckboxInput, isRadioInput } from "./utility";
+import { parameterize } from "../parameterize";
 class FormField {
     constructor(data = null) {
         if (!data) {

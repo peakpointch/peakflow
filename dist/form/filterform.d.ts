@@ -1,4 +1,5 @@
-import { FieldGroup, HTMLFormInput } from "src/form";
+import { FieldGroup } from "./fieldgroup";
+import { HTMLFormInput } from "./utility";
 type FilterAction<T extends string = string, Q extends string = string> = (filters: FieldGroup<T>, fieldId: Q) => any;
 type ActionElement = 'download' | 'save';
 type HTMLActionElement = HTMLButtonElement;

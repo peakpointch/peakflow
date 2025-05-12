@@ -1,4 +1,4 @@
-import Renderer from "src/renderer";
+import Renderer from "../renderer";
 class CollectionList {
     constructor(container, name = '', rendererName = 'wf') {
         this.name = name;

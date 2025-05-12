@@ -1,4 +1,4 @@
-import Renderer, { RenderData } from "src/renderer";
+import Renderer, { RenderData } from "../renderer";
 type GlobalWfCollections = {
     initialized: boolean;
     [key: string]: GlobalCollection | CollectionList | boolean;

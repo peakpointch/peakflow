@@ -1,5 +1,5 @@
 import { getISOWeek, getISOWeeksInYear, getISOWeekYear, setISOWeekYear, setISOWeek, startOfISOWeek, format } from 'date-fns';
-import createAttribute from 'src/attributeselector';
+import createAttribute from '../attributeselector';
 
 type UXMode = 'continuous' | 'loop' | 'fixed';
 type CalendarweekElements = 'component' | 'week' | 'year';
