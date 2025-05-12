@@ -1,8 +1,8 @@
 import { fieldFromInput } from "./formfield";
 import { FieldGroup } from "./fieldgroup";
 import { HTMLFormInput } from "./utility";
-import createAttribute from "src/attributeselector";
-import wf from "src/webflow";
+import createAttribute from "../attributeselector";
+import wf from "../webflow";
 
 type FilterAction<T extends string = string, Q extends string = string> = (filters: FieldGroup<T>, fieldId: Q) => any;
 type ActionElement = 'download' | 'save';

@@ -1,7 +1,7 @@
 import { fieldFromInput } from "./formfield";
 import { FieldGroup } from "./fieldgroup";
-import createAttribute from "src/attributeselector";
-import wf from "src/webflow";
+import createAttribute from "../attributeselector";
+import wf from "../webflow";
 export class FilterForm {
     constructor(container, fieldIds) {
         this.fieldIds = fieldIds;

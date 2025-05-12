@@ -15,7 +15,7 @@ export default class Pdf {
      * Use this method to select the elements for a new `Pdf` instance.
      * @returns CSS selector string
      */
-    static select: import("src/attributeselector").AttributeSelector<PdfElement>;
+    static select: import("./attributeselector").AttributeSelector<PdfElement>;
     private getScaleElement;
     getDefaultScale(): number;
     getPages(): HTMLElement[];
