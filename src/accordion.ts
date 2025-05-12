@@ -1,4 +1,4 @@
-import createAttribute from "@library/attributeselector";
+import createAttribute from "src/attributeselector";
 
 type ModalElement = 'scroll' | 'sticky-top' | 'sticky-bottom';
 

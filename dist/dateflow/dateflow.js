@@ -1,4 +1,4 @@
-import createAttribute from "@library/attributeselector";
+import createAttribute from "src/attributeselector";
 import { format } from "date-fns";
 function getDomElements(...elements) {
     const containers = [];

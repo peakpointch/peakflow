@@ -1,7 +1,7 @@
-import Renderer from "@library/renderer";
+import Renderer from "src/renderer";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import createAttribute from "@library/attributeselector";
+import createAttribute from "src/attributeselector";
 // Variables
 class Pdf {
     constructor(container) {

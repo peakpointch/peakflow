@@ -1,4 +1,4 @@
-import Renderer, { RenderData } from "@library/renderer";
+import Renderer, { RenderData } from "src/renderer";
 export type PdfElement = 'container' | 'scale' | 'page' | 'page-wrapper' | 'weekday' | 'dish';
 export type PdfFieldName = string | 'dishName' | 'dishDescription' | 'price' | 'priceSmall';
 export type PdfFormat = 'a3' | 'a4' | 'a5';
@@ -15,7 +15,7 @@ export default class Pdf {
      * Use this method to select the elements for a new `Pdf` instance.
      * @returns CSS selector string
      */
-    static select: import("@library/attributeselector").AttributeSelector<PdfElement>;
+    static select: import("src/attributeselector").AttributeSelector<PdfElement>;
     private getScaleElement;
     getDefaultScale(): number;
     getPages(): HTMLElement[];

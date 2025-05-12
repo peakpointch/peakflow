@@ -1,4 +1,4 @@
-import { FieldGroup, HTMLFormInput } from "@library/form";
+import { FieldGroup, HTMLFormInput } from "src/form";
 type FilterAction<T extends string = string, Q extends string = string> = (filters: FieldGroup<T>, fieldId: Q) => any;
 type ActionElement = 'download' | 'save';
 type HTMLActionElement = HTMLButtonElement;
@@ -13,7 +13,7 @@ export declare class FilterForm<FieldId extends string = string> {
     private globalChangeActions;
     private defaultDayRange;
     private resizeResetFields;
-    static select: import("@library/attributeselector").AttributeSelector<ActionElement>;
+    static select: import("src/attributeselector").AttributeSelector<ActionElement>;
     constructor(container: HTMLElement | null, fieldIds?: readonly FieldId[]);
     /**
      * Returns the `HTMLElement` of a specific filter input.

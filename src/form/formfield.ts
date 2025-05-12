@@ -1,6 +1,6 @@
-import { FormComponentElement, HTMLFormInput } from "@library/form";
-import { isCheckboxInput, isRadioInput } from "@library/form";
-import { parameterize } from "@library/parameterize";
+import { FormComponentElement, HTMLFormInput } from "src/form";
+import { isCheckboxInput, isRadioInput } from "src/form";
+import { parameterize } from "src/parameterize";
 
 interface FieldData {
   id: string;

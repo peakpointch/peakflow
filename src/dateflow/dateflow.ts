@@ -1,4 +1,4 @@
-import createAttribute from "@library/attributeselector";
+import createAttribute from "src/attributeselector";
 import { format, Locale } from "date-fns";
 
 type ElementsArg = Array<NodeListOf<HTMLElement> | HTMLElement | string>;

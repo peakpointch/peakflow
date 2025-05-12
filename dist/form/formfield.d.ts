@@ -1,4 +1,4 @@
-import { HTMLFormInput } from "@library/form";
+import { HTMLFormInput } from "src/form";
 interface FieldData {
     id: string;
     label: string;

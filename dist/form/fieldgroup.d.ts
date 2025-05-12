@@ -1,4 +1,4 @@
-import { FormField } from "@library/form/formfield";
+import { FormField } from "src/form/formfield";
 export declare class FieldGroup<Field extends string = string> {
     fields: Map<Field, FormField>;
     constructor(fields?: Map<Field, FormField>);

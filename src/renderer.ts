@@ -1,4 +1,4 @@
-import createAttribute from "@library/attributeselector";
+import createAttribute from "src/attributeselector";
 import { toCamelCase } from "./parameterize";
 import { format, parse } from "date-fns";
 import { de } from "date-fns/locale";

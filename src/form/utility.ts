@@ -1,5 +1,5 @@
-import createAttribute from "@library/attributeselector";
-import wf from "@library/webflow";
+import createAttribute from "src/attributeselector";
+import wf from "src/webflow";
 import { WfFormData } from "~/types/webflow";
 
 // Types
