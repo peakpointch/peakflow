@@ -89,18 +89,15 @@ const _Modal = class _Modal {
     this.component.classList.remove("hide");
     this.hide();
     switch (this.settings.animation.type) {
+      case "growIn":
+      case "slideUp":
+        this.modal.style.willChange = "transform";
+        this.modal.style.transitionProperty = "transform";
+        this.modal.style.transitionDuration = `${this.settings.animation.duration.toString()}ms`;
       case "fade":
         this.component.style.willChange = "opacity";
         this.component.style.transitionProperty = "opacity";
         this.component.style.transitionDuration = `${this.settings.animation.duration.toString()}ms`;
-        break;
-      case "slideUp":
-        this.component.style.willChange = "opacity";
-        this.component.style.transitionProperty = "opacity";
-        this.component.style.transitionDuration = `${this.settings.animation.duration.toString()}ms`;
-        this.modal.style.willChange = "transform";
-        this.modal.style.transitionProperty = "transform";
-        this.modal.style.transitionDuration = `${this.settings.animation.duration.toString()}ms`;
         break;
       case "none":
         break;
@@ -120,6 +117,10 @@ const _Modal = class _Modal {
         this.component.style.opacity = "1";
         this.modal.style.transform = "translateY(0vh)";
         break;
+      case "growIn":
+        this.component.style.opacity = "1";
+        this.modal.style.transform = "scale(1)";
+        break;
       default:
         this.component.classList.remove("is-closed");
     }
@@ -136,6 +137,10 @@ const _Modal = class _Modal {
       case "slideUp":
         this.component.style.opacity = "0";
         this.modal.style.transform = "translateY(10vh)";
+        break;
+      case "growIn":
+        this.component.style.opacity = "0";
+        this.modal.style.transform = "scale(0.9)";
         break;
       default:
         break;

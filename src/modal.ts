@@ -1,7 +1,7 @@
 import createAttribute from "./attributeselector";
 
 type ModalElement = 'component' | 'modal' | 'open' | 'close' | 'scroll' | 'sticky-top' | 'sticky-bottom';
-type ModalAnimationType = 'fade' | 'slideUp' | 'custom' | 'none';
+type ModalAnimationType = 'fade' | 'slideUp' | 'growIn' | 'custom' | 'none';
 
 interface ModalAnimation {
   type: ModalAnimationType;
@@ -158,20 +158,16 @@ export default class Modal {
     this.hide();
 
     switch (this.settings.animation.type) {
+      case 'growIn':
+      case 'slideUp':
+        this.modal.style.willChange = 'transform';
+        this.modal.style.transitionProperty = 'transform';
+        this.modal.style.transitionDuration = `${this.settings.animation.duration.toString()}ms`;
+
       case 'fade':
         this.component.style.willChange = 'opacity';
         this.component.style.transitionProperty = 'opacity';
         this.component.style.transitionDuration = `${this.settings.animation.duration.toString()}ms`;
-        break;
-
-      case 'slideUp':
-        this.component.style.willChange = 'opacity';
-        this.component.style.transitionProperty = 'opacity';
-        this.component.style.transitionDuration = `${this.settings.animation.duration.toString()}ms`;
-
-        this.modal.style.willChange = 'transform';
-        this.modal.style.transitionProperty = 'transform';
-        this.modal.style.transitionDuration = `${this.settings.animation.duration.toString()}ms`;
         break;
 
       case 'none':
@@ -198,6 +194,11 @@ export default class Modal {
         this.modal.style.transform = 'translateY(0vh)';
         break;
 
+      case 'growIn':
+        this.component.style.opacity = '1';
+        this.modal.style.transform = 'scale(1)';
+        break;
+
       default:
         this.component.classList.remove("is-closed");
     }
@@ -217,6 +218,11 @@ export default class Modal {
       case 'slideUp':
         this.component.style.opacity = '0';
         this.modal.style.transform = 'translateY(10vh)';
+        break;
+
+      case 'growIn':
+        this.component.style.opacity = '0';
+        this.modal.style.transform = 'scale(0.9)';
         break;
 
       default:
