@@ -55,6 +55,7 @@ export default class Modal {
     this.settings = deepMerge(defaultModalSettings, settings);
     this.modal = this.getModalElement();
     this.instance = this.settings.id || component.getAttribute(Modal.attr.id);
+    component.setAttribute(Modal.attr.id, this.instance);
 
     // accessibility
     this.component.setAttribute('role', 'dialog');

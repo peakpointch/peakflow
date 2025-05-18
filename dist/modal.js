@@ -21,6 +21,7 @@ const _Modal = class _Modal {
     this.settings = deepMerge(defaultModalSettings, settings);
     this.modal = this.getModalElement();
     this.instance = this.settings.id || component.getAttribute(_Modal.attr.id);
+    component.setAttribute(_Modal.attr.id, this.instance);
     this.component.setAttribute("role", "dialog");
     this.component.setAttribute("aria-modal", "true");
     this.setInitialState();
