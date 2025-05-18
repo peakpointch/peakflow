@@ -97,7 +97,10 @@ export function clearRadioGroup(container: HTMLElement, name: string) {
     });
 }
 
-export function initCustomInputs(container: HTMLElement) {
+/**
+ * Initialize Webflow's native checkbox and radio elements.
+ */
+export function initWfInputs(container: HTMLElement) {
   // Constants for selectors and classes
   const focusClass = "w--redirected-focus";
   const focusVisibleClass = "w--redirected-focus-visible";

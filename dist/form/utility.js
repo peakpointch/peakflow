@@ -58,7 +58,7 @@ function clearRadioGroup(container, name) {
     }
   });
 }
-function initCustomInputs(container) {
+function initWfInputs(container) {
   const focusClass = "w--redirected-focus";
   const focusVisibleClass = "w--redirected-focus-visible";
   const focusVisibleSelector = ":focus-visible, [data-wf-focus-visible]";
@@ -163,7 +163,7 @@ export {
   filterFormSelector,
   formElementSelector,
   getWfFormData,
-  initCustomInputs,
+  initWfInputs,
   isCheckboxInput,
   isRadioInput,
   removeErrorClasses,

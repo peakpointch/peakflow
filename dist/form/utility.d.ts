@@ -26,7 +26,10 @@ export declare function getWfFormData(form: HTMLFormElement | HTMLElement, field
  */
 export declare function sendFormData(formData: any): Promise<boolean>;
 export declare function clearRadioGroup(container: HTMLElement, name: string): void;
-export declare function initCustomInputs(container: HTMLElement): void;
+/**
+ * Initialize Webflow's native checkbox and radio elements.
+ */
+export declare function initWfInputs(container: HTMLElement): void;
 export declare function reportValidity(input: HTMLFormInput): void;
 export declare function removeErrorClasses(input: HTMLFormInput): void;
 export declare function validateFields(inputs: NodeListOf<HTMLFormInput> | HTMLFormInput[], report?: boolean): {
