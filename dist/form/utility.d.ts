@@ -28,6 +28,7 @@ export declare function sendFormData(formData: any): Promise<boolean>;
 export declare function clearRadioGroup(container: HTMLElement, name: string): void;
 export declare function initCustomInputs(container: HTMLElement): void;
 export declare function reportValidity(input: HTMLFormInput): void;
+export declare function removeErrorClasses(input: HTMLFormInput): void;
 export declare function validateFields(inputs: NodeListOf<HTMLFormInput> | HTMLFormInput[], report?: boolean): {
     valid: boolean;
     invalidField: HTMLFormInput | null;
