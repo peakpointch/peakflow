@@ -1,4 +1,4 @@
-type ModalElement = 'component' | 'modal' | 'open' | 'close' | 'scroll' | 'sticky-top' | 'sticky-bottom';
+type ModalElement = 'component' | 'modal' | 'open' | 'close' | 'cancel' | 'confirm' | 'scroll' | 'sticky-top' | 'sticky-bottom';
 type ModalAnimationType = 'fade' | 'slideUp' | 'growIn' | 'custom' | 'none';
 interface ModalAnimation {
     type: ModalAnimationType;
