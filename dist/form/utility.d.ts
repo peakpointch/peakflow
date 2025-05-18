@@ -1,4 +1,7 @@
 import { WfFormData } from "../../types/webflow";
+/**
+ * Represents any standard form input element <input>, <select>, or <textarea>.
+ */
 type HTMLFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 type CustomValidator = () => boolean;
 type FormComponentElement = 'component' | 'success' | 'error' | 'submit' | 'modal';
@@ -26,6 +29,10 @@ export declare function getWfFormData(form: HTMLFormElement | HTMLElement, field
  */
 export declare function sendFormData(formData: any): Promise<boolean>;
 export declare function clearRadioGroup(container: HTMLElement, name: string): void;
+/**
+ * Prevents unintended form submissions by setting missing <button> types to "button".
+ */
+export declare function enforceButtonTypes(form: HTMLFormElement | null): void;
 /**
  * Initialize Webflow's native checkbox and radio elements.
  */

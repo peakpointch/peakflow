@@ -2,7 +2,9 @@ import createAttribute from "../attributeselector";
 import wf from "../webflow";
 import { WfFormData } from "../../types/webflow";
 
-// Types
+/**
+ * Represents any standard form input element <input>, <select>, or <textarea>.
+ */
 type HTMLFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 type CustomValidator = () => boolean;
 type FormComponentElement = 'component' | 'success' | 'error' | 'submit' | 'modal';
@@ -95,6 +97,15 @@ export function clearRadioGroup(container: HTMLElement, name: string) {
         customRadio.classList.remove(wf.class.checked); // Remove the checked styling
       }
     });
+}
+
+/**
+ * Prevents unintended form submissions by setting missing <button> types to "button".
+ */
+export function enforceButtonTypes(form: HTMLFormElement | null): void {
+  if (!form) return;
+  const buttons = form.querySelectorAll("button:not([type])");
+  buttons.forEach((button) => button.setAttribute("type", "button"));
 }
 
 /**

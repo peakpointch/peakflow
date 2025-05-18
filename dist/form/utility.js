@@ -58,6 +58,11 @@ function clearRadioGroup(container, name) {
     }
   });
 }
+function enforceButtonTypes(form) {
+  if (!form) return;
+  const buttons = form.querySelectorAll("button:not([type])");
+  buttons.forEach((button) => button.setAttribute("type", "button"));
+}
 function initWfInputs(container) {
   const focusClass = "w--redirected-focus";
   const focusVisibleClass = "w--redirected-focus-visible";
@@ -160,6 +165,7 @@ function disableWebflowForm(form) {
 export {
   clearRadioGroup,
   disableWebflowForm,
+  enforceButtonTypes,
   filterFormSelector,
   formElementSelector,
   getWfFormData,
