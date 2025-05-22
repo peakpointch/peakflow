@@ -35,6 +35,10 @@ export function parseDateflow(element: HTMLElement): Date {
   const dateString: string | null = element.getAttribute(attr.date);
   if (!dateString) {
     throw new Error(`Date string is empty.`);
+  } else if (dateString === 'today') {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    return now;
   }
   const time: number = parseFloat(element.getAttribute(attr.time) || "0.00");
   const [year, month, day] = dateString.split("-").map(Number);
@@ -80,4 +84,3 @@ export function dateflow(locale: Locale, ...containers: ElementsArg): void {
     });
   });
 }
-

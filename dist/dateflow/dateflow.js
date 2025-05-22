@@ -26,6 +26,10 @@ function parseDateflow(element) {
   const dateString = element.getAttribute(attr.date);
   if (!dateString) {
     throw new Error(`Date string is empty.`);
+  } else if (dateString === "today") {
+    const now = /* @__PURE__ */ new Date();
+    now.setHours(0, 0, 0, 0);
+    return now;
   }
   const time = parseFloat(element.getAttribute(attr.time) || "0.00");
   const [year, month, day] = dateString.split("-").map(Number);
