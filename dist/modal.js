@@ -1,4 +1,5 @@
 import createAttribute from "./attributeselector";
+import deepMerge from "./deepmerge";
 const defaultModalAnimation = {
   type: "none",
   duration: 0,
@@ -192,17 +193,6 @@ function unlockBodyScroll() {
 }
 function animationFrame() {
   return new Promise((resolve) => requestAnimationFrame(() => resolve()));
-}
-function deepMerge(target, source) {
-  const result = { ...target };
-  for (const key in source) {
-    if (source[key] && typeof source[key] === "object" && !Array.isArray(source[key])) {
-      result[key] = deepMerge(target[key], source[key]);
-    } else if (source[key] !== void 0) {
-      result[key] = source[key];
-    }
-  }
-  return result;
 }
 export {
   Modal as default,
