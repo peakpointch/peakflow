@@ -3,56 +3,82 @@ import { toCamelCase } from "./parameterize";
 import { format, parse } from "date-fns";
 import { de } from "date-fns/locale";
 import wf from "./webflow";
+import deepMerge from "./deepmerge";
+import { DashToCamelCase } from "./typeutils";
 
 type VisibilityControl = boolean | 'emptyState';
 type UnparsedBoolean<T> = Exclude<T, boolean> | "true" | "false";
 
-type RenderField = {
+
+type FilterAttributeType = "string" | "number" | "date" | "boolean";
+
+type FilterAttributes<T extends string = string> = {
+  [K in T]: FilterAttributeType;
+}
+
+type RenderField<F extends FilterAttributes<keyof F & string> = {}> = {
   element: string;
   instance?: string;
   value: string;
   type?: 'text' | 'html' | 'date';
   visibility: boolean;
-  [key: string]: any;
+} & {
+  // [K in keyof F]?: any;
+  [K in keyof F as DashToCamelCase<K & string>]?: any;
 };
 
-type RenderElement = {
+type RenderElement<F extends FilterAttributes<keyof F & string> = {}> = {
   element: string;
   instance?: string;
-  fields: RenderData;
+  fields: RenderData<F>;
   visibility: boolean;
-  [key: string]: any;
+} & {
+  // [K in keyof F]?: any;
+  [K in keyof F as DashToCamelCase<K & string>]?: any;
 };
 
-type RenderData = Array<RenderElement | RenderField>;
-type FilterAttribute = Record<string, "string" | "number" | "date" | "boolean">;
+type RenderData<F extends FilterAttributes<keyof F & string> = {}> = Array<RenderField<F> | RenderElement<F>>;
 
-class Renderer {
+interface RendererOptions<F extends FilterAttributes<keyof F & string> = {}> {
+  attributeName: string;
+  filterAttributes: F;
+}
+
+class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   private canvas: HTMLElement;
-  private data: RenderData;
+  private data: RenderData<F>;
   private fieldAttr: string;
   private elementAttr: string;
   private emptyStateAttr: string;
   private collectionAttr: string = `data-is-collection`;
-  private filterAttributes: FilterAttribute = {
-    "data-filter": "string",
-    "data-category": "string",
+  private attributeName: string = 'render';
+  private options: RendererOptions<F> = {
+    attributeName: 'render',
+    filterAttributes: {} as F as any,
   };
 
-  constructor(canvas: HTMLElement | null, private attributeName: string = 'render') {
+  constructor(canvas: HTMLElement | null, options?: Partial<RendererOptions<F>>) {
     if (!canvas) throw new Error(`Canvas can't be undefined.`);
     this.canvas = canvas;
-    this.elementAttr = `data-${attributeName}-element`;
-    this.fieldAttr = `data-${attributeName}-field`;
-    this.emptyStateAttr = `data-${attributeName}-empty-state`;
+    this.options = deepMerge(this.options, options);
+    this.attributeName = options.attributeName;
+    this.elementAttr = `data-${options.attributeName}-element`;
+    this.fieldAttr = `data-${options.attributeName}-field`;
+    this.emptyStateAttr = `data-${options.attributeName}-empty-state`;
   }
 
-  public render(data: RenderData, canvas: HTMLElement = this.canvas): void {
+  public static defineAttributes<
+    T extends FilterAttributes<keyof T & string>
+  >(obj: T): T {
+    return obj;
+  }
+
+  public render(data: RenderData<F>, canvas: HTMLElement = this.canvas): void {
     this.clear(canvas);
     this._render(data, canvas);
   }
 
-  private _render(data: RenderData, canvas: HTMLElement = this.canvas): void {
+  private _render(data: RenderData<F>, canvas: HTMLElement = this.canvas): void {
     this.data = data;
 
     this.data.forEach((renderItem) => {
@@ -71,7 +97,7 @@ class Renderer {
   /**
    * Render a `RenderElement` to all its instances
    */
-  private renderElement(renderElement: RenderElement, canvas: HTMLElement) {
+  private renderElement(renderElement: RenderElement<F>, canvas: HTMLElement) {
     const selector = this.elementSelector(renderElement);
     const htmlRenderElements: NodeListOf<HTMLElement> = canvas.querySelectorAll(selector);
 
@@ -91,7 +117,7 @@ class Renderer {
     });
   }
 
-  private renderCollection(renderElement: RenderElement, htmlRenderCollection: HTMLElement) {
+  private renderCollection(renderElement: RenderElement<F>, htmlRenderCollection: HTMLElement) {
     switch (this.readVisibilityControl(htmlRenderCollection)) {
       case "emptyState":
         // TODO: Support "emptyState" for render collections
@@ -122,9 +148,9 @@ class Renderer {
       for (let i = 0; i < max; i++) {
         const template = htmlTemplate.cloneNode(true) as HTMLElement;
         if (Renderer.isRenderElement(renderElement.fields[i])) {
-          this.renderElementToTemplate(renderElement.fields[i] as RenderElement, template);
+          this.renderElementToTemplate(renderElement.fields[i] as RenderElement<F>, template);
         } else if (Renderer.isRenderField(renderElement.fields[i])) {
-          this.renderFieldToTemplate(renderElement.fields[i] as RenderField, template);
+          this.renderFieldToTemplate(renderElement.fields[i] as RenderField<F>, template);
         }
 
         fragment.appendChild<HTMLElement>(template);
@@ -139,7 +165,7 @@ class Renderer {
   /**
    * Render a `RenderElement` to a single `HTMLRenderElement`
    */
-  private renderElementToTemplate(renderElement: RenderElement, htmlTemplate: HTMLElement) {
+  private renderElementToTemplate(renderElement: RenderElement<F>, htmlTemplate: HTMLElement) {
     switch (this.readVisibilityControl(htmlTemplate)) {
       case "emptyState":
         const emptyStateElement = htmlTemplate.querySelector<HTMLElement>(`[${this.emptyStateAttr}]`);
@@ -172,7 +198,7 @@ class Renderer {
   /**
    * Render a `RenderField` to all its instances
    */
-  private renderField(renderField: RenderField, canvas: HTMLElement) {
+  private renderField(renderField: RenderField<F>, canvas: HTMLElement) {
     const selector = this.fieldSelector(renderField);
     const fields: NodeListOf<HTMLElement> = canvas.querySelectorAll(selector);
     fields.forEach((htmlRenderField) => {
@@ -183,7 +209,7 @@ class Renderer {
   /**
    * Render a `RenderField` to a single `HTMLRenderField`
    */
-  private renderFieldToTemplate(field: RenderField, htmlTemplate: HTMLElement) {
+  private renderFieldToTemplate(field: RenderField<F>, htmlTemplate: HTMLElement) {
     if (!field.visibility || !field.value.trim()) {
       switch (this.readVisibilityControl(htmlTemplate)) {
         case "emptyState":
@@ -219,8 +245,8 @@ class Renderer {
    * @param node The root node to start reading from.
    * @returns `RenderData` An array of RenderElement and RenderField objects representing the node structure.
    */
-  public read(node: HTMLElement, stopRecursionMatches: string[] = []): RenderData {
-    const renderData: RenderData = [];
+  public read(node: HTMLElement, stopRecursionMatches: string[] = []): RenderData<F> {
+    const renderData: RenderData<F> = [];
 
     Array.from(node.children).forEach((child) => {
       if (stopRecursionMatches.some(selector => child.matches(selector))) {
@@ -272,14 +298,14 @@ class Renderer {
     });
   }
 
-  private readRenderElement(child: HTMLElement, stopRecursionAttributes: string[]): RenderElement {
+  private readRenderElement(child: HTMLElement, stopRecursionAttributes: string[]): RenderElement<F> {
     const elementName = child.getAttribute(this.elementAttr);
     const instance = child.getAttribute(`data-${elementName}-instance`);
 
     // Recursively read child elements
     const fields = this.read(child as HTMLElement, stopRecursionAttributes); // Recurse on children
 
-    const element: RenderElement = {
+    const element: RenderElement<F> = {
       element: elementName!,
       fields,
       visibility: true,
@@ -297,7 +323,7 @@ class Renderer {
     return element;
   }
 
-  private readRenderField(child: HTMLElement): RenderField {
+  private readRenderField(child: HTMLElement): RenderField<F> {
     const fieldName = child.getAttribute(this.fieldAttr);
     const instance = child.getAttribute(`data-${fieldName}-instance`);
 
@@ -313,7 +339,7 @@ class Renderer {
         break;
     }
 
-    const field: RenderField = {
+    const field: RenderField<F> = {
       element: fieldName!,
       value,
       type,
@@ -337,8 +363,8 @@ class Renderer {
    * Modifies the `field` properties based on the filtering attributes from `child`.
    * Handles `date` and `boolean` attributes.
    */
-  private readFilteringProperties(field: RenderField | RenderElement, child: HTMLElement): void {
-    for (let [attr, type] of Object.entries(this.filterAttributes)) {
+  private readFilteringProperties(field: RenderField<F> | RenderElement<F>, child: HTMLElement): void {
+    for (let [attr, type] of Object.entries(this.options.filterAttributes)) {
       if (!child.hasAttribute(attr)) { continue }
 
       let value: any = child.getAttribute(attr);
@@ -378,6 +404,7 @@ class Renderer {
           break;
       }
 
+      // field[toCamelCase(attr) as DashToCamelCase<keyof F & string>] = value;
       field[toCamelCase(attr)] = value;
     };
   }
@@ -400,7 +427,7 @@ class Renderer {
     }
   }
 
-  private shouldHideElement(element: RenderElement): boolean {
+  private shouldHideElement(element: RenderElement<F>): boolean {
     if (element.visibility === false) return true;
     // Check if all child fields and elements are empty
     return element.fields.every((child) => {
@@ -458,18 +485,18 @@ class Renderer {
   }
 
   // Method to add filter attributes
-  public addFilterAttributes(newAttributes: FilterAttribute): void {
-    Object.assign(this.filterAttributes, newAttributes)
+  public addFilterAttributes(newAttributes: FilterAttributes): void {
+    Object.assign(this.options.filterAttributes, newAttributes);
   }
 
   // Method to remove filter attributes
   public removeFilterAttributes(...attributesToRemove: string[]): void {
     attributesToRemove.forEach(attr => {
-      delete this.filterAttributes[attr]
+      delete this.options.filterAttributes[attr];
     });
   }
 
-  private elementSelector(element?: RenderElement): string {
+  private elementSelector(element?: RenderElement<F>): string {
     const elementAttrSelector = createAttribute(this.elementAttr);
     if (!element) {
       return elementAttrSelector();
@@ -482,7 +509,7 @@ class Renderer {
     return selectorString;
   }
 
-  private fieldSelector(field?: RenderField): string {
+  private fieldSelector(field?: RenderField<F>): string {
     const fieldAttrSelector = createAttribute(this.fieldAttr);
     if (!field) {
       return fieldAttrSelector();
@@ -500,15 +527,19 @@ class Renderer {
   }
 
   // Type Guard for RenderElement
-  private static isRenderElement(item: RenderElement | RenderField): item is RenderElement {
-    return (item as RenderElement).fields !== undefined;
+  private static isRenderElement<
+    F extends FilterAttributes = {}
+  >(item: RenderElement<F> | RenderField<F>): item is RenderElement<F> {
+    return (item as RenderElement<F>).fields !== undefined;
   }
 
   // Type Guard for RenderField
-  private static isRenderField(item: RenderElement | RenderField): item is RenderField {
-    return (item as RenderField).value !== undefined;
+  private static isRenderField<
+    F extends FilterAttributes = {}
+  >(item: RenderElement<F> | RenderField<F>): item is RenderField<F> {
+    return (item as RenderField<F>).value !== undefined;
   }
 }
 
 export default Renderer;
-export type { RenderData, RenderElement, RenderField };
+export type { RenderData, RenderElement, RenderField, FilterAttributes };

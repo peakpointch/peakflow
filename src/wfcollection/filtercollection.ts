@@ -1,23 +1,41 @@
 import { CollectionList } from './wfcollection';
-import { RenderData, RenderElement, RenderField } from '../renderer';
+import Renderer from '../renderer';
+import { FilterAttributes, RenderData, RenderElement, RenderField } from '../renderer';
 
 type MenuDataCondition = ((menuData: RenderElement | RenderField) => boolean);
 
-export class FilterCollection extends CollectionList {
-  constructor(container: HTMLElement | null, name: string = '', rendererName: string = 'wf') {
-    super(container, name, rendererName);
+type Merged<F extends FilterAttributes<keyof F & string>> = FilterAttributes<keyof F & string | keyof typeof FilterCollection.defaultAttributes & string>;
 
-    this.renderer.addFilterAttributes({
-      "date": "date",
-      "end-date": "date",
-    });
+export class FilterCollection<
+  F extends FilterAttributes<keyof F & string> = {}
+> extends CollectionList<Merged<F>> {
+
+  static defaultAttributes = Renderer.defineAttributes({
+    "date": "date",
+    "start-date": "date",
+    "end-date": "date"
+  });
+
+  constructor(
+    container: HTMLElement | null,
+    filterAttributes: F,
+    name: string = '',
+    rendererName: string = 'wf'
+  ) {
+
+    const merged = {
+      ...FilterCollection.defaultAttributes,
+      ...filterAttributes,
+    } as Merged<F>;
+
+    super(container, merged, name, rendererName);
   }
 
   public filterByDate(
     startDate: Date,
     endDate: Date,
     ...additionalConditions: MenuDataCondition[]
-  ): RenderData {
+  ): RenderData<F> {
     const filtered = [...this.collectionData].filter(
       (entry) => {
         // Base conditions
@@ -72,4 +90,3 @@ export class FilterCollection extends CollectionList {
     return filtered;
   }
 }
-

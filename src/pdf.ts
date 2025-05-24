@@ -22,7 +22,7 @@ export default class Pdf {
   constructor(container: HTMLElement | null) {
     if (!container) throw new Error('PDF Element not found.');
     this.canvas = container;
-    this.renderer = new Renderer(container, 'pdf');
+    this.renderer = new Renderer(container, { attributeName: 'pdf' });
     this.getPages();
     this.getScaleElement();
   }

@@ -3,19 +3,25 @@ import { toCamelCase } from "./parameterize";
 import { format, parse } from "date-fns";
 import { de } from "date-fns/locale";
 import wf from "./webflow";
+import deepMerge from "./deepmerge";
 class Renderer {
-  constructor(canvas, attributeName = "render") {
-    this.attributeName = attributeName;
+  constructor(canvas, options) {
     this.collectionAttr = `data-is-collection`;
-    this.filterAttributes = {
-      "data-filter": "string",
-      "data-category": "string"
+    this.attributeName = "render";
+    this.options = {
+      attributeName: "render",
+      filterAttributes: {}
     };
     if (!canvas) throw new Error(`Canvas can't be undefined.`);
     this.canvas = canvas;
-    this.elementAttr = `data-${attributeName}-element`;
-    this.fieldAttr = `data-${attributeName}-field`;
-    this.emptyStateAttr = `data-${attributeName}-empty-state`;
+    this.options = deepMerge(this.options, options);
+    this.attributeName = options.attributeName;
+    this.elementAttr = `data-${options.attributeName}-element`;
+    this.fieldAttr = `data-${options.attributeName}-field`;
+    this.emptyStateAttr = `data-${options.attributeName}-empty-state`;
+  }
+  static defineAttributes(obj) {
+    return obj;
   }
   render(data, canvas = this.canvas) {
     this.clear(canvas);
@@ -256,7 +262,7 @@ class Renderer {
    * Handles `date` and `boolean` attributes.
    */
   readFilteringProperties(field, child) {
-    for (let [attr, type] of Object.entries(this.filterAttributes)) {
+    for (let [attr, type] of Object.entries(this.options.filterAttributes)) {
       if (!child.hasAttribute(attr)) {
         continue;
       }
@@ -356,12 +362,12 @@ class Renderer {
   }
   // Method to add filter attributes
   addFilterAttributes(newAttributes) {
-    Object.assign(this.filterAttributes, newAttributes);
+    Object.assign(this.options.filterAttributes, newAttributes);
   }
   // Method to remove filter attributes
   removeFilterAttributes(...attributesToRemove) {
     attributesToRemove.forEach((attr) => {
-      delete this.filterAttributes[attr];
+      delete this.options.filterAttributes[attr];
     });
   }
   elementSelector(element) {

@@ -1,6 +1,6 @@
 import Renderer from "../renderer";
 class CollectionList {
-  constructor(container, name = "", rendererName = "wf") {
+  constructor(container, filterAttributes, name = "", rendererName = "wf") {
     this.name = name;
     this.rendererName = rendererName;
     this.collectionData = [];
@@ -9,7 +9,10 @@ class CollectionList {
     this.container = container;
     this.listElement = container.querySelector(".w-dyn-items");
     this.items = Array.from(this.listElement?.querySelectorAll(".w-dyn-item:not(.w-dyn-list .w-dyn-list *)") ?? []);
-    this.renderer = new Renderer(container, this.rendererName);
+    this.renderer = new Renderer(container, {
+      attributeName: this.rendererName,
+      filterAttributes
+    });
   }
   log(...args) {
     if (!this.debug) return;

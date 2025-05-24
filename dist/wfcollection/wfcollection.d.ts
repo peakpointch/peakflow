@@ -1,23 +1,23 @@
-import Renderer, { RenderData } from "../renderer";
+import Renderer, { FilterAttributes, RenderData } from "../renderer";
 type GlobalWfCollections = {
     initialized: boolean;
     [key: string]: GlobalCollection | CollectionList | boolean;
 };
 type GlobalCollection = Array<object>;
-declare class CollectionList {
+declare class CollectionList<F extends FilterAttributes<keyof F & string> = {}> {
     name: string;
     rendererName: string;
     container: HTMLElement;
-    renderer: Renderer;
-    collectionData: RenderData;
+    renderer: Renderer<F>;
+    collectionData: RenderData<F>;
     debug: boolean;
     private listElement;
     private items;
-    constructor(container: HTMLElement | null, name?: string, rendererName?: string);
+    constructor(container: HTMLElement | null, filterAttributes: F, name?: string, rendererName?: string);
     log(...args: any[]): void;
     isEmpty(): boolean;
     readData(): void;
-    getData(): RenderData;
+    getData(): RenderData<F>;
     getItems(): HTMLElement[];
     /**
      * This method removes every element that was hidden by Webflow's conditional visibility.

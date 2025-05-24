@@ -1,4 +1,4 @@
-import Renderer, { RenderData } from "../renderer";
+import Renderer, { FilterAttributes, RenderData } from "../renderer";
 
 type GlobalWfCollections = {
   initialized: boolean;
@@ -7,21 +7,26 @@ type GlobalWfCollections = {
 
 type GlobalCollection = Array<object>;
 
-class CollectionList {
+class CollectionList<
+  F extends FilterAttributes<keyof F & string> = {}
+> {
   public container: HTMLElement;
-  public renderer: Renderer;
-  public collectionData: RenderData = [];
+  public renderer: Renderer<F>;
+  public collectionData: RenderData<F> = [];
   public debug: boolean = false;
   private listElement: HTMLElement;
   private items: HTMLElement[];
 
-  constructor(container: HTMLElement | null, public name: string = '', public rendererName: string = 'wf') {
+  constructor(container: HTMLElement | null, filterAttributes: F, public name: string = '', public rendererName: string = 'wf') {
     if (!container || !container.classList.contains('w-dyn-list')) throw new Error(`Container can't be undefined.`);
 
     this.container = container;
     this.listElement = container.querySelector('.w-dyn-items');
     this.items = Array.from(this.listElement?.querySelectorAll('.w-dyn-item:not(.w-dyn-list .w-dyn-list *)') ?? []);
-    this.renderer = new Renderer(container, this.rendererName);
+    this.renderer = new Renderer(container, {
+      attributeName: this.rendererName,
+      filterAttributes: filterAttributes,
+    });
   }
 
   public log(...args: any[]) {
@@ -48,7 +53,7 @@ class CollectionList {
     this.log('Data:', this.collectionData);
   }
 
-  public getData(): RenderData {
+  public getData(): RenderData<F> {
     return this.collectionData;
   }
 

@@ -1,9 +1,15 @@
 import { CollectionList } from './wfcollection';
-import { RenderData, RenderElement, RenderField } from '../renderer';
+import { FilterAttributes, RenderData, RenderElement, RenderField } from '../renderer';
 type MenuDataCondition = ((menuData: RenderElement | RenderField) => boolean);
-export declare class FilterCollection extends CollectionList {
-    constructor(container: HTMLElement | null, name?: string, rendererName?: string);
-    filterByDate(startDate: Date, endDate: Date, ...additionalConditions: MenuDataCondition[]): RenderData;
+type Merged<F extends FilterAttributes<keyof F & string>> = FilterAttributes<keyof F & string | keyof typeof FilterCollection.defaultAttributes & string>;
+export declare class FilterCollection<F extends FilterAttributes<keyof F & string> = {}> extends CollectionList<Merged<F>> {
+    static defaultAttributes: {
+        date: "date";
+        "start-date": "date";
+        "end-date": "date";
+    };
+    constructor(container: HTMLElement | null, filterAttributes: F, name?: string, rendererName?: string);
+    filterByDate(startDate: Date, endDate: Date, ...additionalConditions: MenuDataCondition[]): RenderData<F>;
     filterByDateRange(startDate: Date, endDate: Date, ...additionalConditions: MenuDataCondition[]): RenderData;
 }
 export {};

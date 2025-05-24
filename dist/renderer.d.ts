@@ -1,31 +1,42 @@
-type RenderField = {
+import { DashToCamelCase } from "./typeutils";
+type FilterAttributeType = "string" | "number" | "date" | "boolean";
+type FilterAttributes<T extends string = string> = {
+    [K in T]: FilterAttributeType;
+};
+type RenderField<F extends FilterAttributes<keyof F & string> = {}> = {
     element: string;
     instance?: string;
     value: string;
     type?: 'text' | 'html' | 'date';
     visibility: boolean;
-    [key: string]: any;
+} & {
+    [K in keyof F as DashToCamelCase<K & string>]?: any;
 };
-type RenderElement = {
+type RenderElement<F extends FilterAttributes<keyof F & string> = {}> = {
     element: string;
     instance?: string;
-    fields: RenderData;
+    fields: RenderData<F>;
     visibility: boolean;
-    [key: string]: any;
+} & {
+    [K in keyof F as DashToCamelCase<K & string>]?: any;
 };
-type RenderData = Array<RenderElement | RenderField>;
-type FilterAttribute = Record<string, "string" | "number" | "date" | "boolean">;
-declare class Renderer {
-    private attributeName;
+type RenderData<F extends FilterAttributes<keyof F & string> = {}> = Array<RenderField<F> | RenderElement<F>>;
+interface RendererOptions<F extends FilterAttributes<keyof F & string> = {}> {
+    attributeName: string;
+    filterAttributes: F;
+}
+declare class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     private canvas;
     private data;
     private fieldAttr;
     private elementAttr;
     private emptyStateAttr;
     private collectionAttr;
-    private filterAttributes;
-    constructor(canvas: HTMLElement | null, attributeName?: string);
-    render(data: RenderData, canvas?: HTMLElement): void;
+    private attributeName;
+    private options;
+    constructor(canvas: HTMLElement | null, options?: Partial<RendererOptions<F>>);
+    static defineAttributes<T extends FilterAttributes<keyof T & string>>(obj: T): T;
+    render(data: RenderData<F>, canvas?: HTMLElement): void;
     private _render;
     /**
      * Render a `RenderElement` to all its instances
@@ -52,7 +63,7 @@ declare class Renderer {
      * @param node The root node to start reading from.
      * @returns `RenderData` An array of RenderElement and RenderField objects representing the node structure.
      */
-    read(node: HTMLElement, stopRecursionMatches?: string[]): RenderData;
+    read(node: HTMLElement, stopRecursionMatches?: string[]): RenderData<F>;
     clear(node?: HTMLElement): void;
     private readRenderElement;
     private readRenderField;
@@ -74,7 +85,7 @@ declare class Renderer {
     private showHTMLElement;
     private showElement;
     private hideElement;
-    addFilterAttributes(newAttributes: FilterAttribute): void;
+    addFilterAttributes(newAttributes: FilterAttributes): void;
     removeFilterAttributes(...attributesToRemove: string[]): void;
     private elementSelector;
     private fieldSelector;
@@ -83,4 +94,4 @@ declare class Renderer {
     private static isRenderField;
 }
 export default Renderer;
-export type { RenderData, RenderElement, RenderField };
+export type { RenderData, RenderElement, RenderField, FilterAttributes };

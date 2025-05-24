@@ -1,11 +1,12 @@
 import { CollectionList } from "./wfcollection";
-class FilterCollection extends CollectionList {
-  constructor(container, name = "", rendererName = "wf") {
-    super(container, name, rendererName);
-    this.renderer.addFilterAttributes({
-      "date": "date",
-      "end-date": "date"
-    });
+import Renderer from "../renderer";
+const _FilterCollection = class _FilterCollection extends CollectionList {
+  constructor(container, filterAttributes, name = "", rendererName = "wf") {
+    const merged = {
+      ..._FilterCollection.defaultAttributes,
+      ...filterAttributes
+    };
+    super(container, merged, name, rendererName);
   }
   filterByDate(startDate, endDate, ...additionalConditions) {
     const filtered = [...this.collectionData].filter(
@@ -33,7 +34,13 @@ class FilterCollection extends CollectionList {
     this.log("Filtered Data:", filtered);
     return filtered;
   }
-}
+};
+_FilterCollection.defaultAttributes = Renderer.defineAttributes({
+  "date": "date",
+  "start-date": "date",
+  "end-date": "date"
+});
+let FilterCollection = _FilterCollection;
 export {
   FilterCollection
 };
