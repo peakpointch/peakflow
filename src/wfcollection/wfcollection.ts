@@ -8,7 +8,7 @@ type GlobalWfCollections = {
 type GlobalCollection = Array<object>;
 
 class CollectionList<
-  F extends FilterAttributes<keyof F & string> = {}
+  F extends FilterAttributes = {}
 > {
   public container: HTMLElement;
   public renderer: Renderer<F>;

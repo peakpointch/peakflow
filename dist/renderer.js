@@ -6,12 +6,12 @@ import wf from "./webflow";
 import deepMerge from "./deepmerge";
 class Renderer {
   constructor(canvas, options) {
-    this.collectionAttr = `data-is-collection`;
-    this.attributeName = "render";
     this.options = {
       attributeName: "render",
       filterAttributes: {}
     };
+    this.collectionAttr = `data-is-collection`;
+    this.attributeName = "render";
     if (!canvas) throw new Error(`Canvas can't be undefined.`);
     this.canvas = canvas;
     this.options = deepMerge(this.options, options);
@@ -293,7 +293,7 @@ class Renderer {
         default:
           break;
       }
-      field[toCamelCase(attr)] = value;
+      field.props[toCamelCase(attr)] = value;
     }
     ;
   }

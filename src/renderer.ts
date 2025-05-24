@@ -9,12 +9,20 @@ import { DashToCamelCase } from "./typeutils";
 type VisibilityControl = boolean | 'emptyState';
 type UnparsedBoolean<T> = Exclude<T, boolean> | "true" | "false";
 
-
-type FilterAttributeType = "string" | "number" | "date" | "boolean";
+type FilterAttributeType = {
+  "string": string;
+  "number": number;
+  "boolean": boolean;
+  "date": Date;
+}
 
 type FilterAttributes<T extends string = string> = {
-  [K in T]: FilterAttributeType;
+  [K in T]: keyof FilterAttributeType;
 }
+
+type PropsFromFilterAttributes<F extends FilterAttributes> = {
+  [K in keyof F as DashToCamelCase<K & string>]: FilterAttributeType[F[K]];
+};
 
 type RenderField<F extends FilterAttributes<keyof F & string> = {}> = {
   element: string;
@@ -22,9 +30,7 @@ type RenderField<F extends FilterAttributes<keyof F & string> = {}> = {
   value: string;
   type?: 'text' | 'html' | 'date';
   visibility: boolean;
-} & {
-  // [K in keyof F]?: any;
-  [K in keyof F as DashToCamelCase<K & string>]?: any;
+  props?: PropsFromFilterAttributes<F>;
 };
 
 type RenderElement<F extends FilterAttributes<keyof F & string> = {}> = {
@@ -32,12 +38,10 @@ type RenderElement<F extends FilterAttributes<keyof F & string> = {}> = {
   instance?: string;
   fields: RenderData<F>;
   visibility: boolean;
-} & {
-  // [K in keyof F]?: any;
-  [K in keyof F as DashToCamelCase<K & string>]?: any;
+  props?: PropsFromFilterAttributes<F>;
 };
 
-type RenderData<F extends FilterAttributes<keyof F & string> = {}> = Array<RenderField<F> | RenderElement<F>>;
+type RenderData<F extends FilterAttributes = {}> = Array<RenderField<F> | RenderElement<F>>;
 
 interface RendererOptions<F extends FilterAttributes<keyof F & string> = {}> {
   attributeName: string;
@@ -45,6 +49,11 @@ interface RendererOptions<F extends FilterAttributes<keyof F & string> = {}> {
 }
 
 class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
+  public options: RendererOptions<F> = {
+    attributeName: 'render',
+    filterAttributes: {} as F as any,
+  };
+
   private canvas: HTMLElement;
   private data: RenderData<F>;
   private fieldAttr: string;
@@ -52,10 +61,6 @@ class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   private emptyStateAttr: string;
   private collectionAttr: string = `data-is-collection`;
   private attributeName: string = 'render';
-  private options: RendererOptions<F> = {
-    attributeName: 'render',
-    filterAttributes: {} as F as any,
-  };
 
   constructor(canvas: HTMLElement | null, options?: Partial<RendererOptions<F>>) {
     if (!canvas) throw new Error(`Canvas can't be undefined.`);
@@ -68,7 +73,7 @@ class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   }
 
   public static defineAttributes<
-    T extends FilterAttributes<keyof T & string>
+    T extends FilterAttributes
   >(obj: T): T {
     return obj;
   }
@@ -404,8 +409,7 @@ class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
           break;
       }
 
-      // field[toCamelCase(attr) as DashToCamelCase<keyof F & string>] = value;
-      field[toCamelCase(attr)] = value;
+      field.props[toCamelCase(attr)] = value;
     };
   }
 

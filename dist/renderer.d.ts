@@ -1,7 +1,15 @@
 import { DashToCamelCase } from "./typeutils";
-type FilterAttributeType = "string" | "number" | "date" | "boolean";
+type FilterAttributeType = {
+    "string": string;
+    "number": number;
+    "boolean": boolean;
+    "date": Date;
+};
 type FilterAttributes<T extends string = string> = {
-    [K in T]: FilterAttributeType;
+    [K in T]: keyof FilterAttributeType;
+};
+type PropsFromFilterAttributes<F extends FilterAttributes> = {
+    [K in keyof F as DashToCamelCase<K & string>]: FilterAttributeType[F[K]];
 };
 type RenderField<F extends FilterAttributes<keyof F & string> = {}> = {
     element: string;
@@ -9,23 +17,22 @@ type RenderField<F extends FilterAttributes<keyof F & string> = {}> = {
     value: string;
     type?: 'text' | 'html' | 'date';
     visibility: boolean;
-} & {
-    [K in keyof F as DashToCamelCase<K & string>]?: any;
+    props?: PropsFromFilterAttributes<F>;
 };
 type RenderElement<F extends FilterAttributes<keyof F & string> = {}> = {
     element: string;
     instance?: string;
     fields: RenderData<F>;
     visibility: boolean;
-} & {
-    [K in keyof F as DashToCamelCase<K & string>]?: any;
+    props?: PropsFromFilterAttributes<F>;
 };
-type RenderData<F extends FilterAttributes<keyof F & string> = {}> = Array<RenderField<F> | RenderElement<F>>;
+type RenderData<F extends FilterAttributes = {}> = Array<RenderField<F> | RenderElement<F>>;
 interface RendererOptions<F extends FilterAttributes<keyof F & string> = {}> {
     attributeName: string;
     filterAttributes: F;
 }
 declare class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
+    options: RendererOptions<F>;
     private canvas;
     private data;
     private fieldAttr;
@@ -33,9 +40,8 @@ declare class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     private emptyStateAttr;
     private collectionAttr;
     private attributeName;
-    private options;
     constructor(canvas: HTMLElement | null, options?: Partial<RendererOptions<F>>);
-    static defineAttributes<T extends FilterAttributes<keyof T & string>>(obj: T): T;
+    static defineAttributes<T extends FilterAttributes>(obj: T): T;
     render(data: RenderData<F>, canvas?: HTMLElement): void;
     private _render;
     /**

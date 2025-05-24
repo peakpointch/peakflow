@@ -4,7 +4,7 @@ type GlobalWfCollections = {
     [key: string]: GlobalCollection | CollectionList | boolean;
 };
 type GlobalCollection = Array<object>;
-declare class CollectionList<F extends FilterAttributes<keyof F & string> = {}> {
+declare class CollectionList<F extends FilterAttributes = {}> {
     name: string;
     rendererName: string;
     container: HTMLElement;
