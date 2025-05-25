@@ -7,7 +7,7 @@ interface AlertDialogMessage {
 }
 export default class AlertDialog extends Modal {
     private _message;
-    confirm(message: AlertDialogMessage): Promise<boolean>;
+    confirm(message?: AlertDialogMessage): Promise<boolean>;
     set message(message: AlertDialogMessage);
     get message(): AlertDialogMessage;
     private renderMessage;
