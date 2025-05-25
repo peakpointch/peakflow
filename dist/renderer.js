@@ -219,7 +219,8 @@ class Renderer {
     const element = {
       element: elementName,
       fields,
-      visibility: true
+      visibility: true,
+      props: {}
     };
     element.instance = instance || void 0;
     if (child.classList.contains(wf.class.invisible) || child.closest(wf.class.invisible)) {
@@ -246,7 +247,8 @@ class Renderer {
       element: fieldName,
       value,
       type,
-      visibility: true
+      visibility: true,
+      props: {}
     };
     field.instance = instance || void 0;
     if (child.classList.contains(wf.class.invisible) || child.closest(wf.class.invisible)) {

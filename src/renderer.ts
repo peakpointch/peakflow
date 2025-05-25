@@ -21,7 +21,7 @@ type FilterAttributes<T extends string = string> = {
 }
 
 type PropsFromFilterAttributes<F extends FilterAttributes> = {
-  [K in keyof F as DashToCamelCase<K & string>]: FilterAttributeType[F[K]];
+  [K in keyof F as DashToCamelCase<K & string>]?: FilterAttributeType[F[K]];
 };
 
 type RenderField<F extends FilterAttributes<keyof F & string> = {}> = {
@@ -314,6 +314,7 @@ class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
       element: elementName!,
       fields,
       visibility: true,
+      props: {},
     };
 
     element.instance = instance || undefined;
@@ -349,6 +350,7 @@ class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
       value,
       type,
       visibility: true,
+      props: {}
     };
 
     field.instance = instance || undefined;
