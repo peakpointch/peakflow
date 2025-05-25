@@ -5,22 +5,17 @@ import { fromZonedTime } from "date-fns-tz";
 import { de } from "date-fns/locale";
 import wf from "./webflow";
 import deepMerge from "./deepmerge";
-class Renderer {
+const _Renderer = class _Renderer {
   constructor(canvas, options) {
-    this.options = {
-      attributeName: "render",
-      filterAttributes: {},
-      timezone: false
-    };
     this.collectionAttr = `data-is-collection`;
     this.attributeName = "render";
     if (!canvas) throw new Error(`Canvas can't be undefined.`);
     this.canvas = canvas;
-    this.options = deepMerge(this.options, options);
-    this.attributeName = options.attributeName;
-    this.elementAttr = `data-${options.attributeName}-element`;
-    this.fieldAttr = `data-${options.attributeName}-field`;
-    this.emptyStateAttr = `data-${options.attributeName}-empty-state`;
+    this.options = deepMerge(_Renderer.defaultOptions, options);
+    this.attributeName = this.options.attributeName;
+    this.elementAttr = `data-${this.attributeName}-element`;
+    this.fieldAttr = `data-${this.attributeName}-field`;
+    this.emptyStateAttr = `data-${this.attributeName}-empty-state`;
   }
   static defineAttributes(obj) {
     return obj;
@@ -32,10 +27,10 @@ class Renderer {
   _render(data, canvas = this.canvas) {
     this.data = data;
     this.data.forEach((renderItem) => {
-      if (Renderer.isRenderElement(renderItem)) {
+      if (_Renderer.isRenderElement(renderItem)) {
         this.renderElement(renderItem, canvas);
       }
-      if (Renderer.isRenderField(renderItem)) {
+      if (_Renderer.isRenderField(renderItem)) {
         this.renderField(renderItem, canvas);
       }
     });
@@ -84,9 +79,9 @@ class Renderer {
       const fragment = document.createDocumentFragment();
       for (let i = 0; i < max; i++) {
         const template = htmlTemplate.cloneNode(true);
-        if (Renderer.isRenderElement(renderElement.fields[i])) {
+        if (_Renderer.isRenderElement(renderElement.fields[i])) {
           this.renderElementToTemplate(renderElement.fields[i], template);
-        } else if (Renderer.isRenderField(renderElement.fields[i])) {
+        } else if (_Renderer.isRenderField(renderElement.fields[i])) {
           this.renderFieldToTemplate(renderElement.fields[i], template);
         }
         fragment.appendChild(template);
@@ -329,10 +324,10 @@ class Renderer {
   shouldHideElement(element) {
     if (element.visibility === false) return true;
     return element.fields.every((child) => {
-      if (Renderer.isRenderField(child)) {
+      if (_Renderer.isRenderField(child)) {
         return !child.value.trim();
       }
-      if (Renderer.isRenderElement(child)) {
+      if (_Renderer.isRenderElement(child)) {
         return child.fields.length === 0 ? true : this.shouldHideElement(child);
       }
       return false;
@@ -415,7 +410,13 @@ class Renderer {
   static isRenderField(item) {
     return item.value !== void 0;
   }
-}
+};
+_Renderer.defaultOptions = {
+  attributeName: "render",
+  filterAttributes: {},
+  timezone: false
+};
+let Renderer = _Renderer;
 var renderer_default = Renderer;
 export {
   renderer_default as default

@@ -60,6 +60,7 @@ interface RendererOptions<F extends FilterAttributes<keyof F & string> = {}> {
     timezone?: false | string;
 }
 declare class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
+    static readonly defaultOptions: RendererOptions;
     options: RendererOptions<F>;
     private canvas;
     private data;
@@ -128,4 +129,4 @@ declare class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     private static isRenderField;
 }
 export default Renderer;
-export type { RenderData, RenderElement, RenderField, FilterAttributes };
+export type { RenderData, RenderElement, RenderField, RendererOptions, FilterAttributes };

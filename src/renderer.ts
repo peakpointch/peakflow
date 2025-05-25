@@ -78,13 +78,14 @@ interface RendererOptions<F extends FilterAttributes<keyof F & string> = {}> {
   timezone?: false | string;
 }
 
-
 class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
-  public options: RendererOptions<F> = {
+  public static readonly defaultOptions: RendererOptions = {
     attributeName: 'render',
-    filterAttributes: {} as F as any,
+    filterAttributes: {},
     timezone: false,
   };
+
+  public options: RendererOptions<F>;
 
   private canvas: HTMLElement;
   private data: RenderData<F>;
@@ -97,11 +98,11 @@ class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   constructor(canvas: HTMLElement | null, options?: Partial<RendererOptions<F>>) {
     if (!canvas) throw new Error(`Canvas can't be undefined.`);
     this.canvas = canvas;
-    this.options = deepMerge(this.options, options);
-    this.attributeName = options.attributeName;
-    this.elementAttr = `data-${options.attributeName}-element`;
-    this.fieldAttr = `data-${options.attributeName}-field`;
-    this.emptyStateAttr = `data-${options.attributeName}-empty-state`;
+    this.options = deepMerge(Renderer.defaultOptions as RendererOptions<F>, options);
+    this.attributeName = this.options.attributeName;
+    this.elementAttr = `data-${this.attributeName}-element`;
+    this.fieldAttr = `data-${this.attributeName}-field`;
+    this.emptyStateAttr = `data-${this.attributeName}-empty-state`;
   }
 
   public static defineAttributes<
@@ -591,4 +592,4 @@ class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 }
 
 export default Renderer;
-export type { RenderData, RenderElement, RenderField, FilterAttributes };
+export type { RenderData, RenderElement, RenderField, RendererOptions, FilterAttributes };
