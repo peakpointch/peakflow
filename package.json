@@ -7,7 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc && node builder.js",
-    "livereload": "node esbuild.config.js"
+    "livereload": "node esbuild.config.js",
+    "update-time-zones": "npm install -D iana-tz-data && node ./utils/extract-timezones.js"
   },
   "license": "ISC",
   "exports": {
@@ -26,6 +27,8 @@
     "@types/validator": "^13.15.0",
     "esbuild": "^0.25.2",
     "fast-glob": "^3.3.3",
+    "iana-tz-data": "^2019.1.0",
+    "path": "^0.12.7",
     "typescript": "^5.8.3"
   },
   "dependencies": {
