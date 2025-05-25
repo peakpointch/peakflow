@@ -28,8 +28,35 @@ type RenderElement<F extends FilterAttributes<keyof F & string> = {}> = {
 };
 type RenderData<F extends FilterAttributes = {}> = Array<RenderField<F> | RenderElement<F>>;
 interface RendererOptions<F extends FilterAttributes<keyof F & string> = {}> {
+    /**
+     * The base attribute used to identify render elements in the DOM.
+     *
+     * @example
+     * "render" will look for elements like:
+     *   <div data-render-element="example" />.
+     */
     attributeName: string;
+    /**
+     * Defines which HTML attributes should be read as typed values on `props`
+     * of `RenderField` and `RenderElement`. Keys must be in dash-case and will
+     * be converted to camelCase. Values indicate the expected type.
+     * –
+     * @example
+     * { "start-date": "date" } maps to props: { startDate: Date }
+     * For: <div data-render-element="event" start-date="2024-01-01" />
+     */
     filterAttributes: F;
+    /**
+     * The IANA timezone name used when parsing dates from the DOM.
+     *
+     * This is important if the DOM values are in a fixed timezone
+     * (e.g., "Europe/Zurich") while your JavaScript runtime may use another.
+     *
+     * Set to `false` to disable timezone handling and treat dates as-is.
+     *
+     * @example
+     * timezone: "Europe/Zurich"
+     */
     timezone?: false | string;
 }
 declare class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
