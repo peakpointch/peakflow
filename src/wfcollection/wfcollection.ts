@@ -67,7 +67,7 @@ class CollectionList<
   public removeInvisibleElements(): void {
     if (this.isEmpty()) return;
 
-    this.listElement.querySelectorAll(".w-condition-invisible")
+    this.listElement.querySelectorAll(`.w-condition-invisible:not([data-render-condition="true"])`)
       .forEach(element => element.remove());
   }
 

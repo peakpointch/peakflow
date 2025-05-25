@@ -44,7 +44,7 @@ class CollectionList {
    */
   removeInvisibleElements() {
     if (this.isEmpty()) return;
-    this.listElement.querySelectorAll(".w-condition-invisible").forEach((element) => element.remove());
+    this.listElement.querySelectorAll(`.w-condition-invisible:not([data-render-condition="true"])`).forEach((element) => element.remove());
   }
   getAttributeData() {
     let data = [];
