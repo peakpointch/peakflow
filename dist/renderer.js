@@ -1,6 +1,7 @@
 import createAttribute from "./attributeselector";
 import { toCamelCase } from "./parameterize";
 import { format, parse } from "date-fns";
+import { fromZonedTime } from "date-fns-tz";
 import { de } from "date-fns/locale";
 import wf from "./webflow";
 import deepMerge from "./deepmerge";
@@ -8,7 +9,8 @@ class Renderer {
   constructor(canvas, options) {
     this.options = {
       attributeName: "render",
-      filterAttributes: {}
+      filterAttributes: {},
+      timezone: false
     };
     this.collectionAttr = `data-is-collection`;
     this.attributeName = "render";
@@ -274,8 +276,16 @@ class Renderer {
       }
       switch (type) {
         case "date":
-          const parsedDate = parse(value, "yyyy-MM-dd", /* @__PURE__ */ new Date());
-          value = isNaN(parsedDate.getTime()) ? null : parsedDate;
+          let parsedDate;
+          parsedDate = parse(value, "yyyy-MM-dd H:mm", /* @__PURE__ */ new Date());
+          if (isNaN(parsedDate.getTime())) {
+            parsedDate = parse(value, "yyyy-MM-dd", /* @__PURE__ */ new Date());
+          }
+          let parsedUTCDate = parsedDate;
+          if (this.options.timezone) {
+            parsedUTCDate = fromZonedTime(parsedDate, this.options.timezone);
+          }
+          value = isNaN(parsedUTCDate.getTime()) ? null : parsedUTCDate;
           break;
         case "boolean":
           if (value === "select") {

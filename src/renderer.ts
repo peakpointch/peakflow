@@ -1,6 +1,7 @@
 import createAttribute from "./attributeselector";
 import { toCamelCase } from "./parameterize";
 import { format, parse } from "date-fns";
+import { fromZonedTime } from "date-fns-tz";
 import { de } from "date-fns/locale";
 import wf from "./webflow";
 import deepMerge from "./deepmerge";
@@ -46,12 +47,15 @@ type RenderData<F extends FilterAttributes = {}> = Array<RenderField<F> | Render
 interface RendererOptions<F extends FilterAttributes<keyof F & string> = {}> {
   attributeName: string;
   filterAttributes: F;
+  timezone?: false | string;
 }
+
 
 class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   public options: RendererOptions<F> = {
     attributeName: 'render',
     filterAttributes: {} as F as any,
+    timezone: false,
   };
 
   private canvas: HTMLElement;
@@ -379,12 +383,23 @@ class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
       switch (type) {
         case "date":
-          // Parse the date with UTC midnight time
-          //const parsedDate = new Date(value);
+          let parsedDate: Date;
+
+          // Parse the date with a 24h time string
+          parsedDate = parse(value, 'yyyy-MM-dd H:mm', new Date());
 
           // Parse the date with local midnight time
-          const parsedDate = parse(value, 'yyyy-MM-dd', new Date());
-          value = isNaN(parsedDate.getTime()) ? null : parsedDate;  // Ensure valid date
+          if (isNaN(parsedDate.getTime())) {
+            parsedDate = parse(value, 'yyyy-MM-dd', new Date());
+          }
+
+          let parsedUTCDate = parsedDate;
+
+          if (this.options.timezone) {
+            parsedUTCDate = fromZonedTime(parsedDate, this.options.timezone);
+          }
+
+          value = isNaN(parsedUTCDate.getTime()) ? null : parsedUTCDate;  // Ensure valid date
           break;
 
         case "boolean":

@@ -30,6 +30,7 @@ type RenderData<F extends FilterAttributes = {}> = Array<RenderField<F> | Render
 interface RendererOptions<F extends FilterAttributes<keyof F & string> = {}> {
     attributeName: string;
     filterAttributes: F;
+    timezone?: false | string;
 }
 declare class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     options: RendererOptions<F>;
