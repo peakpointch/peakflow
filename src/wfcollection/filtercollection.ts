@@ -1,4 +1,4 @@
-import { CollectionList } from './wfcollection';
+import { CollectionList, CollectionListOptions } from './wfcollection';
 import Renderer from '../renderer';
 import { FilterAttributes, RenderData, RenderElement, RenderField } from '../renderer';
 
@@ -18,17 +18,22 @@ export class FilterCollection<
 
   constructor(
     container: HTMLElement | null,
-    filterAttributes: F,
-    name: string = '',
-    rendererName: string = 'wf'
+    public options: CollectionListOptions<Merged<F>> = { name: '', rendererOptions: {} }
   ) {
-
-    const merged = Renderer.defineAttributes({
+    const mergedFilterAttributes = Renderer.defineAttributes({
       ...FilterCollection.defaultAttributes,
-      ...filterAttributes,
+      ...options.rendererOptions.filterAttributes,
     });
 
-    super(container, merged, name, rendererName);
+    const newOptions = {
+      ...options,
+      rendererOptions: {
+        ...options.rendererOptions,
+        filterAttributes: mergedFilterAttributes,
+      },
+    };
+
+    super(container, newOptions);
   }
 
   public filterByDate(
