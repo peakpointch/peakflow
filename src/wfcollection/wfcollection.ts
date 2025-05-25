@@ -1,4 +1,4 @@
-import Renderer, { FilterAttributes, RenderData } from "../renderer";
+import Renderer, { FilterAttributes, RenderData, RendererOptions } from "../renderer";
 
 type GlobalWfCollections = {
   initialized: boolean;
@@ -6,6 +6,11 @@ type GlobalWfCollections = {
 };
 
 type GlobalCollection = Array<object>;
+
+interface CollectionListOptions<F extends FilterAttributes> {
+  name: string,
+  readonly rendererOptions: Partial<RendererOptions<F>>
+}
 
 class CollectionList<
   F extends FilterAttributes = {}
@@ -17,28 +22,28 @@ class CollectionList<
   private listElement: HTMLElement;
   private items: HTMLElement[];
 
-  constructor(container: HTMLElement | null, filterAttributes: F, public name: string = '', public rendererName: string = 'wf') {
+  constructor(
+    container: HTMLElement | null,
+    public options: CollectionListOptions<F> = { name: '', rendererOptions: {} }
+  ) {
     if (!container || !container.classList.contains('w-dyn-list')) throw new Error(`Container can't be undefined.`);
 
     this.container = container;
     this.listElement = container.querySelector('.w-dyn-items');
     this.items = Array.from(this.listElement?.querySelectorAll('.w-dyn-item:not(.w-dyn-list .w-dyn-list *)') ?? []);
-    this.renderer = new Renderer(container, {
-      attributeName: this.rendererName,
-      filterAttributes: filterAttributes,
-    });
+    this.renderer = new Renderer(container, this.options.rendererOptions);
   }
 
   public log(...args: any[]) {
     if (!this.debug) return;
-    console.log(`"${this.name}" CollectionList:`, ...args);
+    console.log(`"${this.options.name}" CollectionList:`, ...args);
   }
 
   public isEmpty(): boolean {
     const isEmpty = !this.listElement && this.container.querySelector('.w-dyn-empty') !== null;
 
     if (isEmpty) {
-      console.warn(`Collection "${this.name}" is empty.`);
+      console.warn(`Collection "${this.options.name}" is empty.`);
     }
 
     return isEmpty;
@@ -104,4 +109,4 @@ var initWfCollections = (collections: Set<string>): void => {
 };
 
 export { CollectionList, initWfCollections, wfCollections };
-export type { GlobalCollection, GlobalWfCollections };
+export type { CollectionListOptions, GlobalCollection, GlobalWfCollections };

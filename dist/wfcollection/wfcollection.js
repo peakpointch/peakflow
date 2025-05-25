@@ -1,27 +1,23 @@
 import Renderer from "../renderer";
 class CollectionList {
-  constructor(container, filterAttributes, name = "", rendererName = "wf") {
-    this.name = name;
-    this.rendererName = rendererName;
+  constructor(container, options = { name: "", rendererOptions: {} }) {
+    this.options = options;
     this.collectionData = [];
     this.debug = false;
     if (!container || !container.classList.contains("w-dyn-list")) throw new Error(`Container can't be undefined.`);
     this.container = container;
     this.listElement = container.querySelector(".w-dyn-items");
     this.items = Array.from(this.listElement?.querySelectorAll(".w-dyn-item:not(.w-dyn-list .w-dyn-list *)") ?? []);
-    this.renderer = new Renderer(container, {
-      attributeName: this.rendererName,
-      filterAttributes
-    });
+    this.renderer = new Renderer(container, this.options.rendererOptions);
   }
   log(...args) {
     if (!this.debug) return;
-    console.log(`"${this.name}" CollectionList:`, ...args);
+    console.log(`"${this.options.name}" CollectionList:`, ...args);
   }
   isEmpty() {
     const isEmpty = !this.listElement && this.container.querySelector(".w-dyn-empty") !== null;
     if (isEmpty) {
-      console.warn(`Collection "${this.name}" is empty.`);
+      console.warn(`Collection "${this.options.name}" is empty.`);
     }
     return isEmpty;
   }
