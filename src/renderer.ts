@@ -6,6 +6,7 @@ import { de } from "date-fns/locale";
 import wf from "./webflow";
 import deepMerge from "./deepmerge";
 import { DashToCamelCase } from "./typeutils";
+import { IANATimeZone } from "./timezones";
 
 type VisibilityControl = boolean | 'emptyState';
 type UnparsedBoolean<T> = Exclude<T, boolean> | "true" | "false";
@@ -75,7 +76,7 @@ interface RendererOptions<F extends FilterAttributes<keyof F & string> = {}> {
    * @example
    * timezone: "Europe/Zurich"
    */
-  timezone?: false | string;
+  timezone?: false | IANATimeZone;
 }
 
 class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
