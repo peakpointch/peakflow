@@ -52,7 +52,7 @@ async function initCal(namespace) {
     calLink: calDOMOptions.link
   });
   Cal.ns[namespace]("ui", {
-    hideEventTypeDetails: false,
+    hideEventTypeDetails: calDOMOptions.hideEventTypeDetails,
     layout: "month_view",
     cssVarsPerTheme: {
       light: { "cal-brand": "#333" },
