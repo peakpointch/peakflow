@@ -57,7 +57,8 @@ async function initCal(namespace) {
     cssVarsPerTheme: {
       light: { "cal-brand": "#333" },
       dark: { "cal-brand": "#eee" }
-    }
+    },
+    theme: "light"
   });
   return Cal;
 }
