@@ -38,6 +38,30 @@ async function loadCal(namespace) {
   Cal("init", namespace, { origin: "https://cal.com" });
   return Cal;
 }
+async function initCal(namespace) {
+  const Cal = await loadCal(namespace);
+  const element = document.querySelector(`[cal-id="${namespace}"]`);
+  if (!element) throw new Error("Embed container not found");
+  const calDOMOptions = {
+    link: element.getAttribute("cal-link"),
+    hideEventTypeDetails: element.getAttribute("cal-hide-event-details") === "true"
+  };
+  Cal.ns[namespace]("inline", {
+    elementOrSelector: element,
+    config: { layout: "month_view" },
+    calLink: calDOMOptions.link
+  });
+  Cal.ns[namespace]("ui", {
+    hideEventTypeDetails: false,
+    layout: "month_view",
+    cssVarsPerTheme: {
+      light: { "cal-brand": "#333" },
+      dark: { "cal-brand": "#eee" }
+    }
+  });
+  return Cal;
+}
 export {
+  initCal,
   loadCal
 };
