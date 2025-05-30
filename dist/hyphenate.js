@@ -23,13 +23,15 @@ function finalizeHyphenation(container) {
   }
   for (const textNode of textNodes) {
     const original = textNode.nodeValue;
-    const segments = original.split(/([\u00AD\u00A0 \-–—]+)/);
+    const segments = original.split(/([\u00AD\u00A0 \-\u2013\u2014]+)/);
     let finalFragments = "";
     let unbrokenFragments = "";
     for (let i = 0; i < segments.length; i++) {
       const currentFragment = segments[i];
-      if (currentFragment === " ") {
+      if (/^[ \-\u2013\u2014]+$/.test(currentFragment)) {
         unbrokenFragments += currentFragment;
+        finalFragments += unbrokenFragments;
+        unbrokenFragments = "";
         continue;
       }
       if (currentFragment === "\xAD") {
