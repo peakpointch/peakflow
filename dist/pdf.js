@@ -2,6 +2,7 @@ import Renderer from "./renderer";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import createAttribute from "./attributeselector";
+import { finalizeHyphenation, hyphenateDOM } from "./hyphenate";
 const _Pdf = class _Pdf {
   constructor(container) {
     if (!container) throw new Error("PDF Element not found.");
@@ -155,6 +156,14 @@ const _Pdf = class _Pdf {
   }
   isPageHidden(page) {
     return window.getComputedStyle(page).getPropertyValue("display") === "none" || window.getComputedStyle(page).getPropertyValue("visibility") === "hidden" || page.classList.contains("hide") || page.offsetWidth === 0 || page.offsetHeight === 0;
+  }
+  hyphenatePages(...pages) {
+    if (!pages.length) pages = this.pages;
+    pages.forEach((page) => {
+      if (this.isPageHidden(page)) return;
+      hyphenateDOM(page);
+      finalizeHyphenation(page);
+    });
   }
   async create(format) {
     this.freeze();

@@ -2,6 +2,7 @@ import Renderer, { RenderData } from "./renderer";
 import html2canvas from 'html2canvas';
 import jsPDF, { Html2CanvasOptions } from 'jspdf';
 import createAttribute from "./attributeselector";
+import { finalizeHyphenation, hyphenateDOM } from "./hyphenate";
 
 // Types
 export type PdfElement = 'container' | 'scale' | 'page' | 'page-wrapper' | 'weekday' | 'dish';
@@ -211,6 +212,15 @@ export default class Pdf {
       page.classList.contains("hide") ||
       page.offsetWidth === 0 ||
       page.offsetHeight === 0;
+  }
+
+  public hyphenatePages(...pages: HTMLElement[]): void {
+    if (!pages.length) pages = this.pages;
+    pages.forEach(page => {
+      if (this.isPageHidden(page)) return;
+      hyphenateDOM(page);
+      finalizeHyphenation(page);
+    });
   }
 
   private async create(format: PdfFormat): Promise<jsPDF> {
