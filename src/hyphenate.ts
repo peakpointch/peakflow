@@ -24,6 +24,12 @@ export function hyphenateDOM(container: HTMLElement) {
   }
 }
 
+/**
+ * Converts soft hyphens in all `Text` nodes within the given `container` into real hyphens, 
+ * but only if they cause a line break.
+ *
+ * @param container Ancestor of all the `Text` nodes to convert
+ */
 export function finalizeHyphenation(container: HTMLElement) {
   const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
   const textNodes: Text[] = [];
@@ -83,6 +89,14 @@ export function finalizeHyphenation(container: HTMLElement) {
   }
 }
 
+/**
+ * Check if `nextFragment` causes a line break of `referenceNode`.
+ *
+ * @param referenceNode Current `Text` node in examination
+ * @param finalFragments Fragments of the `referenceNode` with final hyphening
+ * @param unbrokenFragments Fragments of the `referenceNode` that haven't caused a line break yet
+ * @param nextFragment Fragment to check whether it causes a line break or not
+ */
 function isLineBreakAtSoftHyphen(
   referenceNode: Text,
   finalFragments: string,
