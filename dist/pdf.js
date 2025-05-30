@@ -159,7 +159,7 @@ const _Pdf = class _Pdf {
   async create(format) {
     this.freeze();
     const zoom = 0.1;
-    const canvasScale = format === "a3" ? 4 : format === "a4" ? 2 : 1;
+    const canvasScale = format === "a3" ? 2 * 4.17 : format === "a4" ? 1 * 4.17 : 0.5 * 4.17;
     const getHtml2CanvasOptions = (canvas) => {
       return {
         scale: canvasScale,

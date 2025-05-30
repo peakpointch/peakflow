@@ -218,9 +218,9 @@ export default class Pdf {
 
     const zoom = 0.1; // crop 0.1mm on each side
     const canvasScale =
-      format === "a3" ? 4
-        : format === "a4" ? 2
-          : 1;
+      format === "a3" ? 2 * 4.17
+        : format === "a4" ? 1 * 4.17
+          : 0.5 * 4.17;
 
     const getHtml2CanvasOptions = (canvas?: HTMLCanvasElement): Html2CanvasOptions => {
       return {
