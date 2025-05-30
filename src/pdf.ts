@@ -247,7 +247,7 @@ export default class Pdf {
         // Convert HTML element to canvas
         const defaultCanvas: HTMLCanvasElement = this.prepareCanvas(page, canvasScale);
         const canvas = await html2canvas(page, getHtml2CanvasOptions(defaultCanvas));
-        const imgData = canvas.toDataURL('image/jpeg');
+        const imgData = canvas.toDataURL('image/png');
 
         const adjustedWidth = pdfWidth + 2 * zoom;
         const adjustedHeight = (canvas.height * adjustedWidth) / canvas.width;
@@ -258,7 +258,7 @@ export default class Pdf {
 
         firstPage = false;
 
-        pdf.addImage(imgData, 'JPEG', -zoom, -zoom, adjustedWidth, adjustedHeight, undefined, 'SLOW');
+        pdf.addImage(imgData, 'PNG', -zoom, -zoom, adjustedWidth, adjustedHeight, undefined, 'SLOW');
       }
 
       return pdf;

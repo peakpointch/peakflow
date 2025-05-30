@@ -180,14 +180,14 @@ Page:`, page);
         }
         const defaultCanvas = this.prepareCanvas(page, canvasScale);
         const canvas = await html2canvas(page, getHtml2CanvasOptions(defaultCanvas));
-        const imgData = canvas.toDataURL("image/jpeg");
+        const imgData = canvas.toDataURL("image/png");
         const adjustedWidth = pdfWidth + 2 * zoom;
         const adjustedHeight = canvas.height * adjustedWidth / canvas.width;
         if (!firstPage) {
           pdf.addPage();
         }
         firstPage = false;
-        pdf.addImage(imgData, "JPEG", -zoom, -zoom, adjustedWidth, adjustedHeight, void 0, "SLOW");
+        pdf.addImage(imgData, "PNG", -zoom, -zoom, adjustedWidth, adjustedHeight, void 0, "SLOW");
       }
       return pdf;
     } catch (error) {
