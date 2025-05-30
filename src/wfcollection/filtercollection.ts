@@ -10,7 +10,7 @@ export class FilterCollection<
   F extends FilterAttributes<keyof F & string> = {}
 > extends CollectionList<Merged<F>> {
 
-  static defaultAttributes = Renderer.defineAttributes({
+  public static defaultAttributes = Renderer.defineAttributes({
     "date": "date",
     "start-date": "date",
     "end-date": "date"
