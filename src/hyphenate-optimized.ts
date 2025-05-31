@@ -18,8 +18,8 @@ export function finalizeHyphenationUsingLineMap(container: HTMLElement) {
     if (!parent) continue;
 
     let stringLineMap = getRenderedLineMap(textNode, 'strings');
-    const didBreak = stringLineMap.size > 1;
-    if (!didBreak) {
+    const didNodeBreak = stringLineMap.size > 1;
+    if (!didNodeBreak) {
       textNode.textContent = textNode.textContent.replace(/\u00AD/g, '');
       continue;
     }
@@ -32,7 +32,18 @@ export function finalizeHyphenationUsingLineMap(container: HTMLElement) {
       const possibleSoftHyphen = lineText[lastIndex];
 
       if (possibleSoftHyphen === '\u00AD') {
-        newLineText = replaceCharAt(lineText, lastIndex, '-');
+        let testLine = lineText;
+
+        let lastWord = getLastWord(testLine);
+        lastWord = replaceCharAt(lastWord, lastWord.length - 1, '-');
+        const firstWord = getFirstWordOfLine(stringLineMap, lineIndex + 1);
+
+        let currLineWithoutLastWord = testLine.slice(0, testLine.length - lastWord.length);
+        const didWordBreak = doesWordBreak(textNode, currLineWithoutLastWord, lastWord + firstWord);
+
+        if (didWordBreak) {
+          newLineText = replaceCharAt(lineText, lastIndex, '-');
+        }
       }
 
       // Remove all soft hyphens
@@ -45,6 +56,26 @@ export function finalizeHyphenationUsingLineMap(container: HTMLElement) {
     const newNode = document.createTextNode(finalText);
     parent.replaceChild(newNode, textNode);
   }
+}
+
+function getFirstWordOfLine(lineMap: StringsLineMap, lineIndex: number): string {
+  const line = lineMap.get(lineIndex) ?? '';
+  return getFirstWord(line);
+}
+
+function getLastWordOfLine(lineMap: StringsLineMap, lineIndex: number): string {
+  const line = lineMap.get(lineIndex) ?? '';
+  return getLastWord(line);
+}
+
+function getFirstWord(str: string): string {
+  const words = str.split(/[\s\-\u2013\u2014]+/).filter(Boolean);
+  return words[0] ?? '';
+}
+
+function getLastWord(str: string): string {
+  const words = str.split(/[\s\-\u2013\u2014]+/).filter(Boolean);
+  return words[words.length - 1] ?? '';
 }
 
 /**
@@ -77,6 +108,41 @@ function findLineForCharIndex(index: number, lineMap: Map<number, number[]>): nu
     if (indices.includes(index)) return line;
   }
   return null;
+}
+
+export function doesWordBreak(referenceNode: Text, prefixText: string, word: string): boolean {
+  const parent = referenceNode.parentElement;
+  if (!parent) return false;
+
+  const superParent = parent.parentElement;
+  if (!superParent) throw new Error("Super parent is not defined.");
+
+  // Clone the parent node
+  const clone = parent.cloneNode(false) as HTMLElement;
+  clone.style.whiteSpace = 'pre-wrap';
+
+  // Compose the test text
+  const base = document.createElement('span');
+  base.textContent = prefixText;
+  clone.appendChild(base);
+
+  const testText = document.createTextNode(word);
+  const span = document.createElement('span');
+  span.appendChild(testText);
+  clone.appendChild(span);
+
+  // Insert clone
+  parent.style.display = 'none';
+  parent.insertAdjacentElement('beforebegin', clone);
+
+  const lineMap = getRenderedLineMap(testText, 'strings');
+
+  const breaks = lineMap.size > 1;
+
+  superParent.removeChild(clone);
+  parent.style.removeProperty('display');
+
+  return breaks;
 }
 
 type LineMapReturnType = 'indices' | 'strings';

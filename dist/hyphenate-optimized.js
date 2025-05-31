@@ -11,8 +11,8 @@ function finalizeHyphenationUsingLineMap(container) {
     const parent = textNode.parentElement;
     if (!parent) continue;
     let stringLineMap = getRenderedLineMap(textNode, "strings");
-    const didBreak = stringLineMap.size > 1;
-    if (!didBreak) {
+    const didNodeBreak = stringLineMap.size > 1;
+    if (!didNodeBreak) {
       textNode.textContent = textNode.textContent.replace(/\u00AD/g, "");
       continue;
     }
@@ -22,7 +22,15 @@ function finalizeHyphenationUsingLineMap(container) {
       const lastIndex = lineText.length - 1;
       const possibleSoftHyphen = lineText[lastIndex];
       if (possibleSoftHyphen === "\xAD") {
-        newLineText = replaceCharAt(lineText, lastIndex, "-");
+        let testLine = lineText;
+        let lastWord = getLastWord(testLine);
+        lastWord = replaceCharAt(lastWord, lastWord.length - 1, "-");
+        const firstWord = getFirstWordOfLine(stringLineMap, lineIndex + 1);
+        let currLineWithoutLastWord = testLine.slice(0, testLine.length - lastWord.length);
+        const didWordBreak = doesWordBreak(textNode, currLineWithoutLastWord, lastWord + firstWord);
+        if (didWordBreak) {
+          newLineText = replaceCharAt(lineText, lastIndex, "-");
+        }
       }
       newLineText = newLineText.replace(/\u00AD/g, "");
       newLines.set(lineIndex, newLineText);
@@ -31,6 +39,22 @@ function finalizeHyphenationUsingLineMap(container) {
     const newNode = document.createTextNode(finalText);
     parent.replaceChild(newNode, textNode);
   }
+}
+function getFirstWordOfLine(lineMap, lineIndex) {
+  const line = lineMap.get(lineIndex) ?? "";
+  return getFirstWord(line);
+}
+function getLastWordOfLine(lineMap, lineIndex) {
+  const line = lineMap.get(lineIndex) ?? "";
+  return getLastWord(line);
+}
+function getFirstWord(str) {
+  const words = str.split(/[\s\-\u2013\u2014]+/).filter(Boolean);
+  return words[0] ?? "";
+}
+function getLastWord(str) {
+  const words = str.split(/[\s\-\u2013\u2014]+/).filter(Boolean);
+  return words[words.length - 1] ?? "";
 }
 function replaceCharAt(str, index, replacement) {
   if (index < 0 || index >= str.length) {
@@ -50,6 +74,28 @@ function findLineForCharIndex(index, lineMap) {
     if (indices.includes(index)) return line;
   }
   return null;
+}
+function doesWordBreak(referenceNode, prefixText, word) {
+  const parent = referenceNode.parentElement;
+  if (!parent) return false;
+  const superParent = parent.parentElement;
+  if (!superParent) throw new Error("Super parent is not defined.");
+  const clone = parent.cloneNode(false);
+  clone.style.whiteSpace = "pre-wrap";
+  const base = document.createElement("span");
+  base.textContent = prefixText;
+  clone.appendChild(base);
+  const testText = document.createTextNode(word);
+  const span = document.createElement("span");
+  span.appendChild(testText);
+  clone.appendChild(span);
+  parent.style.display = "none";
+  parent.insertAdjacentElement("beforebegin", clone);
+  const lineMap = getRenderedLineMap(testText, "strings");
+  const breaks = lineMap.size > 1;
+  superParent.removeChild(clone);
+  parent.style.removeProperty("display");
+  return breaks;
 }
 function getRenderedLineMap(textNode, returnType) {
   const range = document.createRange();
@@ -92,5 +138,6 @@ function getRenderedLineMap(textNode, returnType) {
   return lineMap;
 }
 export {
+  doesWordBreak,
   finalizeHyphenationUsingLineMap
 };
