@@ -9,3 +9,8 @@ export declare function hyphenateDOM(container: HTMLElement): void;
  * @param container Ancestor of all the `Text` nodes to convert
  */
 export declare function finalizeHyphenation(container: HTMLElement): void;
+/**
+ * Hyphenation finalizer with binary search per word.
+ * Converts soft hyphens that cause a line break into real hyphens.
+ */
+export declare function finalizeHyphenationBinarySearch(container: HTMLElement): void;
