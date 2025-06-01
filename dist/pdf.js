@@ -2,7 +2,8 @@ import Renderer from "./renderer";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import createAttribute from "./attributeselector";
-import { finalizeHyphenation, hyphenateDOM } from "./hyphenate";
+import { softHyphenizer, solidHyphens } from "./hyphenizer";
+import german from "hyphenation.de";
 const _Pdf = class _Pdf {
   constructor(container) {
     if (!container) throw new Error("PDF Element not found.");
@@ -161,8 +162,8 @@ const _Pdf = class _Pdf {
     if (!pages.length) pages = this.pages;
     pages.forEach((page) => {
       if (this.isPageHidden(page)) return;
-      hyphenateDOM(page);
-      finalizeHyphenation(page);
+      softHyphenizer(page, german);
+      solidHyphens(page);
     });
   }
   async create(format) {
@@ -173,7 +174,8 @@ const _Pdf = class _Pdf {
       return {
         scale: canvasScale,
         useCORS: true,
-        canvas
+        canvas,
+        letterRendering: true
       };
     };
     try {

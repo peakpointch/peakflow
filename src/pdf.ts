@@ -2,7 +2,8 @@ import Renderer, { RenderData } from "./renderer";
 import html2canvas from 'html2canvas';
 import jsPDF, { Html2CanvasOptions } from 'jspdf';
 import createAttribute from "./attributeselector";
-import { finalizeHyphenation, hyphenateDOM } from "./hyphenate";
+import { softHyphenizer, solidHyphens } from "./hyphenizer";
+import german from "hyphenation.de";
 
 // Types
 export type PdfElement = 'container' | 'scale' | 'page' | 'page-wrapper' | 'weekday' | 'dish';
@@ -218,8 +219,8 @@ export default class Pdf {
     if (!pages.length) pages = this.pages;
     pages.forEach(page => {
       if (this.isPageHidden(page)) return;
-      hyphenateDOM(page);
-      finalizeHyphenation(page);
+      softHyphenizer(page, german);
+      solidHyphens(page);
     });
   }
 
@@ -236,7 +237,8 @@ export default class Pdf {
       return {
         scale: canvasScale,
         useCORS: true,
-        canvas: canvas
+        canvas: canvas,
+        letterRendering: true,
       }
     }
 
