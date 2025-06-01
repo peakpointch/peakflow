@@ -1,9 +1,14 @@
 import { FormField } from "./formfield";
 
-export class FieldGroup<Field extends string = string> {
-  public fields: Map<Field, FormField>;
+/**
+ * A map of string to a `FormField` class instance.
+ */
+export type FormFieldMap<FieldId extends string = string> = Map<FieldId, FormField>;
 
-  constructor(fields: Map<Field, FormField> = new Map()) {
+export class FieldGroup<FieldId extends string = string> {
+  public fields: FormFieldMap<FieldId>;
+
+  constructor(fields: FormFieldMap<FieldId> = new Map()) {
     this.fields = fields;
   }
 
@@ -12,7 +17,7 @@ export class FieldGroup<Field extends string = string> {
    *
    * @param fieldId The id attribute of the associated DOM element.
    */
-  public getField(fieldId: Field): FormField | undefined {
+  public getField(fieldId: FieldId): FormField | undefined {
     return this.fields.get(fieldId);
   }
 }

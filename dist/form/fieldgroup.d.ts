@@ -1,11 +1,15 @@
 import { FormField } from "./formfield";
-export declare class FieldGroup<Field extends string = string> {
-    fields: Map<Field, FormField>;
-    constructor(fields?: Map<Field, FormField>);
+/**
+ * A map of string to a `FormField` class instance.
+ */
+export type FormFieldMap<FieldId extends string = string> = Map<FieldId, FormField>;
+export declare class FieldGroup<FieldId extends string = string> {
+    fields: FormFieldMap<FieldId>;
+    constructor(fields?: FormFieldMap<FieldId>);
     /**
      * Finds a specific `FormField` instance by id.
      *
      * @param fieldId The id attribute of the associated DOM element.
      */
-    getField(fieldId: Field): FormField | undefined;
+    getField(fieldId: FieldId): FormField | undefined;
 }
