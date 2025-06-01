@@ -1,4 +1,17 @@
-function finalizeHyphenationUsingLineMap(container) {
+import Hypher from "hypher";
+function softHyphenizer(container, language) {
+  const hypher = new Hypher(language);
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+  let node;
+  while (node = walker.nextNode()) {
+    const parent = node?.parentElement;
+    if (parent && !["SCRIPT", "STYLE", "NOSCRIPT"].includes(parent.tagName) && !parent.matches(`[data-hyphenate="false"]`) && node.nodeValue?.trim()) {
+      const hyphenated = hypher.hyphenateText(node.nodeValue);
+      node.nodeValue = hyphenated;
+    }
+  }
+}
+function solidHyphens(container) {
   const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
   const textNodes = [];
   let node;
@@ -164,6 +177,7 @@ function getRenderedLineMap(textNode, returnType) {
 }
 export {
   doesWordBreak,
-  finalizeHyphenationUsingLineMap,
-  getRenderedLineMap
+  getRenderedLineMap,
+  softHyphenizer,
+  solidHyphens
 };

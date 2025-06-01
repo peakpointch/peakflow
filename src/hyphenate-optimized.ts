@@ -1,8 +1,32 @@
+import Hypher from 'hypher';
+
+/**
+ * Replaces text nodes with spans containing hyphenated words using <wbr>
+ */
+export function softHyphenizer(container: HTMLElement, language: any): void {
+  const hypher = new Hypher(language);
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+  let node: Text | null;
+
+  while ((node = walker.nextNode() as Text | null)) {
+    const parent = node?.parentElement;
+    if (
+      parent &&
+      !['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(parent.tagName) &&
+      !parent.matches(`[data-hyphenate="false"]`) &&
+      node.nodeValue?.trim()
+    ) {
+      const hyphenated = hypher.hyphenateText(node.nodeValue);
+      node.nodeValue = hyphenated;
+    }
+  }
+}
+
 /**
  * Finalizes hyphenation by turning soft hyphens into real hyphens
  * *only* at the positions that result in line breaks.
  */
-export function finalizeHyphenationUsingLineMap(container: HTMLElement) {
+export function solidHyphens(container: HTMLElement) {
   const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
   const textNodes: Text[] = [];
 

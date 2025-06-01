@@ -1,17 +1,3 @@
-import Hypher from "hypher";
-import german from "hyphenation.de";
-const hypher = new Hypher(german);
-function hyphenateDOM(container) {
-  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
-  let node;
-  while (node = walker.nextNode()) {
-    const parent = node?.parentElement;
-    if (parent && !["SCRIPT", "STYLE", "NOSCRIPT"].includes(parent.tagName) && !parent.matches(`[data-hyphenate="false"]`) && node.nodeValue?.trim()) {
-      const hyphenated = hypher.hyphenateText(node.nodeValue);
-      node.nodeValue = hyphenated;
-    }
-  }
-}
 function finalizeHyphenation(container) {
   const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
   const textNodes = [];
@@ -228,6 +214,5 @@ function getRenderedLineMap(textNode) {
 }
 export {
   finalizeHyphenation,
-  finalizeHyphenationBinarySearch,
-  hyphenateDOM
+  finalizeHyphenationBinarySearch
 };

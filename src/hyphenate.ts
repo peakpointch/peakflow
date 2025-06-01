@@ -1,29 +1,3 @@
-import Hypher from 'hypher';
-import german from 'hyphenation.de';
-
-const hypher = new Hypher(german);
-
-/**
- * Replaces text nodes with spans containing hyphenated words using <wbr>
- */
-export function hyphenateDOM(container: HTMLElement) {
-  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
-  let node: Text | null;
-
-  while ((node = walker.nextNode() as Text | null)) {
-    const parent = node?.parentElement;
-    if (
-      parent &&
-      !['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(parent.tagName) &&
-      !parent.matches(`[data-hyphenate="false"]`) &&
-      node.nodeValue?.trim()
-    ) {
-      const hyphenated = hypher.hyphenateText(node.nodeValue);
-      node.nodeValue = hyphenated;
-    }
-  }
-}
-
 /**
  * Converts soft hyphens in all `Text` nodes within the given `container` into real hyphens, 
  * but only if they cause a line break.

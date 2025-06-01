@@ -1,8 +1,12 @@
 /**
+ * Replaces text nodes with spans containing hyphenated words using <wbr>
+ */
+export declare function softHyphenizer(container: HTMLElement, language: any): void;
+/**
  * Finalizes hyphenation by turning soft hyphens into real hyphens
  * *only* at the positions that result in line breaks.
  */
-export declare function finalizeHyphenationUsingLineMap(container: HTMLElement): void;
+export declare function solidHyphens(container: HTMLElement): void;
 /**
  * Determines whether a given word will break across lines when rendered
  * in the same visual context as the provided `Text` node.
