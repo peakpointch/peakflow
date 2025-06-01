@@ -20,13 +20,19 @@ export function finalizeHyphenationUsingLineMap(container: HTMLElement) {
     let stringLineMap = getRenderedLineMap(textNode, 'strings');
     const didNodeBreak = stringLineMap.size > 1;
     if (!didNodeBreak) {
-      textNode.textContent = textNode.textContent.replace(/\u00AD/g, '');
+      textNode.textContent = textNode.textContent?.replace(/\u00AD/g, '') ?? '';
       continue;
     }
 
     const newLines: StringsLineMap = new Map<number, string>();
 
-    for (const [lineIndex, lineText] of stringLineMap.entries()) {
+    let lineIndex = 0;
+
+    while (lineIndex < stringLineMap.size) {
+      const lineText = stringLineMap.get(lineIndex);
+      if (lineText === null) break;
+
+      let lineReflow = false;
       let newLineText = lineText;
       const lastIndex = lineText.length - 1;
       const possibleSoftHyphen = lineText[lastIndex];
@@ -38,11 +44,15 @@ export function finalizeHyphenationUsingLineMap(container: HTMLElement) {
         lastWord = replaceCharAt(lastWord, lastWord.length - 1, '-');
         const firstWord = getFirstWordOfLine(stringLineMap, lineIndex + 1);
 
-        let currLineWithoutLastWord = testLine.slice(0, testLine.length - lastWord.length);
-        const didWordBreak = doesWordBreak(textNode, currLineWithoutLastWord, lastWord + firstWord);
+        const currLineWithoutLastWord = testLine.slice(0, testLine.length - lastWord.length);
+        const prefixText = Array.from(newLines.values()).join('') + currLineWithoutLastWord;
+        const didWordBreak = doesWordBreak(textNode, prefixText, lastWord + firstWord);
 
         if (didWordBreak) {
           newLineText = replaceCharAt(lineText, lastIndex, '-');
+        } else {
+          // Because only here a text reflow was caused which shifts the lines
+          lineReflow = true;
         }
       }
 
@@ -50,12 +60,48 @@ export function finalizeHyphenationUsingLineMap(container: HTMLElement) {
       newLineText = newLineText.replace(/\u00AD/g, '');
 
       newLines.set(lineIndex, newLineText);
+
+      if (lineReflow) {
+        const updatedLineMap = finalizeLineWithReflow(textNode, stringLineMap, newLines, lineIndex);
+        stringLineMap = updatedLineMap;
+        continue;
+      }
+
+      lineIndex++;
     }
 
-    const finalText = Array.from(newLines.values()).join('');
-    const newNode = document.createTextNode(finalText);
-    parent.replaceChild(newNode, textNode);
+    // Join all lines back to a single string and update textNode's content
+    textNode.textContent = Array.from(newLines.values()).join('');
   }
+}
+
+function finalizeLineWithReflow(
+  textNode: Text,
+  originalLineMap: StringsLineMap,
+  newLines: StringsLineMap,
+  currentLineIndex: number
+): StringsLineMap {
+  const linesToProcess = new Map<number, string>();
+
+  // Merge lines up to current index (already finalized)
+  for (const [i, text] of newLines.entries()) {
+    linesToProcess.set(i, text);
+  }
+
+  // Reconstruct text for partial update
+  const mergedLines = [...Array.from(linesToProcess.values()),
+  ...Array.from(originalLineMap.entries())
+    .filter(([i]) => i > currentLineIndex)
+    .map(([, line]) => line)];
+
+  const mergedText = mergedLines.join('');
+
+  textNode.textContent = mergedText;
+
+  // Get updated line map
+  const updatedMap = getRenderedLineMap(textNode, 'strings');
+
+  return updatedMap;
 }
 
 function getFirstWordOfLine(lineMap: StringsLineMap, lineIndex: number): string {

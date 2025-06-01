@@ -13,11 +13,15 @@ function finalizeHyphenationUsingLineMap(container) {
     let stringLineMap = getRenderedLineMap(textNode, "strings");
     const didNodeBreak = stringLineMap.size > 1;
     if (!didNodeBreak) {
-      textNode.textContent = textNode.textContent.replace(/\u00AD/g, "");
+      textNode.textContent = textNode.textContent?.replace(/\u00AD/g, "") ?? "";
       continue;
     }
     const newLines = /* @__PURE__ */ new Map();
-    for (const [lineIndex, lineText] of stringLineMap.entries()) {
+    let lineIndex = 0;
+    while (lineIndex < stringLineMap.size) {
+      const lineText = stringLineMap.get(lineIndex);
+      if (lineText === null) break;
+      let lineReflow = false;
       let newLineText = lineText;
       const lastIndex = lineText.length - 1;
       const possibleSoftHyphen = lineText[lastIndex];
@@ -26,19 +30,40 @@ function finalizeHyphenationUsingLineMap(container) {
         let lastWord = getLastWord(testLine);
         lastWord = replaceCharAt(lastWord, lastWord.length - 1, "-");
         const firstWord = getFirstWordOfLine(stringLineMap, lineIndex + 1);
-        let currLineWithoutLastWord = testLine.slice(0, testLine.length - lastWord.length);
-        const didWordBreak = doesWordBreak(textNode, currLineWithoutLastWord, lastWord + firstWord);
+        const currLineWithoutLastWord = testLine.slice(0, testLine.length - lastWord.length);
+        const prefixText = Array.from(newLines.values()).join("") + currLineWithoutLastWord;
+        const didWordBreak = doesWordBreak(textNode, prefixText, lastWord + firstWord);
         if (didWordBreak) {
           newLineText = replaceCharAt(lineText, lastIndex, "-");
+        } else {
+          lineReflow = true;
         }
       }
       newLineText = newLineText.replace(/\u00AD/g, "");
       newLines.set(lineIndex, newLineText);
+      if (lineReflow) {
+        const updatedLineMap = finalizeLineWithReflow(textNode, stringLineMap, newLines, lineIndex);
+        stringLineMap = updatedLineMap;
+        continue;
+      }
+      lineIndex++;
     }
-    const finalText = Array.from(newLines.values()).join("");
-    const newNode = document.createTextNode(finalText);
-    parent.replaceChild(newNode, textNode);
+    textNode.textContent = Array.from(newLines.values()).join("");
   }
+}
+function finalizeLineWithReflow(textNode, originalLineMap, newLines, currentLineIndex) {
+  const linesToProcess = /* @__PURE__ */ new Map();
+  for (const [i, text] of newLines.entries()) {
+    linesToProcess.set(i, text);
+  }
+  const mergedLines = [
+    ...Array.from(linesToProcess.values()),
+    ...Array.from(originalLineMap.entries()).filter(([i]) => i > currentLineIndex).map(([, line]) => line)
+  ];
+  const mergedText = mergedLines.join("");
+  textNode.textContent = mergedText;
+  const updatedMap = getRenderedLineMap(textNode, "strings");
+  return updatedMap;
 }
 function getFirstWordOfLine(lineMap, lineIndex) {
   const line = lineMap.get(lineIndex) ?? "";
