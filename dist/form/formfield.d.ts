@@ -17,6 +17,6 @@ declare class FormField {
     constructor(data?: FieldData | null);
     validate(report?: boolean): boolean;
 }
-declare function fieldFromInput(input: HTMLFormInput, index: any): FormField;
+declare function fieldFromInput(input: HTMLFormInput, index: string | number): FormField;
 export type { FieldData };
 export { FormField, fieldFromInput };

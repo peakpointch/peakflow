@@ -66,7 +66,7 @@ class FormField {
   }
 }
 
-function fieldFromInput(input: HTMLFormInput, index): FormField {
+function fieldFromInput(input: HTMLFormInput, index: string | number): FormField {
   if (input.type === "radio" && !(input as HTMLInputElement).checked) {
     return new FormField();
   }
