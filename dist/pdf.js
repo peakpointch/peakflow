@@ -158,7 +158,7 @@ const _Pdf = class _Pdf {
   isPageHidden(page) {
     return window.getComputedStyle(page).getPropertyValue("display") === "none" || window.getComputedStyle(page).getPropertyValue("visibility") === "hidden" || page.classList.contains("hide") || page.offsetWidth === 0 || page.offsetHeight === 0;
   }
-  hyphenatePages(...pages) {
+  hyphenizePages(...pages) {
     if (!pages.length) pages = this.pages;
     pages.forEach((page) => {
       if (this.isPageHidden(page)) return;

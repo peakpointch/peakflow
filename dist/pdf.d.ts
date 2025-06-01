@@ -55,7 +55,7 @@ export default class Pdf {
      */
     private prepareCanvas;
     private isPageHidden;
-    hyphenatePages(...pages: HTMLElement[]): void;
+    hyphenizePages(...pages: HTMLElement[]): void;
     private create;
     save(format: PdfFormat, filename?: string, clientScale?: number): Promise<void>;
 }

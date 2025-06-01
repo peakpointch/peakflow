@@ -215,7 +215,7 @@ export default class Pdf {
       page.offsetHeight === 0;
   }
 
-  public hyphenatePages(...pages: HTMLElement[]): void {
+  public hyphenizePages(...pages: HTMLElement[]): void {
     if (!pages.length) pages = this.pages;
     pages.forEach(page => {
       if (this.isPageHidden(page)) return;
