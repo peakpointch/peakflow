@@ -43,10 +43,37 @@ function getOperator(type: AttributeMatchType): AttributeMatchOperator {
 function exclude(selector: string, ...exclusions: string[]): string {
   if (exclusions.length === 0) return selector;
 
-  return selector.split(', ').reduce((acc, str) => {
-    let separator = acc === "" ? "" : ', ';
-    return acc + separator + `${str}:not(${exclusions.join(', ')})`;
-  }, "");
+  const result: string[] = [];
+  let current = '';
+  let depth = 0;
+  let i = 0;
+
+  while (i < selector.length) {
+    const char = selector[i];
+
+    if (char === '(') {
+      depth++;
+    } else if (char === ')') {
+      depth--;
+    }
+
+    if (char === ',' && depth === 0) {
+      result.push(current.trim());
+      current = '';
+      i++; // skip comma
+      while (selector[i] === ' ') i++; // skip all spaces after comma
+      continue;
+    }
+
+    current += char;
+    i++;
+  }
+
+  if (current.trim()) {
+    result.push(current.trim());
+  }
+
+  return result.map(sel => `${sel}:not(${exclusions.join(', ')})`).join(', ');
 }
 
 /**
@@ -80,4 +107,4 @@ const createAttribute = <T extends string = string>(
 }
 
 export default createAttribute;
-export type { AttributeSelector, AttributeOptions };
+export { exclude };

@@ -11,10 +11,31 @@ function getOperator(type) {
 }
 function exclude(selector, ...exclusions) {
   if (exclusions.length === 0) return selector;
-  return selector.split(", ").reduce((acc, str) => {
-    let separator = acc === "" ? "" : ", ";
-    return acc + separator + `${str}:not(${exclusions.join(", ")})`;
-  }, "");
+  const result = [];
+  let current = "";
+  let depth = 0;
+  let i = 0;
+  while (i < selector.length) {
+    const char = selector[i];
+    if (char === "(") {
+      depth++;
+    } else if (char === ")") {
+      depth--;
+    }
+    if (char === "," && depth === 0) {
+      result.push(current.trim());
+      current = "";
+      i++;
+      while (selector[i] === " ") i++;
+      continue;
+    }
+    current += char;
+    i++;
+  }
+  if (current.trim()) {
+    result.push(current.trim());
+  }
+  return result.map((sel) => `${sel}:not(${exclusions.join(", ")})`).join(", ");
 }
 const createAttribute = (attrName, options = {
   defaultType: "exact",
@@ -32,5 +53,6 @@ const createAttribute = (attrName, options = {
 };
 var attributeselector_default = createAttribute;
 export {
-  attributeselector_default as default
+  attributeselector_default as default,
+  exclude
 };
