@@ -164,5 +164,6 @@ function getRenderedLineMap(textNode, returnType) {
 }
 export {
   doesWordBreak,
-  finalizeHyphenationUsingLineMap
+  finalizeHyphenationUsingLineMap,
+  getRenderedLineMap
 };

@@ -75,6 +75,9 @@ export function finalizeHyphenationUsingLineMap(container: HTMLElement) {
   }
 }
 
+/**
+ * Merge the finalized lines with the remaining lines and rescan the lines into a new `StringsLineMap`.
+ */
 function finalizeLineWithReflow(
   textNode: Text,
   originalLineMap: StringsLineMap,
@@ -104,21 +107,47 @@ function finalizeLineWithReflow(
   return updatedMap;
 }
 
+/**
+ * Gets the first word of a given line from the line map.
+ *
+ * @param lineMap A map of line indices to line strings.
+ * @param lineIndex The index of the line to retrieve the first word from.
+ * @returns The first word of the line, or an empty string if not found.
+ */
 function getFirstWordOfLine(lineMap: StringsLineMap, lineIndex: number): string {
   const line = lineMap.get(lineIndex) ?? '';
   return getFirstWord(line);
 }
 
+/**
+ * Gets the last word of a given line from the line map.
+ *
+ * @param lineMap A map of line indices to line strings.
+ * @param lineIndex The index of the line to retrieve the last word from.
+ * @returns The last word of the line, or an empty string if not found.
+ */
 function getLastWordOfLine(lineMap: StringsLineMap, lineIndex: number): string {
   const line = lineMap.get(lineIndex) ?? '';
   return getLastWord(line);
 }
 
+/**
+ * Gets the first word of a string.
+ *
+ * @param str The input string.
+ * @returns The first word, or an empty string if none found.
+ */
 function getFirstWord(str: string): string {
   const words = str.split(/[\s\-\u2013\u2014]+/).filter(Boolean);
   return words[0] ?? '';
 }
 
+/**
+ * Gets the last word of a string.
+ *
+ * @param str The input string.
+ * @returns The last word, or an empty string if none found.
+ */
 function getLastWord(str: string): string {
   const words = str.split(/[\s\-\u2013\u2014]+/).filter(Boolean);
   return words[words.length - 1] ?? '';
@@ -156,6 +185,15 @@ function findLineForCharIndex(index: number, lineMap: Map<number, number[]>): nu
   return null;
 }
 
+/**
+ * Determines whether a given word will break across lines when rendered
+ * in the same visual context as the provided `Text` node.
+ *
+ * @param referenceNode The `Text` node whose styling and layout context should be used.
+ * @param prefixText The text content that precedes the `word`, used to simulate real positioning.
+ * @param word The word to test for line-breaking behavior (may contain soft hyphens).
+ * @returns Boolean: true if the word breaks across lines, false otherwise.
+ */
 export function doesWordBreak(referenceNode: Text, prefixText: string, word: string): boolean {
   const parent = referenceNode.parentElement;
   if (!parent) return false;
@@ -278,3 +316,5 @@ function getRenderedLineMap(
 
   return lineMap;
 }
+
+export { getRenderedLineMap };
