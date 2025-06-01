@@ -9,11 +9,16 @@ type AttributeMatchOperator = '^' | '$' | '*' | '~' | '|' | '';
 type AttributeMatchTypeMap = {
   [key in AttributeMatchType]: AttributeMatchOperator;
 };
-type AttributeSelector<T = string> = (name?: T, type?: AttributeMatchType) => string;
+type AttributeSelector<T = string> = (name?: T, options?: Partial<AttributeOptions>) => string;
 
-interface AttributeOptions<T extends string> {
-  defaultType: AttributeMatchType;
+interface AttributeDefaultOptions<T extends string> {
+  defaultMatchType: AttributeMatchType;
   defaultValue: T | undefined;
+  defaultExclusions: string[];
+}
+
+interface AttributeOptions {
+  matchType: AttributeMatchType;
   exclusions: string[];
 }
 
@@ -83,28 +88,36 @@ function exclude(selector: string, ...exclusions: string[]): string {
  * 
  * @template T - The type of the name that will be passed to the generated selector function (e.g., string).
  * @param attrName - The name of the attribute that will be used in the selector.
- * @param options - Options to configure selector generation.
+ * @param defaultOptions - Options to configure selector generation.
  * @returns A function that generates the selector string based on the provided name and match type.
  */
 const createAttribute = <T extends string = string>(
   attrName: string,
-  options: AttributeOptions<T> = {
-    defaultType: 'exact',
-    defaultValue: undefined,
-    exclusions: [],
-  },
+  defaultOptions?: Partial<AttributeDefaultOptions<T>>
 ): AttributeSelector<T> => {
-  return (name: T | undefined = options.defaultValue, type: AttributeMatchType = options.defaultType): string => {
+  const mergedDefaultOptions: AttributeDefaultOptions<T> = {
+    defaultMatchType: defaultOptions?.defaultMatchType ?? 'exact',
+    defaultValue: defaultOptions?.defaultValue ?? undefined,
+    defaultExclusions: defaultOptions?.defaultExclusions ?? [],
+  }
+
+  return (name: T | undefined = mergedDefaultOptions.defaultValue, options?: Partial<AttributeOptions>): string => {
+    const mergedOptions: AttributeOptions = {
+      matchType: options?.matchType ?? mergedDefaultOptions.defaultMatchType,
+      exclusions: options?.exclusions ?? mergedDefaultOptions.defaultExclusions,
+    }
+
     if (!name) {
-      return exclude(`[${attrName}]`, ...options.exclusions);
+      return exclude(`[${attrName}]`, ...mergedOptions.exclusions);
     }
 
     const value = String(name); // Ensure it's a string for selector use
-    const selector = `[${attrName}${getOperator(type)}="${value}"]`;
+    const selector = `[${attrName}${getOperator(mergedOptions.matchType)}="${value}"]`;
 
-    return exclude(selector, ...(options.exclusions ?? []));
+    return exclude(selector, ...(mergedOptions.exclusions ?? []));
   };
 }
 
 export default createAttribute;
 export { exclude };
+export type { AttributeSelector, AttributeDefaultOptions, AttributeOptions };

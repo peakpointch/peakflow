@@ -1,8 +1,12 @@
 type AttributeMatchType = 'startsWith' | 'endsWith' | 'includes' | 'whitespace' | 'hyphen' | 'exact';
-type AttributeSelector<T = string> = (name?: T, type?: AttributeMatchType) => string;
-interface AttributeOptions<T extends string> {
-    defaultType: AttributeMatchType;
+type AttributeSelector<T = string> = (name?: T, options?: Partial<AttributeOptions>) => string;
+interface AttributeDefaultOptions<T extends string> {
+    defaultMatchType: AttributeMatchType;
     defaultValue: T | undefined;
+    defaultExclusions: string[];
+}
+interface AttributeOptions {
+    matchType: AttributeMatchType;
     exclusions: string[];
 }
 /**
@@ -20,9 +24,10 @@ declare function exclude(selector: string, ...exclusions: string[]): string;
  *
  * @template T - The type of the name that will be passed to the generated selector function (e.g., string).
  * @param attrName - The name of the attribute that will be used in the selector.
- * @param options - Options to configure selector generation.
+ * @param defaultOptions - Options to configure selector generation.
  * @returns A function that generates the selector string based on the provided name and match type.
  */
-declare const createAttribute: <T extends string = string>(attrName: string, options?: AttributeOptions<T>) => AttributeSelector<T>;
+declare const createAttribute: <T extends string = string>(attrName: string, defaultOptions?: Partial<AttributeDefaultOptions<T>>) => AttributeSelector<T>;
 export default createAttribute;
 export { exclude };
+export type { AttributeSelector, AttributeDefaultOptions, AttributeOptions };

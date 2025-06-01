@@ -37,18 +37,23 @@ function exclude(selector, ...exclusions) {
   }
   return result.map((sel) => `${sel}:not(${exclusions.join(", ")})`).join(", ");
 }
-const createAttribute = (attrName, options = {
-  defaultType: "exact",
-  defaultValue: void 0,
-  exclusions: []
-}) => {
-  return (name = options.defaultValue, type = options.defaultType) => {
+const createAttribute = (attrName, defaultOptions) => {
+  const mergedDefaultOptions = {
+    defaultMatchType: defaultOptions?.defaultMatchType ?? "exact",
+    defaultValue: defaultOptions?.defaultValue ?? void 0,
+    defaultExclusions: defaultOptions?.defaultExclusions ?? []
+  };
+  return (name = mergedDefaultOptions.defaultValue, options) => {
+    const mergedOptions = {
+      matchType: options?.matchType ?? mergedDefaultOptions.defaultMatchType,
+      exclusions: options?.exclusions ?? mergedDefaultOptions.defaultExclusions
+    };
     if (!name) {
-      return exclude(`[${attrName}]`, ...options.exclusions);
+      return exclude(`[${attrName}]`, ...mergedOptions.exclusions);
     }
     const value = String(name);
-    const selector = `[${attrName}${getOperator(type)}="${value}"]`;
-    return exclude(selector, ...options.exclusions ?? []);
+    const selector = `[${attrName}${getOperator(mergedOptions.matchType)}="${value}"]`;
+    return exclude(selector, ...mergedOptions.exclusions ?? []);
   };
 };
 var attributeselector_default = createAttribute;
