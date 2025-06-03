@@ -10,13 +10,14 @@ interface FieldData {
   checked?: boolean;
 }
 
-class FormField {
+class FormField implements FieldData {
   public id: string;
   public label: string;
   public value: any;
   public required: boolean;
   public type: string;
   public checked: boolean;
+  private listeners: Set<(value: any) => void> = new Set();
 
   constructor(data: FieldData | null = null) {
     if (!data) {
@@ -34,9 +35,17 @@ class FormField {
     }
 
     if (this.type === "checkbox" && !this.checked) {
-      console.log(this.label, this.type, this.checked, data.checked);
       this.value = "Nicht angewählt";
     }
+  }
+
+  public setValue(newValue: any) {
+    this.value = newValue;
+    this.listeners.forEach(callback => callback(newValue));
+  }
+
+  public onChange(callback: (value: any) => void) {
+    this.listeners.add(callback);
   }
 
   public validate(report: boolean = true): boolean {
