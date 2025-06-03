@@ -1,4 +1,5 @@
-import { FormField } from "./formfield";
+import mapToObject from "../maptoobject";
+import { FormField, FieldData } from "./formfield";
 
 /**
  * A map of string to a `FormField` class instance.
@@ -20,5 +21,28 @@ export class FieldGroup<FieldId extends string = string> {
   public getField(fieldId: FieldId): FormField | undefined {
     return this.fields.get(fieldId);
   }
-}
 
+  /**
+   * Serialize this `FieldGroup`.
+   *
+   * @returns `this.fields` as an object
+   */
+  public serialize(): any {
+    return mapToObject(this.fields);
+  }
+
+  /**
+   * Deserialize a `FieldGroup`.
+   *
+   * @returns A new `FieldGroup` instance
+   */
+  public static deserialize(fieldGroupData: any): FieldGroup {
+    const fieldsMap = new Map<string, FormField>();
+    Object.entries(fieldGroupData).forEach(([key, fieldData]) => {
+      const field = new FormField(fieldData as FieldData);
+      fieldsMap.set(key, field);
+    });
+
+    return new FieldGroup(fieldsMap); // Create a new FieldGroup with the fields
+  }
+}

@@ -12,4 +12,16 @@ export declare class FieldGroup<FieldId extends string = string> {
      * @param fieldId The id attribute of the associated DOM element.
      */
     getField(fieldId: FieldId): FormField | undefined;
+    /**
+     * Serialize this `FieldGroup`.
+     *
+     * @returns `this.fields` as an object
+     */
+    serialize(): any;
+    /**
+     * Deserialize a `FieldGroup`.
+     *
+     * @returns A new `FieldGroup` instance
+     */
+    static deserialize(fieldGroupData: any): FieldGroup;
 }
