@@ -1,13 +1,18 @@
 function deepMerge(target, source) {
   const result = { ...target };
   for (const key in source) {
-    if (source[key] && typeof source[key] === "object" && !Array.isArray(source[key])) {
-      result[key] = deepMerge(target[key], source[key]);
-    } else if (source[key] !== void 0) {
-      result[key] = source[key];
+    const sourceValue = source[key];
+    const targetValue = target[key];
+    if (isPlainObject(sourceValue) && isPlainObject(targetValue)) {
+      result[key] = deepMerge(targetValue, sourceValue);
+    } else if (sourceValue !== void 0) {
+      result[key] = sourceValue;
     }
   }
   return result;
+}
+function isPlainObject(value) {
+  return value !== void 0 && value !== null && typeof value === "object" && Object.getPrototypeOf(value) === Object.prototype;
 }
 export {
   deepMerge as default
