@@ -1,5 +1,6 @@
 import createAttribute from "./attributeselector";
 import deepMerge from "./deepmerge";
+import { adjustPaddingForScrollbar, lockBodyScroll, resetScrollbarPadding, unlockBodyScroll } from "./utils/scroll-lock";
 const defaultModalAnimation = {
   type: "none",
   duration: 0,
@@ -10,7 +11,10 @@ const defaultModalSettings = {
   animation: defaultModalAnimation,
   stickyFooter: false,
   stickyHeader: false,
-  lockBodyScroll: true
+  bodyScroll: {
+    lock: true,
+    smooth: false
+  }
 };
 const _Modal = class _Modal {
   constructor(component, settings = {}) {
@@ -107,9 +111,7 @@ const _Modal = class _Modal {
     this.component.dataset.state = "closed";
   }
   async show() {
-    this.component.dataset.state = "opening";
     this.component.style.removeProperty("display");
-    await new Promise((resolve) => setTimeout(resolve, 0));
     await animationFrame();
     switch (this.settings.animation.type) {
       case "fade":
@@ -127,11 +129,15 @@ const _Modal = class _Modal {
         this.component.classList.remove("is-closed");
     }
     setTimeout(() => {
-      this.component.dataset.state = "open";
     }, this.settings.animation.duration);
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, this.settings.animation.duration);
+    });
   }
   async hide() {
-    this.component.dataset.state = "closing";
+    await animationFrame();
     switch (this.settings.animation.type) {
       case "fade":
         this.component.style.opacity = "0";
@@ -147,36 +153,42 @@ const _Modal = class _Modal {
       default:
         break;
     }
-    const finish = new Promise((resolve) => {
+    return new Promise((resolve) => {
       setTimeout(() => {
         this.component.style.display = "none";
-        this.component.dataset.state = "closed";
         resolve();
       }, this.settings.animation.duration);
     });
-    await finish;
   }
   /**
    * Opens the modal instance.
    *
    * This method calls the `show` method and locks the scroll of the document body.
    */
-  open() {
-    this.show();
-    if (this.settings.lockBodyScroll) {
-      lockBodyScroll();
+  async open() {
+    this.component.dataset.state = "opening";
+    if (this.settings.bodyScroll.lock) {
+      adjustPaddingForScrollbar(this.component, document.body);
+      lockBodyScroll(this.settings.bodyScroll.smooth);
     }
+    await this.show();
+    this.opened = true;
+    this.component.dataset.state = "open";
   }
   /**
    * Closes the modal instance.
    *
    * This method calls the `hide` method and unlocks the scroll of the document body.
    */
-  close() {
-    if (this.settings.lockBodyScroll) {
-      unlockBodyScroll();
+  async close() {
+    this.component.dataset.state = "closing";
+    if (this.settings.bodyScroll.lock) {
+      resetScrollbarPadding(this.component);
+      unlockBodyScroll(this.settings.bodyScroll.smooth);
     }
-    this.hide();
+    await this.hide();
+    this.opened = false;
+    this.component.dataset.state = "closed";
   }
 };
 _Modal.attr = {

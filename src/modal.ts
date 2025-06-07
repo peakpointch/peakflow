@@ -1,5 +1,6 @@
 import createAttribute from "./attributeselector";
 import deepMerge from "./deepmerge";
+import { adjustPaddingForScrollbar, lockBodyScroll, resetScrollbarPadding, unlockBodyScroll } from "./utils/scroll-lock";
 
 type ModalElement = 'component' | 'modal' | 'open' | 'close' | 'cancel' | 'confirm' | 'scroll' | 'sticky-top' | 'sticky-bottom';
 type ModalAnimationType = 'fade' | 'slideUp' | 'growIn' | 'custom' | 'none';
@@ -15,7 +16,10 @@ interface ModalSettings {
   animation: ModalAnimation;
   stickyFooter: boolean;
   stickyHeader: boolean;
-  lockBodyScroll: boolean;
+  bodyScroll: {
+    lock: boolean;
+    smooth?: boolean;
+  };
 }
 
 interface ModalAttributes {
@@ -34,12 +38,16 @@ export const defaultModalSettings: ModalSettings = {
   animation: defaultModalAnimation,
   stickyFooter: false,
   stickyHeader: false,
-  lockBodyScroll: true,
+  bodyScroll: {
+    lock: true,
+    smooth: false,
+  },
 }
 
 export default class Modal {
   public component: HTMLElement;
   public modal: HTMLElement;
+  public opened: boolean;
   public initialized: boolean = false;
   public settings: ModalSettings;
   public instance: string;
@@ -180,10 +188,8 @@ export default class Modal {
   }
 
   private async show(): Promise<void> {
-    this.component.dataset.state = "opening";
     this.component.style.removeProperty('display');
 
-    await new Promise(resolve => setTimeout(resolve, 0));
     await animationFrame();
 
     switch (this.settings.animation.type) {
@@ -206,12 +212,17 @@ export default class Modal {
     }
 
     setTimeout(() => {
-      this.component.dataset.state = "open";
     }, this.settings.animation.duration);
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, this.settings.animation.duration);
+    });
   }
 
   private async hide(): Promise<void> {
-    this.component.dataset.state = "closing";
+    await animationFrame();
+
     switch (this.settings.animation.type) {
       case 'fade':
         this.component.style.opacity = '0';
@@ -231,15 +242,12 @@ export default class Modal {
         break;
     }
 
-    const finish = new Promise<void>(resolve => {
+    return new Promise<void>(resolve => {
       setTimeout(() => {
         this.component.style.display = "none";
-        this.component.dataset.state = "closed";
         resolve();
       }, this.settings.animation.duration);
     });
-
-    await finish;
   }
 
   /**
@@ -247,11 +255,15 @@ export default class Modal {
    *
    * This method calls the `show` method and locks the scroll of the document body.
    */
-  public open() {
-    this.show();
-    if (this.settings.lockBodyScroll) {
-      lockBodyScroll();
+  public async open() {
+    this.component.dataset.state = "opening";
+    if (this.settings.bodyScroll.lock) {
+      adjustPaddingForScrollbar(this.component, document.body);
+      lockBodyScroll(this.settings.bodyScroll.smooth);
     }
+    await this.show();
+    this.opened = true;
+    this.component.dataset.state = "open";
   }
 
   /**
@@ -259,11 +271,15 @@ export default class Modal {
    *
    * This method calls the `hide` method and unlocks the scroll of the document body.
    */
-  public close() {
-    if (this.settings.lockBodyScroll) {
-      unlockBodyScroll();
+  public async close() {
+    this.component.dataset.state = "closing";
+    if (this.settings.bodyScroll.lock) {
+      resetScrollbarPadding(this.component);
+      unlockBodyScroll(this.settings.bodyScroll.smooth);
     }
-    this.hide();
+    await this.hide();
+    this.opened = false;
+    this.component.dataset.state = "closed";
   }
 }
 

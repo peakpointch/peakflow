@@ -10,7 +10,10 @@ interface ModalSettings {
     animation: ModalAnimation;
     stickyFooter: boolean;
     stickyHeader: boolean;
-    lockBodyScroll: boolean;
+    bodyScroll: {
+        lock: boolean;
+        smooth?: boolean;
+    };
 }
 interface ModalAttributes {
     id: string;
@@ -21,6 +24,7 @@ export declare const defaultModalSettings: ModalSettings;
 export default class Modal {
     component: HTMLElement;
     modal: HTMLElement;
+    opened: boolean;
     initialized: boolean;
     settings: ModalSettings;
     instance: string;
@@ -50,12 +54,12 @@ export default class Modal {
      *
      * This method calls the `show` method and locks the scroll of the document body.
      */
-    open(): void;
+    open(): Promise<void>;
     /**
      * Closes the modal instance.
      *
      * This method calls the `hide` method and unlocks the scroll of the document body.
      */
-    close(): void;
+    close(): Promise<void>;
 }
 export {};
