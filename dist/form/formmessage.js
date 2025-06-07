@@ -57,6 +57,11 @@ class FormMessage {
       this.resetTimeoutId = null;
     }
     this.component.classList.remove("info", "error");
+    if (this.messageElement) {
+      this.messageElement.textContent = "";
+    }
+    this.component.removeAttribute("aria-live");
+    this.component.removeAttribute("role");
   }
   /**
    * Schedules an automatic reset of the message component after `delayMs` milliseconds.
