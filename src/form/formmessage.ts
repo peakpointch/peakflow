@@ -94,7 +94,7 @@ export class FormMessage {
     if (!this.initialized) return;
     this.clearTimeout();
 
-    this.resetTimeoutId = window.setTimeout(() => {
+    this.resetTimeoutId = setTimeout(() => {
       this.reset();
       this.resetTimeoutId = null;
     }, delayMs);
