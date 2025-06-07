@@ -52,10 +52,7 @@ class FormMessage {
    */
   reset() {
     if (!this.initialized) return;
-    if (this.resetTimeoutId !== null) {
-      clearTimeout(this.resetTimeoutId);
-      this.resetTimeoutId = null;
-    }
+    this.clearTimeout();
     this.component.classList.remove("info", "error");
     if (this.messageElement) {
       this.messageElement.textContent = "";
@@ -69,13 +66,21 @@ class FormMessage {
    */
   setTimedReset(delayMs) {
     if (!this.initialized) return;
-    if (this.resetTimeoutId !== null) {
-      clearTimeout(this.resetTimeoutId);
-    }
+    this.clearTimeout();
     this.resetTimeoutId = window.setTimeout(() => {
       this.reset();
       this.resetTimeoutId = null;
     }, delayMs);
+  }
+  /**
+   * Cancels any existing timer.
+   */
+  clearTimeout() {
+    if (!this.initialized) return;
+    if (this.resetTimeoutId !== null) {
+      clearTimeout(this.resetTimeoutId);
+      this.resetTimeoutId = null;
+    }
   }
   /**
    * Sets the message text and type (private method).

@@ -46,6 +46,10 @@ export declare class FormMessage {
      */
     setTimedReset(delayMs: number): void;
     /**
+     * Cancels any existing timer.
+     */
+    clearTimeout(): void;
+    /**
      * Sets the message text and type (private method).
      * @param message The message text to display. Defaults to `null`.
      * @param type The type of message (`"info"` or `"error"`).

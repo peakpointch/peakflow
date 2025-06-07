@@ -76,11 +76,7 @@ export class FormMessage {
    */
   public reset(): void {
     if (!this.initialized) return;
-
-    if (this.resetTimeoutId !== null) {
-      clearTimeout(this.resetTimeoutId);
-      this.resetTimeoutId = null;
-    }
+    this.clearTimeout();
 
     this.component.classList.remove("info", "error");
     if (this.messageElement) {
@@ -96,15 +92,24 @@ export class FormMessage {
    */
   public setTimedReset(delayMs: number): void {
     if (!this.initialized) return;
-
-    if (this.resetTimeoutId !== null) {
-      clearTimeout(this.resetTimeoutId);
-    }
+    this.clearTimeout();
 
     this.resetTimeoutId = window.setTimeout(() => {
       this.reset();
       this.resetTimeoutId = null;
     }, delayMs);
+  }
+
+  /**
+   * Cancels any existing timer.
+   */
+  public clearTimeout(): void {
+    if (!this.initialized) return;
+
+    if (this.resetTimeoutId !== null) {
+      clearTimeout(this.resetTimeoutId);
+      this.resetTimeoutId = null;
+    }
   }
 
   /**
