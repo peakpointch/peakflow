@@ -185,12 +185,6 @@ _Modal.attr = {
 };
 _Modal.attributeSelector = createAttribute(_Modal.attr.element);
 let Modal = _Modal;
-function lockBodyScroll() {
-  document.body.style.overflow = "hidden";
-}
-function unlockBodyScroll() {
-  document.body.style.removeProperty("overflow");
-}
 function animationFrame() {
   return new Promise((resolve) => requestAnimationFrame(() => resolve()));
 }

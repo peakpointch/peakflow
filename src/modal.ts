@@ -267,28 +267,6 @@ export default class Modal {
   }
 }
 
-/**
- * Locks the scroll on the document body.
- *
- * This function sets the `overflow` style of the `body` element to `"hidden"`,
- * preventing the user from scrolling the page. Commonly used when displaying
- * modals, overlays, or other components that require the page to remain static.
- */
-function lockBodyScroll(): void {
-  document.body.style.overflow = "hidden";
-}
-
-/**
- * Unlocks the scroll on the document body.
- *
- * This function removes the `overflow` style from the `body` element,
- * allowing the user to scroll the page again. Typically used when hiding
- * modals, overlays, or other components that previously locked scrolling.
- */
-function unlockBodyScroll(): void {
-  document.body.style.removeProperty("overflow");
-}
-
 function animationFrame(): Promise<void> {
   return new Promise(resolve => requestAnimationFrame(() => resolve()));
 }
