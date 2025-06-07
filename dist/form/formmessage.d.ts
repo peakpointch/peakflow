@@ -13,10 +13,11 @@
  *   ```
  */
 export declare class FormMessage {
+    initialized: boolean;
     private messageFor;
     private component;
     private messageElement;
-    initialized: boolean;
+    private resetTimeoutId;
     /**
      * Constructs a new FormMessage instance.
      * @param componentName The name of the component (used in `data-message-component`).
@@ -39,6 +40,11 @@ export declare class FormMessage {
      * Resets the message component, hiding any displayed message.
      */
     reset(): void;
+    /**
+     * Schedules an automatic reset of the message component after `delayMs` milliseconds.
+     * Cancels any existing reset timer.
+     */
+    setTimedReset(delayMs: number): void;
     /**
      * Sets the message text and type (private method).
      * @param message The message text to display. Defaults to `null`.

@@ -6,6 +6,7 @@ class FormMessage {
    */
   constructor(componentName, messageFor) {
     this.initialized = false;
+    this.resetTimeoutId = null;
     this.messageFor = messageFor;
     const component = document.querySelector(
       `[data-message-component="${componentName}"][data-message-for="${this.messageFor}"]`
@@ -51,7 +52,25 @@ class FormMessage {
    */
   reset() {
     if (!this.initialized) return;
+    if (this.resetTimeoutId !== null) {
+      clearTimeout(this.resetTimeoutId);
+      this.resetTimeoutId = null;
+    }
     this.component.classList.remove("info", "error");
+  }
+  /**
+   * Schedules an automatic reset of the message component after `delayMs` milliseconds.
+   * Cancels any existing reset timer.
+   */
+  setTimedReset(delayMs) {
+    if (!this.initialized) return;
+    if (this.resetTimeoutId !== null) {
+      clearTimeout(this.resetTimeoutId);
+    }
+    this.resetTimeoutId = window.setTimeout(() => {
+      this.reset();
+      this.resetTimeoutId = null;
+    }, delayMs);
   }
   /**
    * Sets the message text and type (private method).

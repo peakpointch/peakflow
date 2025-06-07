@@ -13,10 +13,11 @@
  *   ```
  */
 export class FormMessage {
+  public initialized: boolean = false;
   private messageFor: string;
   private component: HTMLElement;
   private messageElement: HTMLElement | null;
-  public initialized: boolean = false;
+  private resetTimeoutId: number | null = null;
 
   /**
    * Constructs a new FormMessage instance.
@@ -75,7 +76,30 @@ export class FormMessage {
    */
   public reset(): void {
     if (!this.initialized) return;
+
+    if (this.resetTimeoutId !== null) {
+      clearTimeout(this.resetTimeoutId);
+      this.resetTimeoutId = null;
+    }
+
     this.component.classList.remove("info", "error");
+  }
+
+  /**
+   * Schedules an automatic reset of the message component after `delayMs` milliseconds.
+   * Cancels any existing reset timer.
+   */
+  public setTimedReset(delayMs: number): void {
+    if (!this.initialized) return;
+
+    if (this.resetTimeoutId !== null) {
+      clearTimeout(this.resetTimeoutId);
+    }
+
+    this.resetTimeoutId = window.setTimeout(() => {
+      this.reset();
+      this.resetTimeoutId = null;
+    }, delayMs);
   }
 
   /**
