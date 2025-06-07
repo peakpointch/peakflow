@@ -63,16 +63,23 @@ class FormMessage {
     this.component.removeAttribute("role");
   }
   /**
-   * Schedules an automatic reset of the message component after `delayMs` milliseconds.
+   * Schedules an automatic reset or custom action of the message component after a `delay`.
    * Cancels any existing reset timer.
+   *
+   * @param delay - Time in milliseconds after which the reset or callback is triggered.
+   * @param callback - Optional function to execute when the timer fires instead of the default reset.
    */
-  setTimedReset(delayMs) {
+  setTimedReset(delay, callback) {
     if (!this.initialized) return;
     this.clearTimeout();
     this.resetTimeoutId = setTimeout(() => {
-      this.reset();
+      if (callback) {
+        callback();
+      } else {
+        this.reset();
+      }
       this.resetTimeoutId = null;
-    }, delayMs);
+    }, delay);
   }
   /**
    * Cancels any existing timer.

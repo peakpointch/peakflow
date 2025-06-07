@@ -41,10 +41,13 @@ export declare class FormMessage {
      */
     reset(): void;
     /**
-     * Schedules an automatic reset of the message component after `delayMs` milliseconds.
+     * Schedules an automatic reset or custom action of the message component after a `delay`.
      * Cancels any existing reset timer.
+     *
+     * @param delay - Time in milliseconds after which the reset or callback is triggered.
+     * @param callback - Optional function to execute when the timer fires instead of the default reset.
      */
-    setTimedReset(delayMs: number): void;
+    setTimedReset(delay: number, callback?: () => void): void;
     /**
      * Cancels any existing timer.
      */
