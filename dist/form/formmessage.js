@@ -29,6 +29,7 @@ class FormMessage {
    */
   info(message = null, silent = false) {
     if (!this.initialized) return;
+    this.clearTimeout();
     if (!silent) {
       this.component.setAttribute("aria-live", "polite");
     }
@@ -41,6 +42,7 @@ class FormMessage {
    */
   error(message = null, silent = false) {
     if (!this.initialized) return;
+    this.clearTimeout();
     if (!silent) {
       this.component.setAttribute("role", "alert");
       this.component.setAttribute("aria-live", "assertive");

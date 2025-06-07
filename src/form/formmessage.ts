@@ -51,6 +51,7 @@ export class FormMessage {
    */
   public info(message: string | null = null, silent: boolean = false): void {
     if (!this.initialized) return;
+    this.clearTimeout();
     if (!silent) {
       this.component.setAttribute("aria-live", "polite");
     }
@@ -64,6 +65,7 @@ export class FormMessage {
    */
   public error(message: string | null = null, silent: boolean = false): void {
     if (!this.initialized) return;
+    this.clearTimeout();
     if (!silent) {
       this.component.setAttribute("role", "alert");
       this.component.setAttribute("aria-live", "assertive");
