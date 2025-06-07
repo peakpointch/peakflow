@@ -8,6 +8,9 @@ function isRadioInput(input) {
 function isCheckboxInput(input) {
   return input instanceof HTMLInputElement && input.type === "checkbox";
 }
+function isFormInput(input) {
+  return input instanceof HTMLInputElement || input instanceof HTMLSelectElement || input instanceof HTMLTextAreaElement;
+}
 function getWfFormData(form, fields, test = false) {
   if (!(form instanceof HTMLFormElement)) {
     form = form.querySelector("form");
@@ -171,6 +174,7 @@ export {
   getWfFormData,
   initWfInputs,
   isCheckboxInput,
+  isFormInput,
   isRadioInput,
   removeErrorClasses,
   reportValidity,

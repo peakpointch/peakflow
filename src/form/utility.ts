@@ -32,6 +32,12 @@ export function isCheckboxInput(input: HTMLFormInput): input is HTMLInputElement
   return input instanceof HTMLInputElement && input.type === "checkbox";
 }
 
+export function isFormInput(input: unknown): input is HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement {
+  return input instanceof HTMLInputElement ||
+    input instanceof HTMLSelectElement ||
+    input instanceof HTMLTextAreaElement;
+}
+
 export function getWfFormData(form: HTMLFormElement | HTMLElement, fields: any, test: boolean = false): WfFormData {
   if (!(form instanceof HTMLFormElement)) {
     form = form.querySelector('form');

@@ -20,6 +20,7 @@ export declare function isRadioInput(input: HTMLFormInput): input is HTMLInputEl
  * @returns {boolean} True if the input is a checkbox, otherwise false.
  */
 export declare function isCheckboxInput(input: HTMLFormInput): input is HTMLInputElement;
+export declare function isFormInput(input: unknown): input is HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export declare function getWfFormData(form: HTMLFormElement | HTMLElement, fields: any, test?: boolean): WfFormData;
 /**
  * Submit any form data to a Webflow site.
