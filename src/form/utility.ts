@@ -38,6 +38,42 @@ export function isFormInput(input: unknown): input is HTMLInputElement | HTMLSel
     input instanceof HTMLTextAreaElement;
 }
 
+export function findFormInput<T extends HTMLFormInput = HTMLFormInput>(
+  containers: Iterable<HTMLElement>,
+  inputId: string,
+  selectorPrefix: string = wf.select.formInput
+): T {
+  const selector = `${selectorPrefix}#${inputId}`;
+
+  const matches = Array.from(containers).flatMap(container =>
+    Array.from(container.querySelectorAll<T>(selector))
+  );
+
+  if (matches.length === 0) {
+    throw new Error(`No form input found with selector "${selector}".`);
+  }
+
+  if (matches.length > 1) {
+    throw new Error(`Multiple form inputs found with selector "${selector}" - expected only one.`);
+  }
+
+  return matches[0];
+}
+
+export function findFormInputAll<T extends HTMLFormInput = HTMLFormInput>(
+  containers: Iterable<HTMLElement>,
+  inputId: string,
+  selectorPrefix: string = wf.select.formInput
+): T[] {
+  const selector = `${selectorPrefix}#${inputId}`;
+
+  const matches = Array.from(containers).flatMap(container =>
+    Array.from(container.querySelectorAll<T>(selector))
+  );
+
+  return matches;
+}
+
 export function getWfFormData(form: HTMLFormElement | HTMLElement, fields: any, test: boolean = false): WfFormData {
   if (!(form instanceof HTMLFormElement)) {
     form = form.querySelector('form');

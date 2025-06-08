@@ -21,6 +21,8 @@ export declare function isRadioInput(input: HTMLFormInput): input is HTMLInputEl
  */
 export declare function isCheckboxInput(input: HTMLFormInput): input is HTMLInputElement;
 export declare function isFormInput(input: unknown): input is HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+export declare function findFormInput<T extends HTMLFormInput = HTMLFormInput>(containers: Iterable<HTMLElement>, inputId: string, selectorPrefix?: string): T;
+export declare function findFormInputAll<T extends HTMLFormInput = HTMLFormInput>(containers: Iterable<HTMLElement>, inputId: string, selectorPrefix?: string): T[];
 export declare function getWfFormData(form: HTMLFormElement | HTMLElement, fields: any, test?: boolean): WfFormData;
 /**
  * Submit any form data to a Webflow site.

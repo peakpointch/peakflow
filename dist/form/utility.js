@@ -11,6 +11,26 @@ function isCheckboxInput(input) {
 function isFormInput(input) {
   return input instanceof HTMLInputElement || input instanceof HTMLSelectElement || input instanceof HTMLTextAreaElement;
 }
+function findFormInput(containers, inputId, selectorPrefix = wf.select.formInput) {
+  const selector = `${selectorPrefix}#${inputId}`;
+  const matches = Array.from(containers).flatMap(
+    (container) => Array.from(container.querySelectorAll(selector))
+  );
+  if (matches.length === 0) {
+    throw new Error(`No form input found with selector "${selector}".`);
+  }
+  if (matches.length > 1) {
+    throw new Error(`Multiple form inputs found with selector "${selector}" - expected only one.`);
+  }
+  return matches[0];
+}
+function findFormInputAll(containers, inputId, selectorPrefix = wf.select.formInput) {
+  const selector = `${selectorPrefix}#${inputId}`;
+  const matches = Array.from(containers).flatMap(
+    (container) => Array.from(container.querySelectorAll(selector))
+  );
+  return matches;
+}
 function getWfFormData(form, fields, test = false) {
   if (!(form instanceof HTMLFormElement)) {
     form = form.querySelector("form");
@@ -170,6 +190,8 @@ export {
   disableWebflowForm,
   enforceButtonTypes,
   filterFormSelector,
+  findFormInput,
+  findFormInputAll,
   formElementSelector,
   getWfFormData,
   initWfInputs,
