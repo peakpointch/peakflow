@@ -12,6 +12,21 @@ class FieldGroup {
   getField(fieldId) {
     return this.fields.get(fieldId);
   }
+  validate(report = true) {
+    for (const field of this.fields.values()) {
+      if (field.validate(report)) continue;
+      return false;
+    }
+    return true;
+  }
+  getInvalidFields() {
+    const invalid = [];
+    for (const field of this.fields.values()) {
+      if (field.validate(false)) continue;
+      invalid.push(field);
+    }
+    return invalid;
+  }
   /**
    * Serialize this `FieldGroup`.
    *
