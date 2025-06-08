@@ -2,6 +2,7 @@
 export * from './utility';
 
 // Export FormField class and FieldData interface
+export * from './multistep';
 export * from './formfield';
 export * from './fieldgroup';
 export * from './formmessage';
