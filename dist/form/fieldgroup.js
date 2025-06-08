@@ -13,19 +13,15 @@ class FieldGroup {
     return this.fields.get(fieldId);
   }
   validate(report = true) {
+    const invalidFields = [];
     for (const field of this.fields.values()) {
       if (field.validate(report)) continue;
-      return false;
+      invalidFields.push(field);
     }
-    return true;
-  }
-  getInvalidFields() {
-    const invalid = [];
-    for (const field of this.fields.values()) {
-      if (field.validate(false)) continue;
-      invalid.push(field);
-    }
-    return invalid;
+    return {
+      isValid: invalidFields.length === 0,
+      invalidFields
+    };
   }
   /**
    * Serialize this `FieldGroup`.

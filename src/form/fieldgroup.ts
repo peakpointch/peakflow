@@ -22,23 +22,21 @@ export class FieldGroup<FieldId extends string = string> {
     return this.fields.get(fieldId);
   }
 
-  public validate(report: boolean = true): boolean {
+  public validate(report: boolean = true): {
+    isValid: boolean;
+    invalidFields: FormField[];
+  } {
+    const invalidFields: FormField[] = [];
+
     for (const field of this.fields.values()) {
       if (field.validate(report)) continue;
-      return false;
-    }
-    return true;
-  }
-
-  public getInvalidFields(): FormField[] {
-    const invalid: FormField[] = [];
-
-    for (const field of this.fields.values()) {
-      if (field.validate(false)) continue;
-      invalid.push(field);
+      invalidFields.push(field);
     }
 
-    return invalid;
+    return {
+      isValid: invalidFields.length === 0,
+      invalidFields: invalidFields,
+    };
   }
 
   /**

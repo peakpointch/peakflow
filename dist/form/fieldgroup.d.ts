@@ -12,8 +12,10 @@ export declare class FieldGroup<FieldId extends string = string> {
      * @param fieldId The id attribute of the associated DOM element.
      */
     getField(fieldId: FieldId): FormField | undefined;
-    validate(report?: boolean): boolean;
-    getInvalidFields(): FormField[];
+    validate(report?: boolean): {
+        isValid: boolean;
+        invalidFields: FormField[];
+    };
     /**
      * Serialize this `FieldGroup`.
      *
