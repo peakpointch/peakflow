@@ -3,13 +3,20 @@ const modalSelector = createAttribute("data-modal-element");
 class Accordion {
   constructor(component) {
     this.isOpen = false;
+    this.onClickCallback = () => {
+    };
     this.component = component;
     this.trigger = component.querySelector('[data-animate="trigger"]');
     this.uiTrigger = component.querySelector('[data-animate="ui-trigger"]');
     this.icon = component.querySelector('[data-animate="icon"]');
-    this.uiTrigger.addEventListener("click", () => {
-      this.toggle();
-    });
+  }
+  onClick(callback) {
+    this.removeOnClick();
+    this.onClickCallback = callback;
+    this.uiTrigger.addEventListener("click", this.onClickCallback);
+  }
+  removeOnClick() {
+    this.uiTrigger.removeEventListener("click", this.onClickCallback);
   }
   open() {
     if (!this.isOpen) {

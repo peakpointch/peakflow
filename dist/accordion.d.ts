@@ -1,10 +1,13 @@
 export default class Accordion {
     component: HTMLElement;
-    trigger: HTMLElement;
     uiTrigger: HTMLElement;
     isOpen: boolean;
+    private trigger;
     private icon;
+    private onClickCallback;
     constructor(component: HTMLElement);
+    onClick(callback: () => void): void;
+    removeOnClick(): void;
     open(): void;
     close(): void;
     toggle(): void;

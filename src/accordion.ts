@@ -6,21 +6,27 @@ const modalSelector = createAttribute<ModalElement>('data-modal-element');
 
 export default class Accordion {
   public component: HTMLElement;
-  public trigger: HTMLElement;
   public uiTrigger: HTMLElement;
   public isOpen: boolean = false;
+  private trigger: HTMLElement;
   private icon: HTMLElement;
+  private onClickCallback: () => void = () => { };
 
   constructor(component: HTMLElement) {
     this.component = component;
     this.trigger = component.querySelector('[data-animate="trigger"]')!;
     this.uiTrigger = component.querySelector('[data-animate="ui-trigger"]')!;
     this.icon = component.querySelector('[data-animate="icon"]')!;
+  }
 
-    this.uiTrigger.addEventListener("click", () => {
-      this.toggle();
-      // console.log("ACCORDION TRIGGER; OPEN:", this.isOpen);
-    });
+  public onClick(callback: () => void): void {
+    this.removeOnClick();
+    this.onClickCallback = callback;
+    this.uiTrigger.addEventListener('click', this.onClickCallback);
+  }
+
+  public removeOnClick(): void {
+    this.uiTrigger.removeEventListener('click', this.onClickCallback);
   }
 
   public open() {
