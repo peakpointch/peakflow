@@ -1,6 +1,11 @@
 import mapToObject from "../maptoobject";
 import { FormField, FieldData } from "./formfield";
 
+export type FieldGroupValidation = {
+  isValid: boolean;
+  invalidFields: FormField[];
+};
+
 /**
  * A map of string to a `FormField` class instance.
  */
@@ -22,10 +27,7 @@ export class FieldGroup<FieldId extends string = string> {
     return this.fields.get(fieldId);
   }
 
-  public validate(report: boolean = true): {
-    isValid: boolean;
-    invalidFields: FormField[];
-  } {
+  public validate(report: boolean = true): FieldGroupValidation {
     const invalidFields: FormField[] = [];
 
     for (const field of this.fields.values()) {

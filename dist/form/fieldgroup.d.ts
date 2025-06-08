@@ -1,4 +1,8 @@
 import { FormField } from "./formfield";
+export type FieldGroupValidation = {
+    isValid: boolean;
+    invalidFields: FormField[];
+};
 /**
  * A map of string to a `FormField` class instance.
  */
@@ -12,10 +16,7 @@ export declare class FieldGroup<FieldId extends string = string> {
      * @param fieldId The id attribute of the associated DOM element.
      */
     getField(fieldId: FieldId): FormField | undefined;
-    validate(report?: boolean): {
-        isValid: boolean;
-        invalidFields: FormField[];
-    };
+    validate(report?: boolean): FieldGroupValidation;
     /**
      * Serialize this `FieldGroup`.
      *
