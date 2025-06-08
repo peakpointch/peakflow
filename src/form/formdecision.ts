@@ -124,7 +124,7 @@ export class FormDecision {
    */
   public validate(): boolean {
     const selectedInput = this.getSelectedInput();
-    const { valid: decisionValid } = validateFields(this.decisionInputs);
+    const { isValid: decisionValid } = validateFields(this.decisionInputs);
     if (!decisionValid || !selectedInput) {
       console.warn("No decision selected!");
       this.handleValidationMessages(false);
@@ -170,9 +170,8 @@ export class FormDecision {
       pathElement.querySelectorAll(wf.select.formInput);
 
     // Validate the fields within the path element
-    const { valid, invalidField } = validateFields(inputs, true);
-
-    return valid;
+    const { isValid } = validateFields(inputs, true);
+    return isValid;
   }
 
   /**

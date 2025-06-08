@@ -1,4 +1,5 @@
 import { WfFormData } from "../../types/webflow";
+import { FieldGroupValidation } from "./fieldgroup";
 /**
  * Represents any standard form input element <input>, <select>, or <textarea>.
  */
@@ -42,10 +43,7 @@ export declare function enforceButtonTypes(form: HTMLFormElement | null): void;
 export declare function initWfInputs(container: HTMLElement): void;
 export declare function reportValidity(input: HTMLFormInput): void;
 export declare function removeErrorClasses(input: HTMLFormInput): void;
-export declare function validateFields(inputs: NodeListOf<HTMLFormInput> | HTMLFormInput[], report?: boolean): {
-    valid: boolean;
-    invalidField: HTMLFormInput | null;
-};
+export declare function validateFields(inputs: NodeListOf<HTMLFormInput> | HTMLFormInput[], report?: boolean): FieldGroupValidation;
 export declare function disableWebflowForm(form: HTMLFormElement): void;
 export { formElementSelector, filterFormSelector, };
 export type { HTMLFormInput, FormComponentElement, CustomValidator };

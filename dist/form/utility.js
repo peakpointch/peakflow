@@ -165,21 +165,21 @@ function removeErrorClasses(input) {
   }
 }
 function validateFields(inputs, report = true) {
-  let valid = true;
-  let firstInvalidField = null;
+  let isValid = true;
+  let invalidFields = [];
   for (const input of Array.from(inputs)) {
     if (!input.checkValidity()) {
-      valid = false;
-      if (report && !firstInvalidField) {
+      invalidFields.push(input);
+      isValid = false;
+      if (report) {
         reportValidity(input);
-        firstInvalidField = input;
       }
       break;
     } else {
       input.classList.remove("has-error");
     }
   }
-  return { valid, invalidField: firstInvalidField };
+  return { isValid, invalidFields };
 }
 function disableWebflowForm(form) {
   form?.classList.remove("w-form");

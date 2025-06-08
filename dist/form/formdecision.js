@@ -82,7 +82,7 @@ class FormDecision {
    */
   validate() {
     const selectedInput = this.getSelectedInput();
-    const { valid: decisionValid } = validateFields(this.decisionInputs);
+    const { isValid: decisionValid } = validateFields(this.decisionInputs);
     if (!decisionValid || !selectedInput) {
       console.warn("No decision selected!");
       this.handleValidationMessages(false);
@@ -115,8 +115,8 @@ class FormDecision {
   checkPathValidity(pathIndex) {
     const pathElement = this.paths[pathIndex];
     const inputs = pathElement.querySelectorAll(wf.select.formInput);
-    const { valid, invalidField } = validateFields(inputs, true);
-    return valid;
+    const { isValid } = validateFields(inputs, true);
+    return isValid;
   }
   /**
    * Updates the required attributes of input fields within the paths based on the selected decision input.

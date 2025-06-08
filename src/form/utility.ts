@@ -1,6 +1,7 @@
 import createAttribute from "../attributeselector";
 import wf from "../webflow";
 import { WfFormData } from "../../types/webflow";
+import { FieldGroupValidation } from "./fieldgroup";
 
 /**
  * Represents any standard form input element <input>, <select>, or <textarea>.
@@ -268,19 +269,16 @@ export function removeErrorClasses(input: HTMLFormInput): void {
 export function validateFields(
   inputs: NodeListOf<HTMLFormInput> | HTMLFormInput[],
   report: boolean = true
-): {
-  valid: boolean;
-  invalidField: HTMLFormInput | null;
-} {
-  let valid = true; // Assume the step is valid unless we find a problem
-  let firstInvalidField: HTMLFormInput | null = null;
+): FieldGroupValidation {
+  let isValid = true; // Assume the step is valid unless we find a problem
+  let invalidFields: HTMLFormInput[] = [];
 
   for (const input of Array.from(inputs)) {
     if (!input.checkValidity()) {
-      valid = false;
-      if (report && !firstInvalidField) {
+      invalidFields.push(input);
+      isValid = false;
+      if (report) {
         reportValidity(input);
-        firstInvalidField = input; // Store the first invalid field
       }
       break;
     } else {
@@ -288,7 +286,7 @@ export function validateFields(
     }
   }
 
-  return { valid, invalidField: firstInvalidField };
+  return { isValid, invalidFields };
 }
 
 export function disableWebflowForm(form: HTMLFormElement): void {
