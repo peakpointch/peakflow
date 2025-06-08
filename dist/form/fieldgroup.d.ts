@@ -1,7 +1,8 @@
 import { FormField } from "./formfield";
-export type FieldGroupValidation = {
+import { HTMLFormInput } from "./utility";
+export type FieldGroupValidation<FieldType extends FormField | HTMLFormInput = HTMLFormInput> = {
     isValid: boolean;
-    invalidFields: FormField[];
+    invalidFields: FieldType[];
 };
 /**
  * A map of string to a `FormField` class instance.
@@ -16,7 +17,7 @@ export declare class FieldGroup<FieldId extends string = string> {
      * @param fieldId The id attribute of the associated DOM element.
      */
     getField(fieldId: FieldId): FormField | undefined;
-    validate(report?: boolean): FieldGroupValidation;
+    validate(report?: boolean): FieldGroupValidation<FormField>;
     /**
      * Serialize this `FieldGroup`.
      *

@@ -1,9 +1,10 @@
 import mapToObject from "../maptoobject";
 import { FormField, FieldData } from "./formfield";
+import { HTMLFormInput } from "./utility";
 
-export type FieldGroupValidation = {
+export type FieldGroupValidation<FieldType extends FormField | HTMLFormInput = HTMLFormInput> = {
   isValid: boolean;
-  invalidFields: FormField[];
+  invalidFields: FieldType[];
 };
 
 /**
@@ -27,7 +28,7 @@ export class FieldGroup<FieldId extends string = string> {
     return this.fields.get(fieldId);
   }
 
-  public validate(report: boolean = true): FieldGroupValidation {
+  public validate(report: boolean = true): FieldGroupValidation<FormField> {
     const invalidFields: FormField[] = [];
 
     for (const field of this.fields.values()) {
