@@ -1,6 +1,12 @@
 import createAttribute from "./attributeselector";
 import deepMerge from "./deepmerge";
-import { adjustPaddingForScrollbar, lockBodyScroll, resetScrollbarPadding, unlockBodyScroll } from "./utils/scroll-lock";
+import {
+  adjustPaddingForScrollbar,
+  isScrollbarVisible,
+  lockBodyScroll,
+  resetScrollbarPadding,
+  unlockBodyScroll
+} from "./scroll/lock";
 const defaultModalAnimation = {
   type: "none",
   duration: 0,

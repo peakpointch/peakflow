@@ -1,6 +1,12 @@
 import createAttribute from "./attributeselector";
 import deepMerge from "./deepmerge";
-import { adjustPaddingForScrollbar, lockBodyScroll, resetScrollbarPadding, unlockBodyScroll } from "./utils/scroll-lock";
+import {
+  adjustPaddingForScrollbar,
+  isScrollbarVisible,
+  lockBodyScroll,
+  resetScrollbarPadding,
+  unlockBodyScroll
+} from "./scroll/lock";
 
 type ModalElement = 'component' | 'modal' | 'open' | 'close' | 'cancel' | 'confirm' | 'scroll' | 'sticky-top' | 'sticky-bottom';
 type ModalAnimationType = 'fade' | 'slideUp' | 'growIn' | 'custom' | 'none';
