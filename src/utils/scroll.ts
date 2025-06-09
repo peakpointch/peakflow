@@ -87,7 +87,8 @@ export function initGlobalScrollLinks(): void {
 }
 
 export function disableWebflowScroll(): void {
-  var Webflow = Webflow || [];
+  //@ts-ignore
+  var Webflow = window.Webflow || [];
   Webflow.push(function () {
     $(function () {
       $(document).off('click.wf-scroll');
