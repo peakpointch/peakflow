@@ -2,6 +2,10 @@ import { FormFieldMap, CustomValidator } from ".";
 interface FormOptions {
     excludeInputSelectors: string[];
     recaptcha: boolean;
+    validation: {
+        validate: boolean;
+        reportValidity: boolean;
+    };
 }
 interface MultiStepFormOptions extends FormOptions {
     navigation: {

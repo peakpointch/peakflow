@@ -19,6 +19,10 @@ import deepMerge from "../deepmerge";
 interface FormOptions {
   excludeInputSelectors: string[];
   recaptcha: boolean;
+  validation: {
+    validate: boolean;
+    reportValidity: boolean;
+  }
 }
 
 interface MultiStepFormOptions extends FormOptions {
@@ -69,6 +73,10 @@ export class MultiStepForm {
     pagination: {
       doneClass: "is-done",
       activeClass: "is-active"
+    },
+    validation: {
+      validate: true,
+      reportValidity: true,
     }
   };
 
@@ -435,7 +443,7 @@ export class MultiStepForm {
   }
 
   public validateCurrentStep(stepIndex: number): boolean {
-    //return true; // Change this for dev
+    if (!this.options.validation.validate) return true;
     const basicError = `Validation failed for step: ${stepIndex + 1}/${this.formSteps.length
       }`;
     const currentStepElement = this.formSteps[stepIndex];
@@ -455,12 +463,13 @@ export class MultiStepForm {
       return !isExcluded;
     });
 
-    let { isValid } = validateFields(filteredInputs);
+    let { isValid } = validateFields(filteredInputs, this.options.validation.reportValidity);
 
-    if (!isValid) {
+    if (!isValid && this.options.validation.reportValidity) {
       console.warn(`${basicError}: Standard validation is not valid`);
-      return isValid;
     }
+
+    if (!isValid) return false;
 
     const customValidators: CustomValidator[] = this.customComponents
       .filter((entry) => entry.stepIndex === stepIndex)
@@ -469,7 +478,7 @@ export class MultiStepForm {
     // Custom validations
     const customValid =
       customValidators?.every((validator) => validator()) ?? true;
-    if (!customValid) {
+    if (this.options.validation.reportValidity && !customValid) {
       console.warn(`${basicError}: Custom validation is not valid`);
     }
 

@@ -29,6 +29,10 @@ class MultiStepForm {
       pagination: {
         doneClass: "is-done",
         activeClass: "is-active"
+      },
+      validation: {
+        validate: true,
+        reportValidity: true
       }
     };
     this.initialized = false;
@@ -318,6 +322,7 @@ Component:`,
     return allValid;
   }
   validateCurrentStep(stepIndex) {
+    if (!this.options.validation.validate) return true;
     const basicError = `Validation failed for step: ${stepIndex + 1}/${this.formSteps.length}`;
     const currentStepElement = this.formSteps[stepIndex];
     const inputs = currentStepElement.querySelectorAll(wf.select.formInput);
@@ -329,14 +334,14 @@ Component:`,
       );
       return !isExcluded;
     });
-    let { isValid } = validateFields(filteredInputs);
-    if (!isValid) {
+    let { isValid } = validateFields(filteredInputs, this.options.validation.reportValidity);
+    if (!isValid && this.options.validation.reportValidity) {
       console.warn(`${basicError}: Standard validation is not valid`);
-      return isValid;
     }
+    if (!isValid) return false;
     const customValidators = this.customComponents.filter((entry) => entry.stepIndex === stepIndex).map((entry) => () => entry.validator());
     const customValid = customValidators?.every((validator) => validator()) ?? true;
-    if (!customValid) {
+    if (this.options.validation.reportValidity && !customValid) {
       console.warn(`${basicError}: Custom validation is not valid`);
     }
     return isValid && customValid;
