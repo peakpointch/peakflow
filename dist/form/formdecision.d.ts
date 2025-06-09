@@ -1,3 +1,10 @@
+interface FormDecisionAttributes {
+    component: string;
+    element: string;
+    pathId: string;
+    required: string;
+}
+type FormDecisionElement = "component" | "decision" | "input" | "path";
 /**
  * Represents a decision component within a form, managing conditional paths based on user input.
  *
@@ -9,28 +16,34 @@
  *   ```html
  *   <div data-decision-component="example">
  *     <div data-decision-element="decision">
- *       <input type="radio" data-decision-action="path1">
- *       <input type="radio" data-decision-action="path2">
+ *       <input type="radio" data-decision-element="input" data-path-id="path1">
+ *       <input type="radio" data-decision-element="input" data-path-id="path2">
  *     </div>
- *     <div data-decision-path="path1"></div>
- *     <div data-decision-path="path2"></div>
+ *     <div data-decision-element="path" data-path-id="path1"></div>
+ *     <div data-decision-element="path" data-path-id="path2"></div>
  *   </div>
  *   ```
  */
-export declare class FormDecision {
-    private component;
+export declare class FormDecision<PathId extends string = string> {
+    component: HTMLElement;
     private paths;
     private id;
     private formMessage;
     private decisionInputs;
     private errorMessages;
     private defaultErrorMessage;
+    private attr;
+    static get attr(): FormDecisionAttributes;
+    private _currentPath;
+    get currentPath(): PathId;
+    private set currentPath(value);
     /**
      * Constructs a new FormDecision instance.
      * @param component The FormDecision element.
      * @param id Unique identifier for the specific instance.
      */
     constructor(component: HTMLElement | null, id: string | undefined);
+    selector: import("src/attributeselector").AttributeSelector<FormDecisionElement>;
     /**
      * Initializes the FormDecision instance by setting up decision inputs & paths as well as their event listeners.
      */
@@ -40,7 +53,7 @@ export declare class FormDecision {
      * @param path The HTMLElement that contains the form fields of this path.
      * @param event The event that invokes this change.
      */
-    private handleChange;
+    private changeToPath;
     /**
      * Retrieves the currently selected decision input.
      * @returns The selected input element, or undefined if none is selected.
@@ -65,6 +78,7 @@ export declare class FormDecision {
      * @returns A boolean indicating whether the specified path is valid.
      */
     private checkPathValidity;
+    private initRequiredAttributes;
     /**
      * Updates the required attributes of input fields within the paths based on the selected decision input.
      */
@@ -75,3 +89,4 @@ export declare class FormDecision {
      */
     private handleValidationMessages;
 }
+export {};

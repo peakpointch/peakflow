@@ -1,6 +1,7 @@
 import wf from "../webflow";
 import { validateFields } from "./utility";
 import { FormMessage } from "./formmessage";
+import createAttribute from "src/attributeselector";
 class FormDecision {
   /**
    * Constructs a new FormDecision instance.
@@ -8,9 +9,11 @@ class FormDecision {
    * @param id Unique identifier for the specific instance.
    */
   constructor(component, id) {
-    this.paths = [];
+    this.paths = /* @__PURE__ */ new Map();
     this.errorMessages = {};
     this.defaultErrorMessage = "Please complete the required fields.";
+    this.attr = FormDecision.attr;
+    this.selector = createAttribute(FormDecision.attr.element);
     if (!component || !id) {
       console.error(`FormDecision: Component not found.`);
       return;
@@ -26,14 +29,27 @@ class FormDecision {
     this.formMessage = new FormMessage("FormDecision", id);
     this.initialize();
   }
+  static get attr() {
+    return {
+      component: "data-decision-component",
+      element: "data-decision-element",
+      pathId: "data-path-id",
+      required: "data-decision-required"
+    };
+  }
+  get currentPath() {
+    return this._currentPath;
+  }
+  set currentPath(pathId) {
+    this._currentPath = pathId;
+  }
   /**
    * Initializes the FormDecision instance by setting up decision inputs & paths as well as their event listeners.
    */
   initialize() {
-    const decisionFieldsWrapper = this.component.querySelector('[data-decision-element="decision"]') || this.component;
-    this.decisionInputs = decisionFieldsWrapper.querySelectorAll(
-      "input[data-decision-action]"
-    );
+    const decisionFieldsWrapper = this.component.querySelector(this.selector("decision")) || this.component;
+    const decisionInputsList = decisionFieldsWrapper.querySelectorAll(this.selector("input"));
+    this.decisionInputs = Array.from(decisionInputsList);
     if (this.decisionInputs.length === 0) {
       console.warn(
         `Decision component "${this.id}" does not contain any decision input elements.`
@@ -41,15 +57,16 @@ class FormDecision {
       return;
     }
     this.decisionInputs.forEach((input) => {
-      const path = this.component.querySelector(
-        `[data-decision-path="${input.dataset.decisionAction || input.value}"]`
-      );
+      const pathId = input.getAttribute(this.attr.pathId) || input.value;
+      const pathSelector = `${this.selector("path")}[${this.attr.pathId}="${pathId}"]`;
+      const path = this.component.querySelector(pathSelector);
       if (path) {
         path.style.display = "none";
-        this.paths.push(path);
+        this.initRequiredAttributes(path);
+        this.paths.set(pathId, path);
       }
       input.addEventListener("change", (event) => {
-        this.handleChange(path, event);
+        this.changeToPath(pathId, event);
         this.formMessage.reset();
       });
     });
@@ -60,10 +77,13 @@ class FormDecision {
    * @param path The HTMLElement that contains the form fields of this path.
    * @param event The event that invokes this change.
    */
-  handleChange(path, event) {
-    this.paths.forEach((entry) => {
-      entry.style.display = "none";
-    });
+  changeToPath(pathId, event) {
+    const prevPath = this.paths.get(this.currentPath);
+    if (prevPath) {
+      prevPath.style.display = "none";
+    }
+    this.currentPath = pathId;
+    const path = this.paths.get(this.currentPath);
     if (path) {
       path.style.removeProperty("display");
     }
@@ -88,11 +108,8 @@ class FormDecision {
       this.handleValidationMessages(false);
       return false;
     }
-    const pathId = selectedInput.dataset.decisionAction || selectedInput.value;
-    const pathIndex = this.paths.findIndex(
-      (path) => path.dataset.decisionPath === pathId
-    );
-    const isValid = pathIndex === -1 || this.checkPathValidity(pathIndex);
+    const pathId = selectedInput.getAttribute(this.attr.pathId) || selectedInput.value;
+    const isValid = !this.paths.has(pathId) || this.checkPathValidity(pathId);
     this.handleValidationMessages(isValid);
     return isValid;
   }
@@ -112,41 +129,37 @@ class FormDecision {
    * @param pathIndex The index of the path to validate.
    * @returns A boolean indicating whether the specified path is valid.
    */
-  checkPathValidity(pathIndex) {
-    const pathElement = this.paths[pathIndex];
+  checkPathValidity(pathId) {
+    const pathElement = this.paths.get(pathId);
     const inputs = pathElement.querySelectorAll(wf.select.formInput);
     const { isValid } = validateFields(inputs, true);
     return isValid;
+  }
+  initRequiredAttributes(path) {
+    const inputs = path.querySelectorAll(wf.select.input);
+    inputs.forEach((input) => {
+      input.setAttribute(this.attr.required, `${input.required}`);
+      input.required = false;
+    });
   }
   /**
    * Updates the required attributes of input fields within the paths based on the selected decision input.
    */
   updateRequiredAttributes() {
-    this.paths.forEach((path) => {
-      const inputs = path.querySelectorAll(
-        "input, select, textarea"
-      );
-      inputs.forEach((input) => {
-        input.required = false;
-      });
-    });
-    const selectedInput = this.component.querySelector(
-      "input[data-decision-action]:checked"
-    );
-    if (selectedInput) {
-      const pathId = selectedInput.dataset.decisionAction || selectedInput.value;
-      const selectedPath = this.paths.find(
-        (path) => path.dataset.decisionPath === pathId
-      );
-      if (selectedPath) {
-        const requiredFields = selectedPath.querySelectorAll(
-          '[data-decision-required="required"], [data-decision-required="true"]'
-        );
-        requiredFields.forEach((input) => {
-          input.required = true;
+    this.paths.forEach((path, pathId) => {
+      if (pathId === this.currentPath) {
+        const pathInputs = path.querySelectorAll(wf.select.formInput);
+        pathInputs.forEach((input) => {
+          const isRequired = input.matches(`[${this.attr.required}="required"], [${this.attr.required}="true"]`);
+          input.required = isRequired;
+        });
+      } else {
+        const pathInputs = path.querySelectorAll(wf.select.formInput);
+        pathInputs.forEach((input) => {
+          input.required = false;
         });
       }
-    }
+    });
   }
   /**
    * Displays validation message based on the current path.
