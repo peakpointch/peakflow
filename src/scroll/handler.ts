@@ -1,4 +1,4 @@
-import { isScrollbarVisible } from "./lock";
+import { isScrollbarVisible } from "./scrollbar";
 
 export type ScrollPosition = "start" | "center" | "end" | "nearest";
 

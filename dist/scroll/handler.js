@@ -1,4 +1,4 @@
-import { isScrollbarVisible } from "./lock";
+import { isScrollbarVisible } from "./scrollbar";
 class ScrollHandler {
   constructor(config) {
     this.scrollTimeoutId = null;

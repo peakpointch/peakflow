@@ -1,11 +1,11 @@
 import createAttribute from "./attributeselector";
 import deepMerge from "./deepmerge";
 import {
-  adjustPaddingForScrollbar,
   lockBodyScroll,
-  resetScrollbarPadding,
-  unlockBodyScroll
-} from "./scroll/lock";
+  unlockBodyScroll,
+  addScrollbarPadding,
+  removeScrollbarPadding
+} from "./scroll";
 import { ScrollHandler } from "./scroll/handler";
 const defaultModalAnimation = {
   type: "none",
@@ -185,7 +185,7 @@ const _Modal = class _Modal {
   async open() {
     this.component.dataset.state = "opening";
     if (this.settings.bodyScroll.lock) {
-      adjustPaddingForScrollbar(this.component, document.body);
+      addScrollbarPadding(this.component, document.body);
       lockBodyScroll(this.settings.bodyScroll.smooth);
     }
     await this.show();
@@ -200,7 +200,7 @@ const _Modal = class _Modal {
   async close() {
     this.component.dataset.state = "closing";
     if (this.settings.bodyScroll.lock) {
-      resetScrollbarPadding(this.component);
+      removeScrollbarPadding(this.component);
       unlockBodyScroll(this.settings.bodyScroll.smooth);
     }
     await this.hide();

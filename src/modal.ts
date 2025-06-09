@@ -1,11 +1,11 @@
 import createAttribute from "./attributeselector";
 import deepMerge from "./deepmerge";
 import {
-  adjustPaddingForScrollbar,
   lockBodyScroll,
-  resetScrollbarPadding,
-  unlockBodyScroll
-} from "./scroll/lock";
+  unlockBodyScroll,
+  addScrollbarPadding,
+  removeScrollbarPadding,
+} from "./scroll"
 import { ScrollHandler } from "./scroll/handler";
 
 type ModalElement = 'component' | 'modal' | 'open' | 'close' | 'cancel' | 'confirm' | 'scroll' | 'sticky-top' | 'sticky-bottom';
@@ -283,7 +283,7 @@ export default class Modal {
   public async open() {
     this.component.dataset.state = "opening";
     if (this.settings.bodyScroll.lock) {
-      adjustPaddingForScrollbar(this.component, document.body);
+      addScrollbarPadding(this.component, document.body);
       lockBodyScroll(this.settings.bodyScroll.smooth);
     }
     await this.show();
@@ -299,7 +299,7 @@ export default class Modal {
   public async close() {
     this.component.dataset.state = "closing";
     if (this.settings.bodyScroll.lock) {
-      resetScrollbarPadding(this.component);
+      removeScrollbarPadding(this.component);
       unlockBodyScroll(this.settings.bodyScroll.smooth);
     }
     await this.hide();

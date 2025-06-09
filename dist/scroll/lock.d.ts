@@ -19,11 +19,3 @@ export declare function lockBodyScroll(smooth: boolean): void;
  * @param smooth cleanup the padding added by lockBodyScroll's smooth option
  */
 export declare function unlockBodyScroll(smooth: boolean): void;
-export declare function isScrollbarVisible(element: HTMLElement): boolean;
-/**
- * @returns width of the scrollbar
- */
-export declare function getScrollbarWidth(element: HTMLElement): number;
-export declare function getVisibleScrollbarWidth(element: HTMLElement): number;
-export declare function adjustPaddingForScrollbar(element: HTMLElement, scrollbarElement?: HTMLElement): void;
-export declare function resetScrollbarPadding(element: HTMLElement): void;
