@@ -49,7 +49,8 @@ const _Modal = class _Modal {
    */
   static selector(element, instance) {
     const base = _Modal.attributeSelector(element);
-    return instance ? `${base}[${_Modal.attr.id}="${instance}"]` : base;
+    const instanceSelector = instance ? `[${_Modal.attr.id}="${instance}"]` : "";
+    return element === "component" ? `${base}${instanceSelector}` : `${base}${instanceSelector}, ${instanceSelector} ${base}`;
   }
   /**
    * Instance selector

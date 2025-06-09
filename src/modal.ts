@@ -97,9 +97,13 @@ export default class Modal {
    */
   public static selector(element: ModalElement, instance?: string): string {
     const base = Modal.attributeSelector(element);
-    return instance
-      ? `${base}[${Modal.attr.id}="${instance}"]`
-      : base;
+    const instanceSelector = instance
+      ? `[${Modal.attr.id}="${instance}"]`
+      : "";
+
+    return element === 'component'
+      ? `${base}${instanceSelector}`
+      : `${base}${instanceSelector}, ${instanceSelector} ${base}`;
   }
 
   /**
