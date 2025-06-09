@@ -9,8 +9,6 @@ interface CreateScrollToConfig {
     stickyTop?: HTMLElement | null;
     stickyBottom?: HTMLElement | null;
 }
-export type ScrollToFunction = (element: HTMLElement, options: Partial<OwnScrollToOptions>) => Promise<void>;
-export type ClearTimeoutFunction = () => void;
 export declare class ScrollHandler {
     private scrollWrapper;
     private stickyTop?;
