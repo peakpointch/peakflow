@@ -6,7 +6,7 @@ import {
   resetScrollbarPadding,
   unlockBodyScroll
 } from "./scroll/lock";
-import { createScrollTo } from "./scroll/scrollto";
+import { ScrollHandler } from "./scroll/handler";
 const defaultModalAnimation = {
   type: "none",
   duration: 0,
@@ -79,13 +79,13 @@ const _Modal = class _Modal {
     return this.modal;
   }
   setupScrollTo() {
-    const scrollHandler = createScrollTo({
+    this.scrollHandler = new ScrollHandler({
       scrollWrapper: this.modal,
       stickyTop: this.select("sticky-top"),
       stickyBottom: this.select("sticky-bottom")
     });
-    this.scrollTo = scrollHandler.scrollTo;
-    this.clearScrollTimeout = scrollHandler.clearScrollTimeout;
+    this.scrollTo = this.scrollHandler.scrollTo.bind(this.scrollHandler);
+    this.clearScrollTimeout = this.scrollHandler.clearScrollTimeout.bind(this.scrollHandler);
   }
   setupStickyFooter() {
     const modalContent = this.component.querySelector(_Modal.selector("scroll"));

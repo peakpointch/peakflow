@@ -2,12 +2,11 @@ import createAttribute from "./attributeselector";
 import deepMerge from "./deepmerge";
 import {
   adjustPaddingForScrollbar,
-  isScrollbarVisible,
   lockBodyScroll,
   resetScrollbarPadding,
   unlockBodyScroll
 } from "./scroll/lock";
-import { ClearTimeoutFunction, createScrollTo, ScrollToFunction } from "./scroll/scrollto";
+import { ScrollHandler } from "./scroll/handler";
 
 type ModalElement = 'component' | 'modal' | 'open' | 'close' | 'cancel' | 'confirm' | 'scroll' | 'sticky-top' | 'sticky-bottom';
 type ModalAnimationType = 'fade' | 'slideUp' | 'growIn' | 'custom' | 'none';
@@ -62,8 +61,9 @@ export default class Modal {
     id: 'data-modal-id',
     element: 'data-modal-element',
   };
-  public scrollTo: ScrollToFunction;
-  public clearScrollTimeout: ClearTimeoutFunction;
+  public scrollHandler: ScrollHandler;
+  public scrollTo: ScrollHandler["scrollTo"];
+  public clearScrollTimeout: ScrollHandler["clearScrollTimeout"];
 
   constructor(component: HTMLElement | null, settings: Partial<ModalSettings> = {}) {
     if (!component) {
@@ -148,14 +148,14 @@ export default class Modal {
   }
 
   public setupScrollTo(): void {
-    const scrollHandler = createScrollTo({
+    this.scrollHandler = new ScrollHandler({
       scrollWrapper: this.modal,
       stickyTop: this.select('sticky-top'),
       stickyBottom: this.select('sticky-bottom')
     });
 
-    this.scrollTo = scrollHandler.scrollTo;
-    this.clearScrollTimeout = scrollHandler.clearScrollTimeout;
+    this.scrollTo = this.scrollHandler.scrollTo.bind(this.scrollHandler);
+    this.clearScrollTimeout = this.scrollHandler.clearScrollTimeout.bind(this.scrollHandler);
   }
 
   private setupStickyFooter(): void {
