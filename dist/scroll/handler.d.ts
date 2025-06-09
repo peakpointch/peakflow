@@ -11,8 +11,13 @@ interface CreateScrollToConfig {
 }
 export type ScrollToFunction = (element: HTMLElement, options: Partial<OwnScrollToOptions>) => Promise<void>;
 export type ClearTimeoutFunction = () => void;
-export declare function createScrollTo(config: CreateScrollToConfig): {
-    scrollTo: ScrollToFunction;
-    clearScrollTimeout: ClearTimeoutFunction;
-};
+export declare class ScrollHandler {
+    private scrollWrapper;
+    private stickyTop?;
+    private stickyBottom?;
+    private scrollTimeoutId;
+    constructor(config: CreateScrollToConfig);
+    clearScrollTimeout(): void;
+    scrollTo(element: HTMLElement, options?: Partial<OwnScrollToOptions>): Promise<void>;
+}
 export {};

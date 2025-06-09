@@ -17,34 +17,44 @@ interface CreateScrollToConfig {
 export type ScrollToFunction = (element: HTMLElement, options: Partial<OwnScrollToOptions>) => Promise<void>;
 export type ClearTimeoutFunction = () => void;
 
-export function createScrollTo(
-  config: CreateScrollToConfig
-): {
-  scrollTo: ScrollToFunction;
-  clearScrollTimeout: ClearTimeoutFunction;
-} {
-  let scrollTimeoutId: number | null = null;
+export class ScrollHandler {
+  private scrollWrapper: HTMLElement;
+  private stickyTop?: HTMLElement | null;
+  private stickyBottom?: HTMLElement | null;
+  private scrollTimeoutId: number | null = null;
 
-  const clearScrollTimeout = () => {
-    if (scrollTimeoutId !== null) {
-      clearTimeout(scrollTimeoutId);
-      scrollTimeoutId = null;
+  constructor(config: CreateScrollToConfig) {
+    this.scrollWrapper = config.scrollWrapper;
+    this.stickyTop = config.stickyTop ?? null;
+    this.stickyBottom = config.stickyBottom ?? null;
+
+    if (!this.scrollWrapper) {
+      throw new Error(`Couldn't construct ScrollHandler: The property "scrollWrapper" can't be undefined`);
     }
-  };
+  }
 
-  const { scrollWrapper, stickyTop, stickyBottom } = config;
+  public clearScrollTimeout(): void {
+    if (this.scrollTimeoutId !== null) {
+      clearTimeout(this.scrollTimeoutId);
+      this.scrollTimeoutId = null;
+    }
+  }
 
-  const scrollTo = async (
+  public scrollTo(
     element: HTMLElement,
     options: Partial<OwnScrollToOptions> = {}
-  ): Promise<void> => {
-    clearScrollTimeout();
+  ): Promise<void> {
+    this.clearScrollTimeout();
 
-    if (!element || !scrollWrapper.contains(element)) {
-      throw new Error("The element to scroll into view is not inside the scroll container.");
+    if (!element || !this.scrollWrapper.contains(element)) {
+      return Promise.reject(
+        new Error(
+          "The element to scroll into view is not inside the scroll container."
+        )
+      );
     }
 
-    if (!isScrollbarVisible(scrollWrapper)) return;
+    if (!isScrollbarVisible(this.scrollWrapper)) return Promise.resolve();
 
     const opts: OwnScrollToOptions = {
       delay: options.delay ?? 0,
@@ -53,11 +63,11 @@ export function createScrollTo(
     };
 
     return new Promise<void>((resolve) => {
-      scrollTimeoutId = window.setTimeout(() => {
+      this.scrollTimeoutId = window.setTimeout(() => {
         const elementRect = element.getBoundingClientRect();
-        const wrapperRect = scrollWrapper.getBoundingClientRect();
-        const stickyTopHeight = stickyTop?.clientHeight || 0;
-        const stickyBottomHeight = stickyBottom?.clientHeight || 0;
+        const wrapperRect = this.scrollWrapper.getBoundingClientRect();
+        const stickyTopHeight = this.stickyTop?.clientHeight || 0;
+        const stickyBottomHeight = this.stickyBottom?.clientHeight || 0;
 
         const relativePosition = elementRect.top - wrapperRect.top;
 
@@ -73,32 +83,33 @@ export function createScrollTo(
           case "center":
             scrollOffset =
               relativePosition -
-              scrollWrapper.clientHeight / 2 +
+              this.scrollWrapper.clientHeight / 2 +
               element.clientHeight / 2 +
               opts.offset;
             break;
           case "end":
             scrollOffset =
               relativePosition -
-              scrollWrapper.clientHeight +
+              this.scrollWrapper.clientHeight +
               element.clientHeight +
               stickyBottomHeight +
               opts.offset;
             break;
           case "nearest":
             if (isFullyVisible) {
-              clearScrollTimeout();
-              return resolve();
+              this.clearScrollTimeout();
+              resolve();
+              return;
             }
             scrollOffset =
               relativePosition -
-              scrollWrapper.clientHeight / 2 +
+              this.scrollWrapper.clientHeight / 2 +
               element.clientHeight / 2 +
               opts.offset;
             break;
         }
 
-        scrollWrapper.scrollBy({
+        this.scrollWrapper.scrollBy({
           top: scrollOffset,
           behavior: "smooth",
         });
@@ -106,7 +117,5 @@ export function createScrollTo(
         resolve();
       }, opts.delay);
     });
-  };
-
-  return { scrollTo, clearScrollTimeout };
+  }
 }
