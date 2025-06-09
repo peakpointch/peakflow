@@ -2,13 +2,13 @@ import { isScrollbarVisible } from "./lock";
 
 export type ScrollPosition = "start" | "center" | "end" | "nearest";
 
-interface OwnScrollToOptions {
+interface ScrollToOptions extends ScrollOptions {
   delay: number;
   offset: number;
   position: ScrollPosition;
 }
 
-interface CreateScrollToConfig {
+interface ScrollHandlerConfig {
   scrollWrapper: HTMLElement;
   stickyTop?: HTMLElement | null;
   stickyBottom?: HTMLElement | null;
@@ -20,7 +20,7 @@ export class ScrollHandler {
   private stickyBottom?: HTMLElement | null;
   private scrollTimeoutId: number | null = null;
 
-  constructor(config: CreateScrollToConfig) {
+  constructor(config: ScrollHandlerConfig) {
     this.scrollWrapper = config.scrollWrapper;
     this.stickyTop = config.stickyTop ?? null;
     this.stickyBottom = config.stickyBottom ?? null;
@@ -39,7 +39,7 @@ export class ScrollHandler {
 
   public scrollTo(
     element: HTMLElement,
-    options: Partial<OwnScrollToOptions> = {}
+    options: Partial<ScrollToOptions> = {}
   ): Promise<void> {
     this.clearScrollTimeout();
 
@@ -53,10 +53,11 @@ export class ScrollHandler {
 
     if (!isScrollbarVisible(this.scrollWrapper)) return Promise.resolve();
 
-    const opts: OwnScrollToOptions = {
+    const opts: ScrollToOptions = {
       delay: options.delay ?? 0,
       offset: options.offset ?? 0,
       position: options.position ?? "start",
+      behavior: options.behavior ?? "smooth",
     };
 
     return new Promise<void>((resolve) => {
@@ -108,7 +109,7 @@ export class ScrollHandler {
 
         this.scrollWrapper.scrollBy({
           top: scrollOffset,
-          behavior: "smooth",
+          behavior: opts.behavior,
         });
 
         resolve();

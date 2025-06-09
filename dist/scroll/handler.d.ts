@@ -1,10 +1,10 @@
 export type ScrollPosition = "start" | "center" | "end" | "nearest";
-interface OwnScrollToOptions {
+interface ScrollToOptions extends ScrollOptions {
     delay: number;
     offset: number;
     position: ScrollPosition;
 }
-interface CreateScrollToConfig {
+interface ScrollHandlerConfig {
     scrollWrapper: HTMLElement;
     stickyTop?: HTMLElement | null;
     stickyBottom?: HTMLElement | null;
@@ -14,8 +14,8 @@ export declare class ScrollHandler {
     private stickyTop?;
     private stickyBottom?;
     private scrollTimeoutId;
-    constructor(config: CreateScrollToConfig);
+    constructor(config: ScrollHandlerConfig);
     clearScrollTimeout(): void;
-    scrollTo(element: HTMLElement, options?: Partial<OwnScrollToOptions>): Promise<void>;
+    scrollTo(element: HTMLElement, options?: Partial<ScrollToOptions>): Promise<void>;
 }
 export {};

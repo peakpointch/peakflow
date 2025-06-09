@@ -28,7 +28,8 @@ class ScrollHandler {
     const opts = {
       delay: options.delay ?? 0,
       offset: options.offset ?? 0,
-      position: options.position ?? "start"
+      position: options.position ?? "start",
+      behavior: options.behavior ?? "smooth"
     };
     return new Promise((resolve) => {
       this.scrollTimeoutId = window.setTimeout(() => {
@@ -60,7 +61,7 @@ class ScrollHandler {
         }
         this.scrollWrapper.scrollBy({
           top: scrollOffset,
-          behavior: "smooth"
+          behavior: opts.behavior
         });
         resolve();
       }, opts.delay);
