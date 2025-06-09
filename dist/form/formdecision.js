@@ -1,7 +1,7 @@
 import wf from "../webflow";
 import { validateFields } from "./utility";
 import { FormMessage } from "./formmessage";
-import createAttribute from "src/attributeselector";
+import createAttribute from "../attributeselector";
 class FormDecision {
   /**
    * Constructs a new FormDecision instance.

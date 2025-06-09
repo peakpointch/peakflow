@@ -1,8 +1,7 @@
 import wf from "../webflow";
 import { HTMLFormInput, validateFields } from "./utility";
 import { FormMessage } from "./formmessage";
-import createAttribute, { exclude } from "src/attributeselector";
-import { Path } from "html2canvas/dist/types/render/path";
+import createAttribute from "../attributeselector";
 
 interface FormDecisionAttributes {
   component: string;
