@@ -4,7 +4,8 @@ interface FormDecisionAttributes {
     pathId: string;
     required: string;
 }
-type FormDecisionElement = "component" | "decision" | "input" | "path";
+export type FormDecisionElement = "component" | "decision" | "input" | "path";
+type DecisionPathMap<PathId extends string = string> = Map<PathId, HTMLElement>;
 /**
  * Represents a decision component within a form, managing conditional paths based on user input.
  *
@@ -32,6 +33,7 @@ export declare class FormDecision<PathId extends string = string> {
     private decisionInputs;
     private errorMessages;
     private defaultErrorMessage;
+    private onChangeCallback;
     private attr;
     static get attr(): FormDecisionAttributes;
     private _currentPath;
@@ -53,7 +55,7 @@ export declare class FormDecision<PathId extends string = string> {
      * @param path The HTMLElement that contains the form fields of this path.
      * @param event The event that invokes this change.
      */
-    private changeToPath;
+    changeToPath(pathId: PathId, event?: Event): void;
     /**
      * Retrieves the currently selected decision input.
      * @returns The selected input element, or undefined if none is selected.
@@ -88,5 +90,7 @@ export declare class FormDecision<PathId extends string = string> {
      * @param currentGroupValid A boolean indicating whether the current group of inputs is valid.
      */
     private handleValidationMessages;
+    onChange(callback: () => void): void;
+    clearOnChange(): void;
 }
 export {};

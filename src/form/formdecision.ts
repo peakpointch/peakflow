@@ -46,6 +46,7 @@ export class FormDecision<PathId extends string = string> {
   private decisionInputs: HTMLInputElement[];
   private errorMessages: { [key: string]: string } = {};
   private defaultErrorMessage: string = "Please complete the required fields.";
+  private onChangeCallback: () => void = () => { };
   private attr = FormDecision.attr;
   public static get attr(): FormDecisionAttributes {
     return {
@@ -122,7 +123,6 @@ export class FormDecision<PathId extends string = string> {
 
       input.addEventListener("change", (event) => {
         this.changeToPath(pathId, event);
-        this.formMessage.reset();
       });
     });
 
@@ -134,7 +134,7 @@ export class FormDecision<PathId extends string = string> {
    * @param path The HTMLElement that contains the form fields of this path.
    * @param event The event that invokes this change.
    */
-  private changeToPath(pathId: PathId, event: Event): void {
+  public changeToPath(pathId: PathId, event?: Event): void {
     const prevPath = this.paths.get(this.currentPath);
     if (prevPath) {
       prevPath.style.display = "none";
@@ -149,6 +149,8 @@ export class FormDecision<PathId extends string = string> {
     }
 
     this.updateRequiredAttributes();
+    this.onChangeCallback();
+    this.formMessage.reset();
   }
 
   /**
@@ -257,5 +259,13 @@ export class FormDecision<PathId extends string = string> {
       this.formMessage.reset();
     }
   }
-}
 
+  public onChange(callback: () => void): void {
+    this.clearOnChange();
+    this.onChangeCallback = callback;
+  }
+
+  public clearOnChange(): void {
+    this.onChangeCallback = () => { };
+  }
+}
