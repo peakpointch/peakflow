@@ -11,5 +11,5 @@ export default class Accordion {
     open(): void;
     close(): void;
     toggle(): void;
-    scrollIntoView(): void;
+    scrollIntoView(scrollWrapper: HTMLElement, offset?: number): void;
 }

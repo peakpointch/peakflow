@@ -1,9 +1,5 @@
 import createAttribute from "./attributeselector";
 
-type ModalElement = 'scroll' | 'sticky-top' | 'sticky-bottom';
-
-const modalSelector = createAttribute<ModalElement>('data-modal-element');
-
 export default class Accordion {
   public component: HTMLElement;
   public uiTrigger: HTMLElement;
@@ -57,11 +53,7 @@ export default class Accordion {
     }
   }
 
-  public scrollIntoView(): void {
-    let offset = 0;
-    const scrollWrapper: HTMLElement | null = this.component.closest(
-      modalSelector('scroll')
-    );
+  public scrollIntoView(scrollWrapper: HTMLElement, offset: number = 0): void {
     const elementPosition = this.component.getBoundingClientRect().top;
 
     // Check if there is a scrollable wrapper (like a modal)

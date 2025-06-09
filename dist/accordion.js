@@ -1,5 +1,3 @@
-import createAttribute from "./attributeselector";
-const modalSelector = createAttribute("data-modal-element");
 class Accordion {
   constructor(component) {
     this.isOpen = false;
@@ -43,11 +41,7 @@ class Accordion {
       this.open();
     }
   }
-  scrollIntoView() {
-    let offset = 0;
-    const scrollWrapper = this.component.closest(
-      modalSelector("scroll")
-    );
+  scrollIntoView(scrollWrapper, offset = 0) {
     const elementPosition = this.component.getBoundingClientRect().top;
     if (scrollWrapper) {
       const wrapperPosition = scrollWrapper.getBoundingClientRect().top;
