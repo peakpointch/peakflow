@@ -27,8 +27,8 @@ type DecisionPathMap<PathId extends string = string> = Map<PathId, HTMLElement>;
  */
 export declare class FormDecision<PathId extends string = string> {
     component: HTMLElement;
-    private paths;
-    private id;
+    id: string;
+    paths: DecisionPathMap<PathId>;
     private formMessage;
     private decisionInputs;
     private errorMessages;
@@ -45,7 +45,8 @@ export declare class FormDecision<PathId extends string = string> {
      * @param id Unique identifier for the specific instance.
      */
     constructor(component: HTMLElement | null, id: string | undefined);
-    selector: import("src/attributeselector").AttributeSelector<FormDecisionElement>;
+    static selector: import("../attributeselector").AttributeSelector<FormDecisionElement>;
+    selector: import("../attributeselector").AttributeSelector<FormDecisionElement>;
     /**
      * Initializes the FormDecision instance by setting up decision inputs & paths as well as their event listeners.
      */

@@ -10,7 +10,7 @@ interface FormDecisionAttributes {
   required: string;
 }
 
-type FormDecisionElement =
+export type FormDecisionElement =
   "component"
   | "decision"
   | "input"
@@ -39,8 +39,8 @@ type DecisionPathMap<PathId extends string = string> = Map<PathId, HTMLElement>;
  */
 export class FormDecision<PathId extends string = string> {
   public component: HTMLElement;
-  private paths: DecisionPathMap<PathId> = new Map();
-  private id: string;
+  public id: string;
+  public paths: DecisionPathMap<PathId> = new Map();
   private formMessage: FormMessage;
   private decisionInputs: HTMLInputElement[];
   private errorMessages: { [key: string]: string } = {};
@@ -82,11 +82,12 @@ export class FormDecision<PathId extends string = string> {
     }
 
     this.component = component;
-    this.id = id;
+    this.id = id || this.component.getAttribute(this.attr.component);
     this.formMessage = new FormMessage("FormDecision", id); // Assuming you want to initialize a FormMessage
     this.initialize();
   }
 
+  public static selector = createAttribute<FormDecisionElement>(FormDecision.attr.element);
   public selector = createAttribute<FormDecisionElement>(FormDecision.attr.element);
 
   /**
@@ -117,8 +118,9 @@ export class FormDecision<PathId extends string = string> {
       if (path) {
         path.style.display = "none";
         this.initRequiredAttributes(path);
-        this.paths.set(pathId, path);
       }
+      // Set path anyways to keep path id
+      this.paths.set(pathId, path);
 
       input.addEventListener("change", (event) => {
         this.changeToPath(pathId, event);
@@ -205,6 +207,7 @@ export class FormDecision<PathId extends string = string> {
   private checkPathValidity(pathId: PathId): boolean {
     // Get the path element and the form inputs inside it
     const pathElement = this.paths.get(pathId);
+    if (!pathElement) return true;
     const inputs: NodeListOf<HTMLFormInput> =
       pathElement.querySelectorAll(wf.select.formInput);
 
@@ -228,6 +231,8 @@ export class FormDecision<PathId extends string = string> {
   private updateRequiredAttributes(): void {
     // For the currently selected path, set inputs with [data-decision-required="required"] as required
     this.paths.forEach((path, pathId) => {
+      if (!path) return;
+
       if (pathId === this.currentPath) {
         const pathInputs = path.querySelectorAll<HTMLFormInput>(wf.select.formInput);
         pathInputs.forEach((input) => {
@@ -249,10 +254,8 @@ export class FormDecision<PathId extends string = string> {
    */
   private handleValidationMessages(currentGroupValid: boolean): void {
     if (!currentGroupValid) {
-      const selectedInput = this.getSelectedInput();
-      const pathId = selectedInput?.dataset.decisionAction || selectedInput?.value;
       const customMessage =
-        this.errorMessages[pathId!] || this.defaultErrorMessage;
+        this.errorMessages[this.currentPath] || this.defaultErrorMessage;
       this.formMessage.error(customMessage);
     } else {
       this.formMessage.reset();

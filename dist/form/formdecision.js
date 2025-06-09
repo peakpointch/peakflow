@@ -2,7 +2,7 @@ import wf from "../webflow";
 import { validateFields } from "./utility";
 import { FormMessage } from "./formmessage";
 import createAttribute from "../attributeselector";
-class FormDecision {
+const _FormDecision = class _FormDecision {
   /**
    * Constructs a new FormDecision instance.
    * @param component The FormDecision element.
@@ -12,8 +12,10 @@ class FormDecision {
     this.paths = /* @__PURE__ */ new Map();
     this.errorMessages = {};
     this.defaultErrorMessage = "Please complete the required fields.";
-    this.attr = FormDecision.attr;
-    this.selector = createAttribute(FormDecision.attr.element);
+    this.onChangeCallback = () => {
+    };
+    this.attr = _FormDecision.attr;
+    this.selector = createAttribute(_FormDecision.attr.element);
     if (!component || !id) {
       console.error(`FormDecision: Component not found.`);
       return;
@@ -25,7 +27,7 @@ class FormDecision {
       return;
     }
     this.component = component;
-    this.id = id;
+    this.id = id || this.component.getAttribute(this.attr.component);
     this.formMessage = new FormMessage("FormDecision", id);
     this.initialize();
   }
@@ -63,11 +65,10 @@ class FormDecision {
       if (path) {
         path.style.display = "none";
         this.initRequiredAttributes(path);
-        this.paths.set(pathId, path);
       }
+      this.paths.set(pathId, path);
       input.addEventListener("change", (event) => {
         this.changeToPath(pathId, event);
-        this.formMessage.reset();
       });
     });
     this.component.addEventListener("change", () => this.formMessage.reset());
@@ -88,6 +89,8 @@ class FormDecision {
       path.style.removeProperty("display");
     }
     this.updateRequiredAttributes();
+    this.onChangeCallback();
+    this.formMessage.reset();
   }
   /**
    * Retrieves the currently selected decision input.
@@ -131,6 +134,7 @@ class FormDecision {
    */
   checkPathValidity(pathId) {
     const pathElement = this.paths.get(pathId);
+    if (!pathElement) return true;
     const inputs = pathElement.querySelectorAll(wf.select.formInput);
     const { isValid } = validateFields(inputs, true);
     return isValid;
@@ -147,6 +151,7 @@ class FormDecision {
    */
   updateRequiredAttributes() {
     this.paths.forEach((path, pathId) => {
+      if (!path) return;
       if (pathId === this.currentPath) {
         const pathInputs = path.querySelectorAll(wf.select.formInput);
         pathInputs.forEach((input) => {
@@ -167,15 +172,23 @@ class FormDecision {
    */
   handleValidationMessages(currentGroupValid) {
     if (!currentGroupValid) {
-      const selectedInput = this.getSelectedInput();
-      const pathId = selectedInput?.dataset.decisionAction || selectedInput?.value;
-      const customMessage = this.errorMessages[pathId] || this.defaultErrorMessage;
+      const customMessage = this.errorMessages[this.currentPath] || this.defaultErrorMessage;
       this.formMessage.error(customMessage);
     } else {
       this.formMessage.reset();
     }
   }
-}
+  onChange(callback) {
+    this.clearOnChange();
+    this.onChangeCallback = callback;
+  }
+  clearOnChange() {
+    this.onChangeCallback = () => {
+    };
+  }
+};
+_FormDecision.selector = createAttribute(_FormDecision.attr.element);
+let FormDecision = _FormDecision;
 export {
   FormDecision
 };
