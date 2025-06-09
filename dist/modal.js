@@ -25,7 +25,6 @@ const defaultModalSettings = {
 const _Modal = class _Modal {
   constructor(component, settings = {}) {
     this.initialized = false;
-    this.scrollTimeoutId = null;
     if (!component) {
       throw new Error(`The component HTMLElement cannot be undefined.`);
     }

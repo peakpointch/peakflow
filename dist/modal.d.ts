@@ -30,7 +30,6 @@ export default class Modal {
     settings: ModalSettings;
     instance: string;
     static attr: ModalAttributes;
-    private scrollTimeoutId;
     scrollTo: ScrollToFunction;
     clearScrollTimeout: ClearTimeoutFunction;
     constructor(component: HTMLElement | null, settings?: Partial<ModalSettings>);
