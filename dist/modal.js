@@ -2,11 +2,11 @@ import createAttribute from "./attributeselector";
 import deepMerge from "./deepmerge";
 import {
   adjustPaddingForScrollbar,
-  isScrollbarVisible,
   lockBodyScroll,
   resetScrollbarPadding,
   unlockBodyScroll
 } from "./scroll/lock";
+import { createScrollTo } from "./scroll/scrollto";
 const defaultModalAnimation = {
   type: "none",
   duration: 0,
@@ -25,6 +25,7 @@ const defaultModalSettings = {
 const _Modal = class _Modal {
   constructor(component, settings = {}) {
     this.initialized = false;
+    this.scrollTimeoutId = null;
     if (!component) {
       throw new Error(`The component HTMLElement cannot be undefined.`);
     }
@@ -35,6 +36,7 @@ const _Modal = class _Modal {
     component.setAttribute(_Modal.attr.id, this.instance);
     this.component.setAttribute("role", "dialog");
     this.component.setAttribute("aria-modal", "true");
+    this.setupScrollTo();
     this.setInitialState();
     this.setupStickyFooter();
     if (this.modal === this.component) {
@@ -75,6 +77,15 @@ const _Modal = class _Modal {
     }
     if (!this.modal) this.modal = this.component;
     return this.modal;
+  }
+  setupScrollTo() {
+    const scrollHandler = createScrollTo({
+      scrollWrapper: this.modal,
+      stickyTop: this.select("sticky-top"),
+      stickyBottom: this.select("sticky-bottom")
+    });
+    this.scrollTo = scrollHandler.scrollTo;
+    this.clearScrollTimeout = scrollHandler.clearScrollTimeout;
   }
   setupStickyFooter() {
     const modalContent = this.component.querySelector(_Modal.selector("scroll"));

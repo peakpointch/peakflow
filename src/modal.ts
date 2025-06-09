@@ -7,6 +7,7 @@ import {
   resetScrollbarPadding,
   unlockBodyScroll
 } from "./scroll/lock";
+import { ClearTimeoutFunction, createScrollTo, ScrollToFunction } from "./scroll/scrollto";
 
 type ModalElement = 'component' | 'modal' | 'open' | 'close' | 'cancel' | 'confirm' | 'scroll' | 'sticky-top' | 'sticky-bottom';
 type ModalAnimationType = 'fade' | 'slideUp' | 'growIn' | 'custom' | 'none';
@@ -61,6 +62,8 @@ export default class Modal {
     id: 'data-modal-id',
     element: 'data-modal-element',
   };
+  public scrollTo: ScrollToFunction;
+  public clearScrollTimeout: ClearTimeoutFunction;
 
   constructor(component: HTMLElement | null, settings: Partial<ModalSettings> = {}) {
     if (!component) {
@@ -76,6 +79,7 @@ export default class Modal {
     this.component.setAttribute('role', 'dialog');
     this.component.setAttribute('aria-modal', 'true');
 
+    this.setupScrollTo();
     this.setInitialState();
     this.setupStickyFooter();
 
@@ -137,6 +141,17 @@ export default class Modal {
     if (!this.modal) this.modal = this.component;
 
     return this.modal;
+  }
+
+  public setupScrollTo(): void {
+    const scrollHandler = createScrollTo({
+      scrollWrapper: this.modal,
+      stickyTop: this.select('sticky-top'),
+      stickyBottom: this.select('sticky-bottom')
+    });
+
+    this.scrollTo = scrollHandler.scrollTo;
+    this.clearScrollTimeout = scrollHandler.clearScrollTimeout;
   }
 
   private setupStickyFooter(): void {

@@ -1,3 +1,4 @@
+import { ClearTimeoutFunction, ScrollToFunction } from "./scroll/scrollto";
 type ModalElement = 'component' | 'modal' | 'open' | 'close' | 'cancel' | 'confirm' | 'scroll' | 'sticky-top' | 'sticky-bottom';
 type ModalAnimationType = 'fade' | 'slideUp' | 'growIn' | 'custom' | 'none';
 interface ModalAnimation {
@@ -29,6 +30,9 @@ export default class Modal {
     settings: ModalSettings;
     instance: string;
     static attr: ModalAttributes;
+    private scrollTimeoutId;
+    scrollTo: ScrollToFunction;
+    clearScrollTimeout: ClearTimeoutFunction;
     constructor(component: HTMLElement | null, settings?: Partial<ModalSettings>);
     private static attributeSelector;
     /**
@@ -44,6 +48,7 @@ export default class Modal {
     select<T extends Element = HTMLElement>(element: ModalElement, local?: boolean): T;
     selectAll<T extends Element = HTMLElement>(element: ModalElement, local?: boolean): NodeListOf<T>;
     private getModalElement;
+    setupScrollTo(): void;
     private setupStickyFooter;
     private setupScrollEvent;
     private setInitialState;
