@@ -8,7 +8,7 @@ import {
   enforceButtonTypes
 } from ".";
 import wf from "../webflow";
-import mapToObject from "../maptoobject";
+import mapToObject from "../utils/maptoobject";
 import deepMerge from "../deepmerge";
 ;
 const stepsElementSelector = createAttribute("data-steps-element", {

@@ -1,4 +1,4 @@
-import mapToObject from "../maptoobject";
+import mapToObject from "../utils/maptoobject";
 import { FormField, FieldData } from "./formfield";
 import { HTMLFormInput } from "./utility";
 

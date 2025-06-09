@@ -12,7 +12,7 @@ import {
   CustomValidator,
 } from ".";
 import wf from "../webflow";
-import mapToObject from "../maptoobject"
+import mapToObject from "../utils/maptoobject"
 import deepMerge from "../deepmerge";
 
 // Types

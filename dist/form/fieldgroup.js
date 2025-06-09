@@ -1,4 +1,4 @@
-import mapToObject from "../maptoobject";
+import mapToObject from "../utils/maptoobject";
 import { FormField } from "./formfield";
 class FieldGroup {
   constructor(fields = /* @__PURE__ */ new Map()) {
