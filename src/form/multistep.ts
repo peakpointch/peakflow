@@ -498,7 +498,7 @@ export class MultiStepForm {
 
     const stepElement = this.formSteps[step];
     const stepInputs: NodeListOf<HTMLFormInput> =
-      stepElement.querySelectorAll(exclude(wf.select.formInput, `${stepsElementSelector("custom-component")} ${wf.select.formInput}`));
+      stepElement.querySelectorAll(exclude(wf.select.formInput, `${stepsElementSelector("custom-component", { exclusions: [] })} *`));
     stepInputs.forEach((input, inputIndex) => {
       const entry = fieldFromInput(input, inputIndex);
       if (entry?.id) {

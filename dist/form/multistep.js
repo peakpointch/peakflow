@@ -357,7 +357,7 @@ Component:`,
   getFieldMapForStep(step) {
     let fields = /* @__PURE__ */ new Map();
     const stepElement = this.formSteps[step];
-    const stepInputs = stepElement.querySelectorAll(exclude(wf.select.formInput, `${stepsElementSelector("custom-component")} ${wf.select.formInput}`));
+    const stepInputs = stepElement.querySelectorAll(exclude(wf.select.formInput, `${stepsElementSelector("custom-component", { exclusions: [] })} *`));
     stepInputs.forEach((input, inputIndex) => {
       const entry = fieldFromInput(input, inputIndex);
       if (entry?.id) {
