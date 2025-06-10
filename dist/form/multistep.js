@@ -360,7 +360,7 @@ Component:`,
     const stepInputs = stepElement.querySelectorAll(exclude(wf.select.formInput, `${stepsElementSelector("custom-component", { exclusions: [] })} *`));
     stepInputs.forEach((input, inputIndex) => {
       const entry = fieldFromInput(input, inputIndex);
-      if (entry?.id) {
+      if (entry.id) {
         fields.set(entry.id, entry.value);
       }
     });
