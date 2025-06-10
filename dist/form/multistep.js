@@ -129,7 +129,7 @@ Component:`,
       this.submitButton.value = this.submitButton.dataset.wait || "Wird gesendet ...";
     }
     const formData = this.buildJsonForWebflow();
-    console.log(formData);
+    debugger;
     const success = await sendFormData(formData);
     if (success) {
       this.onFormSuccess();

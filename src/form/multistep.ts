@@ -12,7 +12,7 @@ import {
   CustomValidator,
 } from ".";
 import wf from "../webflow";
-import mapToObject from "../utils/maptoobject"
+import mapToObject from "../utils/maptoobject";
 import deepMerge from "../deepmerge";
 
 // Types
@@ -206,7 +206,8 @@ export class MultiStepForm {
     }
 
     const formData = this.buildJsonForWebflow();
-    console.log(formData);
+
+    debugger;
 
     // Submit form
     const success = await sendFormData(formData);
