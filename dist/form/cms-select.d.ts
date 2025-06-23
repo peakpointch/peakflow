@@ -1,4 +1,4 @@
-type CMSSelectElement = 'source' | 'target' | 'value';
+type CMSSelectElement = 'source' | 'target' | 'option';
 interface CMSSelectAttr {
     element: string;
     prefix: string;

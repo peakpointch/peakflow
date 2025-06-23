@@ -1,7 +1,7 @@
 import createAttribute from "../attributeselector";
 import { getAllElements, getElement } from "../utils/getelements";
 
-type CMSSelectElement = 'source' | 'target' | 'value';
+type CMSSelectElement = 'source' | 'target' | 'option';
 interface CMSSelectAttr {
   element: string;
   prefix: string;
@@ -83,15 +83,14 @@ export default class CMSSelect {
 
   public readValues(): void {
     this.values = [];
-    const valueElements = getAllElements(CMSSelect.selector('value'));
-    valueElements.forEach(element => {
+    const optionElements = this.source.querySelectorAll<HTMLElement>(CMSSelect.selector('option'));
+    optionElements.forEach(element => {
       this.values.push(this.getSelectValue(element));
     });
   }
 
   private insertSelectOptions(targets: HTMLSelectElement[] = this.targets) {
     this.values.forEach(val => {
-
       if (val) {
         const option = CMSSelect.createOption(val);
         targets.forEach(target => target.appendChild(option));

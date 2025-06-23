@@ -58,8 +58,8 @@ const _CMSSelect = class _CMSSelect {
   }
   readValues() {
     this.values = [];
-    const valueElements = getAllElements(_CMSSelect.selector("value"));
-    valueElements.forEach((element) => {
+    const optionElements = this.source.querySelectorAll(_CMSSelect.selector("option"));
+    optionElements.forEach((element) => {
       this.values.push(this.getSelectValue(element));
     });
   }
