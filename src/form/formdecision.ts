@@ -264,7 +264,7 @@ export class FormDecision<PathId extends string = string> {
       });
     }
   }
-  
+
   public clearPath(pathId: PathId, silent: boolean = false): void {
     const path = this.paths.get(pathId);
     if (!path) return;
