@@ -101,14 +101,7 @@ const _CMSSelect = class _CMSSelect {
     });
   }
   insertOptions() {
-    this.values.forEach((val) => {
-      if (val) {
-        const option = _CMSSelect.createOption(val);
-        this.targets.forEach((target) => target.appendChild(option));
-      } else {
-        console.warn("CMS select: skip empty option");
-      }
-    });
+    _CMSSelect.insertOptions(this.targets, this.values);
   }
   getSelectValue(item) {
     const prefix = item.getAttribute(this.attr.prefix) || "";

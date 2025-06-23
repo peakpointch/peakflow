@@ -154,14 +154,7 @@ export default class CMSSelect {
   }
 
   public insertOptions() {
-    this.values.forEach(val => {
-      if (val) {
-        const option = CMSSelect.createOption(val);
-        this.targets.forEach(target => target.appendChild(option));
-      } else {
-        console.warn('CMS select: skip empty option');
-      }
-    });
+    CMSSelect.insertOptions(this.targets, this.values);
   }
 
   public getSelectValue(item: HTMLElement) {
