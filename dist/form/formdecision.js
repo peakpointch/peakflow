@@ -88,7 +88,9 @@ const _FormDecision = class _FormDecision {
     if (path) {
       path.style.removeProperty("display");
     }
-    this.updateRequiredAttributes();
+    this.paths.forEach((path2, pathId2) => {
+      this.updateRequiredAttributes(pathId2);
+    });
     this.onChangeCallback();
     this.formMessage.reset();
   }
@@ -149,22 +151,21 @@ const _FormDecision = class _FormDecision {
   /**
    * Updates the required attributes of input fields within the paths based on the selected decision input.
    */
-  updateRequiredAttributes() {
-    this.paths.forEach((path, pathId) => {
-      if (!path) return;
-      if (pathId === this.currentPath) {
-        const pathInputs = path.querySelectorAll(wf.select.formInput);
-        pathInputs.forEach((input) => {
-          const isRequired = input.matches(`[${this.attr.required}="required"], [${this.attr.required}="true"]`);
-          input.required = isRequired;
-        });
-      } else {
-        const pathInputs = path.querySelectorAll(wf.select.formInput);
-        pathInputs.forEach((input) => {
-          input.required = false;
-        });
-      }
-    });
+  updateRequiredAttributes(pathId) {
+    const path = this.paths.get(pathId);
+    if (!path) return;
+    if (pathId === this.currentPath) {
+      const pathInputs = path.querySelectorAll(wf.select.formInput);
+      pathInputs.forEach((input) => {
+        const isRequired = input.matches(`[${this.attr.required}="required"], [${this.attr.required}="true"]`);
+        input.required = isRequired;
+      });
+    } else {
+      const pathInputs = path.querySelectorAll(wf.select.formInput);
+      pathInputs.forEach((input) => {
+        input.required = false;
+      });
+    }
   }
   /**
    * Displays validation message based on the current path.

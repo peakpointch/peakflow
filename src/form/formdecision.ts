@@ -149,7 +149,9 @@ export class FormDecision<PathId extends string = string> {
       path.style.removeProperty("display");
     }
 
-    this.updateRequiredAttributes();
+    this.paths.forEach((path, pathId) => {
+      this.updateRequiredAttributes(pathId);
+    });
     this.onChangeCallback();
     this.formMessage.reset();
   }
@@ -228,24 +230,23 @@ export class FormDecision<PathId extends string = string> {
   /**
    * Updates the required attributes of input fields within the paths based on the selected decision input.
    */
-  private updateRequiredAttributes(): void {
+  private updateRequiredAttributes(pathId: PathId): void {
     // For the currently selected path, set inputs with [data-decision-required="required"] as required
-    this.paths.forEach((path, pathId) => {
-      if (!path) return;
+    const path = this.paths.get(pathId);
+    if (!path) return;
 
-      if (pathId === this.currentPath) {
-        const pathInputs = path.querySelectorAll<HTMLFormInput>(wf.select.formInput);
-        pathInputs.forEach((input) => {
-          const isRequired = input.matches(`[${this.attr.required}="required"], [${this.attr.required}="true"]`)
-          input.required = isRequired;
-        });
-      } else {
-        const pathInputs = path.querySelectorAll<HTMLFormInput>(wf.select.formInput);
-        pathInputs.forEach((input) => {
-          input.required = false;
-        });
-      }
-    });
+    if (pathId === this.currentPath) {
+      const pathInputs = path.querySelectorAll<HTMLFormInput>(wf.select.formInput);
+      pathInputs.forEach((input) => {
+        const isRequired = input.matches(`[${this.attr.required}="required"], [${this.attr.required}="true"]`)
+        input.required = isRequired;
+      });
+    } else {
+      const pathInputs = path.querySelectorAll<HTMLFormInput>(wf.select.formInput);
+      pathInputs.forEach((input) => {
+        input.required = false;
+      });
+    }
   }
 
   /**
