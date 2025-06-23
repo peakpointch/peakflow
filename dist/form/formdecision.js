@@ -1,5 +1,5 @@
 import wf from "../webflow";
-import { validateFields } from "./utility";
+import { clearRadioInput, validateFields } from "./utility";
 import { FormMessage } from "./formmessage";
 import createAttribute from "../attributeselector";
 const _FormDecision = class _FormDecision {
@@ -11,7 +11,8 @@ const _FormDecision = class _FormDecision {
   constructor(component, options) {
     this.opts = {
       id: void 0,
-      clearPathOnChange: false
+      clearPathOnChange: false,
+      defaultPath: null
     };
     this.paths = /* @__PURE__ */ new Map();
     this.errorMessages = {};
@@ -33,7 +34,8 @@ const _FormDecision = class _FormDecision {
     this.component = component;
     this.opts = {
       id: options.id || this.component.getAttribute(this.attr.component) || this.opts.id,
-      clearPathOnChange: options.clearPathOnChange || this.opts.clearPathOnChange
+      clearPathOnChange: options.clearPathOnChange || this.opts.clearPathOnChange,
+      defaultPath: options.defaultPath || this.opts.defaultPath
     };
     this.formMessage = new FormMessage("FormDecision", this.opts.id);
     this.initialize();
@@ -86,6 +88,12 @@ const _FormDecision = class _FormDecision {
    * @param event The event that invokes this change.
    */
   changeToPath(pathId, event) {
+    if (pathId === null) {
+      this.hideAllPaths();
+      this.decisionInputs.forEach((input) => {
+        clearRadioInput(input);
+      });
+    }
     if (this.currentPath === pathId) return;
     const prevPath = this.paths.get(this.currentPath);
     if (prevPath) {
@@ -105,12 +113,40 @@ const _FormDecision = class _FormDecision {
     this.onChangeCallback();
     this.formMessage.reset();
   }
+  reset(force) {
+    this.clearAllPaths();
+    this.changeToPath(force !== void 0 ? force : this.opts.defaultPath);
+  }
+  /**
+   * Sync the path shown do the actual selected path, if the component ever gets out of sync.
+   */
+  sync() {
+    const path = this.getCurrentPath();
+    this.changeToPath(path);
+  }
+  /**
+   * Sets the display of all path elements to 'none'.
+   */
+  hideAllPaths() {
+    this.paths.forEach((path) => {
+      if (!path) return;
+      path.style.display = "none";
+    });
+  }
   /**
    * Retrieves the currently selected decision input.
    * @returns The selected input element, or undefined if none is selected.
    */
   getSelectedInput() {
     return Array.from(this.decisionInputs).find((input) => input.checked);
+  }
+  /**
+   * Retrieves the current `PathId` from the currently selected decision input.
+   */
+  getCurrentPath() {
+    const selected = this.getSelectedInput();
+    if (!selected) return null;
+    return selected.getAttribute(this.attr.pathId);
   }
   /**
    * Validates the FormDecision based on the selected path to ensure the form's correctness.

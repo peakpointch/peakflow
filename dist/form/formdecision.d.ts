@@ -6,9 +6,10 @@ interface FormDecisionAttributes {
 }
 export type FormDecisionElement = "component" | "decision" | "input" | "path";
 type DecisionPathMap<PathId extends string = string> = Map<PathId, HTMLElement>;
-interface FormDecisionOptions {
+interface FormDecisionOptions<PathId> {
     id: string;
     clearPathOnChange: boolean;
+    defaultPath: PathId | null;
 }
 /**
  * Represents a decision component within a form, managing conditional paths based on user input.
@@ -30,7 +31,7 @@ interface FormDecisionOptions {
  *   ```
  */
 export declare class FormDecision<PathId extends string = string> {
-    opts: FormDecisionOptions;
+    opts: FormDecisionOptions<PathId>;
     component: HTMLElement;
     paths: DecisionPathMap<PathId>;
     private formMessage;
@@ -48,7 +49,7 @@ export declare class FormDecision<PathId extends string = string> {
      * @param component The FormDecision element.
      * @param id Unique identifier for the specific instance.
      */
-    constructor(component: HTMLElement | null, options: Partial<FormDecisionOptions>);
+    constructor(component: HTMLElement | null, options: Partial<FormDecisionOptions<PathId>>);
     static selector: import("../attributeselector").AttributeSelector<FormDecisionElement>;
     selector: import("../attributeselector").AttributeSelector<FormDecisionElement>;
     /**
@@ -60,12 +61,25 @@ export declare class FormDecision<PathId extends string = string> {
      * @param path The HTMLElement that contains the form fields of this path.
      * @param event The event that invokes this change.
      */
-    changeToPath(pathId: PathId, event?: Event): void;
+    changeToPath(pathId: PathId | null, event?: Event): void;
+    reset(force?: PathId | null): void;
+    /**
+     * Sync the path shown do the actual selected path, if the component ever gets out of sync.
+     */
+    sync(): void;
+    /**
+     * Sets the display of all path elements to 'none'.
+     */
+    private hideAllPaths;
     /**
      * Retrieves the currently selected decision input.
      * @returns The selected input element, or undefined if none is selected.
      */
-    private getSelectedInput;
+    getSelectedInput(): HTMLInputElement | undefined;
+    /**
+     * Retrieves the current `PathId` from the currently selected decision input.
+     */
+    private getCurrentPath;
     /**
      * Validates the FormDecision based on the selected path to ensure the form's correctness.
      * @returns A boolean indicating whether the validation passed.

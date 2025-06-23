@@ -1,5 +1,5 @@
 import wf from "../webflow";
-import { HTMLFormInput, validateFields } from "./utility";
+import { clearRadioInput, HTMLFormInput, validateFields } from "./utility";
 import { FormMessage } from "./formmessage";
 import createAttribute from "../attributeselector";
 
@@ -18,9 +18,10 @@ export type FormDecisionElement =
 
 type DecisionPathMap<PathId extends string = string> = Map<PathId, HTMLElement>;
 
-interface FormDecisionOptions {
+interface FormDecisionOptions<PathId> {
   id: string;
   clearPathOnChange: boolean;
+  defaultPath: PathId | null;
 }
 
 /**
@@ -43,9 +44,10 @@ interface FormDecisionOptions {
  *   ```
  */
 export class FormDecision<PathId extends string = string> {
-  public opts: FormDecisionOptions = {
+  public opts: FormDecisionOptions<PathId> = {
     id: undefined,
     clearPathOnChange: false,
+    defaultPath: null,
   }
   public component: HTMLElement;
   public paths: DecisionPathMap<PathId> = new Map();
@@ -77,7 +79,7 @@ export class FormDecision<PathId extends string = string> {
    * @param component The FormDecision element.
    * @param id Unique identifier for the specific instance.
    */
-  constructor(component: HTMLElement | null, options: Partial<FormDecisionOptions>) {
+  constructor(component: HTMLElement | null, options: Partial<FormDecisionOptions<PathId>>) {
     if (!component) {
       console.error(`FormDecision: Component not found.`);
       return;
@@ -93,6 +95,7 @@ export class FormDecision<PathId extends string = string> {
     this.opts = {
       id: options.id || this.component.getAttribute(this.attr.component) || this.opts.id,
       clearPathOnChange: options.clearPathOnChange || this.opts.clearPathOnChange,
+      defaultPath: options.defaultPath || this.opts.defaultPath,
     };
     this.formMessage = new FormMessage("FormDecision", this.opts.id); // Assuming you want to initialize a FormMessage
     this.initialize();
@@ -146,7 +149,14 @@ export class FormDecision<PathId extends string = string> {
    * @param path The HTMLElement that contains the form fields of this path.
    * @param event The event that invokes this change.
    */
-  public changeToPath(pathId: PathId, event?: Event): void {
+  public changeToPath(pathId: PathId | null, event?: Event): void {
+    if (pathId === null) {
+      this.hideAllPaths();
+      this.decisionInputs.forEach(input => {
+        clearRadioInput(input);
+      });
+    }
+
     if (this.currentPath === pathId) return;
 
     const prevPath = this.paths.get(this.currentPath);
@@ -172,12 +182,44 @@ export class FormDecision<PathId extends string = string> {
     this.formMessage.reset();
   }
 
+  public reset(force?: PathId | null): void {
+    this.clearAllPaths();
+    this.changeToPath(force !== undefined ? force : this.opts.defaultPath);
+  }
+
+  /**
+   * Sync the path shown do the actual selected path, if the component ever gets out of sync.
+   */
+  public sync(): void {
+    const path = this.getCurrentPath();
+    this.changeToPath(path);
+  }
+
+  /**
+   * Sets the display of all path elements to 'none'.
+   */
+  private hideAllPaths(): void {
+    this.paths.forEach((path) => {
+      if (!path) return;
+      path.style.display = "none";
+    });
+  }
+
   /**
    * Retrieves the currently selected decision input.
    * @returns The selected input element, or undefined if none is selected.
    */
-  private getSelectedInput(): HTMLInputElement | undefined {
+  public getSelectedInput(): HTMLInputElement | undefined {
     return Array.from(this.decisionInputs).find((input) => input.checked);
+  }
+
+  /**
+   * Retrieves the current `PathId` from the currently selected decision input.
+   */
+  private getCurrentPath(): PathId | null {
+    const selected = this.getSelectedInput();
+    if (!selected) return null;
+    return selected.getAttribute(this.attr.pathId) as PathId;
   }
 
   /**
