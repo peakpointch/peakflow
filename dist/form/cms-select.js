@@ -6,6 +6,7 @@ const _CMSSelect = class _CMSSelect {
       id: void 0
     };
     this.attr = _CMSSelect.attr;
+    this.onChangeCallbacks = /* @__PURE__ */ new Map();
     try {
       this.source = getElement(component);
       if (!this.source) {
@@ -17,6 +18,7 @@ const _CMSSelect = class _CMSSelect {
       this.waitEvent = this.source.dataset.formSelectWait || null;
       this.targets = getAllElements(this.selector("target"));
       this.readValues();
+      this.initOnChange();
     } catch (e) {
       console.error(`Failed to create CMSSelect instance: ${e.message}`);
     }
@@ -96,8 +98,34 @@ const _CMSSelect = class _CMSSelect {
     const optionValue = prefix ? `${prefix} ${value}` : value;
     return optionValue;
   }
+  initOnChange() {
+    this.targets.forEach((target) => {
+      target.addEventListener("change", () => {
+        this.triggerOnChange();
+      });
+    });
+  }
+  onChange(name, callback) {
+    this.onChangeCallbacks.set(name, callback);
+  }
+  clearOnChange(name) {
+    this.onChangeCallbacks.delete(name);
+  }
+  triggerOnChange() {
+    for (const callback of this.onChangeCallbacks.values()) {
+      callback();
+    }
+  }
 };
-_CMSSelect.selector = createAttribute("data-cms-select-element");
+_CMSSelect.attr = {
+  id: "data-cms-select-id",
+  element: "data-cms-select-element",
+  prefix: "data-cms-select-prefix",
+  value: "data-cms-select-value",
+  wait: "data-cms-select-wait",
+  status: "data-cms-select-status"
+};
+_CMSSelect.attributeSelector = createAttribute("data-cms-select-element");
 let CMSSelect = _CMSSelect;
 export {
   CMSSelect as default

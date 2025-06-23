@@ -1,4 +1,5 @@
 type CMSSelectElement = 'source' | 'target' | 'option';
+type OnChangeCallback = () => void;
 interface CMSSelectAttr {
     id: string;
     element: string;
@@ -19,6 +20,7 @@ export default class CMSSelect {
     waitEvent: string;
     static attr: CMSSelectAttr;
     attr: CMSSelectAttr;
+    private onChangeCallbacks;
     constructor(component: string | HTMLElement, options?: Partial<CMSSelectOptions>);
     private static attributeSelector;
     /**
@@ -39,5 +41,9 @@ export default class CMSSelect {
     readValues(): void;
     private insertSelectOptions;
     getSelectValue(item: HTMLElement): string;
+    private initOnChange;
+    onChange(name: string, callback: OnChangeCallback): void;
+    clearOnChange(name: string): void;
+    triggerOnChange(): void;
 }
 export {};

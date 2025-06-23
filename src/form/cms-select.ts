@@ -2,6 +2,8 @@ import createAttribute from "../attributeselector";
 import { getAllElements, getElement } from "../utils/getelements";
 
 type CMSSelectElement = 'source' | 'target' | 'option';
+type OnChangeCallback = () => void;
+
 interface CMSSelectAttr {
   id: string;
   element: string;
@@ -34,6 +36,8 @@ export default class CMSSelect {
   };
   public attr: CMSSelectAttr = CMSSelect.attr;
 
+  private onChangeCallbacks: Map<string, OnChangeCallback> = new Map();
+
   constructor(component: string | HTMLElement, options: Partial<CMSSelectOptions> = {}) {
     try {
       this.source = getElement(component);
@@ -50,6 +54,7 @@ export default class CMSSelect {
       this.waitEvent = this.source.dataset.formSelectWait || null;
       this.targets = getAllElements<HTMLSelectElement>(this.selector('target'));
       this.readValues();
+      this.initOnChange();
     } catch (e) {
       console.error(`Failed to create CMSSelect instance: ${e.message}`);
     }
@@ -146,4 +151,27 @@ export default class CMSSelect {
     const optionValue = prefix ? `${prefix} ${value}` : value;
     return optionValue;
   }
+
+  private initOnChange(): void {
+    this.targets.forEach(target => {
+      target.addEventListener('change', () => {
+        this.triggerOnChange();
+      });
+    });
+  }
+
+  public onChange(name: string, callback: OnChangeCallback): void {
+    this.onChangeCallbacks.set(name, callback);
+  }
+
+  public clearOnChange(name: string): void {
+    this.onChangeCallbacks.delete(name);
+  }
+
+  public triggerOnChange(): void {
+    for (const callback of this.onChangeCallbacks.values()) {
+      callback();
+    }
+  }
+
 }
