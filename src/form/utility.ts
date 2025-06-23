@@ -126,20 +126,25 @@ export async function sendFormData(formData: any): Promise<boolean> {
   }
 }
 
-export function clearRadioGroup(container: HTMLElement, name: string) {
+export function clearRadioGroup(container: HTMLElement, name: string): void {
   container
     .querySelectorAll<HTMLInputElement>(
       `${wf.select.radioInput}[name="${name}"]`
     )
     .forEach((radio) => {
-      radio.checked = false; // Uncheck all radios in the group
-      const customRadio = radio
-        .closest(".w-radio")
-        ?.querySelector(wf.select.radio);
-      if (customRadio) {
-        customRadio.classList.remove(wf.class.checked); // Remove the checked styling
-      }
+      clearRadioInput(radio);
     });
+}
+
+export function clearRadioInput(radio: HTMLInputElement): void {
+  radio.checked = false; // Uncheck all radios in the group
+  const customRadio = radio
+    .closest(".w-radio")
+    ?.querySelector(wf.select.radio);
+  if (customRadio) {
+    customRadio.classList.remove(wf.class.checked); // Remove the checked styling
+  }
+  radio.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
 /**

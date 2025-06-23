@@ -74,12 +74,16 @@ function clearRadioGroup(container, name) {
   container.querySelectorAll(
     `${wf.select.radioInput}[name="${name}"]`
   ).forEach((radio) => {
-    radio.checked = false;
-    const customRadio = radio.closest(".w-radio")?.querySelector(wf.select.radio);
-    if (customRadio) {
-      customRadio.classList.remove(wf.class.checked);
-    }
+    clearRadioInput(radio);
   });
+}
+function clearRadioInput(radio) {
+  radio.checked = false;
+  const customRadio = radio.closest(".w-radio")?.querySelector(wf.select.radio);
+  if (customRadio) {
+    customRadio.classList.remove(wf.class.checked);
+  }
+  radio.dispatchEvent(new Event("change", { bubbles: true }));
 }
 function enforceButtonTypes(form) {
   if (!form) return;
@@ -187,6 +191,7 @@ function disableWebflowForm(form) {
 }
 export {
   clearRadioGroup,
+  clearRadioInput,
   disableWebflowForm,
   enforceButtonTypes,
   filterFormSelector,

@@ -33,6 +33,7 @@ export declare function getWfFormData(form: HTMLFormElement | HTMLElement, field
  */
 export declare function sendFormData(formData: any): Promise<boolean>;
 export declare function clearRadioGroup(container: HTMLElement, name: string): void;
+export declare function clearRadioInput(radio: HTMLInputElement): void;
 /**
  * Prevents unintended form submissions by setting missing <button> types to "button".
  */
