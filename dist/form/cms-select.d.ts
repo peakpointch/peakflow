@@ -34,6 +34,7 @@ export default class CMSSelect {
     static initializeAll(): void;
     static createOption(value: string): HTMLOptionElement;
     static insertOptions(targets: HTMLSelectElement[], values: string[]): void;
+    static clearOptions(targets: HTMLSelectElement | HTMLSelectElement[], keepEmpty: boolean): void;
     /**
      * @param graceful Whether to throw an error if the wait event is invalid.
      * @returns A boolean indicating whether the wait event was initialized successfully.

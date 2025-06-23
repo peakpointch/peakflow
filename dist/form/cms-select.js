@@ -69,6 +69,14 @@ const _CMSSelect = class _CMSSelect {
       }
     });
   }
+  static clearOptions(targets, keepEmpty) {
+    const targetList = getAllElements(targets, true);
+    targetList.forEach((target) => {
+      let options = Array.from(target.querySelectorAll("option"));
+      if (keepEmpty) options = options.filter((option) => Boolean(option.value));
+      options.forEach((option) => option.remove());
+    });
+  }
   /**
    * @param graceful Whether to throw an error if the wait event is invalid.
    * @returns A boolean indicating whether the wait event was initialized successfully.

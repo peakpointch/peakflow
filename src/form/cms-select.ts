@@ -119,6 +119,15 @@ export default class CMSSelect {
     });
   }
 
+  public static clearOptions(targets: HTMLSelectElement | HTMLSelectElement[], keepEmpty: boolean): void {
+    const targetList = getAllElements<HTMLSelectElement>(targets, true)
+    targetList.forEach(target => {
+      let options = Array.from(target.querySelectorAll('option'));
+      if (keepEmpty) options = options.filter(option => Boolean(option.value));
+      options.forEach(option => option.remove());
+    });
+  }
+
   /**
    * @param graceful Whether to throw an error if the wait event is invalid.
    * @returns A boolean indicating whether the wait event was initialized successfully.
