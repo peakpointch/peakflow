@@ -1,34 +1,111 @@
-export function getSelectValue(item) {
-  const prefix = item.dataset.formSelectOptionPrefix || "";
-  const value = item.dataset.formSelectOptionValue || "";
+import createAttribute from "../attributeselector";
+import { getAllElements, getElement } from "../utils/getelements";
 
-  const optionValue = prefix ? `${prefix} ${value}` : value;
-  return optionValue;
+type CMSSelectElement = 'source' | 'target' | 'value';
+interface CMSSelectAttr {
+  element: string;
+  prefix: string;
+  value: string;
+  status: string;
+  wait: string;
 }
 
-export function Option(value) {
-  const optionElement = document.createElement('option');
-  optionElement.setAttribute('value', value);
-  optionElement.innerText = value;
+export default class CMSSelect {
+  public name: string;
+  public source: HTMLElement;
+  public targets: HTMLSelectElement[];
+  public values: string[];
+  public waitEvent: string;
+  public attr: CMSSelectAttr = {
+    element: 'data-cms-select-element',
+    prefix: 'data-cms-select-prefix',
+    value: 'data-cms-select-value',
+    wait: 'data-cms-select-wait',
+    status: 'data-cms-select-status',
+  };
 
-  return optionElement;
-}
+  constructor(component: string | HTMLElement) {
+    try {
+      this.source = getElement(component);
 
-export function insertSelectOptions() {
-  const items = selectList.querySelectorAll('[data-form-select-element="option-value"]');
-  const selectTarget = document.querySelector('[data-form-select-element="target"]');
+      if (!this.source) {
+        throw new Error(`Source list element is not defined.`);
+      }
 
-  items.forEach(item => {
-    const optionValue = getSelectValue(item);
-    const optionStatus = item.dataset.status ? item.dataset.status : null;
-
-    if (optionValue && (!optionStatus || optionStatus === 'active')) {
-      const option = new Option(optionValue);
-      console.log('CMS FORM SELECT -- INSERTING ...', optionValue);
-      selectTarget.appendChild(option);
-    } else {
-      console.log('CMS FORM SELECT -- SKIPPING EMPTY OPTION');
+      this.waitEvent = this.source.dataset.formSelectWait || null;
+      this.targets = getAllElements<HTMLSelectElement>(this.selector('target'));
+      this.readValues();
+    } catch (e) {
+      console.error(`Failed to create CMSSelect instance: ${e.message}`);
     }
-  });
-}
+  }
 
+  public static selector = createAttribute<CMSSelectElement>('data-cms-select-element');
+  private selector = createAttribute<CMSSelectElement>('data-cms-select-element');
+
+  public static initializeAll(): void {
+    try {
+      const sourceLists = getAllElements(CMSSelect.selector('source'));
+      sourceLists.forEach(list => {
+        const cmsSelect = new CMSSelect(list);
+        if (cmsSelect.initWaitEvent(true)) return;
+        cmsSelect.insertSelectOptions();
+      });
+    } catch (e) {
+      console.error(`Failed to initialize all CMS select components: ${e.message}`);
+    }
+  }
+
+  public static createOption(value: string): HTMLOptionElement {
+    const optionElement = document.createElement('option');
+    optionElement.setAttribute('value', value);
+    optionElement.innerText = value;
+
+    return optionElement;
+  }
+
+  /**
+   * @param graceful Whether to throw an error if the wait event is invalid.
+   * @returns A boolean indicating whether the wait event was initialized successfully.
+   */
+  public initWaitEvent(graceful: boolean = false): boolean {
+    if (this.waitEvent) {
+      this.source.addEventListener(this.waitEvent, () => {
+        this.insertSelectOptions()
+      });
+      return true;
+    } else {
+      const message = `The wait event name "${this.waitEvent}" is invalid.`;
+      if (graceful) return false;
+      throw new Error(message);
+    }
+  }
+
+  public readValues(): void {
+    this.values = [];
+    const valueElements = getAllElements(CMSSelect.selector('value'));
+    valueElements.forEach(element => {
+      this.values.push(this.getSelectValue(element));
+    });
+  }
+
+  private insertSelectOptions(targets: HTMLSelectElement[] = this.targets) {
+    this.values.forEach(val => {
+
+      if (val) {
+        const option = CMSSelect.createOption(val);
+        targets.forEach(target => target.appendChild(option));
+      } else {
+        console.warn('CMS select: skip empty option');
+      }
+    });
+  }
+
+  public getSelectValue(item: HTMLElement) {
+    const prefix = item.getAttribute(this.attr.prefix) || "";
+    const value = item.getAttribute(this.attr.value) || "";
+
+    const optionValue = prefix ? `${prefix} ${value}` : value;
+    return optionValue;
+  }
+}
