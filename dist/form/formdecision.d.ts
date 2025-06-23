@@ -6,6 +6,10 @@ interface FormDecisionAttributes {
 }
 export type FormDecisionElement = "component" | "decision" | "input" | "path";
 type DecisionPathMap<PathId extends string = string> = Map<PathId, HTMLElement>;
+interface FormDecisionOptions {
+    id: string;
+    clearPathOnChange: boolean;
+}
 /**
  * Represents a decision component within a form, managing conditional paths based on user input.
  *
@@ -26,8 +30,8 @@ type DecisionPathMap<PathId extends string = string> = Map<PathId, HTMLElement>;
  *   ```
  */
 export declare class FormDecision<PathId extends string = string> {
+    opts: FormDecisionOptions;
     component: HTMLElement;
-    id: string;
     paths: DecisionPathMap<PathId>;
     private formMessage;
     private decisionInputs;
@@ -44,7 +48,7 @@ export declare class FormDecision<PathId extends string = string> {
      * @param component The FormDecision element.
      * @param id Unique identifier for the specific instance.
      */
-    constructor(component: HTMLElement | null, id: string | undefined);
+    constructor(component: HTMLElement | null, options: Partial<FormDecisionOptions>);
     static selector: import("../attributeselector").AttributeSelector<FormDecisionElement>;
     selector: import("../attributeselector").AttributeSelector<FormDecisionElement>;
     /**
@@ -86,6 +90,8 @@ export declare class FormDecision<PathId extends string = string> {
      * Updates the required attributes of input fields within the paths based on the selected decision input.
      */
     private updateRequiredAttributes;
+    clearPath(pathId: PathId, silent?: boolean): void;
+    clearAllPaths(clearCurrentPath?: boolean): void;
     /**
      * Displays validation message based on the current path.
      * @param currentGroupValid A boolean indicating whether the current group of inputs is valid.

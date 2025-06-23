@@ -18,6 +18,11 @@ export type FormDecisionElement =
 
 type DecisionPathMap<PathId extends string = string> = Map<PathId, HTMLElement>;
 
+interface FormDecisionOptions {
+  id: string;
+  clearPathOnChange: boolean;
+}
+
 /**
  * Represents a decision component within a form, managing conditional paths based on user input.
  *
@@ -38,8 +43,11 @@ type DecisionPathMap<PathId extends string = string> = Map<PathId, HTMLElement>;
  *   ```
  */
 export class FormDecision<PathId extends string = string> {
+  public opts: FormDecisionOptions = {
+    id: undefined,
+    clearPathOnChange: false,
+  }
   public component: HTMLElement;
-  public id: string;
   public paths: DecisionPathMap<PathId> = new Map();
   private formMessage: FormMessage;
   private decisionInputs: HTMLInputElement[];
@@ -69,8 +77,8 @@ export class FormDecision<PathId extends string = string> {
    * @param component The FormDecision element.
    * @param id Unique identifier for the specific instance.
    */
-  constructor(component: HTMLElement | null, id: string | undefined) {
-    if (!component || !id) {
+  constructor(component: HTMLElement | null, options: Partial<FormDecisionOptions>) {
+    if (!component) {
       console.error(`FormDecision: Component not found.`);
       return;
     } else if (!component.hasAttribute("data-decision-component")) {
@@ -82,8 +90,11 @@ export class FormDecision<PathId extends string = string> {
     }
 
     this.component = component;
-    this.id = id || this.component.getAttribute(this.attr.component);
-    this.formMessage = new FormMessage("FormDecision", id); // Assuming you want to initialize a FormMessage
+    this.opts = {
+      id: options.id || this.component.getAttribute(this.attr.component) || this.opts.id,
+      clearPathOnChange: options.clearPathOnChange || this.opts.clearPathOnChange,
+    };
+    this.formMessage = new FormMessage("FormDecision", this.opts.id); // Assuming you want to initialize a FormMessage
     this.initialize();
   }
 
@@ -105,7 +116,7 @@ export class FormDecision<PathId extends string = string> {
     // Ensure there are decision inputs
     if (this.decisionInputs.length === 0) {
       console.warn(
-        `Decision component "${this.id}" does not contain any decision input elements.`
+        `Decision component "${this.opts.id}" does not contain any decision input elements.`
       );
       return;
     }
@@ -151,6 +162,9 @@ export class FormDecision<PathId extends string = string> {
 
     this.paths.forEach((path, pathId) => {
       this.updateRequiredAttributes(pathId);
+      if (this.opts.clearPathOnChange) {
+        this.clearPath(pathId);
+      }
     });
     this.onChangeCallback();
     this.formMessage.reset();
@@ -247,6 +261,28 @@ export class FormDecision<PathId extends string = string> {
         input.required = false;
       });
     }
+  }
+  
+  public clearPath(pathId: PathId, silent: boolean = false): void {
+    const path = this.paths.get(pathId);
+    if (!path) return;
+
+    const pathInputs = path.querySelectorAll<HTMLFormInput>(wf.select.formInput);
+    pathInputs.forEach((input) => {
+      input.value = null;
+      if (silent) return;
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  }
+
+  public clearAllPaths(clearCurrentPath: boolean = true): void {
+    this.paths.forEach((path, pathId) => {
+      if (clearCurrentPath) {
+        this.clearPath(pathId);
+      } else if (pathId !== this.currentPath) {
+        this.clearPath(pathId);
+      }
+    });
   }
 
   /**

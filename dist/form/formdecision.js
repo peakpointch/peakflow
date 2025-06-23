@@ -8,7 +8,11 @@ const _FormDecision = class _FormDecision {
    * @param component The FormDecision element.
    * @param id Unique identifier for the specific instance.
    */
-  constructor(component, id) {
+  constructor(component, options) {
+    this.opts = {
+      id: void 0,
+      clearPathOnChange: false
+    };
     this.paths = /* @__PURE__ */ new Map();
     this.errorMessages = {};
     this.defaultErrorMessage = "Please complete the required fields.";
@@ -16,7 +20,7 @@ const _FormDecision = class _FormDecision {
     };
     this.attr = _FormDecision.attr;
     this.selector = createAttribute(_FormDecision.attr.element);
-    if (!component || !id) {
+    if (!component) {
       console.error(`FormDecision: Component not found.`);
       return;
     } else if (!component.hasAttribute("data-decision-component")) {
@@ -27,8 +31,11 @@ const _FormDecision = class _FormDecision {
       return;
     }
     this.component = component;
-    this.id = id || this.component.getAttribute(this.attr.component);
-    this.formMessage = new FormMessage("FormDecision", id);
+    this.opts = {
+      id: options.id || this.component.getAttribute(this.attr.component) || this.opts.id,
+      clearPathOnChange: options.clearPathOnChange || this.opts.clearPathOnChange
+    };
+    this.formMessage = new FormMessage("FormDecision", this.opts.id);
     this.initialize();
   }
   static get attr() {
@@ -54,7 +61,7 @@ const _FormDecision = class _FormDecision {
     this.decisionInputs = Array.from(decisionInputsList);
     if (this.decisionInputs.length === 0) {
       console.warn(
-        `Decision component "${this.id}" does not contain any decision input elements.`
+        `Decision component "${this.opts.id}" does not contain any decision input elements.`
       );
       return;
     }
@@ -90,6 +97,9 @@ const _FormDecision = class _FormDecision {
     }
     this.paths.forEach((path2, pathId2) => {
       this.updateRequiredAttributes(pathId2);
+      if (this.opts.clearPathOnChange) {
+        this.clearPath(pathId2);
+      }
     });
     this.onChangeCallback();
     this.formMessage.reset();
@@ -166,6 +176,25 @@ const _FormDecision = class _FormDecision {
         input.required = false;
       });
     }
+  }
+  clearPath(pathId, silent = false) {
+    const path = this.paths.get(pathId);
+    if (!path) return;
+    const pathInputs = path.querySelectorAll(wf.select.formInput);
+    pathInputs.forEach((input) => {
+      input.value = null;
+      if (silent) return;
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
+  clearAllPaths(clearCurrentPath = true) {
+    this.paths.forEach((path, pathId) => {
+      if (clearCurrentPath) {
+        this.clearPath(pathId);
+      } else if (pathId !== this.currentPath) {
+        this.clearPath(pathId);
+      }
+    });
   }
   /**
    * Displays validation message based on the current path.
