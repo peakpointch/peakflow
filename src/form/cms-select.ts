@@ -108,11 +108,12 @@ export default class CMSSelect {
     return optionElement;
   }
 
-  public static insertOptions(targets: HTMLSelectElement[], values: string[]) {
+  public static insertOptions(targets: HTMLSelectElement | HTMLSelectElement[], values: string[]) {
+    const targetList = getAllElements<HTMLSelectElement>(targets, true);
     values.forEach(val => {
       if (val) {
         const option = CMSSelect.createOption(val);
-        targets.forEach(target => target.appendChild(option));
+        targetList.forEach(target => target.appendChild(option));
       } else {
         console.warn('CMS select: skip empty option');
       }

@@ -60,10 +60,11 @@ const _CMSSelect = class _CMSSelect {
     return optionElement;
   }
   static insertOptions(targets, values) {
+    const targetList = getAllElements(targets, true);
     values.forEach((val) => {
       if (val) {
         const option = _CMSSelect.createOption(val);
-        targets.forEach((target) => target.appendChild(option));
+        targetList.forEach((target) => target.appendChild(option));
       } else {
         console.warn("CMS select: skip empty option");
       }
