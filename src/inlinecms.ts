@@ -1,5 +1,4 @@
-import findElements from "./findelements";
-import getSelectorStringForError from "./selectorstring";
+import { getAllElements } from "./utils/getelements";
 
 const INLINECMS_TARGET_ATTR = `data-inlinecms-target`;
 const INLINECMS_COMPONENT_ATTR = `data-inlinecms-component`;
@@ -69,7 +68,7 @@ export function inlineCmsDev(
   target?: string | HTMLElement
 ): void {
   // Find all container elements
-  const containers = findElements(container, true);
+  const containers = getAllElements(container);
 
   containers.forEach((container, index) => {
     const componentName: string = container.getAttribute(INLINECMS_COMPONENT_ATTR) || `index ${index}`;
@@ -77,7 +76,7 @@ export function inlineCmsDev(
 
     // Determine the target element
     const targetElement = target
-      ? findElements(target)[0]
+      ? getAllElements(target)[0]
       : container.parentElement;
 
     if (!targetElement) {
@@ -105,7 +104,7 @@ export function inlineCms(
   let containerElements: HTMLElement[];
 
   if (typeof containers === "string") {
-    containerElements = findElements(containers, true);
+    containerElements = getAllElements(containers);
   } else {
     containerElements = Array.from(containers);
   }

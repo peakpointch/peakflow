@@ -1,4 +1,4 @@
-import findElements from "./findelements";
+import { getAllElements } from "./utils/getelements";
 const INLINECMS_TARGET_ATTR = `data-inlinecms-target`;
 const INLINECMS_COMPONENT_ATTR = `data-inlinecms-component`;
 function validateContainer(container) {
@@ -34,11 +34,11 @@ function extractTargetFromAttribute(container) {
   return target;
 }
 function inlineCmsDev(container, target) {
-  const containers = findElements(container, true);
+  const containers = getAllElements(container);
   containers.forEach((container2, index) => {
     const componentName = container2.getAttribute(INLINECMS_COMPONENT_ATTR) || `index ${index}`;
     validateContainer(container2);
-    const targetElement = target ? findElements(target)[0] : container2.parentElement;
+    const targetElement = target ? getAllElements(target)[0] : container2.parentElement;
     if (!targetElement) {
       throw new Error("Target element not found or specified.");
     }
@@ -52,7 +52,7 @@ function inlineCmsDev(container, target) {
 function inlineCms(containers) {
   let containerElements;
   if (typeof containers === "string") {
-    containerElements = findElements(containers, true);
+    containerElements = getAllElements(containers);
   } else {
     containerElements = Array.from(containers);
   }
