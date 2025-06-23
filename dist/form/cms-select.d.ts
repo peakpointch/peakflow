@@ -33,13 +33,14 @@ export default class CMSSelect {
     selector(element: CMSSelectElement, local?: boolean): string;
     static initializeAll(): void;
     static createOption(value: string): HTMLOptionElement;
+    static insertOptions(targets: HTMLSelectElement[], values: string[]): void;
     /**
      * @param graceful Whether to throw an error if the wait event is invalid.
      * @returns A boolean indicating whether the wait event was initialized successfully.
      */
     initWaitEvent(graceful?: boolean): boolean;
     readValues(): void;
-    private insertSelectOptions;
+    insertOptions(): void;
     getSelectValue(item: HTMLElement): string;
     private initOnChange;
     onChange(name: string, callback: OnChangeCallback): void;

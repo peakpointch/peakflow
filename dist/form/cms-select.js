@@ -47,7 +47,7 @@ const _CMSSelect = class _CMSSelect {
       sourceLists.forEach((list) => {
         const cmsSelect = new _CMSSelect(list);
         if (cmsSelect.initWaitEvent(true)) return;
-        cmsSelect.insertSelectOptions();
+        cmsSelect.insertOptions();
       });
     } catch (e) {
       console.error(`Failed to initialize all CMS select components: ${e.message}`);
@@ -59,6 +59,16 @@ const _CMSSelect = class _CMSSelect {
     optionElement.innerText = value;
     return optionElement;
   }
+  static insertOptions(targets, values) {
+    values.forEach((val) => {
+      if (val) {
+        const option = _CMSSelect.createOption(val);
+        targets.forEach((target) => target.appendChild(option));
+      } else {
+        console.warn("CMS select: skip empty option");
+      }
+    });
+  }
   /**
    * @param graceful Whether to throw an error if the wait event is invalid.
    * @returns A boolean indicating whether the wait event was initialized successfully.
@@ -66,7 +76,7 @@ const _CMSSelect = class _CMSSelect {
   initWaitEvent(graceful = false) {
     if (this.waitEvent) {
       this.source.addEventListener(this.waitEvent, () => {
-        this.insertSelectOptions();
+        this.insertOptions();
       });
       return true;
     } else {
@@ -82,11 +92,11 @@ const _CMSSelect = class _CMSSelect {
       this.values.push(this.getSelectValue(element));
     });
   }
-  insertSelectOptions(targets = this.targets) {
+  insertOptions() {
     this.values.forEach((val) => {
       if (val) {
         const option = _CMSSelect.createOption(val);
-        targets.forEach((target) => target.appendChild(option));
+        this.targets.forEach((target) => target.appendChild(option));
       } else {
         console.warn("CMS select: skip empty option");
       }
