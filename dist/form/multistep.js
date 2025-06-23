@@ -1,4 +1,4 @@
-import createAttribute, { exclude } from "../attributeselector";
+import createAttribute, { exclude, extend } from "../attributeselector";
 import {
   initWfInputs,
   sendFormData,
@@ -390,10 +390,7 @@ Component:`,
     return fields;
   }
   getFormInput(id) {
-    const selector = wf.select.formInput.split(", ").reduce((acc, string) => {
-      const prefix = acc === "" ? "" : `${acc}, `;
-      return `${prefix}${string}#${id}`;
-    }, "");
+    const selector = extend(wf.select.formInput, `#${id}`);
     return this.component.querySelector(selector);
   }
 }

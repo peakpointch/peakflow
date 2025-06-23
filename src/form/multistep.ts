@@ -1,5 +1,5 @@
 // Imports
-import createAttribute, { exclude } from "../attributeselector";
+import createAttribute, { exclude, extend } from "../attributeselector";
 import {
   initWfInputs,
   sendFormData,
@@ -539,10 +539,7 @@ export class MultiStepForm {
   }
 
   public getFormInput<T extends HTMLFormInput = HTMLFormInput>(id: string): T {
-    const selector = wf.select.formInput.split(', ').reduce((acc, string) => {
-      const prefix = acc === '' ? '' : `${acc}, `
-      return `${prefix}${string}#${id}`;
-    }, '');
+    const selector = extend(wf.select.formInput, `#${id}`);
     return this.component.querySelector(selector);
   }
 }
