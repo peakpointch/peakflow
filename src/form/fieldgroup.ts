@@ -14,6 +14,7 @@ export type FormFieldMap<FieldId extends string = string> = Map<FieldId, FormFie
 
 export class FieldGroup<FieldId extends string = string> {
   public fields: FormFieldMap<FieldId>;
+  public validation: FieldGroupValidation<FormField>;
 
   constructor(fields: FormFieldMap<FieldId> = new Map()) {
     this.fields = fields;
@@ -36,10 +37,12 @@ export class FieldGroup<FieldId extends string = string> {
       invalidFields.push(field);
     }
 
-    return {
+    this.validation = {
       isValid: invalidFields.length === 0,
       invalidFields: invalidFields,
     };
+
+    return this.validation;
   }
 
   /**

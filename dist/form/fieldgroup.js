@@ -18,10 +18,11 @@ class FieldGroup {
       if (field.validate(report)) continue;
       invalidFields.push(field);
     }
-    return {
+    this.validation = {
       isValid: invalidFields.length === 0,
       invalidFields
     };
+    return this.validation;
   }
   /**
    * Serialize this `FieldGroup`.

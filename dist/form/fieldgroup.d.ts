@@ -10,6 +10,7 @@ export type FieldGroupValidation<FieldType extends FormField | HTMLFormInput = H
 export type FormFieldMap<FieldId extends string = string> = Map<FieldId, FormField>;
 export declare class FieldGroup<FieldId extends string = string> {
     fields: FormFieldMap<FieldId>;
+    validation: FieldGroupValidation<FormField>;
     constructor(fields?: FormFieldMap<FieldId>);
     /**
      * Finds a specific `FormField` instance by id.
