@@ -11,6 +11,23 @@ function getOperator(type) {
 }
 function exclude(selector, ...exclusions) {
   if (exclusions.length === 0) return selector;
+  return extend(selector, `:not(${exclusions.join(", ")})`);
+}
+function extend(selector, ...extensions) {
+  if (extensions.length === 0) return selector;
+  const selectors = split(selector);
+  const selectorsWithExtensions = extensions.map((extension) => {
+    return append(selectors, extension);
+  });
+  return selectorsWithExtensions.join(", ");
+}
+function append(selectorList, suffix) {
+  return selectorList.reduce((acc, string) => {
+    const prefix = acc === "" ? "" : `${acc}, `;
+    return `${prefix}${string}${suffix}`;
+  }, "");
+}
+function split(selector) {
   const result = [];
   let current = "";
   let depth = 0;
@@ -35,7 +52,7 @@ function exclude(selector, ...exclusions) {
   if (current.trim()) {
     result.push(current.trim());
   }
-  return result.map((sel) => `${sel}:not(${exclusions.join(", ")})`).join(", ");
+  return result;
 }
 const createAttribute = (attrName, defaultOptions) => {
   const mergedDefaultOptions = {
@@ -58,6 +75,9 @@ const createAttribute = (attrName, defaultOptions) => {
 };
 var attributeselector_default = createAttribute;
 export {
+  append,
   attributeselector_default as default,
-  exclude
+  exclude,
+  extend,
+  split
 };

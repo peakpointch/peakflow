@@ -16,7 +16,10 @@ interface AttributeOptions {
  * @param exclusions The selectors to exclude from the original selector.
  * @returns A CSS selector.
  */
-declare function exclude(selector: string, ...exclusions: string[]): string;
+export declare function exclude(selector: string, ...exclusions: string[]): string;
+export declare function extend(selector: string, ...extensions: string[]): string;
+export declare function append(selectorList: string[], suffix: string): string;
+export declare function split(selector: string): string[];
 /**
  * Creates a selector function based on the provided attribute name.
  * The returned selector function can be used to generate a string selector for the given name.
@@ -29,5 +32,4 @@ declare function exclude(selector: string, ...exclusions: string[]): string;
  */
 declare const createAttribute: <T extends string = string>(attrName: string, defaultOptions?: Partial<AttributeDefaultOptions<T>>) => AttributeSelector<T>;
 export default createAttribute;
-export { exclude };
 export type { AttributeSelector, AttributeDefaultOptions, AttributeOptions };

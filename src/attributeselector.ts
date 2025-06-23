@@ -45,9 +45,32 @@ function getOperator(type: AttributeMatchType): AttributeMatchOperator {
  * @param exclusions The selectors to exclude from the original selector.
  * @returns A CSS selector.
  */
-function exclude(selector: string, ...exclusions: string[]): string {
+export function exclude(selector: string, ...exclusions: string[]): string {
   if (exclusions.length === 0) return selector;
 
+  return extend(selector, `:not(${exclusions.join(', ')})`);
+}
+
+export function extend(selector: string, ...extensions: string[]): string {
+  if (extensions.length === 0) return selector;
+
+  const selectors = split(selector);
+
+  const selectorsWithExtensions = extensions.map((extension) => {
+    return append(selectors, extension);
+  });
+
+  return selectorsWithExtensions.join(', ');
+}
+
+export function append(selectorList: string[], suffix: string): string {
+  return selectorList.reduce((acc, string) => {
+    const prefix = acc === '' ? '' : `${acc}, `;
+    return `${prefix}${string}${suffix}`;
+  }, '');
+}
+
+export function split(selector: string): string[] {
   const result: string[] = [];
   let current = '';
   let depth = 0;
@@ -78,7 +101,7 @@ function exclude(selector: string, ...exclusions: string[]): string {
     result.push(current.trim());
   }
 
-  return result.map(sel => `${sel}:not(${exclusions.join(', ')})`).join(', ');
+  return result;
 }
 
 /**
@@ -119,5 +142,4 @@ const createAttribute = <T extends string = string>(
 }
 
 export default createAttribute;
-export { exclude };
 export type { AttributeSelector, AttributeDefaultOptions, AttributeOptions };
