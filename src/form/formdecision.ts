@@ -147,6 +147,8 @@ export class FormDecision<PathId extends string = string> {
    * @param event The event that invokes this change.
    */
   public changeToPath(pathId: PathId, event?: Event): void {
+    if (this.currentPath === pathId) return;
+
     const prevPath = this.paths.get(this.currentPath);
     if (prevPath) {
       prevPath.style.display = "none";

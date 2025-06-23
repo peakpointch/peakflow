@@ -86,6 +86,7 @@ const _FormDecision = class _FormDecision {
    * @param event The event that invokes this change.
    */
   changeToPath(pathId, event) {
+    if (this.currentPath === pathId) return;
     const prevPath = this.paths.get(this.currentPath);
     if (prevPath) {
       prevPath.style.display = "none";
