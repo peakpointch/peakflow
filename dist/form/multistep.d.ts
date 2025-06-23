@@ -1,4 +1,4 @@
-import { FormFieldMap, CustomValidator } from ".";
+import { FormFieldMap, HTMLFormInput, CustomValidator } from ".";
 interface FormOptions {
     excludeInputSelectors: string[];
     recaptcha: boolean;
@@ -94,5 +94,6 @@ export declare class MultiStepForm {
     getFieldMapForStep(step: number): FormFieldMap;
     getFieldMap(): FormFieldMap;
     getFormData(): any;
+    getFormInput<T extends HTMLFormInput = HTMLFormInput>(id: string): T;
 }
 export {};

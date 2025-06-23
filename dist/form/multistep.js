@@ -389,6 +389,13 @@ Component:`,
     };
     return fields;
   }
+  getFormInput(id) {
+    const selector = wf.select.formInput.split(", ").reduce((acc, string) => {
+      const prefix = acc === "" ? "" : `${acc}, `;
+      return `${prefix}${string}#${id}`;
+    }, "");
+    return this.component.querySelector(selector);
+  }
 }
 export {
   MultiStepForm

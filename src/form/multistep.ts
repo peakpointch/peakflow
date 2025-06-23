@@ -537,6 +537,12 @@ export class MultiStepForm {
 
     return fields;
   }
+
+  public getFormInput<T extends HTMLFormInput = HTMLFormInput>(id: string): T {
+    const selector = wf.select.formInput.split(', ').reduce((acc, string) => {
+      const prefix = acc === '' ? '' : `${acc}, `
+      return `${prefix}${string}#${id}`;
+    }, '');
+    return this.component.querySelector(selector);
+  }
 }
-
-
