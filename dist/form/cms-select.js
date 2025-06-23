@@ -1,26 +1,43 @@
 import createAttribute from "../attributeselector";
 import { getAllElements, getElement } from "../utils/getelements";
 const _CMSSelect = class _CMSSelect {
-  constructor(component) {
-    this.attr = {
-      element: "data-cms-select-element",
-      prefix: "data-cms-select-prefix",
-      value: "data-cms-select-value",
-      wait: "data-cms-select-wait",
-      status: "data-cms-select-status"
+  constructor(component, options = {}) {
+    this.opts = {
+      id: void 0
     };
-    this.selector = createAttribute("data-cms-select-element");
+    this.attr = _CMSSelect.attr;
     try {
       this.source = getElement(component);
       if (!this.source) {
         throw new Error(`Source list element is not defined.`);
       }
+      this.opts = { id: options.id ?? this.opts.id };
+      this.id = this.opts.id || this.source.getAttribute(this.attr.id);
+      this.source.setAttribute(this.attr.id, this.opts.id);
       this.waitEvent = this.source.dataset.formSelectWait || null;
       this.targets = getAllElements(this.selector("target"));
       this.readValues();
     } catch (e) {
       console.error(`Failed to create CMSSelect instance: ${e.message}`);
     }
+  }
+  /**
+   * Static selector
+   */
+  static selector(element, instance) {
+    const base = _CMSSelect.attributeSelector(element);
+    const instanceSelector = instance ? `[${_CMSSelect.attr.id}="${instance}"]` : "";
+    if (element === "option") {
+      return `${instanceSelector} ${base}`.trim();
+    } else {
+      return `${base}${instanceSelector}`;
+    }
+  }
+  /**
+   * Instance selector
+   */
+  selector(element, local = true) {
+    return local ? _CMSSelect.selector(element, this.id) : _CMSSelect.selector(element);
   }
   static initializeAll() {
     try {

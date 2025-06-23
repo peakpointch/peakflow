@@ -3,6 +3,7 @@ import { getAllElements, getElement } from "../utils/getelements";
 
 type CMSSelectElement = 'source' | 'target' | 'option';
 interface CMSSelectAttr {
+  id: string;
   element: string;
   prefix: string;
   value: string;
@@ -10,27 +11,41 @@ interface CMSSelectAttr {
   wait: string;
 }
 
+interface CMSSelectOptions {
+  id: string;
+}
+
 export default class CMSSelect {
-  public name: string;
+  public opts: CMSSelectOptions = {
+    id: undefined
+  }
+  public id: string;
   public source: HTMLElement;
   public targets: HTMLSelectElement[];
   public values: string[];
   public waitEvent: string;
-  public attr: CMSSelectAttr = {
+  public static attr: CMSSelectAttr = {
+    id: 'data-cms-select-id',
     element: 'data-cms-select-element',
     prefix: 'data-cms-select-prefix',
     value: 'data-cms-select-value',
     wait: 'data-cms-select-wait',
     status: 'data-cms-select-status',
   };
+  public attr: CMSSelectAttr = CMSSelect.attr;
 
-  constructor(component: string | HTMLElement) {
+  constructor(component: string | HTMLElement, options: Partial<CMSSelectOptions> = {}) {
     try {
       this.source = getElement(component);
 
       if (!this.source) {
         throw new Error(`Source list element is not defined.`);
       }
+
+      // Get and set id
+      this.opts = { id: options.id ?? this.opts.id };
+      this.id = this.opts.id || this.source.getAttribute(this.attr.id);
+      this.source.setAttribute(this.attr.id, this.opts.id);
 
       this.waitEvent = this.source.dataset.formSelectWait || null;
       this.targets = getAllElements<HTMLSelectElement>(this.selector('target'));
@@ -40,8 +55,32 @@ export default class CMSSelect {
     }
   }
 
-  public static selector = createAttribute<CMSSelectElement>('data-cms-select-element');
-  private selector = createAttribute<CMSSelectElement>('data-cms-select-element');
+  private static attributeSelector = createAttribute<CMSSelectElement>('data-cms-select-element');
+
+  /**
+   * Static selector
+   */
+  public static selector(element: CMSSelectElement, instance?: string): string {
+    const base = CMSSelect.attributeSelector(element);
+    const instanceSelector = instance
+      ? `[${CMSSelect.attr.id}="${instance}"]`
+      : "";
+
+    if (element === 'option') {
+      return `${instanceSelector} ${base}`.trim();
+    } else {
+      return `${base}${instanceSelector}`
+    }
+  }
+
+  /**
+   * Instance selector
+   */
+  public selector(element: CMSSelectElement, local = true): string {
+    return local
+      ? CMSSelect.selector(element, this.id)
+      : CMSSelect.selector(element);
+  }
 
   public static initializeAll(): void {
     try {
