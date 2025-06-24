@@ -1,4 +1,4 @@
-import createAttribute from "../attributeselector";
+import createAttribute, { extend } from "../attributeselector";
 import wf from "../webflow";
 import { WfFormData } from "../../types/webflow";
 import { FieldGroupValidation } from "./fieldgroup";
@@ -163,25 +163,38 @@ export async function sendFormData(formData: any): Promise<boolean> {
   }
 }
 
-export function clearRadioGroup(container: HTMLElement, name: string): void {
-  container
-    .querySelectorAll<HTMLInputElement>(
-      `${wf.select.radioInput}[name="${name}"]`
-    )
-    .forEach((radio) => {
-      clearRadioInput(radio);
-    });
+export function clearRadioGroup(container: HTMLElement, name: string, silent: boolean = false): void {
+  const radioGroup = getRadioGroups(container, name)[0];
+  radioGroup.inputs.forEach(radio => {
+    setChecked(radio, false, silent);
+  });
 }
 
-export function clearRadioInput(radio: HTMLInputElement): void {
-  radio.checked = false; // Uncheck all radios in the group
-  const customRadio = radio
-    .closest(".w-radio")
-    ?.querySelector(wf.select.radio);
-  if (customRadio) {
-    customRadio.classList.remove(wf.class.checked); // Remove the checked styling
+export function setChecked(input: HTMLInputElement, checked: boolean, silent: boolean = false): void {
+  if (!isRadioInput(input) && !isCheckboxInput(input)) {
+    throw new Error(`Expected an input of type checkbox or radio.`);
   }
-  radio.dispatchEvent(new Event('change', { bubbles: true }));
+
+  input.checked = checked;
+
+  if (isRadioInput(input)) {
+    const wradio = input.closest(wf.select.wradio);
+    const customRadio = wradio?.querySelector(wf.select.radio);
+    if (customRadio) {
+      customRadio.classList.toggle(wf.class.checked, checked);
+    }
+  }
+
+  if (isCheckboxInput(input)) {
+    const wcheckbox = input.closest(wf.select.wcheckbox);
+    const customCheckbox = wcheckbox?.querySelector(wf.select.checkbox);
+    if (customCheckbox) {
+      customCheckbox.classList.toggle(wf.class.checked, checked);
+    }
+  }
+
+  if (silent) return;
+  input.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
 /**
@@ -212,12 +225,7 @@ export function initWfInputs(container: HTMLElement) {
     .forEach((input) => {
       input.addEventListener("change", (event) => {
         const target = event.target as HTMLInputElement;
-        const customCheckbox = target
-          .closest(".w-checkbox")
-          ?.querySelector(wf.select.checkbox);
-        if (customCheckbox) {
-          customCheckbox.classList.toggle(wf.class.checked, target.checked);
-        }
+        setChecked(target, target.checked, true);
       });
     });
 
@@ -229,28 +237,11 @@ export function initWfInputs(container: HTMLElement) {
         const target = event.target as HTMLInputElement;
         if (!target.checked) return;
 
-        // Deselect other radios in the same group
-        const name = target.name;
-        container
-          .querySelectorAll<HTMLInputElement>(
-            `input[type="radio"][name="${name}"]`
-          )
-          .forEach((radio) => {
-            const customRadio = radio
-              .closest(".w-radio")
-              ?.querySelector(wf.select.radio);
-            if (customRadio) {
-              customRadio.classList.remove(wf.class.checked);
-            }
-          });
-
-        // Add the checked class to the selected radio's custom container
-        const selectedCustomRadio = target
-          .closest(".w-radio")
-          ?.querySelector(wf.select.radio);
-        if (selectedCustomRadio) {
-          selectedCustomRadio.classList.add(wf.class.checked);
-        }
+        const radioGroup = getRadioGroups(container, target.name)[0];
+        radioGroup.inputs.forEach(radio => {
+          // Check the radio that was selected, uncheck all others in the group
+          setChecked(radio, radio.value === target.value, true);
+        });
       });
     });
 

@@ -95,20 +95,33 @@ async function sendFormData(formData) {
     return false;
   }
 }
-function clearRadioGroup(container, name) {
-  container.querySelectorAll(
-    `${wf.select.radioInput}[name="${name}"]`
-  ).forEach((radio) => {
-    clearRadioInput(radio);
+function clearRadioGroup(container, name, silent = false) {
+  const radioGroup = getRadioGroups(container, name)[0];
+  radioGroup.inputs.forEach((radio) => {
+    setChecked(radio, false, silent);
   });
 }
-function clearRadioInput(radio) {
-  radio.checked = false;
-  const customRadio = radio.closest(".w-radio")?.querySelector(wf.select.radio);
-  if (customRadio) {
-    customRadio.classList.remove(wf.class.checked);
+function setChecked(input, checked, silent = false) {
+  if (!isRadioInput(input) && !isCheckboxInput(input)) {
+    throw new Error(`Expected an input of type checkbox or radio.`);
   }
-  radio.dispatchEvent(new Event("change", { bubbles: true }));
+  input.checked = checked;
+  if (isRadioInput(input)) {
+    const wradio = input.closest(wf.select.wradio);
+    const customRadio = wradio?.querySelector(wf.select.radio);
+    if (customRadio) {
+      customRadio.classList.toggle(wf.class.checked, checked);
+    }
+  }
+  if (isCheckboxInput(input)) {
+    const wcheckbox = input.closest(wf.select.wcheckbox);
+    const customCheckbox = wcheckbox?.querySelector(wf.select.checkbox);
+    if (customCheckbox) {
+      customCheckbox.classList.toggle(wf.class.checked, checked);
+    }
+  }
+  if (silent) return;
+  input.dispatchEvent(new Event("change", { bubbles: true }));
 }
 function enforceButtonTypes(form) {
   if (!form) return;
@@ -126,29 +139,17 @@ function initWfInputs(container) {
   container.querySelectorAll(wf.select.checkboxInput).forEach((input) => {
     input.addEventListener("change", (event) => {
       const target = event.target;
-      const customCheckbox = target.closest(".w-checkbox")?.querySelector(wf.select.checkbox);
-      if (customCheckbox) {
-        customCheckbox.classList.toggle(wf.class.checked, target.checked);
-      }
+      setChecked(target, target.checked, true);
     });
   });
   container.querySelectorAll('input[type="radio"]').forEach((input) => {
     input.addEventListener("change", (event) => {
       const target = event.target;
       if (!target.checked) return;
-      const name = target.name;
-      container.querySelectorAll(
-        `input[type="radio"][name="${name}"]`
-      ).forEach((radio) => {
-        const customRadio = radio.closest(".w-radio")?.querySelector(wf.select.radio);
-        if (customRadio) {
-          customRadio.classList.remove(wf.class.checked);
-        }
+      const radioGroup = getRadioGroups(container, target.name)[0];
+      radioGroup.inputs.forEach((radio) => {
+        setChecked(radio, radio.value === target.value, true);
       });
-      const selectedCustomRadio = target.closest(".w-radio")?.querySelector(wf.select.radio);
-      if (selectedCustomRadio) {
-        selectedCustomRadio.classList.add(wf.class.checked);
-      }
     });
   });
   inputTypes.forEach(([type, customClass]) => {
@@ -216,7 +217,6 @@ function disableWebflowForm(form) {
 }
 export {
   clearRadioGroup,
-  clearRadioInput,
   disableWebflowForm,
   enforceButtonTypes,
   filterFormSelector,
@@ -232,5 +232,6 @@ export {
   removeErrorClasses,
   reportValidity,
   sendFormData,
+  setChecked,
   validateFields
 };
