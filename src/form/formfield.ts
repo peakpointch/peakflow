@@ -30,7 +30,7 @@ class FormField implements FieldData {
     this.required = data.required || false;
     this.type = data.type || "text";
 
-    if (this.type === "radio" || "checkbox") {
+    if (['radio', 'checkbox'].includes(this.type)) {
       this.checked = data.checked || false;
     }
 

@@ -11,7 +11,7 @@ class FormField {
     this.value = data.value || "";
     this.required = data.required || false;
     this.type = data.type || "text";
-    if (this.type === "radio" || "checkbox") {
+    if (["radio", "checkbox"].includes(this.type)) {
       this.checked = data.checked || false;
     }
     if (this.type === "checkbox" && !this.checked) {
