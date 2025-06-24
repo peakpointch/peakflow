@@ -1,5 +1,5 @@
 import wf from "../webflow";
-import { clearRadioInput, HTMLFormInput, validateFields } from "./utility";
+import { setChecked, HTMLFormInput, validateFields } from "./utility";
 import { FormMessage } from "./formmessage";
 import createAttribute from "../attributeselector";
 
@@ -153,7 +153,7 @@ export class FormDecision<PathId extends string = string> {
     if (pathId === null) {
       this.hideAllPaths();
       this.decisionInputs.forEach(input => {
-        clearRadioInput(input);
+        setChecked(input, false);
       });
     }
 
