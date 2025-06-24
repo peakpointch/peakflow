@@ -56,7 +56,6 @@ export function getRadioGroups(source: HTMLElement | HTMLFormInput[], ...names: 
   }
 
   if (!inputs || !inputs.length) {
-    console.warn(`Get radio groups: No form inputs found in the provided ${Array.isArray(source) ? "array" : "container"}.`);
     return [];
   }
 
