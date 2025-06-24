@@ -7,6 +7,10 @@ export type HTMLFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectE
 export type CustomValidator = () => boolean;
 export type FormComponentElement = 'component' | 'success' | 'error' | 'submit' | 'modal';
 type FilterFormElement = 'component' | 'field';
+export interface RadioGroup {
+    name: string;
+    inputs: HTMLInputElement[];
+}
 declare const formElementSelector: import("../attributeselector").AttributeSelector<FormComponentElement>;
 declare const filterFormSelector: import("../attributeselector").AttributeSelector<FilterFormElement>;
 /**
@@ -22,6 +26,7 @@ export declare function isRadioInput(input: HTMLFormInput): input is HTMLInputEl
  */
 export declare function isCheckboxInput(input: HTMLFormInput): input is HTMLInputElement;
 export declare function isFormInput(input: unknown): input is HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+export declare function getRadioGroups(firstArg: string | HTMLElement | HTMLFormInput[], name?: string): RadioGroup[];
 export declare function findFormInput<T extends HTMLFormInput = HTMLFormInput>(containers: Iterable<HTMLElement>, inputId: string, selectorPrefix?: string): T;
 export declare function findFormInputAll<T extends HTMLFormInput = HTMLFormInput>(containers: Iterable<HTMLElement>, inputId: string, selectorPrefix?: string): T[];
 export declare function getWfFormData(form: HTMLFormElement | HTMLElement, fields: any, test?: boolean): WfFormData;

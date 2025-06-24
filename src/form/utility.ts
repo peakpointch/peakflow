@@ -2,6 +2,7 @@ import createAttribute from "../attributeselector";
 import wf from "../webflow";
 import { WfFormData } from "../../types/webflow";
 import { FieldGroupValidation } from "./fieldgroup";
+import { getAllElements, getElement } from "src/utils/getelements";
 
 /**
  * Represents any standard form input element <input>, <select>, or <textarea>.
@@ -10,6 +11,11 @@ export type HTMLFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectE
 export type CustomValidator = () => boolean;
 export type FormComponentElement = 'component' | 'success' | 'error' | 'submit' | 'modal';
 type FilterFormElement = 'component' | 'field';
+
+export interface RadioGroup {
+  name: string;
+  inputs: HTMLInputElement[];
+}
 
 // Form selector functions
 const formElementSelector = createAttribute<FormComponentElement>('data-form-element');
@@ -37,6 +43,37 @@ export function isFormInput(input: unknown): input is HTMLInputElement | HTMLSel
   return input instanceof HTMLInputElement ||
     input instanceof HTMLSelectElement ||
     input instanceof HTMLTextAreaElement;
+}
+
+export function getRadioGroups(firstArg: string | HTMLElement | HTMLFormInput[], name?: string): RadioGroup[] {
+  let inputs: HTMLFormInput[];
+  if (Array.isArray(firstArg)) {
+    inputs = firstArg;
+  } else if (firstArg instanceof HTMLElement || typeof firstArg === 'string') {
+    const container = getElement(firstArg, { single: false });
+    inputs = getAllElements<HTMLFormInput>(wf.select.formInput, { single: false, node: container })
+  } else {
+    throw new Error(`Invalid first parameter: expected "string", "HTMLElement" or "HTMLFormInput[]".`);
+  }
+
+  if (!inputs || !inputs.length) {
+    throw new Error(`No form inputs found in the provided ${Array.isArray(firstArg) ? "array" : "container"}.`);
+  }
+
+  const radioGroupMap = inputs.reduce<Map<string, RadioGroup>>((acc, input) => {
+    if (!isRadioInput(input)) return acc;
+
+    if (name && input.name !== name) return acc;
+
+    if (!acc.has(input.name)) {
+      acc.set(input.name, { name: input.name, inputs: [] });
+    }
+
+    acc.get(input.name)!.inputs.push(input);
+    return acc;
+  }, new Map());
+
+  return Array.from(radioGroupMap.values());
 }
 
 export function findFormInput<T extends HTMLFormInput = HTMLFormInput>(

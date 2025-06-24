@@ -1,5 +1,6 @@
 import createAttribute from "../attributeselector";
 import wf from "../webflow";
+import { getAllElements, getElement } from "src/utils/getelements";
 const formElementSelector = createAttribute("data-form-element");
 const filterFormSelector = createAttribute("data-filter-form");
 function isRadioInput(input) {
@@ -10,6 +11,30 @@ function isCheckboxInput(input) {
 }
 function isFormInput(input) {
   return input instanceof HTMLInputElement || input instanceof HTMLSelectElement || input instanceof HTMLTextAreaElement;
+}
+function getRadioGroups(firstArg, name) {
+  let inputs;
+  if (Array.isArray(firstArg)) {
+    inputs = firstArg;
+  } else if (firstArg instanceof HTMLElement || typeof firstArg === "string") {
+    const container = getElement(firstArg, { single: false });
+    inputs = getAllElements(wf.select.formInput, { single: false, node: container });
+  } else {
+    throw new Error(`Invalid first parameter: expected "string", "HTMLElement" or "HTMLFormInput[]".`);
+  }
+  if (!inputs || !inputs.length) {
+    throw new Error(`No form inputs found in the provided ${Array.isArray(firstArg) ? "array" : "container"}.`);
+  }
+  const radioGroupMap = inputs.reduce((acc, input) => {
+    if (!isRadioInput(input)) return acc;
+    if (name && input.name !== name) return acc;
+    if (!acc.has(input.name)) {
+      acc.set(input.name, { name: input.name, inputs: [] });
+    }
+    acc.get(input.name).inputs.push(input);
+    return acc;
+  }, /* @__PURE__ */ new Map());
+  return Array.from(radioGroupMap.values());
 }
 function findFormInput(containers, inputId, selectorPrefix = wf.select.formInput) {
   const selector = `${selectorPrefix}#${inputId}`;
@@ -198,6 +223,7 @@ export {
   findFormInput,
   findFormInputAll,
   formElementSelector,
+  getRadioGroups,
   getWfFormData,
   initWfInputs,
   isCheckboxInput,
