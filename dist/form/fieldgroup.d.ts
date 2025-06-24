@@ -31,5 +31,5 @@ export declare class FieldGroup<FieldId extends string = string> {
      *
      * @returns A new `FieldGroup` instance
      */
-    static deserialize(fieldGroupData: any): FieldGroup;
+    static deserialize(fieldGroupData: SerializedFieldGroup): FieldGroup;
 }
