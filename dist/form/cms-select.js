@@ -60,7 +60,7 @@ const _CMSSelect = class _CMSSelect {
     return optionElement;
   }
   static insertOptions(targets, values) {
-    const targetList = getAllElements(targets, true);
+    const targetList = getAllElements(targets, { single: true });
     values.forEach((val) => {
       if (val) {
         const option = _CMSSelect.createOption(val);
@@ -71,7 +71,7 @@ const _CMSSelect = class _CMSSelect {
     });
   }
   static clearOptions(targets, keepEmpty) {
-    const targetList = getAllElements(targets, true);
+    const targetList = getAllElements(targets, { single: true });
     targetList.forEach((target) => {
       let options = Array.from(target.querySelectorAll("option"));
       if (keepEmpty) options = options.filter((option) => Boolean(option.value));

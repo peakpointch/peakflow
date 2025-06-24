@@ -109,7 +109,7 @@ export default class CMSSelect {
   }
 
   public static insertOptions(targets: HTMLSelectElement | HTMLSelectElement[], values: string[]) {
-    const targetList = getAllElements<HTMLSelectElement>(targets, true);
+    const targetList = getAllElements<HTMLSelectElement>(targets, { single: true });
     values.forEach(val => {
       if (val) {
         const option = CMSSelect.createOption(val);
@@ -121,7 +121,7 @@ export default class CMSSelect {
   }
 
   public static clearOptions(targets: HTMLSelectElement | HTMLSelectElement[], keepEmpty: boolean): void {
-    const targetList = getAllElements<HTMLSelectElement>(targets, true)
+    const targetList = getAllElements<HTMLSelectElement>(targets, { single: true });
     targetList.forEach(target => {
       let options = Array.from(target.querySelectorAll('option'));
       if (keepEmpty) options = options.filter(option => Boolean(option.value));

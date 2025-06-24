@@ -1,3 +1,8 @@
+type GetElementOptions = {
+  single: boolean;
+  node: Element | Document;
+};
+
 /**
  * Finds one or multiple elements based on input type.
  * @param input - CSS selector or HTMLElement(s).
@@ -6,13 +11,18 @@
  */
 export function getAllElements<T extends HTMLElement = HTMLElement>(
   input: string | T | T[] | NodeListOf<T>,
-  single: boolean = false
+  options: Partial<GetElementOptions> = {}
 ): T[] {
+  const opts: GetElementOptions = {
+    single: options.single ?? false,
+    node: options.node ?? document
+  }
+
   if (typeof input === 'string') {
-    const elements = Array.from(document.querySelectorAll<T>(input)).filter(Boolean);
+    const elements = Array.from(opts.node.querySelectorAll<T>(input)).filter(Boolean);
     if (elements.length === 0) {
       throw new Error(`No elements found matching selector: ${input}`);
-    } else if (single) {
+    } else if (opts.single) {
       return [elements[0]];
     } else {
       return elements;
@@ -30,14 +40,18 @@ export function getAllElements<T extends HTMLElement = HTMLElement>(
 
 export function getElement<T extends HTMLElement = HTMLElement>(
   input: string | T,
-  singleOnly: boolean = true
+  options: Partial<GetElementOptions> = {}
 ): T {
+  const opts: GetElementOptions = {
+    single: options.single ?? true,
+    node: options.node ?? document
+  }
   if (typeof input === 'string') {
-    const elements = Array.from(document.querySelectorAll<T>(input));
+    const elements = Array.from(opts.node.querySelectorAll<T>(input));
 
     if (elements.length === 0) {
       throw new Error(`No elements found matching selector: "${input}".`);
-    } else if (singleOnly && elements.length > 1) {
+    } else if (opts.single && elements.length > 1) {
       throw new Error(`More than 1 element found matching selector "${input}". Make your selector more specific.`);
     }
 
