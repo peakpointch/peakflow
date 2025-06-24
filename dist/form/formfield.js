@@ -7,7 +7,7 @@ class FormField {
       return;
     }
     this.id = data.id || `field-${Math.random().toString(36).substring(2)}`;
-    this.label = data.label || `Unnamed Field`;
+    this.label = data.label || `Untitled`;
     this.value = data.value || "";
     this.required = data.required || false;
     this.type = data.type || "text";
@@ -48,9 +48,10 @@ function fieldFromInput(input, index) {
   if (input.type === "radio" && !input.checked) {
     return new FormField();
   }
+  const id = input.id || parameterize(input.dataset.name || `untitled ${index}`);
   const field = new FormField({
-    id: input.id || parameterize(input.dataset.name || `field ${index}`),
-    label: input.dataset.name || `field ${index}`,
+    id: isRadioInput(input) ? input.name : id,
+    label: input.dataset.name || `Untitled ${index}`,
     value: input.value,
     required: input.required || false,
     type: input.type,
