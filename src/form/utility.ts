@@ -1,8 +1,8 @@
-import createAttribute, { extend } from "../attributeselector";
+import createAttribute from "../attributeselector";
 import wf from "../webflow";
 import { WfFormData } from "../../types/webflow";
 import { FieldGroupValidation } from "./fieldgroup";
-import { getAllElements, getElement } from "src/utils/getelements";
+import { getAllElements } from "../utils/getelements";
 
 /**
  * Represents any standard form input element <input>, <select>, or <textarea>.

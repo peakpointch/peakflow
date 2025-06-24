@@ -1,6 +1,6 @@
 import createAttribute from "../attributeselector";
 import wf from "../webflow";
-import { getAllElements } from "src/utils/getelements";
+import { getAllElements } from "../utils/getelements";
 const formElementSelector = createAttribute("data-form-element");
 const filterFormSelector = createAttribute("data-filter-form");
 function isRadioInput(input) {
