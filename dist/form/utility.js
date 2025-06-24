@@ -12,17 +12,17 @@ function isCheckboxInput(input) {
 function isFormInput(input) {
   return input instanceof HTMLInputElement || input instanceof HTMLSelectElement || input instanceof HTMLTextAreaElement;
 }
-function getRadioGroups(firstArg, ...names) {
+function getRadioGroups(source, ...names) {
   let inputs;
-  if (Array.isArray(firstArg)) {
-    inputs = firstArg;
-  } else if (firstArg instanceof HTMLElement) {
-    inputs = getAllElements(wf.select.formInput, { single: false, node: firstArg });
+  if (Array.isArray(source)) {
+    inputs = source;
+  } else if (source instanceof HTMLElement) {
+    inputs = getAllElements(wf.select.formInput, { single: false, node: source });
   } else {
     throw new Error(`Invalid first parameter: expected "string", "HTMLElement" or "HTMLFormInput[]".`);
   }
   if (!inputs || !inputs.length) {
-    console.warn(`Get radio groups: No form inputs found in the provided ${Array.isArray(firstArg) ? "array" : "container"}.`);
+    console.warn(`Get radio groups: No form inputs found in the provided ${Array.isArray(source) ? "array" : "container"}.`);
     return [];
   }
   const radioGroupMap = inputs.reduce((acc, input) => {
@@ -35,6 +35,27 @@ function getRadioGroups(firstArg, ...names) {
     return acc;
   }, /* @__PURE__ */ new Map());
   return Array.from(radioGroupMap.values());
+}
+function getRadioGroup(source, name) {
+  const groups = getRadioGroups(source, name);
+  const group = groups[0];
+  if (!group) return null;
+  if (groups.length > 1) {
+    console.warn(`Get radio group: Multiple groups found for name "${name}". Returning the first.`);
+  }
+  if (!group.inputs.length) {
+    console.warn(`Radio group "${name}" has no inputs.`);
+  } else if (group.inputs.length === 1) {
+    console.warn(`Radio group "${name}" has only 1 input.`);
+  }
+  return group;
+}
+function getRadioGroupStrict(source, name) {
+  const group = getRadioGroup(source, name);
+  if (!group || !group.name) {
+    throw new Error(`Radio group "${name}" not found.`);
+  }
+  return group;
 }
 function findFormInput(containers, inputId, selectorPrefix = wf.select.formInput) {
   const selector = `${selectorPrefix}#${inputId}`;
@@ -96,7 +117,7 @@ async function sendFormData(formData) {
   }
 }
 function clearRadioGroup(container, name, silent = false) {
-  const radioGroup = getRadioGroups(container, name)[0];
+  const radioGroup = getRadioGroup(container, name);
   radioGroup.inputs.forEach((radio) => {
     setChecked(radio, false, silent);
   });
@@ -143,7 +164,7 @@ function initWfInputs(container) {
     input.addEventListener("change", (event) => {
       const target = event.target;
       if (!target.checked) return;
-      const radioGroup = getRadioGroups(container, target.name)[0];
+      const radioGroup = getRadioGroup(container, target.name);
       radioGroup.inputs.forEach((radio) => {
         setChecked(radio, radio.value === target.value, true);
       });
@@ -220,6 +241,8 @@ export {
   findFormInput,
   findFormInputAll,
   formElementSelector,
+  getRadioGroup,
+  getRadioGroupStrict,
   getRadioGroups,
   getWfFormData,
   initWfInputs,

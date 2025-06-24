@@ -76,6 +76,32 @@ export function getRadioGroups(source: HTMLElement | HTMLFormInput[], ...names: 
   return Array.from(radioGroupMap.values());
 }
 
+export function getRadioGroup(source: HTMLElement | HTMLFormInput[], name: string): RadioGroup | null {
+  const groups = getRadioGroups(source, name);
+  const group = groups[0];
+  if (!group) return null;
+
+  if (groups.length > 1) {
+    console.warn(`Get radio group: Multiple groups found for name "${name}". Returning the first.`);
+  }
+
+  if (!group.inputs.length) {
+    console.warn(`Radio group "${name}" has no inputs.`);
+  } else if (group.inputs.length === 1) {
+    console.warn(`Radio group "${name}" has only 1 input.`);
+  }
+
+  return group;
+}
+
+export function getRadioGroupStrict(source: HTMLElement | HTMLFormInput[], name: string): RadioGroup {
+  const group = getRadioGroup(source, name);
+  if (!group || !group.name) {
+    throw new Error(`Radio group "${name}" not found.`);
+  }
+  return group;
+}
+
 export function findFormInput<T extends HTMLFormInput = HTMLFormInput>(
   containers: Iterable<HTMLElement>,
   inputId: string,
@@ -164,7 +190,7 @@ export async function sendFormData(formData: any): Promise<boolean> {
 }
 
 export function clearRadioGroup(container: HTMLElement, name: string, silent: boolean = false): void {
-  const radioGroup = getRadioGroups(container, name)[0];
+  const radioGroup = getRadioGroup(container, name);
   radioGroup.inputs.forEach(radio => {
     setChecked(radio, false, silent);
   });
@@ -234,7 +260,7 @@ export function initWfInputs(container: HTMLElement) {
         const target = event.target as HTMLInputElement;
         if (!target.checked) return;
 
-        const radioGroup = getRadioGroups(container, target.name)[0];
+        const radioGroup = getRadioGroup(container, target.name);
         radioGroup.inputs.forEach(radio => {
           // Check the radio that was selected, uncheck all others in the group
           setChecked(radio, radio.value === target.value, true);
