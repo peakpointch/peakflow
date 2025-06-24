@@ -3,9 +3,9 @@ import { FieldGroupValidation } from "./fieldgroup";
 /**
  * Represents any standard form input element <input>, <select>, or <textarea>.
  */
-type HTMLFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
-type CustomValidator = () => boolean;
-type FormComponentElement = 'component' | 'success' | 'error' | 'submit' | 'modal';
+export type HTMLFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+export type CustomValidator = () => boolean;
+export type FormComponentElement = 'component' | 'success' | 'error' | 'submit' | 'modal';
 type FilterFormElement = 'component' | 'field';
 declare const formElementSelector: import("../attributeselector").AttributeSelector<FormComponentElement>;
 declare const filterFormSelector: import("../attributeselector").AttributeSelector<FilterFormElement>;
@@ -47,4 +47,3 @@ export declare function removeErrorClasses(input: HTMLFormInput): void;
 export declare function validateFields(inputs: NodeListOf<HTMLFormInput> | HTMLFormInput[], report?: boolean): FieldGroupValidation;
 export declare function disableWebflowForm(form: HTMLFormElement): void;
 export { formElementSelector, filterFormSelector, };
-export type { HTMLFormInput, FormComponentElement, CustomValidator };

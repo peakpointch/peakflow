@@ -6,9 +6,9 @@ import { FieldGroupValidation } from "./fieldgroup";
 /**
  * Represents any standard form input element <input>, <select>, or <textarea>.
  */
-type HTMLFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
-type CustomValidator = () => boolean;
-type FormComponentElement = 'component' | 'success' | 'error' | 'submit' | 'modal';
+export type HTMLFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+export type CustomValidator = () => boolean;
+export type FormComponentElement = 'component' | 'success' | 'error' | 'submit' | 'modal';
 type FilterFormElement = 'component' | 'field';
 
 // Form selector functions
@@ -303,5 +303,3 @@ export {
   formElementSelector,
   filterFormSelector,
 }
-
-export type { HTMLFormInput, FormComponentElement, CustomValidator };
