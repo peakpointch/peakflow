@@ -73,6 +73,22 @@ class FormField implements FieldData {
 
     return valid;
   }
+
+  public serialize(): FieldData {
+    const serialized: FieldData = {
+      id: this.id,
+      label: this.label,
+      value: this.value,
+      required: this.required,
+      type: this.type,
+    }
+
+    if (['radio', 'checkbox'].includes(this.type)) {
+      serialized.checked = this.checked;
+    }
+
+    return serialized;
+  }
 }
 
 function fieldFromInput(input: HTMLFormInput, index: string | number): FormField {

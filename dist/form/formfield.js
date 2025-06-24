@@ -43,6 +43,19 @@ class FormField {
     }
     return valid;
   }
+  serialize() {
+    const serialized = {
+      id: this.id,
+      label: this.label,
+      value: this.value,
+      required: this.required,
+      type: this.type
+    };
+    if (["radio", "checkbox"].includes(this.type)) {
+      serialized.checked = this.checked;
+    }
+    return serialized;
+  }
 }
 function fieldFromInput(input, index) {
   if (input.type === "radio" && !input.checked) {

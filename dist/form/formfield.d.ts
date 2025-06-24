@@ -19,6 +19,7 @@ declare class FormField implements FieldData {
     setValue(newValue: any): void;
     onChange(callback: (value: any) => void): void;
     validate(report?: boolean): boolean;
+    serialize(): FieldData;
 }
 declare function fieldFromInput(input: HTMLFormInput, index: string | number): FormField;
 export type { FieldData };
