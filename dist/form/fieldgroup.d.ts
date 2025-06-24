@@ -1,4 +1,4 @@
-import { FormField } from "./formfield";
+import { FormField, FieldData } from "./formfield";
 import { HTMLFormInput } from "./utility";
 export type FieldGroupValidation<FieldType extends FormField | HTMLFormInput = HTMLFormInput> = {
     isValid: boolean;
@@ -8,6 +8,7 @@ export type FieldGroupValidation<FieldType extends FormField | HTMLFormInput = H
  * A map of string to a `FormField` class instance.
  */
 export type FormFieldMap<FieldId extends string = string> = Map<FieldId, FormField>;
+export type SerializedFieldGroup = Record<string, FieldData>;
 export declare class FieldGroup<FieldId extends string = string> {
     fields: FormFieldMap<FieldId>;
     validation: FieldGroupValidation<FormField>;
@@ -24,7 +25,7 @@ export declare class FieldGroup<FieldId extends string = string> {
      *
      * @returns `this.fields` as an object
      */
-    serialize(): any;
+    serialize(): SerializedFieldGroup;
     /**
      * Deserialize a `FieldGroup`.
      *

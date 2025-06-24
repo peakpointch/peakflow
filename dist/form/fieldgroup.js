@@ -1,4 +1,3 @@
-import mapToObject from "../utils/maptoobject";
 import { FormField } from "./formfield";
 class FieldGroup {
   constructor(fields = /* @__PURE__ */ new Map()) {
@@ -30,7 +29,11 @@ class FieldGroup {
    * @returns `this.fields` as an object
    */
   serialize() {
-    return mapToObject(this.fields);
+    let fields = {};
+    this.fields.forEach((field, key) => {
+      fields[key] = field.serialize();
+    });
+    return fields;
   }
   /**
    * Deserialize a `FieldGroup`.
