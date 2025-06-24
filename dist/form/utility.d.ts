@@ -27,8 +27,8 @@ export declare function isRadioInput(input: HTMLFormInput): input is HTMLInputEl
 export declare function isCheckboxInput(input: HTMLFormInput): input is HTMLInputElement;
 export declare function isFormInput(input: unknown): input is HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export declare function getRadioGroups(source: HTMLElement | HTMLFormInput[], ...names: string[]): RadioGroup[];
-export declare function getRadioGroup(source: HTMLElement | HTMLFormInput[], name: string): RadioGroup | null;
 export declare function getRadioGroupStrict(source: HTMLElement | HTMLFormInput[], name: string): RadioGroup;
+export declare function getRadioGroup(source: HTMLElement | HTMLFormInput[], name: string): RadioGroup | null;
 export declare function findFormInput<T extends HTMLFormInput = HTMLFormInput>(containers: Iterable<HTMLElement>, inputId: string, selectorPrefix?: string): T;
 export declare function findFormInputAll<T extends HTMLFormInput = HTMLFormInput>(containers: Iterable<HTMLElement>, inputId: string, selectorPrefix?: string): T[];
 export declare function getWfFormData(form: HTMLFormElement | HTMLElement, fields: any, test?: boolean): WfFormData;

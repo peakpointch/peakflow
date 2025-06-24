@@ -76,10 +76,12 @@ export function getRadioGroups(source: HTMLElement | HTMLFormInput[], ...names: 
   return Array.from(radioGroupMap.values());
 }
 
-export function getRadioGroup(source: HTMLElement | HTMLFormInput[], name: string): RadioGroup | null {
+export function getRadioGroupStrict(source: HTMLElement | HTMLFormInput[], name: string): RadioGroup {
   const groups = getRadioGroups(source, name);
   const group = groups[0];
-  if (!group) return null;
+  if (!group || !group.name) {
+    throw new Error(`Radio group "${name}" not found.`);
+  }
 
   if (groups.length > 1) {
     console.warn(`Get radio group: Multiple groups found for name "${name}". Returning the first.`);
@@ -94,12 +96,13 @@ export function getRadioGroup(source: HTMLElement | HTMLFormInput[], name: strin
   return group;
 }
 
-export function getRadioGroupStrict(source: HTMLElement | HTMLFormInput[], name: string): RadioGroup {
-  const group = getRadioGroup(source, name);
-  if (!group || !group.name) {
-    throw new Error(`Radio group "${name}" not found.`);
+export function getRadioGroup(source: HTMLElement | HTMLFormInput[], name: string): RadioGroup | null {
+  try {
+    return getRadioGroupStrict(source, name);
+  } catch (e) {
+    console.warn(`Get radio group: ${e.message}`);
+    return null;
   }
-  return group;
 }
 
 export function findFormInput<T extends HTMLFormInput = HTMLFormInput>(

@@ -36,10 +36,12 @@ function getRadioGroups(source, ...names) {
   }, /* @__PURE__ */ new Map());
   return Array.from(radioGroupMap.values());
 }
-function getRadioGroup(source, name) {
+function getRadioGroupStrict(source, name) {
   const groups = getRadioGroups(source, name);
   const group = groups[0];
-  if (!group) return null;
+  if (!group || !group.name) {
+    throw new Error(`Radio group "${name}" not found.`);
+  }
   if (groups.length > 1) {
     console.warn(`Get radio group: Multiple groups found for name "${name}". Returning the first.`);
   }
@@ -50,12 +52,13 @@ function getRadioGroup(source, name) {
   }
   return group;
 }
-function getRadioGroupStrict(source, name) {
-  const group = getRadioGroup(source, name);
-  if (!group || !group.name) {
-    throw new Error(`Radio group "${name}" not found.`);
+function getRadioGroup(source, name) {
+  try {
+    return getRadioGroupStrict(source, name);
+  } catch (e) {
+    console.warn(`Get radio group: ${e.message}`);
+    return null;
   }
-  return group;
 }
 function findFormInput(containers, inputId, selectorPrefix = wf.select.formInput) {
   const selector = `${selectorPrefix}#${inputId}`;
