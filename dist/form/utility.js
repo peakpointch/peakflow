@@ -1,6 +1,6 @@
 import createAttribute from "../attributeselector";
 import wf from "../webflow";
-import { getAllElements, getElement } from "src/utils/getelements";
+import { getAllElements } from "src/utils/getelements";
 const formElementSelector = createAttribute("data-form-element");
 const filterFormSelector = createAttribute("data-filter-form");
 function isRadioInput(input) {
@@ -12,13 +12,12 @@ function isCheckboxInput(input) {
 function isFormInput(input) {
   return input instanceof HTMLInputElement || input instanceof HTMLSelectElement || input instanceof HTMLTextAreaElement;
 }
-function getRadioGroups(firstArg, name) {
+function getRadioGroups(firstArg, ...names) {
   let inputs;
   if (Array.isArray(firstArg)) {
     inputs = firstArg;
-  } else if (firstArg instanceof HTMLElement || typeof firstArg === "string") {
-    const container = getElement(firstArg, { single: false });
-    inputs = getAllElements(wf.select.formInput, { single: false, node: container });
+  } else if (firstArg instanceof HTMLElement) {
+    inputs = getAllElements(wf.select.formInput, { single: false, node: firstArg });
   } else {
     throw new Error(`Invalid first parameter: expected "string", "HTMLElement" or "HTMLFormInput[]".`);
   }
@@ -28,7 +27,7 @@ function getRadioGroups(firstArg, name) {
   }
   const radioGroupMap = inputs.reduce((acc, input) => {
     if (!isRadioInput(input)) return acc;
-    if (name && input.name !== name) return acc;
+    if (names.length && !names.includes(input.name)) return acc;
     if (!acc.has(input.name)) {
       acc.set(input.name, { name: input.name, inputs: [] });
     }

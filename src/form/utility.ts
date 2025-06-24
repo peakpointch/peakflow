@@ -45,13 +45,12 @@ export function isFormInput(input: unknown): input is HTMLInputElement | HTMLSel
     input instanceof HTMLTextAreaElement;
 }
 
-export function getRadioGroups(firstArg: string | HTMLElement | HTMLFormInput[], name?: string): RadioGroup[] {
+export function getRadioGroups(source: HTMLElement | HTMLFormInput[], ...names: string[]): RadioGroup[] {
   let inputs: HTMLFormInput[];
-  if (Array.isArray(firstArg)) {
-    inputs = firstArg;
-  } else if (firstArg instanceof HTMLElement || typeof firstArg === 'string') {
-    const container = getElement(firstArg, { single: false });
-    inputs = getAllElements<HTMLFormInput>(wf.select.formInput, { single: false, node: container })
+  if (Array.isArray(source)) {
+    inputs = source;
+  } else if (source instanceof HTMLElement) {
+    inputs = getAllElements<HTMLFormInput>(wf.select.formInput, { single: false, node: source });
   } else {
     throw new Error(`Invalid first parameter: expected "string", "HTMLElement" or "HTMLFormInput[]".`);
   }
@@ -64,7 +63,7 @@ export function getRadioGroups(firstArg: string | HTMLElement | HTMLFormInput[],
   const radioGroupMap = inputs.reduce<Map<string, RadioGroup>>((acc, input) => {
     if (!isRadioInput(input)) return acc;
 
-    if (name && input.name !== name) return acc;
+    if (names.length && !names.includes(input.name)) return acc;
 
     if (!acc.has(input.name)) {
       acc.set(input.name, { name: input.name, inputs: [] });
