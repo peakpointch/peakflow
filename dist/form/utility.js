@@ -23,7 +23,8 @@ function getRadioGroups(firstArg, name) {
     throw new Error(`Invalid first parameter: expected "string", "HTMLElement" or "HTMLFormInput[]".`);
   }
   if (!inputs || !inputs.length) {
-    throw new Error(`No form inputs found in the provided ${Array.isArray(firstArg) ? "array" : "container"}.`);
+    console.warn(`Get radio groups: No form inputs found in the provided ${Array.isArray(firstArg) ? "array" : "container"}.`);
+    return [];
   }
   const radioGroupMap = inputs.reduce((acc, input) => {
     if (!isRadioInput(input)) return acc;

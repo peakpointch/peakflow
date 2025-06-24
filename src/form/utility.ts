@@ -57,7 +57,8 @@ export function getRadioGroups(firstArg: string | HTMLElement | HTMLFormInput[],
   }
 
   if (!inputs || !inputs.length) {
-    throw new Error(`No form inputs found in the provided ${Array.isArray(firstArg) ? "array" : "container"}.`);
+    console.warn(`Get radio groups: No form inputs found in the provided ${Array.isArray(source) ? "array" : "container"}.`);
+    return [];
   }
 
   const radioGroupMap = inputs.reduce<Map<string, RadioGroup>>((acc, input) => {
