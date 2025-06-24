@@ -7,6 +7,8 @@ export interface WebflowClassNames {
   wcheckbox: "w-checkbox";
   checkbox: "w-checkbox-input";
   checked: "w--redirected-checked";
+  focus: "w--redirected-focus";
+  focusVisible: "w--redirected-focus-visible";
 }
 
 type InputSelectorList = Array<
@@ -25,6 +27,9 @@ export interface WebflowSelectors {
   wcheckbox: `.${WebflowClassNames["wcheckbox"]}`;
   checkbox: `.${WebflowClassNames["checkbox"]}`;
   checked: `.${WebflowClassNames["checked"]}`;
+  focused: `:focus-visible, [data-wf-focus-visible]`;
+  focus: `.${WebflowClassNames["focus"]}`;
+  focusVisible: `.${WebflowClassNames["focusVisible"]}`;
 
   /** CSS Selector to select all `HTMLFormInput`'s. */
   formInput: string;

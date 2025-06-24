@@ -8,7 +8,9 @@ const wfclass = {
   radio: "w-radio-input",
   wcheckbox: "w-checkbox",
   checkbox: "w-checkbox-input",
-  checked: "w--redirected-checked"
+  checked: "w--redirected-checked",
+  focus: "w--redirected-focus",
+  focusVisible: "w--redirected-focus-visible"
 };
 const inputSelectorList = [
   `.${wfclass.input}`,
@@ -25,6 +27,9 @@ const wfselect = {
   wcheckbox: `.${wfclass.wcheckbox}`,
   checkbox: `.${wfclass.checkbox}`,
   checked: `.${wfclass.checked}`,
+  focused: `:focus-visible, [data-wf-focus-visible]`,
+  focus: `.${wfclass.focus}`,
+  focusVisible: `.${wfclass.focusVisible}`,
   formInput: inputSelectorList.join(", "),
   radioInput: `.${wfclass.wradio} input[type="radio"]`,
   checkboxInput: `.${wfclass.wcheckbox} input[type="checkbox"]:not(.${wfclass.checkbox})`,
