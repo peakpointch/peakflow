@@ -129,9 +129,6 @@ function enforceButtonTypes(form) {
   buttons.forEach((button) => button.setAttribute("type", "button"));
 }
 function initWfInputs(container) {
-  const focusClass = "w--redirected-focus";
-  const focusVisibleClass = "w--redirected-focus-visible";
-  const focusVisibleSelector = ":focus-visible, [data-wf-focus-visible]";
   const inputTypes = [
     ["checkbox", wf.select.checkbox],
     ["radio", wf.select.radio]
@@ -160,9 +157,9 @@ function initWfInputs(container) {
         const target = event.target;
         const customElement = target.closest(".w-checkbox, .w-radio")?.querySelector(customClass);
         if (customElement) {
-          customElement.classList.add(focusClass);
-          if (target.matches(focusVisibleSelector)) {
-            customElement.classList.add(focusVisibleClass);
+          customElement.classList.add(wf.class.focus);
+          if (target.matches(wf.select.focused)) {
+            customElement.classList.add(wf.class.focusVisible);
           }
         }
       });
@@ -170,7 +167,7 @@ function initWfInputs(container) {
         const target = event.target;
         const customElement = target.closest(".w-checkbox, .w-radio")?.querySelector(customClass);
         if (customElement) {
-          customElement.classList.remove(focusClass, focusVisibleClass);
+          customElement.classList.remove(wf.class.focus, wf.class.focusVisible);
         }
       });
     });

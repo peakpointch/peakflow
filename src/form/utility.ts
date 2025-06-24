@@ -211,9 +211,6 @@ export function enforceButtonTypes(form: HTMLFormElement | null): void {
  */
 export function initWfInputs(container: HTMLElement) {
   // Constants for selectors and classes
-  const focusClass = "w--redirected-focus";
-  const focusVisibleClass = "w--redirected-focus-visible";
-  const focusVisibleSelector = ":focus-visible, [data-wf-focus-visible]";
   const inputTypes = [
     ["checkbox", wf.select.checkbox],
     ["radio", wf.select.radio],
@@ -258,9 +255,9 @@ export function initWfInputs(container: HTMLElement) {
             .closest(".w-checkbox, .w-radio")
             ?.querySelector(customClass);
           if (customElement) {
-            customElement.classList.add(focusClass);
-            if (target.matches(focusVisibleSelector)) {
-              customElement.classList.add(focusVisibleClass);
+            customElement.classList.add(wf.class.focus);
+            if (target.matches(wf.select.focused)) {
+              customElement.classList.add(wf.class.focusVisible);
             }
           }
         });
@@ -271,7 +268,7 @@ export function initWfInputs(container: HTMLElement) {
             .closest(".w-checkbox, .w-radio")
             ?.querySelector(customClass);
           if (customElement) {
-            customElement.classList.remove(focusClass, focusVisibleClass);
+            customElement.classList.remove(wf.class.focus, wf.class.focusVisible);
           }
         });
       });
