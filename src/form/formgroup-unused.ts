@@ -1,5 +1,5 @@
-import { FormMessage } from "./formmessage";
-import { HTMLFormInput, isCheckboxInput, isRadioInput } from "./utility";
+import { FormMessage } from "./formmessage.js";
+import { HTMLFormInput, isCheckboxInput, isRadioInput } from "./utility.js";
 
 class FormGroup {
   private form: HTMLFormElement;

@@ -1,12 +1,12 @@
-import createAttribute from "../attributeselector";
-import { toCamelCase } from "../utils/parameterize";
+import createAttribute from "../attributeselector/index.js";
+import { toCamelCase } from "../utils/parameterize.js";
 import { format, parse } from "date-fns";
 import { fromZonedTime } from "date-fns-tz";
 import { de } from "date-fns/locale";
-import wf from "../webflow";
-import deepMerge from "../utils/deepmerge";
-import { DashToCamelCase } from "../typeutils";
-import { IANATimeZone } from "../timezones";
+import wf from "../webflow/index.js";
+import deepMerge from "../utils/deepmerge.js";
+import { DashToCamelCase } from "../typeutils/index.js";
+import { IANATimeZone } from "../timezones/index.js";
 
 type VisibilityControl = boolean | 'emptyState';
 type UnparsedBoolean<T> = Exclude<T, boolean> | "true" | "false";

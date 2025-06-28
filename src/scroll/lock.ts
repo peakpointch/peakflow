@@ -1,4 +1,4 @@
-import { addScrollbarPadding, removeScrollbarPadding } from "./scrollbar";
+import { addScrollbarPadding, removeScrollbarPadding } from "./scrollbar.js";
 
 /**
  * Count how many times the body scroll gets locked to avoid unintended unlocks.

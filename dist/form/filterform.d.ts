@@ -1,5 +1,5 @@
-import { FieldGroup } from "./fieldgroup";
-import { HTMLFormInput } from "./utility";
+import { FieldGroup } from "./fieldgroup.js";
+import { HTMLFormInput } from "./utility.js";
 type FilterAction<T extends string = string, Q extends string = string> = (filters: FieldGroup<T>, fieldId: Q) => any;
 type ActionElement = 'download' | 'save';
 type HTMLActionElement = HTMLButtonElement;
@@ -14,7 +14,7 @@ export declare class FilterForm<FieldId extends string = string> {
     private globalChangeActions;
     private defaultDayRange;
     private resizeResetFields;
-    static select: import("..").AttributeSelector<ActionElement>;
+    static select: import("../index.js").AttributeSelector<ActionElement>;
     constructor(container: HTMLElement | null, fieldIds?: readonly FieldId[]);
     /**
      * Returns the `HTMLElement` of a specific filter input.

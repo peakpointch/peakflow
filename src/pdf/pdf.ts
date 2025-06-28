@@ -1,8 +1,8 @@
-import Renderer, { RenderData } from "../renderer";
+import Renderer, { RenderData } from "../renderer/index.js";
 import html2canvas from 'html2canvas';
 import jsPDF, { Html2CanvasOptions } from 'jspdf';
-import createAttribute from "../attributeselector";
-import { softHyphenizer, solidHyphens } from "../hyphenizer";
+import createAttribute from "../attributeselector/index.js";
+import { softHyphenizer, solidHyphens } from "../hyphenizer/index.js";
 import german from "hyphenation.de";
 
 // Types

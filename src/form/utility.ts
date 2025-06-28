@@ -1,8 +1,8 @@
-import createAttribute from "../attributeselector";
-import wf from "../webflow";
-import { WfFormData } from "../../types/webflow";
-import { FieldGroupValidation } from "./fieldgroup";
-import { getAllElements } from "../utils/getelements";
+import createAttribute from "../attributeselector/index.js";
+import wf from "../webflow/index.js";
+import { WfFormData } from "../../types/webflow.js";
+import { FieldGroupValidation } from "./fieldgroup.js";
+import { getAllElements } from "../utils/getelements.js";
 
 /**
  * Represents any standard form input element <input>, <select>, or <textarea>.
@@ -98,8 +98,8 @@ export function getRadioGroupStrict(source: HTMLElement | HTMLFormInput[], name:
 export function getRadioGroup(source: HTMLElement | HTMLFormInput[], name: string): RadioGroup | null {
   try {
     return getRadioGroupStrict(source, name);
-  } catch (e) {
-    console.warn(`Get radio group: ${e.message}`);
+  } catch (e: unknown) {
+    console.warn(`Get radio group: ${e instanceof Error ? e.message : 'Unknown error'}`);
     return null;
   }
 }
@@ -141,8 +141,8 @@ export function findFormInputAll<T extends HTMLFormInput = HTMLFormInput>(
 }
 
 export function getWfFormData(form: HTMLFormElement | HTMLElement, fields: any, test: boolean = false): WfFormData {
-  if (!(form instanceof HTMLFormElement)) {
-    form = form.querySelector('form');
+  if (!form || !(form instanceof HTMLFormElement)) {
+    form = form?.querySelector('form') as HTMLFormElement;
   }
 
   if (!form || !(form instanceof HTMLFormElement)) {

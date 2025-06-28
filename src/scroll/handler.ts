@@ -1,4 +1,4 @@
-import { isScrollbarVisible } from "./scrollbar";
+import { isScrollbarVisible } from "./scrollbar.js";
 
 export type ScrollPosition = "start" | "center" | "end" | "nearest";
 

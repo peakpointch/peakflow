@@ -1,5 +1,2 @@
-import { Renderer } from "./";
-export * from "./renderer";
-export {
-  Renderer as default
-};
+export { Renderer as default } from './renderer.js';
+export * from './renderer.js';

@@ -1,7 +1,7 @@
-import wf from "../webflow";
-import { setChecked, HTMLFormInput, validateFields } from "./utility";
-import { FormMessage } from "./formmessage";
-import createAttribute from "../attributeselector";
+import wf from "../webflow/index.js";
+import { setChecked, HTMLFormInput, validateFields } from "./utility.js";
+import { FormMessage } from "./formmessage.js";
+import createAttribute from "../attributeselector/index.js";
 
 interface FormDecisionAttributes {
   component: string;

@@ -1,1 +1,1 @@
-export type * from './timezones';
+export type * from './timezones.js';

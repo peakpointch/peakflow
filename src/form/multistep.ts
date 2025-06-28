@@ -1,5 +1,5 @@
 // Imports
-import createAttribute, { exclude, extend } from "../attributeselector";
+import createAttribute, { exclude, extend } from "../attributeselector/index.js";
 import {
   initWfInputs,
   sendFormData,
@@ -10,10 +10,10 @@ import {
   FormFieldMap,
   HTMLFormInput,
   CustomValidator,
-} from ".";
-import wf from "../webflow";
-import mapToObject from "../utils/maptoobject";
-import deepMerge from "../utils/deepmerge";
+} from "./index.js";
+import wf from "../webflow/index.js";
+import mapToObject from "../utils/maptoobject.js";
+import deepMerge from "../utils/deepmerge.js";
 
 // Types
 interface FormOptions {

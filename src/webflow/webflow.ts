@@ -3,7 +3,7 @@ import type {
   Webflow,
   WebflowClassNames,
   WebflowSelectors,
-} from "../../types/webflow";
+} from "../../types/webflow.js";
 
 // Webflow environment
 const siteId: string = document.documentElement.dataset.wfSite || "";

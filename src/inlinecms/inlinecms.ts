@@ -1,4 +1,4 @@
-import { getAllElements } from "../utils/getelements";
+import { getAllElements } from "../utils/getelements.js";
 
 const INLINECMS_TARGET_ATTR = `data-inlinecms-target`;
 const INLINECMS_COMPONENT_ATTR = `data-inlinecms-component`;

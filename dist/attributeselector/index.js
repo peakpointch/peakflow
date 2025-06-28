@@ -1,5 +1,2 @@
-import { createAttribute } from "./attributeselector";
-export * from "./attributeselector";
-export {
-  createAttribute as default
-};
+export { createAttribute as default } from './attributeselector.js';
+export * from './attributeselector.js';

@@ -62,8 +62,11 @@ export async function initCal(namespace: string,): Promise<GlobalCal> {
   const element = document.querySelector<HTMLElement>(`[cal-id="${namespace}"]`);
   if (!element) throw new Error("Embed container not found");
 
+  const calLink= element.getAttribute('cal-link');
+  if (!calLink) throw new Error(`Please specify a cal link`);
+
   const calDOMOptions: CalDOMOptions = {
-    link: element.getAttribute('cal-link'),
+    link: calLink,
     hideEventTypeDetails: element.getAttribute('cal-hide-event-details') === 'true',
   }
 

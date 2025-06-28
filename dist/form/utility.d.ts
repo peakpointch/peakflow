@@ -1,5 +1,5 @@
-import { WfFormData } from "../../types/webflow";
-import { FieldGroupValidation } from "./fieldgroup";
+import { WfFormData } from "../../types/webflow.js";
+import { FieldGroupValidation } from "./fieldgroup.js";
 /**
  * Represents any standard form input element <input>, <select>, or <textarea>.
  */
@@ -11,8 +11,8 @@ export interface RadioGroup {
     name: string;
     inputs: HTMLInputElement[];
 }
-declare const formElementSelector: import("..").AttributeSelector<FormComponentElement>;
-declare const filterFormSelector: import("..").AttributeSelector<FilterFormElement>;
+declare const formElementSelector: import("../index.js").AttributeSelector<FormComponentElement>;
+declare const filterFormSelector: import("../index.js").AttributeSelector<FilterFormElement>;
 /**
  * Check if a FormElement is a radio input.
  * @param {HTMLFormInput} input - The input that is to be checked.

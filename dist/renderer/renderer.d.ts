@@ -1,5 +1,5 @@
-import { DashToCamelCase } from "../typeutils";
-import { IANATimeZone } from "../timezones";
+import { DashToCamelCase } from "../typeutils/index.js";
+import { IANATimeZone } from "../timezones/index.js";
 type FilterAttributeType = {
     "string": string;
     "number": number;

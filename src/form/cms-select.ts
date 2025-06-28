@@ -1,5 +1,5 @@
-import createAttribute from "../attributeselector";
-import { getAllElements, getElement } from "../utils/getelements";
+import createAttribute from "../attributeselector/index.js";
+import { getAllElements, getElement } from "../utils/getelements.js";
 
 type CMSSelectElement = 'source' | 'target' | 'option';
 type OnChangeCallback = () => void;

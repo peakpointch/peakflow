@@ -1,5 +1,5 @@
-import { isCheckboxInput, isRadioInput, HTMLFormInput } from "./utility";
-import { parameterize } from "../utils/parameterize";
+import { isCheckboxInput, isRadioInput, HTMLFormInput } from "./utility.js";
+import { parameterize } from "../utils/parameterize.js";
 
 interface FieldData {
   id: string;

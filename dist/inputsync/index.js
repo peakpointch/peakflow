@@ -1,1 +1,1 @@
-export * from "./inputsync";
+export * from './inputsync.js';

@@ -1,4 +1,4 @@
-import createAttribute from "../attributeselector";
+import createAttribute from "../attributeselector/index.js";
 
 export interface DefaultScrollOptions {
   defaultOffset: number;

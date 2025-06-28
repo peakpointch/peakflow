@@ -1,12 +1,12 @@
-import createAttribute from "../attributeselector";
-import deepMerge from "../utils/deepmerge";
+import createAttribute from "../attributeselector/index.js";
+import deepMerge from "../utils/deepmerge.js";
 import {
+  ScrollHandler,
   lockBodyScroll,
   unlockBodyScroll,
   addScrollbarPadding,
   removeScrollbarPadding,
-} from "../scroll"
-import { ScrollHandler } from "../scroll/handler";
+} from "../scroll/index.js"
 
 type ModalElement = 'component' | 'modal' | 'open' | 'close' | 'cancel' | 'confirm' | 'scroll' | 'sticky-top' | 'sticky-bottom';
 type ModalAnimationType = 'fade' | 'slideUp' | 'growIn' | 'custom' | 'none';

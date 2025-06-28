@@ -1,4 +1,4 @@
-import Modal from "./modal";
+import Modal from "./modal.js";
 interface AlertDialogMessage {
     title: string;
     paragraph: string;

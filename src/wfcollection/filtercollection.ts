@@ -1,6 +1,6 @@
-import { CollectionList, CollectionListOptions } from './wfcollection';
-import Renderer from '../renderer';
-import { FilterAttributes, RenderData, RenderElement, RenderField } from '../renderer/renderer';
+import { CollectionList, CollectionListOptions } from './wfcollection.js';
+import Renderer from '../renderer/index.js';
+import { FilterAttributes, RenderData, RenderElement, RenderField } from '../renderer/index.js';
 
 type MenuDataCondition = ((menuData: RenderElement | RenderField) => boolean);
 

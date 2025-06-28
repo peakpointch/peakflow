@@ -1,4 +1,4 @@
-import createAttribute from "../attributeselector"
+import createAttribute from "../attributeselector/index.js"
 
 /**
  * Returns the *"input-sync"* attribute as a CSSSelector.

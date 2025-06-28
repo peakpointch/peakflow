@@ -1,6 +1,6 @@
 // Export general collection
-export * from './wfcollection'
+export * from './wfcollection.js'
 
 // Class descendants
-export * from './filtercollection';
+export * from './filtercollection.js';
 

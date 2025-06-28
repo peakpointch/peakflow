@@ -1,1 +1,1 @@
-export * from './marquee';
+export * from './marquee.js';

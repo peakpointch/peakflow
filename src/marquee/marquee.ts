@@ -1,4 +1,4 @@
-import createAttribute from "../attributeselector";
+import createAttribute from "../attributeselector/index.js";
 
 export type MarqueeElement = 'component' | 'track' | 'button';
 

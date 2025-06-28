@@ -1,1 +1,1 @@
-export * from "./inlinecms";
+export * from './inlinecms.js';
