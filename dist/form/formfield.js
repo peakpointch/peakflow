@@ -1,5 +1,5 @@
 import { isCheckboxInput, isRadioInput } from "./utility";
-import { parameterize } from "../parameterize";
+import { parameterize } from "../utils/parameterize";
 class FormField {
   constructor(data = null) {
     this.listeners = /* @__PURE__ */ new Set();

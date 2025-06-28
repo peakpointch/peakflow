@@ -9,7 +9,7 @@ import {
 } from ".";
 import wf from "../webflow";
 import mapToObject from "../utils/maptoobject";
-import deepMerge from "../deepmerge";
+import deepMerge from "../utils/deepmerge";
 ;
 const stepsElementSelector = createAttribute("data-steps-element", {
   defaultExclusions: ['[data-steps-element="component"] [data-steps-element="component"] *']

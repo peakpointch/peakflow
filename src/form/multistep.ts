@@ -13,7 +13,7 @@ import {
 } from ".";
 import wf from "../webflow";
 import mapToObject from "../utils/maptoobject";
-import deepMerge from "../deepmerge";
+import deepMerge from "../utils/deepmerge";
 
 // Types
 interface FormOptions {
