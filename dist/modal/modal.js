@@ -16,7 +16,7 @@ export const defaultModalSettings = {
         smooth: false,
     },
 };
-class Modal {
+export class Modal {
     constructor(component, settings = {}) {
         this.initialized = false;
         if (!component) {
@@ -224,7 +224,6 @@ Modal.attr = {
     element: 'data-modal-element',
 };
 Modal.attributeSelector = createAttribute(Modal.attr.element);
-export default Modal;
 function animationFrame() {
     return new Promise(resolve => requestAnimationFrame(() => resolve()));
 }

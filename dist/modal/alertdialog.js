@@ -1,5 +1,5 @@
-import Modal from "./modal.js";
-export default class AlertDialog extends Modal {
+import { Modal } from "./modal.js";
+export class AlertDialog extends Modal {
     confirm(message) {
         this.message = message;
         this.open();

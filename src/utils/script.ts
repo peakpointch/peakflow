@@ -1,4 +1,4 @@
-export class Script {
+export default class Script {
   element: HTMLScriptElement;
   constructor(src: string) {
     this.element = document.createElement('script');

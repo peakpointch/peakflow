@@ -1,4 +1,4 @@
-export default class EditableCanvas {
+export class EditableCanvas {
   private canvas: HTMLElement;
   private elements: {
     all: HTMLElement[];

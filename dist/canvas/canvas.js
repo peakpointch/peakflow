@@ -1,4 +1,4 @@
-export default class EditableCanvas {
+export class EditableCanvas {
     constructor(canvas, ...customSelectors) {
         this.elements = { all: [], hidden: [] };
         this.defaultSelector = '[data-canvas-editable="true"]';

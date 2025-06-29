@@ -1,4 +1,4 @@
-export class Stylesheet {
+export default class Stylesheet {
   element: HTMLLinkElement;
   constructor(href: string) {
     this.element = document.createElement('link');

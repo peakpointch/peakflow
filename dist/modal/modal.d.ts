@@ -22,7 +22,7 @@ interface ModalAttributes {
 }
 export declare const defaultModalAnimation: ModalAnimation;
 export declare const defaultModalSettings: ModalSettings;
-export default class Modal {
+export declare class Modal {
     component: HTMLElement;
     modal: HTMLElement;
     opened: boolean;

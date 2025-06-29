@@ -1,11 +1,11 @@
-import Modal from "./modal.js";
+import { Modal } from "./modal.js";
 interface AlertDialogMessage {
     title: string;
     paragraph: string;
     confirm: string;
     cancel: string;
 }
-export default class AlertDialog extends Modal {
+export declare class AlertDialog extends Modal {
     private _message;
     confirm(message?: AlertDialogMessage): Promise<boolean>;
     set message(message: AlertDialogMessage);

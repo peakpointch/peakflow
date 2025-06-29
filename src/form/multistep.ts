@@ -12,8 +12,9 @@ import {
   CustomValidator,
 } from "./index.js";
 import wf from "../webflow/index.js";
-import mapToObject from "../utils/maptoobject.js";
-import deepMerge from "../utils/deepmerge.js";
+// import mapToObject from "../utils/maptoobject.js";
+// import deepMerge from "../utils/deepmerge.js";
+import { mapToObject, deepMerge } from "../utils";
 
 // Types
 interface FormOptions {

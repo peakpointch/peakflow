@@ -2,8 +2,9 @@
 import createAttribute, { exclude, extend } from "../attributeselector/index.js";
 import { initWfInputs, sendFormData, validateFields, formElementSelector, fieldFromInput, enforceButtonTypes, } from "./index.js";
 import wf from "../webflow/index.js";
-import mapToObject from "../utils/maptoobject.js";
-import deepMerge from "../utils/deepmerge.js";
+// import mapToObject from "../utils/maptoobject.js";
+// import deepMerge from "../utils/deepmerge.js";
+import { mapToObject, deepMerge } from "../utils";
 ;
 // Selector functions
 const stepsElementSelector = createAttribute('data-steps-element', {

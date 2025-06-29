@@ -7,12 +7,12 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "default": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./*": {
-      "default": "./dist/*/index.js",
-      "types": "./dist/*/index.d.ts"
+      "types": "./dist/*/index.d.ts",
+      "default": "./dist/*/index.js"
     }
   },
   "files": [

@@ -50,7 +50,7 @@ export const defaultModalSettings: ModalSettings = {
   },
 }
 
-export default class Modal {
+export class Modal {
   public component: HTMLElement;
   public modal: HTMLElement;
   public opened: boolean;

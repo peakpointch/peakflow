@@ -1,4 +1,4 @@
-export default class EditableCanvas {
+export declare class EditableCanvas {
     private canvas;
     private elements;
     private defaultSelector;

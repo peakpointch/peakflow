@@ -1,4 +1,4 @@
-export class Stylesheet {
+export default class Stylesheet {
     constructor(href) {
         this.element = document.createElement('link');
         this.element.setAttribute('rel', 'stylesheet');

@@ -1,4 +1,4 @@
-import Modal from "./modal.js";
+import { Modal } from "./modal.js";
 
 interface AlertDialogMessage {
   title: string;
@@ -9,7 +9,7 @@ interface AlertDialogMessage {
 
 type AlertDialogMessageElement = keyof AlertDialogMessage;
 
-export default class AlertDialog extends Modal {
+export class AlertDialog extends Modal {
   private _message: AlertDialogMessage;
 
   public confirm(message?: AlertDialogMessage): Promise<boolean> {
