@@ -17,7 +17,7 @@ interface CMSSelectOptions {
   id: string;
 }
 
-export default class CMSSelect {
+export class CMSSelect {
   public opts: CMSSelectOptions = {
     id: undefined
   }
@@ -187,5 +187,4 @@ export default class CMSSelect {
       callback();
     }
   }
-
 }
