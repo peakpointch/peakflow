@@ -41,13 +41,12 @@ export function scrollToSection(
   }, 10);
 }
 
-export function onScroll(event: Event, options: Partial<DefaultScrollOptions> = {}): void {
+export function onScroll(link: HTMLAnchorElement, event: Event, options: Partial<DefaultScrollOptions> = {}): void {
   event.preventDefault();
   const opts: DefaultScrollOptions = {
     defaultOffset: options.defaultOffset ?? defaultScrollOptions.defaultOffset,
     defaultBehaviour: options.defaultBehaviour ?? defaultScrollOptions.defaultBehaviour,
   }
-  const link = event.target as HTMLAnchorElement;
   if (!link) throw new Error(`Event target is undefined. Cannot scroll from an undefined link.`);
   const scrollId =
     link.getAttribute("href")?.slice(1) ||
@@ -106,7 +105,7 @@ export function overrideDefaultScroll(options: Partial<DefaultScrollOptions> = {
   );
 
   allScrollLinks.forEach((link) => {
-    link.addEventListener("click", (event) => onScroll(event, options));
+    link.addEventListener("click", (event) => onScroll(link, event, options));
   });
 }
 
