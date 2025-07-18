@@ -37,7 +37,6 @@
   "dependencies": {
     "@calcom/embed-core": "^1.5.3",
     "@vime/core": "^5.4.1",
-    "chart.js": "^4.4.8",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "html2canvas": "^1.4.1",
