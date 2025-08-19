@@ -21,6 +21,10 @@ export class FormMessage {
     constructor(componentName, messageFor) {
         this.initialized = false;
         this.resetTimeoutId = null;
+        this.className = {
+            error: "is-error",
+            info: "is-info",
+        };
         this.messageFor = messageFor;
         const component = document.querySelector(`[data-message-component="${componentName}"][data-message-for="${this.messageFor}"]`);
         if (!component) {
@@ -69,7 +73,7 @@ export class FormMessage {
         if (!this.initialized)
             return;
         this.clearTimeout();
-        this.component.classList.remove("info", "error");
+        this.component.classList.remove(this.className.info, this.className.error);
         if (this.messageElement) {
             this.messageElement.textContent = "";
         }
@@ -124,8 +128,8 @@ export class FormMessage {
             console.warn("Message text element not found.");
         }
         // Set class based on type
-        this.component.classList.remove("info", "error");
-        this.component.classList.add(type);
+        this.component.classList.remove(this.className.info, this.className.error);
+        this.component.classList.add(type === "info" ? this.className.info : this.className.error);
         if (silent)
             return;
         this.component.scrollIntoView({

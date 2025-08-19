@@ -18,6 +18,13 @@ export class FormMessage {
   private component: HTMLElement;
   private messageElement: HTMLElement | null;
   private resetTimeoutId: number | null = null;
+  private className: {
+    error: string;
+    info: string;
+  } = {
+    error: "is-error",
+    info: "is-info",
+  };
 
   /**
    * Constructs a new FormMessage instance.
@@ -27,12 +34,12 @@ export class FormMessage {
   constructor(componentName: string, messageFor: string) {
     this.messageFor = messageFor;
     const component: HTMLElement | null = document.querySelector(
-      `[data-message-component="${componentName}"][data-message-for="${this.messageFor}"]`
+      `[data-message-component="${componentName}"][data-message-for="${this.messageFor}"]`,
     );
 
     if (!component) {
       console.warn(
-        `No FormMessage component was found: ${componentName}, ${this.messageFor}`
+        `No FormMessage component was found: ${componentName}, ${this.messageFor}`,
       );
       return;
     }
@@ -80,7 +87,7 @@ export class FormMessage {
     if (!this.initialized) return;
     this.clearTimeout();
 
-    this.component.classList.remove("info", "error");
+    this.component.classList.remove(this.className.info, this.className.error);
     if (this.messageElement) {
       this.messageElement.textContent = "";
     }
@@ -130,7 +137,7 @@ export class FormMessage {
   private setMessage(
     message: string | null = null,
     type: "info" | "error",
-    silent: boolean = false
+    silent: boolean = false,
   ): void {
     if (!this.initialized) return;
     if (this.messageElement && message) {
@@ -140,8 +147,10 @@ export class FormMessage {
     }
 
     // Set class based on type
-    this.component.classList.remove("info", "error");
-    this.component.classList.add(type);
+    this.component.classList.remove(this.className.info, this.className.error);
+    this.component.classList.add(
+      type === "info" ? this.className.info : this.className.error,
+    );
 
     if (silent) return;
 

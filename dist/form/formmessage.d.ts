@@ -18,6 +18,7 @@ export declare class FormMessage {
     private component;
     private messageElement;
     private resetTimeoutId;
+    private className;
     /**
      * Constructs a new FormMessage instance.
      * @param componentName The name of the component (used in `data-message-component`).
