@@ -26,7 +26,7 @@ type StringsLineMap = Map<number, string>;
  * @param returnType "strings" returns each line as a string.
  * @returns A map of line index to line text.
  */
-declare function getRenderedLineMap(textNode: Text, returnType: 'strings'): StringsLineMap;
+declare function getRenderedLineMap(textNode: Text, returnType: "strings"): StringsLineMap;
 /**
  * Get each rendered line of `textNode` as character indices of its text content.
  *
@@ -35,5 +35,5 @@ declare function getRenderedLineMap(textNode: Text, returnType: 'strings'): Stri
  * These indices are global offsets within the `Text` node's text content.
  * @returns A map of line index to character indices.
  */
-declare function getRenderedLineMap(textNode: Text, returnType: 'indices'): IndicesLineMap;
+declare function getRenderedLineMap(textNode: Text, returnType: "indices"): IndicesLineMap;
 export { getRenderedLineMap };

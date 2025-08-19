@@ -1,4 +1,4 @@
-import Hypher from 'hypher';
+import Hypher from "hypher";
 /**
  * Replaces text nodes with spans containing hyphenated words using <wbr>
  */
@@ -9,8 +9,8 @@ export function softHyphenizer(container, language) {
     while ((node = walker.nextNode())) {
         const parent = node?.parentElement;
         if (parent &&
-            !['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(parent.tagName) &&
-            !parent.matches(`[data-hyphenate="false"]`) &&
+            !["SCRIPT", "STYLE", "NOSCRIPT"].includes(parent.tagName) &&
+            !parent.matches(`[data-hyphenate="false"], [data-hyphenate="false"] *`) &&
             node.nodeValue?.trim()) {
             const hyphenated = hypher.hyphenateText(node.nodeValue);
             node.nodeValue = hyphenated;
@@ -26,7 +26,7 @@ export function solidHyphens(container) {
     const textNodes = [];
     let node;
     while ((node = walker.nextNode())) {
-        if (node.nodeValue && node.nodeValue.includes('\u00AD')) {
+        if (node.nodeValue && node.nodeValue.includes("\u00AD")) {
             textNodes.push(node);
         }
     }
@@ -34,10 +34,10 @@ export function solidHyphens(container) {
         const parent = textNode.parentElement;
         if (!parent)
             continue;
-        let stringLineMap = getRenderedLineMap(textNode, 'strings');
+        let stringLineMap = getRenderedLineMap(textNode, "strings");
         const didNodeBreak = stringLineMap.size > 1;
         if (!didNodeBreak) {
-            textNode.textContent = textNode.textContent?.replace(/\u00AD/g, '') ?? '';
+            textNode.textContent = textNode.textContent?.replace(/\u00AD/g, "") ?? "";
             continue;
         }
         const newLines = new Map();
@@ -50,16 +50,16 @@ export function solidHyphens(container) {
             let newLineText = lineText;
             const lastIndex = lineText.length - 1;
             const possibleSoftHyphen = lineText[lastIndex];
-            if (possibleSoftHyphen === '\u00AD') {
+            if (possibleSoftHyphen === "\u00AD") {
                 let testLine = lineText;
                 let lastWord = getLastWord(testLine);
-                lastWord = replaceCharAt(lastWord, lastWord.length - 1, '-');
+                lastWord = replaceCharAt(lastWord, lastWord.length - 1, "-");
                 const firstWord = getFirstWordOfLine(stringLineMap, lineIndex + 1);
                 const currLineWithoutLastWord = testLine.slice(0, testLine.length - lastWord.length);
-                const prefixText = Array.from(newLines.values()).join('') + currLineWithoutLastWord;
+                const prefixText = Array.from(newLines.values()).join("") + currLineWithoutLastWord;
                 const didWordBreak = doesWordBreak(textNode, prefixText, lastWord + firstWord);
                 if (didWordBreak) {
-                    newLineText = replaceCharAt(lineText, lastIndex, '-');
+                    newLineText = replaceCharAt(lineText, lastIndex, "-");
                 }
                 else {
                     // Because only here a text reflow was caused which shifts the lines
@@ -67,7 +67,7 @@ export function solidHyphens(container) {
                 }
             }
             // Remove all soft hyphens
-            newLineText = newLineText.replace(/\u00AD/g, '');
+            newLineText = newLineText.replace(/\u00AD/g, "");
             newLines.set(lineIndex, newLineText);
             if (lineReflow) {
                 const updatedLineMap = finalizeLineWithReflow(textNode, stringLineMap, newLines, lineIndex);
@@ -77,7 +77,7 @@ export function solidHyphens(container) {
             lineIndex++;
         }
         // Join all lines back to a single string and update textNode's content
-        textNode.textContent = Array.from(newLines.values()).join('');
+        textNode.textContent = Array.from(newLines.values()).join("");
     }
 }
 /**
@@ -90,14 +90,16 @@ function finalizeLineWithReflow(textNode, originalLineMap, newLines, currentLine
         linesToProcess.set(i, text);
     }
     // Reconstruct text for partial update
-    const mergedLines = [...Array.from(linesToProcess.values()),
+    const mergedLines = [
+        ...Array.from(linesToProcess.values()),
         ...Array.from(originalLineMap.entries())
             .filter(([i]) => i > currentLineIndex)
-            .map(([, line]) => line)];
-    const mergedText = mergedLines.join('');
+            .map(([, line]) => line),
+    ];
+    const mergedText = mergedLines.join("");
     textNode.textContent = mergedText;
     // Get updated line map
-    const updatedMap = getRenderedLineMap(textNode, 'strings');
+    const updatedMap = getRenderedLineMap(textNode, "strings");
     return updatedMap;
 }
 /**
@@ -108,7 +110,7 @@ function finalizeLineWithReflow(textNode, originalLineMap, newLines, currentLine
  * @returns The first word of the line, or an empty string if not found.
  */
 function getFirstWordOfLine(lineMap, lineIndex) {
-    const line = lineMap.get(lineIndex) ?? '';
+    const line = lineMap.get(lineIndex) ?? "";
     return getFirstWord(line);
 }
 /**
@@ -119,7 +121,7 @@ function getFirstWordOfLine(lineMap, lineIndex) {
  * @returns The last word of the line, or an empty string if not found.
  */
 function getLastWordOfLine(lineMap, lineIndex) {
-    const line = lineMap.get(lineIndex) ?? '';
+    const line = lineMap.get(lineIndex) ?? "";
     return getLastWord(line);
 }
 /**
@@ -130,7 +132,7 @@ function getLastWordOfLine(lineMap, lineIndex) {
  */
 function getFirstWord(str) {
     const words = str.split(/[\s\-\u2013\u2014]+/).filter(Boolean);
-    return words[0] ?? '';
+    return words[0] ?? "";
 }
 /**
  * Gets the last word of a string.
@@ -140,7 +142,7 @@ function getFirstWord(str) {
  */
 function getLastWord(str) {
     const words = str.split(/[\s\-\u2013\u2014]+/).filter(Boolean);
-    return words[words.length - 1] ?? '';
+    return words[words.length - 1] ?? "";
 }
 /**
  * Replace a character at an `index` inside a string.
@@ -151,7 +153,7 @@ function getLastWord(str) {
  */
 function replaceCharAt(str, index, replacement) {
     if (index < 0 || index >= str.length) {
-        throw new RangeError('Index out of bounds');
+        throw new RangeError("Index out of bounds");
     }
     return str.slice(0, index) + replacement + str.slice(index + 1);
 }
@@ -161,7 +163,7 @@ function replaceCharAt(str, index, replacement) {
 function getSoftHyphenIndices(word) {
     const indices = [];
     for (let i = 0; i < word.length; i++) {
-        if (word[i] === '\u00AD')
+        if (word[i] === "\u00AD")
             indices.push(i);
     }
     return indices;
@@ -191,22 +193,22 @@ export function doesWordBreak(referenceNode, prefixText, word) {
         throw new Error("Super parent is not defined.");
     // Clone the parent node
     const clone = parent.cloneNode(false);
-    clone.style.whiteSpace = 'pre-wrap';
+    clone.style.whiteSpace = "pre-wrap";
     // Compose the test text
-    const base = document.createElement('span');
+    const base = document.createElement("span");
     base.textContent = prefixText;
     clone.appendChild(base);
     const testText = document.createTextNode(word);
-    const span = document.createElement('span');
+    const span = document.createElement("span");
     span.appendChild(testText);
     clone.appendChild(span);
     // Insert clone
-    parent.style.display = 'none';
-    parent.insertAdjacentElement('beforebegin', clone);
-    const lineMap = getRenderedLineMap(testText, 'strings');
+    parent.style.display = "none";
+    parent.insertAdjacentElement("beforebegin", clone);
+    const lineMap = getRenderedLineMap(testText, "strings");
     const breaks = lineMap.size > 1;
     superParent.removeChild(clone);
-    parent.style.removeProperty('display');
+    parent.style.removeProperty("display");
     return breaks;
 }
 /**
@@ -219,16 +221,16 @@ export function doesWordBreak(referenceNode, prefixText, word) {
  */
 function getRenderedLineMap(textNode, returnType) {
     const range = document.createRange();
-    const content = textNode.textContent || '';
+    const content = textNode.textContent || "";
     const parent = textNode.parentElement;
     if (!parent)
-        throw new Error('Text node must be in DOM.');
-    const lineMap = returnType === 'indices'
+        throw new Error("Text node must be in DOM.");
+    const lineMap = returnType === "indices"
         ? new Map()
         : new Map();
     let lastTop = null;
     let currentLine = 0;
-    let lineText = '';
+    let lineText = "";
     for (let i = 0; i < content.length; i++) {
         range.setStart(textNode, i);
         range.setEnd(textNode, i + 1);
@@ -239,15 +241,16 @@ function getRenderedLineMap(textNode, returnType) {
         if (lastTop === null) {
             lastTop = top; // For first char in current line, lastTop is top of itself
         }
-        if (Math.abs(top - lastTop) > 1) { // if the char tops are more than 1px apart, it considers them
-            if (returnType === 'strings') {
+        if (Math.abs(top - lastTop) > 1) {
+            // if the char tops are more than 1px apart, it considers them
+            if (returnType === "strings") {
                 lineMap.set(currentLine, lineText);
-                lineText = '';
+                lineText = "";
             }
             currentLine++;
             lastTop = top;
         }
-        if (returnType === 'indices') {
+        if (returnType === "indices") {
             if (!lineMap.has(currentLine)) {
                 lineMap.set(currentLine, []);
             }
@@ -257,7 +260,7 @@ function getRenderedLineMap(textNode, returnType) {
             lineText += content[i];
         }
     }
-    if (returnType === 'strings' && lineText) {
+    if (returnType === "strings" && lineText) {
         lineMap.set(currentLine, lineText);
     }
     return lineMap;
