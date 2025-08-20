@@ -9,10 +9,13 @@ export interface WebflowClassNames {
   checked: "w--redirected-checked";
   focus: "w--redirected-focus";
   focusVisible: "w--redirected-focus-visible";
+  cmsWrapper: "w-dyn-list";
+  cmsList: "w-dyn-items";
+  cmsItem: "w-dyn-item";
 }
 
 type InputSelectorList = Array<
-  `.${WebflowClassNames["input"]}`
+  | `.${WebflowClassNames["input"]}`
   | `.${WebflowClassNames["select"]}`
   | `.${WebflowClassNames["wradio"]} input[type="radio"]`
   | `.${WebflowClassNames["wcheckbox"]} input[type="checkbox"]:not(.${WebflowClassNames["checkbox"]})`
@@ -30,6 +33,9 @@ export interface WebflowSelectors {
   focused: `:focus-visible, [data-wf-focus-visible]`;
   focus: `.${WebflowClassNames["focus"]}`;
   focusVisible: `.${WebflowClassNames["focusVisible"]}`;
+  cmsWrapper: `.${WebflowClassNames["cmsWrapper"]}`;
+  cmsList: `.${WebflowClassNames["cmsList"]}`;
+  cmsItem: `.${WebflowClassNames["cmsItem"]}`;
 
   /** CSS Selector to select all `HTMLFormInput`'s. */
   formInput: string;
