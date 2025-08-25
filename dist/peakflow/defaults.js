@@ -1,0 +1,7 @@
+import inlineCmsDefault from "../inlinecms/default";
+import dateflowDefault from "../dateflow/default";
+// instead of forcing PeakflowRegistry, let TS infer the literal key
+export const defaultRegistry = {
+    inlinecms: inlineCmsDefault,
+    dateflow: dateflowDefault,
+};
