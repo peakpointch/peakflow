@@ -11,17 +11,149 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./*": {
-      "types": "./dist/*/index.d.ts",
-      "default": "./dist/*/index.js"
+    "./accordion": {
+      "types": "./dist/accordion/index.d.ts",
+      "default": "./dist/accordion/index.js"
+    },
+    "./attributeselector": {
+      "types": "./dist/attributeselector/index.d.ts",
+      "default": "./dist/attributeselector/index.js"
+    },
+    "./cal": {
+      "types": "./dist/cal/index.d.ts",
+      "default": "./dist/cal/index.js"
+    },
+    "./canvas": {
+      "types": "./dist/canvas/index.d.ts",
+      "default": "./dist/canvas/index.js"
+    },
+    "./dateflow": {
+      "types": "./dist/dateflow/index.d.ts",
+      "default": "./dist/dateflow/index.js"
+    },
+    "./form": {
+      "types": "./dist/form/index.d.ts",
+      "default": "./dist/form/index.js"
+    },
+    "./hyphenizer": {
+      "types": "./dist/hyphenizer/index.d.ts",
+      "default": "./dist/hyphenizer/index.js"
+    },
+    "./inlinecms": {
+      "types": "./dist/inlinecms/index.d.ts",
+      "default": "./dist/inlinecms/index.js"
+    },
+    "./inputsync": {
+      "types": "./dist/inputsync/index.d.ts",
+      "default": "./dist/inputsync/index.js"
+    },
+    "./marquee": {
+      "types": "./dist/marquee/index.d.ts",
+      "default": "./dist/marquee/index.js"
+    },
+    "./modal": {
+      "types": "./dist/modal/index.d.ts",
+      "default": "./dist/modal/index.js"
+    },
+    "./pdf": {
+      "types": "./dist/pdf/index.d.ts",
+      "default": "./dist/pdf/index.js"
+    },
+    "./peakflow": {
+      "types": "./dist/peakflow/index.d.ts",
+      "default": "./dist/peakflow/index.js"
+    },
+    "./renderer": {
+      "types": "./dist/renderer/index.d.ts",
+      "default": "./dist/renderer/index.js"
+    },
+    "./scroll": {
+      "types": "./dist/scroll/index.d.ts",
+      "default": "./dist/scroll/index.js"
+    },
+    "./timezones": {
+      "types": "./dist/timezones/index.d.ts",
+      "default": "./dist/timezones/index.js"
+    },
+    "./typeutils": {
+      "types": "./dist/typeutils/index.d.ts",
+      "default": "./dist/typeutils/index.js"
     },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
       "default": "./dist/utils/index.js"
     },
-    "./attributeselector/": {
-      "types": "./dist/attributeselector/index.d.ts",
-      "default": "./dist/attributeselector/index.js"
+    "./webflow": {
+      "types": "./dist/webflow/index.d.ts",
+      "default": "./dist/webflow/index.js"
+    },
+    "./wfcollection": {
+      "types": "./dist/wfcollection/index.d.ts",
+      "default": "./dist/wfcollection/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "accordion": [
+        "dist/accordion/index.d.ts"
+      ],
+      "attributeselector": [
+        "dist/attributeselector/index.d.ts"
+      ],
+      "cal": [
+        "dist/cal/index.d.ts"
+      ],
+      "canvas": [
+        "dist/canvas/index.d.ts"
+      ],
+      "dateflow": [
+        "dist/dateflow/index.d.ts"
+      ],
+      "form": [
+        "dist/form/index.d.ts"
+      ],
+      "hyphenizer": [
+        "dist/hyphenizer/index.d.ts"
+      ],
+      "inlinecms": [
+        "dist/inlinecms/index.d.ts"
+      ],
+      "inputsync": [
+        "dist/inputsync/index.d.ts"
+      ],
+      "marquee": [
+        "dist/marquee/index.d.ts"
+      ],
+      "modal": [
+        "dist/modal/index.d.ts"
+      ],
+      "pdf": [
+        "dist/pdf/index.d.ts"
+      ],
+      "peakflow": [
+        "dist/peakflow/index.d.ts"
+      ],
+      "renderer": [
+        "dist/renderer/index.d.ts"
+      ],
+      "scroll": [
+        "dist/scroll/index.d.ts"
+      ],
+      "timezones": [
+        "dist/timezones/index.d.ts"
+      ],
+      "typeutils": [
+        "dist/typeutils/index.d.ts"
+      ],
+      "utils": [
+        "dist/utils/index.d.ts"
+      ],
+      "webflow": [
+        "dist/webflow/index.d.ts"
+      ],
+      "wfcollection": [
+        "dist/wfcollection/index.d.ts"
+      ]
     }
   },
   "files": [
