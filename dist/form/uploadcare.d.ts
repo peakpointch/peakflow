@@ -4284,4 +4284,5 @@ interface UCFileUploaderConfig {
  */
 export declare function initUCFileUploader(config: Partial<UCFileUploaderConfig>): void;
 export declare function initUploadcare(container: HTMLElement, config: Partial<Omit<UCFileUploaderConfig, "name" | "component">>): void;
+export declare function initUploadcareDefault(): void;
 export {};

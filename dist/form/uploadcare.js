@@ -155,3 +155,8 @@ export function initUploadcare(container, config) {
         initUCFileUploader(newConfig);
     });
 }
+export function initUploadcareDefault() {
+    return initUploadcare(document.body, {
+        locale: "en",
+    });
+}

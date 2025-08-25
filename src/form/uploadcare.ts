@@ -194,3 +194,9 @@ export function initUploadcare(
     initUCFileUploader(newConfig);
   });
 }
+
+export function initUploadcareDefault(): void {
+  return initUploadcare(document.body, {
+    locale: "en",
+  });
+}
