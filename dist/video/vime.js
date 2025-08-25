@@ -1,34 +1,29 @@
 import "@vime/core";
+import Script from "../utils/script";
+import Stylesheet from "../utils/stylesheet";
 export const defaultConfig = {
     customPoster: false,
 };
 export async function loadVimeAssets() {
-    const head = document.head;
-    const exists = (tag, url) => Array.from(document.querySelectorAll(tag)).some((el) => tag === "link"
-        ? el.href.includes(url)
-        : el.src.includes(url));
-    const appendLink = (href) => {
-        if (!exists("link", href)) {
-            const link = document.createElement("link");
-            link.rel = "stylesheet";
-            link.href = href;
-            head.appendChild(link);
-        }
-    };
-    // Add CSS
-    appendLink("https://cdn.jsdelivr.net/npm/@vime/core@^5/themes/default.css");
-    appendLink("https://cdn.jsdelivr.net/npm/@vime/core@^5/themes/light.css");
-    // Add JS and await it loading
-    const vimeScript = "https://cdn.jsdelivr.net/npm/@vime/core@^5/dist/vime/vime.esm.js";
-    if (!exists("script", vimeScript)) {
-        await new Promise((resolve, reject) => {
-            const script = document.createElement("script");
-            script.type = "module";
-            script.src = vimeScript;
-            script.onload = () => resolve();
-            script.onerror = () => reject(new Error(`Failed to load script: ${vimeScript}`));
-            head.appendChild(script);
-        });
+    // Define all Vime assets
+    const stylesheets = [
+        new Stylesheet({ href: "https://cdn.jsdelivr.net/npm/@vime/core@^5/themes/default.css" }),
+        new Stylesheet({ href: "https://cdn.jsdelivr.net/npm/@vime/core@^5/themes/light.css" }),
+    ];
+    const scripts = [
+        new Script({
+            src: "https://cdn.jsdelivr.net/npm/@vime/core@^5/dist/vime/vime.esm.js",
+            type: "module",
+            async: true,
+        }),
+    ];
+    // Load all stylesheets (awaiting each one)
+    for (const sheet of stylesheets) {
+        await sheet.load();
+    }
+    // Load all scripts (awaiting each one)
+    for (const script of scripts) {
+        await script.load();
     }
 }
 function getCustomPoster(player) {

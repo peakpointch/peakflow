@@ -1,4 +1,6 @@
 import "@vime/core";
+import Script from "../utils/script";
+import Stylesheet from "../utils/stylesheet";
 
 interface VimeConfig {
   customPoster: boolean;
@@ -9,39 +11,28 @@ export const defaultConfig: VimeConfig = {
 };
 
 export async function loadVimeAssets(): Promise<void> {
-  const head = document.head;
+  // Define all Vime assets
+  const stylesheets = [
+    new Stylesheet({ href: "https://cdn.jsdelivr.net/npm/@vime/core@^5/themes/default.css" }),
+    new Stylesheet({ href: "https://cdn.jsdelivr.net/npm/@vime/core@^5/themes/light.css" }),
+  ];
 
-  const exists = (tag: "link" | "script", url: string) =>
-    Array.from(document.querySelectorAll(tag)).some((el) =>
-      tag === "link"
-        ? (el as HTMLLinkElement).href.includes(url)
-        : (el as HTMLScriptElement).src.includes(url),
-    );
+  const scripts = [
+    new Script({
+      src: "https://cdn.jsdelivr.net/npm/@vime/core@^5/dist/vime/vime.esm.js",
+      type: "module",
+      async: true,
+    }),
+  ];
 
-  const appendLink = (href: string) => {
-    if (!exists("link", href)) {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = href;
-      head.appendChild(link);
-    }
-  };
+  // Load all stylesheets (awaiting each one)
+  for (const sheet of stylesheets) {
+    await sheet.load();
+  }
 
-  // Add CSS
-  appendLink("https://cdn.jsdelivr.net/npm/@vime/core@^5/themes/default.css");
-  appendLink("https://cdn.jsdelivr.net/npm/@vime/core@^5/themes/light.css");
-
-  // Add JS and await it loading
-  const vimeScript = "https://cdn.jsdelivr.net/npm/@vime/core@^5/dist/vime/vime.esm.js";
-  if (!exists("script", vimeScript)) {
-    await new Promise<void>((resolve, reject) => {
-      const script = document.createElement("script");
-      script.type = "module";
-      script.src = vimeScript;
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error(`Failed to load script: ${vimeScript}`));
-      head.appendChild(script);
-    });
+  // Load all scripts (awaiting each one)
+  for (const script of scripts) {
+    await script.load();
   }
 }
 
