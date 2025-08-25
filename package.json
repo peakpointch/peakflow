@@ -191,6 +191,7 @@
   },
   "dependencies": {
     "@calcom/embed-core": "^1.5.3",
+    "@uploadcare/file-uploader": "^1.19.5",
     "@vime/core": "^5.4.1",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
