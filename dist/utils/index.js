@@ -7,3 +7,4 @@ export { default as objectToMap } from "./objecttomap.js";
 export { default as getSelectorStringForError } from "./selectorstring.js";
 export { default as Script } from "./script.js";
 export { default as Stylesheet } from "./stylesheet.js";
+export * from "./logger.js";
