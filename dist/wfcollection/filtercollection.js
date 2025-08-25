@@ -1,7 +1,10 @@
-import { CollectionList } from './wfcollection.js';
-import Renderer from '../renderer/index.js';
+import { CollectionList } from "./wfcollection.js";
+import Renderer from "../renderer/index.js";
 export class FilterCollection extends CollectionList {
-    constructor(container, options = { name: '', rendererOptions: {} }) {
+    constructor(container, options = {
+        name: "",
+        rendererOptions: {},
+    }) {
         const mergedFilterAttributes = Renderer.defineAttributes({
             ...FilterCollection.defaultAttributes,
             ...options.rendererOptions.filterAttributes,
@@ -25,7 +28,7 @@ export class FilterCollection extends CollectionList {
             const allAdditionalConditions = additionalConditions.every((condition) => condition(entry));
             return baseCondition && allAdditionalConditions;
         });
-        this.log('Filtered Data:', filtered);
+        this.log("Filtered Data:", filtered);
         return filtered;
     }
     filterByDateRange(startDate, endDate, ...additionalConditions) {
@@ -42,14 +45,14 @@ export class FilterCollection extends CollectionList {
                 entry.props.endDate.getTime() >= endDate.getTime();
             // Check all additional conditions
             const allAdditionalConditions = additionalConditions.every((condition) => condition(entry));
-            return (startOrEndInRange || startBeforeEndAfter) && allAdditionalConditions;
+            return ((startOrEndInRange || startBeforeEndAfter) && allAdditionalConditions);
         });
-        this.log('Filtered Data:', filtered);
+        this.log("Filtered Data:", filtered);
         return filtered;
     }
 }
 FilterCollection.defaultAttributes = Renderer.defineAttributes({
-    "date": "date",
+    date: "date",
     "start-date": "date",
-    "end-date": "date"
+    "end-date": "date",
 });

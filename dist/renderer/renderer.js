@@ -8,7 +8,7 @@ import deepMerge from "../utils/deepmerge.js";
 export class Renderer {
     constructor(canvas, options) {
         this.collectionAttr = `data-is-collection`;
-        this.attributeName = 'render';
+        this.attributeName = "render";
         if (!canvas)
             throw new Error(`Canvas can't be undefined.`);
         this.canvas = canvas;
@@ -50,7 +50,7 @@ export class Renderer {
         }
         // Recursion with visibility check
         htmlRenderElements.forEach((htmlRenderElement) => {
-            let isCollection = htmlRenderElement.getAttribute(this.collectionAttr) === 'true';
+            let isCollection = htmlRenderElement.getAttribute(this.collectionAttr) === "true";
             if (isCollection) {
                 this.renderCollection(renderElement, htmlRenderElement);
             }
@@ -74,7 +74,7 @@ export class Renderer {
             default:
                 break;
         }
-        let max = parseInt(htmlRenderCollection.getAttribute('data-limit-items') || '-1');
+        let max = parseInt(htmlRenderCollection.getAttribute("data-limit-items") || "-1");
         if (max === -1)
             max = renderElement.fields.length;
         max = Math.min(renderElement.fields.length, max);
@@ -82,7 +82,7 @@ export class Renderer {
         const firstChild = htmlRenderCollection.firstElementChild;
         if (firstChild) {
             const htmlTemplate = firstChild.cloneNode(true);
-            htmlRenderCollection.innerHTML = '';
+            htmlRenderCollection.innerHTML = "";
             // Use DocumentFragment for performance improvement
             const fragment = document.createDocumentFragment();
             for (let i = 0; i < max; i++) {
@@ -98,7 +98,7 @@ export class Renderer {
             htmlRenderCollection.appendChild(fragment);
         }
         else {
-            console.warn('No first child found to clone');
+            console.warn("No first child found to clone");
         }
     }
     /**
@@ -109,13 +109,13 @@ export class Renderer {
             case "emptyState":
                 const emptyStateElement = htmlTemplate.querySelector(`[${this.emptyStateAttr}]`);
                 if (this.shouldHideElement(renderElement)) {
-                    emptyStateElement.classList.remove('hide');
+                    emptyStateElement.classList.remove("hide");
                     if (emptyStateElement.style.display === "none") {
-                        emptyStateElement.style.removeProperty('display');
+                        emptyStateElement.style.removeProperty("display");
                     }
                 }
                 else {
-                    emptyStateElement.classList.add('hide');
+                    emptyStateElement.classList.add("hide");
                     emptyStateElement.style.display = "none";
                 }
                 // For both cases since the children next to the `emptyStateElement` have to be hidden if the empty state is shown.
@@ -164,12 +164,14 @@ export class Renderer {
         }
         else {
             switch (field.type) {
-                case 'html':
+                case "html":
                     htmlTemplate.innerHTML = field.value;
                     break;
-                case 'date':
-                    const formatStr = htmlTemplate.dataset.dateFormat || 'd.M.yyyy';
-                    htmlTemplate.innerText = format(new Date(field.value), formatStr, { locale: de });
+                case "date":
+                    const formatStr = htmlTemplate.dataset.dateFormat || "d.M.yyyy";
+                    htmlTemplate.innerText = format(new Date(field.value), formatStr, {
+                        locale: de,
+                    });
                     break;
                 default:
                     htmlTemplate.innerText = field.value;
@@ -187,7 +189,7 @@ export class Renderer {
     read(node, stopRecursionMatches = []) {
         const renderData = [];
         Array.from(node.children).forEach((child) => {
-            if (stopRecursionMatches.some(selector => child.matches(selector))) {
+            if (stopRecursionMatches.some((selector) => child.matches(selector))) {
                 return; // Stop recursion for this element
             }
             // If it's a RenderElement
@@ -200,7 +202,8 @@ export class Renderer {
             }
             // If it's neither, check if any descendants are renderable
             else {
-                const hasRenderableChild = child.querySelectorAll(`[${this.elementAttr}], [${this.fieldAttr}]`).length > 0;
+                const hasRenderableChild = child.querySelectorAll(`[${this.elementAttr}], [${this.fieldAttr}]`)
+                    .length > 0;
                 // If there are renderable children, recurse on this child
                 if (hasRenderableChild) {
                     renderData.push(...this.read(child, stopRecursionMatches));
@@ -211,13 +214,13 @@ export class Renderer {
     }
     clear(node = this.canvas) {
         const collections = node.querySelectorAll(`${this.elementSelector()}[${this.collectionAttr}]`);
-        collections.forEach(collection => {
+        collections.forEach((collection) => {
             const template = collection.firstElementChild.cloneNode(true);
-            collection.innerHTML = '';
+            collection.innerHTML = "";
             collection.appendChild(template);
         });
         const fields = node.querySelectorAll(this.fieldSelector());
-        fields.forEach(field => {
+        fields.forEach((field) => {
             field.innerText = "";
             const fieldVisibility = this.readVisibilityControl(field);
             if (fieldVisibility === true || fieldVisibility === "emptyState") {
@@ -225,7 +228,7 @@ export class Renderer {
             }
         });
         const elements = node.querySelectorAll(this.elementSelector());
-        elements.forEach(element => {
+        elements.forEach((element) => {
             this.showElement(element);
         });
     }
@@ -241,7 +244,8 @@ export class Renderer {
             props: {},
         };
         element.instance = instance || undefined;
-        if (child.classList.contains(wf.class.invisible) || child.closest(wf.select.invisible)) {
+        if (child.classList.contains(wf.class.invisible) ||
+            child.closest(wf.select.invisible)) {
             element.visibility = false;
         }
         else {
@@ -255,9 +259,13 @@ export class Renderer {
         const instance = child.getAttribute(`data-${fieldName}-instance`);
         // Determine field type (handle date, text, html)
         let value = child.innerHTML.trim();
-        const type = child.children.length > 0 ? 'html' : (child.hasAttribute('data-date') ? 'date' : 'text');
+        const type = child.children.length > 0
+            ? "html"
+            : child.hasAttribute("data-date")
+                ? "date"
+                : "text";
         switch (type) {
-            case 'date':
+            case "date":
                 value = value;
                 break;
             default:
@@ -268,10 +276,11 @@ export class Renderer {
             value,
             type,
             visibility: true,
-            props: {}
+            props: {},
         };
         field.instance = instance || undefined;
-        if (child.classList.contains(wf.class.invisible) || child.closest(wf.select.invisible)) {
+        if (child.classList.contains(wf.class.invisible) ||
+            child.closest(wf.select.invisible)) {
             field.visibility = false;
         }
         else {
@@ -298,10 +307,10 @@ export class Renderer {
                 case "date":
                     let parsedDate;
                     // Parse the date with a 24h time string
-                    parsedDate = parse(value, 'yyyy-MM-dd H:mm', new Date());
+                    parsedDate = parse(value, "yyyy-MM-dd H:mm", new Date());
                     // Parse the date with local midnight time
                     if (isNaN(parsedDate.getTime())) {
-                        parsedDate = parse(value, 'yyyy-MM-dd', new Date());
+                        parsedDate = parse(value, "yyyy-MM-dd", new Date());
                     }
                     let parsedUTCDate = parsedDate;
                     if (this.options.timezone) {
@@ -310,7 +319,7 @@ export class Renderer {
                     value = isNaN(parsedUTCDate.getTime()) ? null : parsedUTCDate; // Ensure valid date
                     break;
                 case "boolean":
-                    if (value === 'select') {
+                    if (value === "select") {
                         // Translate webflows conditional visibility to boolean
                         const targetElement = child.querySelector(`[${attr}]`);
                         if (!targetElement) {
@@ -332,7 +341,6 @@ export class Renderer {
             }
             field.props[toCamelCase(attr)] = value;
         }
-        ;
     }
     /**
      * Parse the visibility control attribute value of a Render-`child`.
@@ -343,12 +351,14 @@ export class Renderer {
      * - `false`: Disable visibility control, do not mess with the element's visibility.
      */
     readVisibilityControl(child) {
-        const visibilityControlAttr = child.getAttribute(`data-${this.attributeName}-visibility-control`)?.trim();
+        const visibilityControlAttr = child
+            .getAttribute(`data-${this.attributeName}-visibility-control`)
+            ?.trim();
         switch (visibilityControlAttr) {
             case "emptyState":
                 return "emptyState";
             default:
-                return JSON.parse(visibilityControlAttr ?? 'false') || false;
+                return JSON.parse(visibilityControlAttr ?? "false") || false;
         }
     }
     shouldHideElement(element) {
@@ -367,10 +377,10 @@ export class Renderer {
     }
     showHTMLElement(element) {
         if (element.style.display === "none") {
-            element.style.removeProperty('display');
+            element.style.removeProperty("display");
         }
-        if (element.classList.contains('hide')) {
-            element.classList.remove('hide');
+        if (element.classList.contains("hide")) {
+            element.classList.remove("hide");
         }
     }
     showElement(element) {
@@ -388,17 +398,17 @@ export class Renderer {
         }
     }
     hideElement(element) {
-        const hideSelf = JSON.parse(element.getAttribute(`data-${this.attributeName}-hide-self`) || 'false');
+        const hideSelf = JSON.parse(element.getAttribute(`data-${this.attributeName}-hide-self`) || "false");
         const ancestorToHide = element.getAttribute(`data-${this.attributeName}-hide-ancestor`);
         if (hideSelf) {
             // Hide the element itself
-            element.style.display = 'none';
+            element.style.display = "none";
         }
         else if (ancestorToHide) {
             // Hide the specified ancestor
             const ancestor = element.closest(ancestorToHide);
             if (ancestor) {
-                ancestor.style.display = 'none';
+                ancestor.style.display = "none";
             }
             else {
                 console.warn(`Ancestor "${ancestorToHide}" not found for element.`);
@@ -411,7 +421,7 @@ export class Renderer {
     }
     // Method to remove filter attributes
     removeFilterAttributes(...attributesToRemove) {
-        attributesToRemove.forEach(attr => {
+        attributesToRemove.forEach((attr) => {
             delete this.options.filterAttributes[attr];
         });
     }
@@ -450,7 +460,7 @@ export class Renderer {
     }
 }
 Renderer.defaultOptions = {
-    attributeName: 'render',
+    attributeName: "render",
     filterAttributes: {},
     timezone: false,
 };

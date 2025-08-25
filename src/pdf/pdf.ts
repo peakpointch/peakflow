@@ -1,14 +1,27 @@
-import Renderer, { RenderData } from "../renderer/index.js";
-import html2canvas from 'html2canvas';
-import jsPDF, { Html2CanvasOptions } from 'jspdf';
+import Renderer from "../renderer/index.js";
+import type { RenderData } from "../renderer/index.js";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import type { Html2CanvasOptions } from "jspdf";
 import createAttribute from "../attributeselector/index.js";
 import { softHyphenizer, solidHyphens } from "../hyphenizer/index.js";
 import german from "hyphenation.de";
 
 // Types
-export type PdfElement = 'container' | 'scale' | 'page' | 'page-wrapper' | 'weekday' | 'dish';
-export type PdfFieldName = string | 'dishName' | 'dishDescription' | 'price' | 'priceSmall';
-export type PdfFormat = 'a3' | 'a4' | 'a5';
+export type PdfElement =
+  | "container"
+  | "scale"
+  | "page"
+  | "page-wrapper"
+  | "weekday"
+  | "dish";
+export type PdfFieldName =
+  | string
+  | "dishName"
+  | "dishDescription"
+  | "price"
+  | "priceSmall";
+export type PdfFormat = "a3" | "a4" | "a5";
 
 // Variables
 
@@ -22,9 +35,9 @@ export class Pdf {
   private pages: HTMLElement[];
 
   constructor(container: HTMLElement | null) {
-    if (!container) throw new Error('PDF Element not found.');
+    if (!container) throw new Error("PDF Element not found.");
     this.canvas = container;
-    this.renderer = new Renderer(container, { attributeName: 'pdf' });
+    this.renderer = new Renderer(container, { attributeName: "pdf" });
     this.getPages();
     this.getScaleElement();
   }
@@ -33,12 +46,12 @@ export class Pdf {
    * Use this method to select the elements for a new `Pdf` instance.
    * @returns CSS selector string
    */
-  static select = createAttribute<PdfElement>('data-pdf-element');
+  static select = createAttribute<PdfElement>("data-pdf-element");
 
   private getScaleElement(): HTMLElement {
-    const scale = this.canvas.querySelector<HTMLElement>(Pdf.select('scale'));
+    const scale = this.canvas.querySelector<HTMLElement>(Pdf.select("scale"));
     if (!scale) {
-      console.warn(`Scale element ${Pdf.select('scale')} is undefined.`)
+      console.warn(`Scale element ${Pdf.select("scale")} is undefined.`);
       return;
     }
     this.scaleElement = scale;
@@ -47,16 +60,16 @@ export class Pdf {
   }
 
   public getDefaultScale(): number {
-    this.scaleElement.style.removeProperty('font-size');
+    this.scaleElement.style.removeProperty("font-size");
     const elements: any = {
-      "container": this.canvas,
-      "scale": this.scaleElement,
-    }
+      container: this.canvas,
+      scale: this.scaleElement,
+    };
     let scaleValues: any = {};
 
     for (let key in elements) {
       const scaleStyles = getComputedStyle(elements[key]);
-      const scaleValue = parseFloat(scaleStyles.getPropertyValue('font-size'));
+      const scaleValue = parseFloat(scaleStyles.getPropertyValue("font-size"));
       scaleValues[key] = scaleValue;
     }
 
@@ -65,13 +78,15 @@ export class Pdf {
   }
 
   public getPages(): HTMLElement[] {
-    const pages = this.canvas.querySelectorAll<HTMLElement>(Pdf.select('page'));
+    const pages = this.canvas.querySelectorAll<HTMLElement>(Pdf.select("page"));
     this.pages = Array.from(pages);
     return this.pages;
   }
 
   public getPageWrappers(): HTMLElement[] {
-    const pageWrappers = this.canvas.querySelectorAll<HTMLElement>(Pdf.select('page-wrapper'));
+    const pageWrappers = this.canvas.querySelectorAll<HTMLElement>(
+      Pdf.select("page-wrapper"),
+    );
     return Array.from(pageWrappers);
   }
 
@@ -85,14 +100,16 @@ export class Pdf {
    * @returns Array of matching `HTMLElement` elements.
    */
   public getDesigns(...designs: string[]): HTMLElement[] {
-    const designWrappers = Array.from(this.canvas.querySelectorAll<HTMLElement>(`[data-pdf-design]`));
+    const designWrappers = Array.from(
+      this.canvas.querySelectorAll<HTMLElement>(`[data-pdf-design]`),
+    );
 
     if (designs.length === 0) {
       return designWrappers;
     }
 
-    const filteredDesigns = designWrappers.filter(wrapper => {
-      return designs.includes(wrapper.getAttribute('data-pdf-design') || '');
+    const filteredDesigns = designWrappers.filter((wrapper) => {
+      return designs.includes(wrapper.getAttribute("data-pdf-design") || "");
     });
 
     return filteredDesigns;
@@ -104,7 +121,7 @@ export class Pdf {
    * @param data Data of type `RenderData`. This data will be given to the Renderer instance to render it.
    */
   public render(data: RenderData): void {
-    this.pages.forEach(page => {
+    this.pages.forEach((page) => {
       this.renderer.render(data, page);
     });
   }
@@ -129,17 +146,20 @@ export class Pdf {
   }
 
   public freeze(): void {
-    this.pages.forEach(page => {
-      this.freezeSelector = '*:not([pdf-freeze="exclude"], [pdf-freeze="exclude"] *, svg, svg *)';
-      const children: NodeListOf<HTMLElement> = page.querySelectorAll(this.freezeSelector);
-      children.forEach(child => {
+    this.pages.forEach((page) => {
+      this.freezeSelector =
+        '*:not([pdf-freeze="exclude"], [pdf-freeze="exclude"] *, svg, svg *)';
+      const children: NodeListOf<HTMLElement> = page.querySelectorAll(
+        this.freezeSelector,
+      );
+      children.forEach((child) => {
         this.freezeElement(child);
       });
     });
   }
 
   private freezeElement(element: HTMLElement): void {
-    if (element.tagName === 'svg') return;
+    if (element.tagName === "svg") return;
 
     const elementRect = element.getBoundingClientRect();
 
@@ -150,9 +170,11 @@ export class Pdf {
   }
 
   public unFreeze(): void {
-    this.pages.forEach(page => {
-      const children: NodeListOf<HTMLElement> = page.querySelectorAll(this.freezeSelector);
-      children.forEach(child => {
+    this.pages.forEach((page) => {
+      const children: NodeListOf<HTMLElement> = page.querySelectorAll(
+        this.freezeSelector,
+      );
+      children.forEach((child) => {
         this.unFreezeElement(child);
       });
     });
@@ -160,14 +182,14 @@ export class Pdf {
 
   private unFreezeElement(element: HTMLElement): void {
     // Reset the inline styles to allow for dynamic layout adjustments
-    element.style.removeProperty('width');
-    element.style.removeProperty('min-width');
-    element.style.removeProperty('max-width');
-    element.style.removeProperty('height');
-    element.style.removeProperty('position');
-    element.style.removeProperty('left');
-    element.style.removeProperty('top');
-    element.style.removeProperty('margin');
+    element.style.removeProperty("width");
+    element.style.removeProperty("min-width");
+    element.style.removeProperty("max-width");
+    element.style.removeProperty("height");
+    element.style.removeProperty("position");
+    element.style.removeProperty("left");
+    element.style.removeProperty("top");
+    element.style.removeProperty("margin");
   }
 
   /**
@@ -188,36 +210,49 @@ export class Pdf {
     const originalDrawImage = ctx.drawImage;
 
     // @ts-ignore
-    ctx.drawImage = function (image: CanvasImageSource, sx: number, sy: number, sw: number, sh, dx, dy, dw, dh): void {
+    ctx.drawImage = function (
+      image: CanvasImageSource,
+      sx: number,
+      sy: number,
+      sw: number,
+      sh,
+      dx,
+      dy,
+      dw,
+      dh,
+    ): void {
       if (image instanceof HTMLImageElement) {
         if (sw / dw < sh / dh) {
-          const _dh = dh
-          dh = sh * (dw / sw)
-          dy = dy + (_dh - dh) / 2
+          const _dh = dh;
+          dh = sh * (dw / sw);
+          dy = dy + (_dh - dh) / 2;
         } else {
-          const _dw = dw
-          dw = sw * (dh / sh)
-          dx = dx + (_dw - dw) / 2
+          const _dw = dw;
+          dw = sw * (dh / sh);
+          dx = dx + (_dw - dw) / 2;
         }
       }
 
-      return originalDrawImage.call(ctx, image, sx, sy, sw, sh, dx, dy, dw, dh)
+      return originalDrawImage.call(ctx, image, sx, sy, sw, sh, dx, dy, dw, dh);
     };
 
     return canvas;
   }
 
   private isPageHidden(page: HTMLElement): boolean {
-    return window.getComputedStyle(page).getPropertyValue('display') === "none" ||
-      window.getComputedStyle(page).getPropertyValue('visibility') === 'hidden' ||
+    return (
+      window.getComputedStyle(page).getPropertyValue("display") === "none" ||
+      window.getComputedStyle(page).getPropertyValue("visibility") ===
+        "hidden" ||
       page.classList.contains("hide") ||
       page.offsetWidth === 0 ||
-      page.offsetHeight === 0;
+      page.offsetHeight === 0
+    );
   }
 
   public hyphenizePages(...pages: HTMLElement[]): void {
     if (!pages.length) pages = this.pages;
-    pages.forEach(page => {
+    pages.forEach((page) => {
       if (this.isPageHidden(page)) return;
       softHyphenizer(page, german);
       solidHyphens(page);
@@ -229,22 +264,22 @@ export class Pdf {
 
     const zoom = 0.1; // crop 0.1mm on each side
     const canvasScale =
-      format === "a3" ? 2 * 4.17
-        : format === "a4" ? 1 * 4.17
-          : 0.5 * 4.17;
+      format === "a3" ? 2 * 4.17 : format === "a4" ? 1 * 4.17 : 0.5 * 4.17;
 
-    const getHtml2CanvasOptions = (canvas?: HTMLCanvasElement): Html2CanvasOptions => {
+    const getHtml2CanvasOptions = (
+      canvas?: HTMLCanvasElement,
+    ): Html2CanvasOptions => {
       return {
         scale: canvasScale,
         useCORS: true,
         canvas: canvas,
         letterRendering: true,
-      }
-    }
+      };
+    };
 
     try {
       // Generate the PDF
-      const pdf = new jsPDF('portrait', 'mm', format);
+      const pdf = new jsPDF("portrait", "mm", format);
       const pdfWidth = pdf.internal.pageSize.getWidth();
       let firstPage = true;
 
@@ -252,14 +287,23 @@ export class Pdf {
         const page = this.pages[i];
 
         if (this.isPageHidden(page)) {
-          console.warn(`Hidden page detected, skipping current page. \nPage:`, page);
+          console.warn(
+            `Hidden page detected, skipping current page. \nPage:`,
+            page,
+          );
           continue;
         }
 
         // Convert HTML element to canvas
-        const defaultCanvas: HTMLCanvasElement = this.prepareCanvas(page, canvasScale);
-        const canvas = await html2canvas(page, getHtml2CanvasOptions(defaultCanvas));
-        const imgData = canvas.toDataURL('image/png');
+        const defaultCanvas: HTMLCanvasElement = this.prepareCanvas(
+          page,
+          canvasScale,
+        );
+        const canvas = await html2canvas(
+          page,
+          getHtml2CanvasOptions(defaultCanvas),
+        );
+        const imgData = canvas.toDataURL("image/png");
 
         const adjustedWidth = pdfWidth + 2 * zoom;
         const adjustedHeight = (canvas.height * adjustedWidth) / canvas.width;
@@ -270,21 +314,36 @@ export class Pdf {
 
         firstPage = false;
 
-        pdf.addImage(imgData, 'PNG', -zoom, -zoom, adjustedWidth, adjustedHeight, undefined, 'SLOW');
+        pdf.addImage(
+          imgData,
+          "PNG",
+          -zoom,
+          -zoom,
+          adjustedWidth,
+          adjustedHeight,
+          undefined,
+          "SLOW",
+        );
       }
 
       return pdf;
     } catch (error) {
-      console.error('Error creating PDF:', error);
+      console.error("Error creating PDF:", error);
     } finally {
       this.unFreeze();
     }
   }
 
-  public async save(format: PdfFormat, filename?: string, clientScale: number = 1): Promise<void> {
+  public async save(
+    format: PdfFormat,
+    filename?: string,
+    clientScale: number = 1,
+  ): Promise<void> {
     // Save the PDF
-    filename = filename || `Dokument generiert am ${new Date().toLocaleDateString('de-DE')}`;
-    filename = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
+    filename =
+      filename ||
+      `Dokument generiert am ${new Date().toLocaleDateString("de-DE")}`;
+    filename = filename.endsWith(".pdf") ? filename : `${filename}.pdf`;
 
     // Scale the pdf on client
     this.scale(clientScale, false);

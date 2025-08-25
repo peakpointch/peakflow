@@ -1,10 +1,10 @@
-import { DashToCamelCase } from "../typeutils/index.js";
-import { IANATimeZone } from "../timezones/index.js";
+import type { DashToCamelCase } from "../typeutils/index.js";
+import type { IANATimeZone } from "../timezones/index.js";
 type FilterAttributeType = {
-    "string": string;
-    "number": number;
-    "boolean": boolean;
-    "date": Date;
+    string: string;
+    number: number;
+    boolean: boolean;
+    date: Date;
 };
 export type FilterAttributes<T extends string = string> = {
     [K in T]: keyof FilterAttributeType;
@@ -16,7 +16,7 @@ export type RenderField<F extends FilterAttributes<keyof F & string> = {}> = {
     element: string;
     instance?: string;
     value: string;
-    type?: 'text' | 'html' | 'date';
+    type?: "text" | "html" | "date";
     visibility: boolean;
     props?: PropsFromFilterAttributes<F>;
 };

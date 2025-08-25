@@ -24,10 +24,10 @@ import createAttribute from "../attributeselector/index.js";
 export class FormDecision {
     static get attr() {
         return {
-            component: 'data-decision-component',
-            element: 'data-decision-element',
-            pathId: 'data-path-id',
-            required: 'data-decision-required',
+            component: "data-decision-component",
+            element: "data-decision-element",
+            pathId: "data-path-id",
+            required: "data-decision-required",
         };
     }
     get currentPath() {
@@ -63,7 +63,9 @@ export class FormDecision {
         }
         this.component = component;
         this.opts = {
-            id: options.id || this.component.getAttribute(this.attr.component) || this.opts.id,
+            id: options.id ||
+                this.component.getAttribute(this.attr.component) ||
+                this.opts.id,
             clearPathOnChange: options.clearPathOnChange || this.opts.clearPathOnChange,
             defaultPath: options.defaultPath || this.opts.defaultPath,
         };
@@ -75,9 +77,8 @@ export class FormDecision {
      */
     initialize() {
         // Find the decision element wrapper
-        const decisionFieldsWrapper = this.component.querySelector(this.selector('decision')) ||
-            this.component;
-        const decisionInputsList = decisionFieldsWrapper.querySelectorAll(this.selector('input'));
+        const decisionFieldsWrapper = this.component.querySelector(this.selector("decision")) || this.component;
+        const decisionInputsList = decisionFieldsWrapper.querySelectorAll(this.selector("input"));
         this.decisionInputs = Array.from(decisionInputsList);
         // Ensure there are decision inputs
         if (this.decisionInputs.length === 0) {
@@ -86,8 +87,9 @@ export class FormDecision {
         }
         // Iterate through the decision inputs
         this.decisionInputs.forEach((input) => {
-            const pathId = input.getAttribute(this.attr.pathId) || input.value;
-            const pathSelector = `${this.selector('path')}[${this.attr.pathId}="${pathId}"]`;
+            const pathId = input.getAttribute(this.attr.pathId) ||
+                input.value;
+            const pathSelector = `${this.selector("path")}[${this.attr.pathId}="${pathId}"]`;
             const path = this.component.querySelector(pathSelector);
             if (path) {
                 path.style.display = "none";
@@ -109,7 +111,7 @@ export class FormDecision {
     changeToPath(pathId, event) {
         if (pathId === null) {
             this.hideAllPaths();
-            this.decisionInputs.forEach(input => {
+            this.decisionInputs.forEach((input) => {
                 setChecked(input, false);
             });
         }
@@ -183,7 +185,8 @@ export class FormDecision {
             this.handleValidationMessages(false);
             return false;
         }
-        const pathId = selectedInput.getAttribute(this.attr.pathId) || selectedInput.value;
+        const pathId = selectedInput.getAttribute(this.attr.pathId) ||
+            selectedInput.value;
         // If no corresponding path, consider it valid
         const isValid = !this.paths.has(pathId) || this.checkPathValidity(pathId);
         this.handleValidationMessages(isValid);
@@ -254,7 +257,7 @@ export class FormDecision {
             input.value = null;
             if (silent)
                 return;
-            input.dispatchEvent(new Event('change', { bubbles: true }));
+            input.dispatchEvent(new Event("change", { bubbles: true }));
         });
     }
     clearAllPaths(clearCurrentPath = true) {

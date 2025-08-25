@@ -1,7 +1,7 @@
 import { FieldGroup } from "./fieldgroup.js";
-import { HTMLFormInput } from "./utility.js";
+import type { HTMLFormInput } from "./utility.js";
 type FilterAction<T extends string = string, Q extends string = string> = (filters: FieldGroup<T>, fieldId: Q) => any;
-type ActionElement = 'download' | 'save';
+type ActionElement = "download" | "save";
 type HTMLActionElement = HTMLButtonElement;
 export declare class FilterForm<FieldId extends string = string> {
     private fieldIds?;
@@ -14,7 +14,7 @@ export declare class FilterForm<FieldId extends string = string> {
     private globalChangeActions;
     private defaultDayRange;
     private resizeResetFields;
-    static select: import("../index.js").AttributeSelector<ActionElement>;
+    static select: import("../attributeselector/attributeselector.js").AttributeSelector<ActionElement>;
     constructor(container: HTMLElement | null, fieldIds?: readonly FieldId[]);
     /**
      * Returns the `HTMLElement` of a specific filter input.
@@ -48,7 +48,7 @@ export declare class FilterForm<FieldId extends string = string> {
      * @param fields - An array of field IDs and action element IDs OR '*' for any change event.
      * @param action - An array of actions to execute when the field(s) change.
      */
-    addOnChange<T extends FieldId>(fields: readonly T[] | '*', action: FilterAction<FieldId, T>): void;
+    addOnChange<T extends FieldId>(fields: readonly T[] | "*", action: FilterAction<FieldId, T>): void;
     /**
      * Execute change actions for the specific field that changed.
      * If wildcard actions exist, they run on every change.

@@ -1,5 +1,6 @@
 import createAttribute from "../attributeselector/index.js";
-import { format, Locale } from "date-fns";
+import { format } from "date-fns";
+import type { Locale } from "date-fns";
 
 type ElementsArg = Array<NodeListOf<HTMLElement> | HTMLElement | string>;
 type AttrObject = {

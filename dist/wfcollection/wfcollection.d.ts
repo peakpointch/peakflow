@@ -1,4 +1,5 @@
-import Renderer, { FilterAttributes, RenderData, RendererOptions } from "../renderer/index.js";
+import Renderer from "../renderer/index.js";
+import type { FilterAttributes, RenderData, RendererOptions } from "../renderer/index.js";
 type GlobalWfCollections = {
     initialized: boolean;
     [key: string]: GlobalCollection | CollectionList | boolean;

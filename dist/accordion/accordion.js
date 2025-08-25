@@ -1,3 +1,4 @@
+import createAttribute from "../attributeselector/index.js";
 export class Accordion {
     constructor(component) {
         this.isOpen = false;

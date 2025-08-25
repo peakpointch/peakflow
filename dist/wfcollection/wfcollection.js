@@ -1,14 +1,17 @@
 import Renderer from "../renderer/index.js";
 class CollectionList {
-    constructor(container, options = { name: '', rendererOptions: {} }) {
+    constructor(container, options = {
+        name: "",
+        rendererOptions: {},
+    }) {
         this.options = options;
         this.collectionData = [];
         this.debug = false;
-        if (!container || !container.classList.contains('w-dyn-list'))
+        if (!container || !container.classList.contains("w-dyn-list"))
             throw new Error(`Container can't be undefined.`);
         this.container = container;
-        this.listElement = container.querySelector('.w-dyn-items');
-        this.items = Array.from(this.listElement?.querySelectorAll('.w-dyn-item:not(.w-dyn-list .w-dyn-list *)') ?? []);
+        this.listElement = container.querySelector(".w-dyn-items");
+        this.items = Array.from(this.listElement?.querySelectorAll(".w-dyn-item:not(.w-dyn-list .w-dyn-list *)") ?? []);
         this.renderer = new Renderer(container, this.options.rendererOptions);
     }
     log(...args) {
@@ -17,7 +20,8 @@ class CollectionList {
         console.log(`"${this.options.name}" CollectionList:`, ...args);
     }
     isEmpty() {
-        const isEmpty = !this.listElement && this.container.querySelector('.w-dyn-empty') !== null;
+        const isEmpty = !this.listElement &&
+            this.container.querySelector(".w-dyn-empty") !== null;
         if (isEmpty) {
             console.warn(`Collection "${this.options.name}" is empty.`);
         }
@@ -29,7 +33,7 @@ class CollectionList {
             return;
         }
         this.collectionData = this.renderer.read(this.listElement);
-        this.log('Data:', this.collectionData);
+        this.log("Data:", this.collectionData);
     }
     getData() {
         return this.collectionData;
@@ -43,15 +47,16 @@ class CollectionList {
     removeInvisibleElements() {
         if (this.isEmpty())
             return;
-        this.listElement.querySelectorAll(`.w-condition-invisible:not([data-render-condition="true"])`)
-            .forEach(element => element.remove());
+        this.listElement
+            .querySelectorAll(`.w-condition-invisible:not([data-render-condition="true"])`)
+            .forEach((element) => element.remove());
     }
     getAttributeData() {
         let data = [];
-        this.items.forEach(item => {
+        this.items.forEach((item) => {
             const itemData = new Map(Object.entries(item.dataset));
             itemData.forEach((value, key) => {
-                if (!key.startsWith('wf')) {
+                if (!key.startsWith("wf")) {
                     itemData.delete(key);
                 }
             });

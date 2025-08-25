@@ -1,5 +1,6 @@
-import { FormField, FieldData } from "./formfield.js";
-import { HTMLFormInput } from "./utility.js";
+import { FormField } from "./formfield.js";
+import type { FieldData } from "./formfield.js";
+import type { HTMLFormInput } from "./utility.js";
 export type FieldGroupValidation<FieldType extends FormField | HTMLFormInput = HTMLFormInput> = {
     isValid: boolean;
     invalidFields: FieldType[];

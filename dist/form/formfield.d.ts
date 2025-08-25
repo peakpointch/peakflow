@@ -1,4 +1,4 @@
-import { HTMLFormInput } from "./utility.js";
+import type { HTMLFormInput } from "./utility.js";
 interface FieldData {
     id: string;
     label: string;

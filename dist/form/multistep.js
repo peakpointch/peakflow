@@ -1,17 +1,18 @@
 // Imports
-import createAttribute, { exclude, extend } from "../attributeselector/index.js";
+import createAttribute, { exclude, extend, } from "../attributeselector/index.js";
 import { initWfInputs, sendFormData, validateFields, formElementSelector, fieldFromInput, enforceButtonTypes, } from "./index.js";
 import wf from "../webflow/index.js";
 // import mapToObject from "../utils/maptoobject.js";
 // import deepMerge from "../utils/deepmerge.js";
 import { mapToObject, deepMerge } from "../utils";
-;
 // Selector functions
-const stepsElementSelector = createAttribute('data-steps-element', {
-    defaultExclusions: ['[data-steps-element="component"] [data-steps-element="component"] *']
+const stepsElementSelector = createAttribute("data-steps-element", {
+    defaultExclusions: [
+        '[data-steps-element="component"] [data-steps-element="component"] *',
+    ],
 });
-const stepsTargetSelector = createAttribute('data-step-target');
-const stepsNavSelector = createAttribute('data-steps-nav');
+const stepsTargetSelector = createAttribute("data-step-target");
+const stepsNavSelector = createAttribute("data-steps-nav");
 const STEPS_PAGINATION_ITEM_SELECTOR = `button${stepsTargetSelector()}`;
 export class MultiStepForm {
     set currentStep(index) {
@@ -30,12 +31,12 @@ export class MultiStepForm {
             nested: false,
             pagination: {
                 doneClass: "is-done",
-                activeClass: "is-active"
+                activeClass: "is-active",
             },
             validation: {
                 validate: true,
                 reportValidity: true,
-            }
+            },
         };
         this.initialized = false;
         this._currentStep = 0;
@@ -50,30 +51,30 @@ export class MultiStepForm {
     }
     validateComponent() {
         if (!this.component.getAttribute("data-steps-element")) {
-            console.error(`Form Steps: Component is not a steps component or is missing the attribute ${stepsElementSelector('component')}.\nComponent:`, this.component);
+            console.error(`Form Steps: Component is not a steps component or is missing the attribute ${stepsElementSelector("component")}.\nComponent:`, this.component);
             throw new Error("Component is not a valid multi-step form component.");
         }
     }
     cacheDomElements() {
-        this.formElement = this.component.querySelector('form');
+        this.formElement = this.component.querySelector("form");
         if (!this.options.nested && !this.formElement) {
             throw new Error("Form element not found within the specified component.");
         }
         if (this.options.nested) {
             this.formElement = this.component;
         }
-        this.formSteps = this.component.querySelectorAll(stepsElementSelector('step'));
+        this.formSteps = this.component.querySelectorAll(stepsElementSelector("step"));
         this.paginationItems = this.component.querySelectorAll(STEPS_PAGINATION_ITEM_SELECTOR);
-        this.navigationElement = this.component.querySelector(stepsElementSelector('navigation'));
-        this.buttonsNext = this.component.querySelectorAll(stepsNavSelector('next'));
-        this.buttonsPrev = this.component.querySelectorAll(stepsNavSelector('prev'));
-        this.successElement = this.component.querySelector(formElementSelector('success'));
-        this.errorElement = this.component.querySelector(formElementSelector('error'));
-        this.submitButton = this.component.querySelector(formElementSelector('submit'));
+        this.navigationElement = this.component.querySelector(stepsElementSelector("navigation"));
+        this.buttonsNext = this.component.querySelectorAll(stepsNavSelector("next"));
+        this.buttonsPrev = this.component.querySelectorAll(stepsNavSelector("prev"));
+        this.successElement = this.component.querySelector(formElementSelector("success"));
+        this.errorElement = this.component.querySelector(formElementSelector("error"));
+        this.submitButton = this.component.querySelector(formElementSelector("submit"));
     }
     setupForm() {
         if (!this.formSteps.length) {
-            console.warn(`Form Steps: The selected list doesn't contain any steps. Skipping initialization. Provided List:`, this.component.querySelector(stepsElementSelector('list')));
+            console.warn(`Form Steps: The selected list doesn't contain any steps. Skipping initialization. Provided List:`, this.component.querySelector(stepsElementSelector("list")));
             return;
         }
         if (!this.options.nested) {
@@ -339,7 +340,7 @@ export class MultiStepForm {
         const filteredInputs = Array.from(inputs).filter((input) => {
             // Check if the input matches any exclude selectors or is inside an excluded wrapper
             const isExcluded = this.options.excludeInputSelectors.some((selector) => {
-                return (input.closest(`${selector}`) !== null || input.matches(selector));
+                return input.closest(`${selector}`) !== null || input.matches(selector);
             });
             return !isExcluded;
         });
@@ -382,10 +383,7 @@ export class MultiStepForm {
     getFieldMap() {
         const fields = Array.from(this.formSteps).reduce((acc, _, stepIndex) => {
             const stepData = this.getFieldMapForStep(stepIndex);
-            return new Map([
-                ...acc,
-                ...stepData
-            ]);
+            return new Map([...acc, ...stepData]);
         }, new Map());
         return fields;
     }

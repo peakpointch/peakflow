@@ -1,4 +1,4 @@
-import { Locale } from "date-fns";
+import type { Locale } from "date-fns";
 type ElementsArg = Array<NodeListOf<HTMLElement> | HTMLElement | string>;
 export declare function parseDateflow(element: HTMLElement): Date;
 /**

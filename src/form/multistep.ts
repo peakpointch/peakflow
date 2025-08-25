@@ -1,5 +1,8 @@
 // Imports
-import createAttribute, { exclude, extend } from "../attributeselector/index.js";
+import createAttribute, {
+  exclude,
+  extend,
+} from "../attributeselector/index.js";
 import {
   initWfInputs,
   sendFormData,
@@ -7,10 +10,8 @@ import {
   formElementSelector,
   fieldFromInput,
   enforceButtonTypes,
-  FormFieldMap,
-  HTMLFormInput,
-  CustomValidator,
 } from "./index.js";
+import type { FormFieldMap, HTMLFormInput, CustomValidator } from "./index.js";
 import wf from "../webflow/index.js";
 // import mapToObject from "../utils/maptoobject.js";
 // import deepMerge from "../utils/deepmerge.js";
@@ -23,7 +24,7 @@ interface FormOptions {
   validation: {
     validate: boolean;
     reportValidity: boolean;
-  }
+  };
 }
 
 interface MultiStepFormOptions extends FormOptions {
@@ -33,10 +34,10 @@ interface MultiStepFormOptions extends FormOptions {
   pagination: {
     doneClass: string;
     activeClass: string;
-  }
+  };
   onStepChange?: StepChangeCallback;
   nested: boolean;
-};
+}
 
 type StepChangeCallback = (options: {
   index: number;
@@ -51,15 +52,26 @@ type CustomFormComponent = {
   getData?: () => {};
 };
 
-type StepsComponentElement = 'component' | 'list' | 'step' | 'navigation' | 'pagination' | 'custom-component';
-type StepsNavElement = 'prev' | 'next';
+type StepsComponentElement =
+  | "component"
+  | "list"
+  | "step"
+  | "navigation"
+  | "pagination"
+  | "custom-component";
+type StepsNavElement = "prev" | "next";
 
 // Selector functions
-const stepsElementSelector = createAttribute<StepsComponentElement>('data-steps-element', {
-  defaultExclusions: ['[data-steps-element="component"] [data-steps-element="component"] *']
-});
-const stepsTargetSelector = createAttribute<string>('data-step-target');
-const stepsNavSelector = createAttribute<StepsNavElement>('data-steps-nav');
+const stepsElementSelector = createAttribute<StepsComponentElement>(
+  "data-steps-element",
+  {
+    defaultExclusions: [
+      '[data-steps-element="component"] [data-steps-element="component"] *',
+    ],
+  },
+);
+const stepsTargetSelector = createAttribute<string>("data-step-target");
+const stepsNavSelector = createAttribute<StepsNavElement>("data-steps-nav");
 
 const STEPS_PAGINATION_ITEM_SELECTOR: string = `button${stepsTargetSelector()}`;
 
@@ -73,12 +85,12 @@ export class MultiStepForm {
     nested: false,
     pagination: {
       doneClass: "is-done",
-      activeClass: "is-active"
+      activeClass: "is-active",
     },
     validation: {
       validate: true,
       reportValidity: true,
-    }
+    },
   };
 
   public initialized: boolean = false;
@@ -115,15 +127,15 @@ export class MultiStepForm {
   private validateComponent(): void {
     if (!this.component.getAttribute("data-steps-element")) {
       console.error(
-        `Form Steps: Component is not a steps component or is missing the attribute ${stepsElementSelector('component')}.\nComponent:`,
-        this.component
+        `Form Steps: Component is not a steps component or is missing the attribute ${stepsElementSelector("component")}.\nComponent:`,
+        this.component,
       );
       throw new Error("Component is not a valid multi-step form component.");
     }
   }
 
   private cacheDomElements(): void {
-    this.formElement = this.component.querySelector<HTMLFormElement>('form');
+    this.formElement = this.component.querySelector<HTMLFormElement>("form");
     if (!this.options.nested && !this.formElement) {
       throw new Error("Form element not found within the specified component.");
     }
@@ -132,22 +144,38 @@ export class MultiStepForm {
       this.formElement = this.component;
     }
 
-    this.formSteps = this.component.querySelectorAll(stepsElementSelector('step'));
-    this.paginationItems = this.component.querySelectorAll(STEPS_PAGINATION_ITEM_SELECTOR);
-    this.navigationElement = this.component.querySelector(stepsElementSelector('navigation'));
-    this.buttonsNext = this.component.querySelectorAll(stepsNavSelector('next'));
-    this.buttonsPrev = this.component.querySelectorAll(stepsNavSelector('prev'));
+    this.formSteps = this.component.querySelectorAll(
+      stepsElementSelector("step"),
+    );
+    this.paginationItems = this.component.querySelectorAll(
+      STEPS_PAGINATION_ITEM_SELECTOR,
+    );
+    this.navigationElement = this.component.querySelector(
+      stepsElementSelector("navigation"),
+    );
+    this.buttonsNext = this.component.querySelectorAll(
+      stepsNavSelector("next"),
+    );
+    this.buttonsPrev = this.component.querySelectorAll(
+      stepsNavSelector("prev"),
+    );
 
-    this.successElement = this.component.querySelector(formElementSelector('success'));
-    this.errorElement = this.component.querySelector(formElementSelector('error'));
-    this.submitButton = this.component.querySelector<HTMLInputElement>(formElementSelector('submit'));
+    this.successElement = this.component.querySelector(
+      formElementSelector("success"),
+    );
+    this.errorElement = this.component.querySelector(
+      formElementSelector("error"),
+    );
+    this.submitButton = this.component.querySelector<HTMLInputElement>(
+      formElementSelector("submit"),
+    );
   }
 
   private setupForm(): void {
     if (!this.formSteps.length) {
       console.warn(
         `Form Steps: The selected list doesn't contain any steps. Skipping initialization. Provided List:`,
-        this.component.querySelector(stepsElementSelector('list'))
+        this.component.querySelector(stepsElementSelector("list")),
       );
       return;
     }
@@ -187,7 +215,7 @@ export class MultiStepForm {
 
     if (this.currentStep !== this.formSteps.length - 1) {
       console.error(
-        "SUBMIT ERROR: the current step is not the last step. Can only submit the MultiStepForm in the last step."
+        "SUBMIT ERROR: the current step is not the last step. Can only submit the MultiStepForm in the last step.",
       );
       return;
     }
@@ -228,7 +256,9 @@ export class MultiStepForm {
     const fields = this.getFormData();
 
     if (this.options.recaptcha) {
-      const recaptcha = (this.formElement.querySelector("#g-recaptcha-response") as HTMLFormInput).value;
+      const recaptcha = (
+        this.formElement.querySelector("#g-recaptcha-response") as HTMLFormInput
+      ).value;
       fields["g-recaptcha-response"] = recaptcha;
     }
 
@@ -426,7 +456,10 @@ export class MultiStepForm {
 
     this.paginationItems.forEach((step, index) => {
       step.classList.toggle(this.options.pagination.doneClass, index < target);
-      step.classList.toggle(this.options.pagination.activeClass, index === target);
+      step.classList.toggle(
+        this.options.pagination.activeClass,
+        index === target,
+      );
     });
   }
 
@@ -446,8 +479,9 @@ export class MultiStepForm {
 
   public validateCurrentStep(stepIndex: number): boolean {
     if (!this.options.validation.validate) return true;
-    const basicError = `Validation failed for step: ${stepIndex + 1}/${this.formSteps.length
-      }`;
+    const basicError = `Validation failed for step: ${stepIndex + 1}/${
+      this.formSteps.length
+    }`;
     const currentStepElement = this.formSteps[stepIndex];
     const inputs: NodeListOf<HTMLFormInput> =
       currentStepElement.querySelectorAll(wf.select.formInput);
@@ -455,17 +489,16 @@ export class MultiStepForm {
     // TODO: Fix this overkill approach
     const filteredInputs = Array.from(inputs).filter((input) => {
       // Check if the input matches any exclude selectors or is inside an excluded wrapper
-      const isExcluded = this.options.excludeInputSelectors.some(
-        (selector) => {
-          return (
-            input.closest(`${selector}`) !== null || input.matches(selector)
-          );
-        }
-      );
+      const isExcluded = this.options.excludeInputSelectors.some((selector) => {
+        return input.closest(`${selector}`) !== null || input.matches(selector);
+      });
       return !isExcluded;
     });
 
-    let { isValid } = validateFields(filteredInputs, this.options.validation.reportValidity);
+    let { isValid } = validateFields(
+      filteredInputs,
+      this.options.validation.reportValidity,
+    );
 
     if (!isValid && this.options.validation.reportValidity) {
       console.warn(`${basicError}: Standard validation is not valid`);
@@ -499,8 +532,12 @@ export class MultiStepForm {
     let fields: FormFieldMap = new Map();
 
     const stepElement = this.formSteps[step];
-    const stepInputs: NodeListOf<HTMLFormInput> =
-      stepElement.querySelectorAll(exclude(wf.select.formInput, `${stepsElementSelector("custom-component", { exclusions: [] })} *`));
+    const stepInputs: NodeListOf<HTMLFormInput> = stepElement.querySelectorAll(
+      exclude(
+        wf.select.formInput,
+        `${stepsElementSelector("custom-component", { exclusions: [] })} *`,
+      ),
+    );
     stepInputs.forEach((input, inputIndex) => {
       const entry = fieldFromInput(input, inputIndex);
       if (entry.id) {
@@ -514,10 +551,7 @@ export class MultiStepForm {
   public getFieldMap(): FormFieldMap {
     const fields = Array.from(this.formSteps).reduce((acc, _, stepIndex) => {
       const stepData = this.getFieldMapForStep(stepIndex);
-      return new Map([
-        ...acc,
-        ...stepData
-      ]);
+      return new Map([...acc, ...stepData]);
     }, new Map() as FormFieldMap);
 
     return fields;
@@ -534,7 +568,7 @@ export class MultiStepForm {
     const fields = {
       ...mapToObject(this.getFieldMap(), false),
       ...customFields,
-    }
+    };
 
     return fields;
   }

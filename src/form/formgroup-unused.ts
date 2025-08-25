@@ -11,7 +11,7 @@ class FormGroup {
   constructor(
     container: HTMLElement,
     groupNames: string[],
-    validationMessage: string
+    validationMessage: string,
   ) {
     this.container = container;
     this.groupNames = groupNames;

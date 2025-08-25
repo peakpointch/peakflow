@@ -1,7 +1,8 @@
-import Renderer, { RenderData } from "../renderer/index.js";
-export type PdfElement = 'container' | 'scale' | 'page' | 'page-wrapper' | 'weekday' | 'dish';
-export type PdfFieldName = string | 'dishName' | 'dishDescription' | 'price' | 'priceSmall';
-export type PdfFormat = 'a3' | 'a4' | 'a5';
+import Renderer from "../renderer/index.js";
+import type { RenderData } from "../renderer/index.js";
+export type PdfElement = "container" | "scale" | "page" | "page-wrapper" | "weekday" | "dish";
+export type PdfFieldName = string | "dishName" | "dishDescription" | "price" | "priceSmall";
+export type PdfFormat = "a3" | "a4" | "a5";
 export declare class Pdf {
     canvas: HTMLElement;
     renderer: Renderer;
@@ -15,7 +16,7 @@ export declare class Pdf {
      * Use this method to select the elements for a new `Pdf` instance.
      * @returns CSS selector string
      */
-    static select: import("../index.js").AttributeSelector<PdfElement>;
+    static select: import("../attributeselector/attributeselector.js").AttributeSelector<PdfElement>;
     private getScaleElement;
     getDefaultScale(): number;
     getPages(): HTMLElement[];

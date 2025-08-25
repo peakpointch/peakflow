@@ -1,4 +1,5 @@
-import { isCheckboxInput, isRadioInput, HTMLFormInput } from "./utility.js";
+import { isCheckboxInput, isRadioInput } from "./utility.js";
+import type { HTMLFormInput } from "./utility.js";
 import { parameterize } from "../utils/parameterize.js";
 
 interface FieldData {
@@ -30,7 +31,7 @@ class FormField implements FieldData {
     this.required = data.required || false;
     this.type = data.type || "text";
 
-    if (['radio', 'checkbox'].includes(this.type)) {
+    if (["radio", "checkbox"].includes(this.type)) {
       this.checked = data.checked || false;
     }
 
@@ -41,7 +42,7 @@ class FormField implements FieldData {
 
   public setValue(newValue: any) {
     this.value = newValue;
-    this.listeners.forEach(callback => callback(newValue));
+    this.listeners.forEach((callback) => callback(newValue));
   }
 
   public onChange(callback: (value: any) => void) {
@@ -81,9 +82,9 @@ class FormField implements FieldData {
       value: this.value,
       required: this.required,
       type: this.type,
-    }
+    };
 
-    if (['radio', 'checkbox'].includes(this.type)) {
+    if (["radio", "checkbox"].includes(this.type)) {
       serialized.checked = this.checked;
     }
 
@@ -91,12 +92,16 @@ class FormField implements FieldData {
   }
 }
 
-function fieldFromInput(input: HTMLFormInput, index: string | number): FormField {
+function fieldFromInput(
+  input: HTMLFormInput,
+  index: string | number,
+): FormField {
   if (input.type === "radio" && !(input as HTMLInputElement).checked) {
     return new FormField();
   }
 
-  const id = input.id || parameterize(input.dataset.name || `untitled ${index}`);
+  const id =
+    input.id || parameterize(input.dataset.name || `untitled ${index}`);
 
   const field = new FormField({
     id: isRadioInput(input) ? input.name : id,
@@ -112,4 +117,4 @@ function fieldFromInput(input: HTMLFormInput, index: string | number): FormField
 }
 
 export type { FieldData };
-export { FormField, fieldFromInput }
+export { FormField, fieldFromInput };

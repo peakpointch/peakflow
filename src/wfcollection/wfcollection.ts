@@ -1,20 +1,23 @@
-import Renderer, { FilterAttributes, RenderData, RendererOptions } from "../renderer/index.js";
+import Renderer from "../renderer/index.js";
+import type {
+  FilterAttributes,
+  RenderData,
+  RendererOptions,
+} from "../renderer/index.js";
 
 type GlobalWfCollections = {
   initialized: boolean;
-  [key: string]: GlobalCollection | CollectionList | boolean;  // Enforces array values for all other keys
+  [key: string]: GlobalCollection | CollectionList | boolean; // Enforces array values for all other keys
 };
 
 type GlobalCollection = Array<object>;
 
 interface CollectionListOptions<F extends FilterAttributes> {
-  name: string,
-  readonly rendererOptions: Partial<RendererOptions<F>>
+  name: string;
+  readonly rendererOptions: Partial<RendererOptions<F>>;
 }
 
-class CollectionList<
-  F extends FilterAttributes = {}
-> {
+class CollectionList<F extends FilterAttributes = {}> {
   public container: HTMLElement;
   public renderer: Renderer<F>;
   public collectionData: RenderData<F> = [];
@@ -24,13 +27,21 @@ class CollectionList<
 
   constructor(
     container: HTMLElement | null,
-    public options: CollectionListOptions<F> = { name: '', rendererOptions: {} }
+    public options: CollectionListOptions<F> = {
+      name: "",
+      rendererOptions: {},
+    },
   ) {
-    if (!container || !container.classList.contains('w-dyn-list')) throw new Error(`Container can't be undefined.`);
+    if (!container || !container.classList.contains("w-dyn-list"))
+      throw new Error(`Container can't be undefined.`);
 
     this.container = container;
-    this.listElement = container.querySelector('.w-dyn-items');
-    this.items = Array.from(this.listElement?.querySelectorAll('.w-dyn-item:not(.w-dyn-list .w-dyn-list *)') ?? []);
+    this.listElement = container.querySelector(".w-dyn-items");
+    this.items = Array.from(
+      this.listElement?.querySelectorAll(
+        ".w-dyn-item:not(.w-dyn-list .w-dyn-list *)",
+      ) ?? [],
+    );
     this.renderer = new Renderer(container, this.options.rendererOptions);
   }
 
@@ -40,7 +51,9 @@ class CollectionList<
   }
 
   public isEmpty(): boolean {
-    const isEmpty = !this.listElement && this.container.querySelector('.w-dyn-empty') !== null;
+    const isEmpty =
+      !this.listElement &&
+      this.container.querySelector(".w-dyn-empty") !== null;
 
     if (isEmpty) {
       console.warn(`Collection "${this.options.name}" is empty.`);
@@ -55,7 +68,7 @@ class CollectionList<
       return;
     }
     this.collectionData = this.renderer.read(this.listElement);
-    this.log('Data:', this.collectionData);
+    this.log("Data:", this.collectionData);
   }
 
   public getData(): RenderData<F> {
@@ -72,17 +85,20 @@ class CollectionList<
   public removeInvisibleElements(): void {
     if (this.isEmpty()) return;
 
-    this.listElement.querySelectorAll(`.w-condition-invisible:not([data-render-condition="true"])`)
-      .forEach(element => element.remove());
+    this.listElement
+      .querySelectorAll(
+        `.w-condition-invisible:not([data-render-condition="true"])`,
+      )
+      .forEach((element) => element.remove());
   }
 
   public getAttributeData(): any {
     let data: any[] = [];
 
-    this.items.forEach(item => {
+    this.items.forEach((item) => {
       const itemData: Map<string, any> = new Map(Object.entries(item.dataset));
       itemData.forEach((value, key) => {
-        if (!key.startsWith('wf')) {
+        if (!key.startsWith("wf")) {
           itemData.delete(key);
         }
       });

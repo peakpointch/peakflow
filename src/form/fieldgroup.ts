@@ -1,8 +1,10 @@
-import mapToObject from "../utils/maptoobject.js";
-import { FormField, FieldData } from "./formfield.js";
-import { HTMLFormInput } from "./utility.js";
+import { FormField } from "./formfield.js";
+import type { FieldData } from "./formfield.js";
+import type { HTMLFormInput } from "./utility.js";
 
-export type FieldGroupValidation<FieldType extends FormField | HTMLFormInput = HTMLFormInput> = {
+export type FieldGroupValidation<
+  FieldType extends FormField | HTMLFormInput = HTMLFormInput,
+> = {
   isValid: boolean;
   invalidFields: FieldType[];
 };
@@ -10,7 +12,10 @@ export type FieldGroupValidation<FieldType extends FormField | HTMLFormInput = H
 /**
  * A map of string to a `FormField` class instance.
  */
-export type FormFieldMap<FieldId extends string = string> = Map<FieldId, FormField>;
+export type FormFieldMap<FieldId extends string = string> = Map<
+  FieldId,
+  FormField
+>;
 export type SerializedFieldGroup = Record<string, FieldData>;
 
 export class FieldGroup<FieldId extends string = string> {

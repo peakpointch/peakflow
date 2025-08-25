@@ -1,4 +1,4 @@
-import { FormFieldMap, HTMLFormInput, CustomValidator } from "./index.js";
+import type { FormFieldMap, HTMLFormInput, CustomValidator } from "./index.js";
 interface FormOptions {
     excludeInputSelectors: string[];
     recaptcha: boolean;

@@ -13,14 +13,14 @@ export class FilterForm {
         if (!container)
             throw new Error(`FilterForm container can't be null`);
         container = container;
-        if (container.tagName === 'form') {
-            container = container.querySelector('form');
+        if (container.tagName === "form") {
+            container = container.querySelector("form");
         }
         if (!container) {
             throw new Error(`Form cannot be undefined.`);
         }
         container.classList.remove("w-form");
-        container.addEventListener('submit', (event) => {
+        container.addEventListener("submit", (event) => {
             event.preventDefault();
         });
         this.container = container;
@@ -36,25 +36,25 @@ export class FilterForm {
         if (!this.fieldExists(fieldId, existingFields)) {
             throw new Error(`Field with ID "${fieldId}" was not found`);
         }
-        return Array.from(this.filterFields).find(field => field.id === fieldId);
+        return Array.from(this.filterFields).find((field) => field.id === fieldId);
     }
     /**
      * Returns the `HTMLElement` of a specific action element.
      */
     getActionElement(id) {
-        return Array.from(this.actionElements).find(element => element.id === id);
+        return Array.from(this.actionElements).find((element) => element.id === id);
     }
     /**
      * Get all the field-ids inside the current instance.
      */
     getFieldIds(fields) {
-        return Array.from(fields).map(input => input.id);
+        return Array.from(fields).map((input) => input.id);
     }
     /**
      * Check if a field-id exists in a list of field-ids.
      */
     fieldExists(fieldId, fieldIds) {
-        const matches = fieldIds.filter(id => id === fieldId);
+        const matches = fieldIds.filter((id) => id === fieldId);
         if (matches.length === 1) {
             return true;
         }
@@ -69,10 +69,10 @@ export class FilterForm {
      * current state of the FilterForm.
      */
     attachChangeListeners() {
-        this.filterFields.forEach(field => {
+        this.filterFields.forEach((field) => {
             field.addEventListener("input", (event) => this.onChange(event));
         });
-        this.actionElements.forEach(element => {
+        this.actionElements.forEach((element) => {
             element.addEventListener("click", (event) => this.onChange(event));
         });
     }
@@ -89,7 +89,7 @@ export class FilterForm {
      * @param action - An array of actions to execute when the field(s) change.
      */
     addOnChange(fields, action) {
-        if (fields === '*') {
+        if (fields === "*") {
             this.globalChangeActions.push(action);
         }
         else {
@@ -112,7 +112,7 @@ export class FilterForm {
         if (!targetId) {
             throw new Error(`Target is neither a FilterField nor an ActionElement.`);
         }
-        this.beforeChangeActions.forEach(action => action(filters, targetId));
+        this.beforeChangeActions.forEach((action) => action(filters, targetId));
         filters = this.getFieldGroup(this.filterFields);
         // Run specific actions for this field
         const actions = this.fieldChangeActions.get(targetId) || [];
@@ -129,7 +129,7 @@ export class FilterForm {
         let filters = this.getFieldGroup(this.filterFields);
         if (fields === "*") {
             invokedBy = "";
-            this.beforeChangeActions.forEach(action => action(filters, invokedBy));
+            this.beforeChangeActions.forEach((action) => action(filters, invokedBy));
             filters = this.getFieldGroup(this.filterFields);
             // Invoke all actions
             const done = [];
@@ -144,10 +144,10 @@ export class FilterForm {
         }
         else {
             invokedBy = fields.length === 1 ? fields[0] : "";
-            this.beforeChangeActions.forEach(action => action(filters, invokedBy));
+            this.beforeChangeActions.forEach((action) => action(filters, invokedBy));
             filters = this.getFieldGroup(this.filterFields);
             // Invoke specific actions
-            fields.forEach(fieldId => {
+            fields.forEach((fieldId) => {
                 invokedBy = fieldId;
                 const actions = this.fieldChangeActions.get(fieldId) || [];
                 actions.forEach((action) => action(filters, invokedBy));
@@ -198,7 +198,7 @@ export class FilterForm {
         this.resizeResetFields.set(fieldId, getValue);
         // Attach resize event listener only once
         if (this.resizeResetFields.size === 1) {
-            window.addEventListener('resize', () => this.applyResizeResets());
+            window.addEventListener("resize", () => this.applyResizeResets());
         }
     }
     /**
@@ -208,7 +208,7 @@ export class FilterForm {
         this.resizeResetFields.delete(fieldId);
         // Detach event listener if no fields remain to reset on resize
         if (this.resizeResetFields.size === 0) {
-            window.removeEventListener('resize', this.applyResizeResets);
+            window.removeEventListener("resize", this.applyResizeResets);
         }
     }
     /**
@@ -218,7 +218,7 @@ export class FilterForm {
         this.resizeResetFields.forEach((getValue, fieldId) => {
             let value = getValue();
             if (value instanceof Date) {
-                value = value.toISOString().split('T')[0]; // Format Date to YYYY-MM-DD
+                value = value.toISOString().split("T")[0]; // Format Date to YYYY-MM-DD
             }
             this.getFilterInput(fieldId).value = value.toString();
         });
@@ -251,36 +251,36 @@ export class FilterForm {
         if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
             const diffInDays = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
             // Determine which field was changed (by checking focus or value)
-            let activeField = 'other';
+            let activeField = "other";
             if (document.activeElement === startDateInput) {
-                activeField = 'startDate';
+                activeField = "startDate";
             }
             else if (document.activeElement === endDateInput) {
-                activeField = 'endDate';
+                activeField = "endDate";
             }
-            if (activeField === 'startDate' || activeField === 'other') {
+            if (activeField === "startDate" || activeField === "other") {
                 // Adjust `endDate` based on `startDate`
                 if (diffInDays !== activeRange) {
                     const newEndDate = new Date(startDate);
                     newEndDate.setDate(startDate.getDate() + activeRange);
-                    endDateInput.value = newEndDate.toISOString().split('T')[0];
+                    endDateInput.value = newEndDate.toISOString().split("T")[0];
                 }
                 else if (diffInDays < 0) {
-                    endDateInput.value = startDate.toISOString().split('T')[0];
+                    endDateInput.value = startDate.toISOString().split("T")[0];
                 }
             }
-            else if (activeField === 'endDate') {
+            else if (activeField === "endDate") {
                 // Adjust `startDate` based on `endDate`
                 if (diffInDays !== activeRange) {
                     const newStartDate = new Date(endDate);
                     newStartDate.setDate(endDate.getDate() - activeRange);
-                    startDateInput.value = newStartDate.toISOString().split('T')[0];
+                    startDateInput.value = newStartDate.toISOString().split("T")[0];
                 }
                 else if (diffInDays < 0) {
-                    startDateInput.value = endDate.toISOString().split('T')[0];
+                    startDateInput.value = endDate.toISOString().split("T")[0];
                 }
             }
         }
     }
 }
-FilterForm.select = createAttribute('data-action');
+FilterForm.select = createAttribute("data-action");

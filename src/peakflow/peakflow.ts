@@ -1,5 +1,6 @@
-import { defaultRegistry, DefaultRegistry, AnyFn } from "./defaults";
-import { IANATimeZone } from "../timezones";
+import { defaultRegistry } from "./defaults";
+import type { DefaultRegistry, AnyFn } from "./defaults";
+import type { IANATimeZone } from "../timezones";
 
 export interface PeakflowConfig {
   language?: string;

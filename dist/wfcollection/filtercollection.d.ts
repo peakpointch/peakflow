@@ -1,6 +1,7 @@
-import { CollectionList, CollectionListOptions } from './wfcollection.js';
-import { FilterAttributes, RenderData, RenderElement, RenderField } from '../renderer/index.js';
-type MenuDataCondition = ((menuData: RenderElement | RenderField) => boolean);
+import { CollectionList } from "./wfcollection.js";
+import type { CollectionListOptions } from "./wfcollection.js";
+import type { FilterAttributes, RenderData, RenderElement, RenderField } from "../renderer/index.js";
+type MenuDataCondition = (menuData: RenderElement | RenderField) => boolean;
 type Merged<F extends FilterAttributes<keyof F & string>> = F & typeof FilterCollection.defaultAttributes;
 export declare class FilterCollection<F extends FilterAttributes<keyof F & string> = {}> extends CollectionList<Merged<F>> {
     options: CollectionListOptions<Merged<F>>;

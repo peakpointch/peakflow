@@ -11,7 +11,7 @@ class FormField {
         this.value = data.value || "";
         this.required = data.required || false;
         this.type = data.type || "text";
-        if (['radio', 'checkbox'].includes(this.type)) {
+        if (["radio", "checkbox"].includes(this.type)) {
             this.checked = data.checked || false;
         }
         if (this.type === "checkbox" && !this.checked) {
@@ -20,7 +20,7 @@ class FormField {
     }
     setValue(newValue) {
         this.value = newValue;
-        this.listeners.forEach(callback => callback(newValue));
+        this.listeners.forEach((callback) => callback(newValue));
     }
     onChange(callback) {
         this.listeners.add(callback);
@@ -56,7 +56,7 @@ class FormField {
             required: this.required,
             type: this.type,
         };
-        if (['radio', 'checkbox'].includes(this.type)) {
+        if (["radio", "checkbox"].includes(this.type)) {
             serialized.checked = this.checked;
         }
         return serialized;

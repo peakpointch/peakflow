@@ -1,18 +1,18 @@
-import { WfFormData } from "../../types/webflow.js";
-import { FieldGroupValidation } from "./fieldgroup.js";
+import type { WfFormData } from "../../types/webflow.js";
+import type { FieldGroupValidation } from "./fieldgroup.js";
 /**
  * Represents any standard form input element <input>, <select>, or <textarea>.
  */
 export type HTMLFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 export type CustomValidator = () => boolean;
-export type FormComponentElement = 'component' | 'success' | 'error' | 'submit' | 'modal';
-type FilterFormElement = 'component' | 'field';
+export type FormComponentElement = "component" | "success" | "error" | "submit" | "modal";
+type FilterFormElement = "component" | "field";
 export interface RadioGroup {
     name: string;
     inputs: HTMLInputElement[];
 }
-declare const formElementSelector: import("../index.js").AttributeSelector<FormComponentElement>;
-declare const filterFormSelector: import("../index.js").AttributeSelector<FilterFormElement>;
+declare const formElementSelector: import("../attributeselector/attributeselector.js").AttributeSelector<FormComponentElement>;
+declare const filterFormSelector: import("../attributeselector/attributeselector.js").AttributeSelector<FilterFormElement>;
 /**
  * Check if a FormElement is a radio input.
  * @param {HTMLFormInput} input - The input that is to be checked.
@@ -53,4 +53,4 @@ export declare function reportValidity(input: HTMLFormInput): void;
 export declare function removeErrorClasses(input: HTMLFormInput): void;
 export declare function validateFields(inputs: NodeListOf<HTMLFormInput> | HTMLFormInput[], report?: boolean): FieldGroupValidation;
 export declare function disableWebflowForm(form: HTMLFormElement): void;
-export { formElementSelector, filterFormSelector, };
+export { formElementSelector, filterFormSelector };

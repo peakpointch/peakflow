@@ -2,8 +2,8 @@ import createAttribute from "../attributeselector/index.js";
 import wf from "../webflow/index.js";
 import { getAllElements } from "../utils/getelements.js";
 // Form selector functions
-const formElementSelector = createAttribute('data-form-element');
-const filterFormSelector = createAttribute('data-filter-form');
+const formElementSelector = createAttribute("data-form-element");
+const filterFormSelector = createAttribute("data-filter-form");
 /**
  * Check if a FormElement is a radio input.
  * @param {HTMLFormInput} input - The input that is to be checked.
@@ -21,9 +21,9 @@ export function isCheckboxInput(input) {
     return input instanceof HTMLInputElement && input.type === "checkbox";
 }
 export function isFormInput(input) {
-    return input instanceof HTMLInputElement ||
+    return (input instanceof HTMLInputElement ||
         input instanceof HTMLSelectElement ||
-        input instanceof HTMLTextAreaElement;
+        input instanceof HTMLTextAreaElement);
 }
 export function getRadioGroups(source, ...names) {
     let inputs;
@@ -31,7 +31,10 @@ export function getRadioGroups(source, ...names) {
         inputs = source;
     }
     else if (source instanceof HTMLElement) {
-        inputs = getAllElements(wf.select.formInput, { single: false, node: source });
+        inputs = getAllElements(wf.select.formInput, {
+            single: false,
+            node: source,
+        });
     }
     else {
         throw new Error(`Invalid first parameter: expected "string", "HTMLElement" or "HTMLFormInput[]".`);
@@ -74,13 +77,13 @@ export function getRadioGroup(source, name) {
         return getRadioGroupStrict(source, name);
     }
     catch (e) {
-        console.warn(`Get radio group: ${e instanceof Error ? e.message : 'Unknown error'}`);
+        console.warn(`Get radio group: ${e instanceof Error ? e.message : "Unknown error"}`);
         return null;
     }
 }
 export function findFormInput(containers, inputId, selectorPrefix = wf.select.formInput) {
     const selector = `${selectorPrefix}#${inputId}`;
-    const matches = Array.from(containers).flatMap(container => Array.from(container.querySelectorAll(selector)));
+    const matches = Array.from(containers).flatMap((container) => Array.from(container.querySelectorAll(selector)));
     if (matches.length === 0) {
         throw new Error(`No form input found with selector "${selector}".`);
     }
@@ -91,12 +94,12 @@ export function findFormInput(containers, inputId, selectorPrefix = wf.select.fo
 }
 export function findFormInputAll(containers, inputId, selectorPrefix = wf.select.formInput) {
     const selector = `${selectorPrefix}#${inputId}`;
-    const matches = Array.from(containers).flatMap(container => Array.from(container.querySelectorAll(selector)));
+    const matches = Array.from(containers).flatMap((container) => Array.from(container.querySelectorAll(selector)));
     return matches;
 }
 export function getWfFormData(form, fields, test = false) {
     if (!form || !(form instanceof HTMLFormElement)) {
-        form = form?.querySelector('form');
+        form = form?.querySelector("form");
     }
     if (!form || !(form instanceof HTMLFormElement)) {
         throw new TypeError(`The passed "form" is not a form.`);
@@ -142,7 +145,7 @@ export async function sendFormData(formData) {
 }
 export function clearRadioGroup(container, name, silent = false) {
     const radioGroup = getRadioGroup(container, name);
-    radioGroup.inputs.forEach(radio => {
+    radioGroup.inputs.forEach((radio) => {
         setChecked(radio, false, silent);
     });
 }
@@ -205,7 +208,7 @@ export function initWfInputs(container) {
             if (!target.checked)
                 return;
             const radioGroup = getRadioGroup(container, target.name);
-            radioGroup.inputs.forEach(radio => {
+            radioGroup.inputs.forEach((radio) => {
                 // Check the radio that was selected, uncheck all others in the group
                 setChecked(radio, radio.value === target.value, true);
             });
@@ -244,19 +247,27 @@ export function reportValidity(input) {
     input.reportValidity();
     input.classList.add("has-error");
     if (isCheckboxInput(input)) {
-        input.parentElement?.querySelector(wf.select.checkbox)?.classList.add("has-error");
+        input.parentElement
+            ?.querySelector(wf.select.checkbox)
+            ?.classList.add("has-error");
     }
     if (input.type !== "checkbox" && input.type !== "radio") {
-        input.addEventListener("input", () => removeErrorClasses(input), { once: true });
+        input.addEventListener("input", () => removeErrorClasses(input), {
+            once: true,
+        });
     }
     else {
-        input.addEventListener("change", () => removeErrorClasses(input), { once: true });
+        input.addEventListener("change", () => removeErrorClasses(input), {
+            once: true,
+        });
     }
 }
 export function removeErrorClasses(input) {
     input.classList.remove("has-error");
     if (isCheckboxInput(input)) {
-        input.parentElement?.querySelector(wf.select.checkbox)?.classList.remove("has-error");
+        input.parentElement
+            ?.querySelector(wf.select.checkbox)
+            ?.classList.remove("has-error");
     }
 }
 export function validateFields(inputs, report = true) {
@@ -281,4 +292,4 @@ export function disableWebflowForm(form) {
     form?.classList.remove("w-form");
     form.parentElement.classList.remove("w-form");
 }
-export { formElementSelector, filterFormSelector, };
+export { formElementSelector, filterFormSelector };
