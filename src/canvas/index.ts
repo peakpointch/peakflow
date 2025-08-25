@@ -1,2 +1,2 @@
-export { EditableCanvas as default } from './canvas.js';
-export * from './canvas.js';
+export { EditableCanvas as default } from "./canvas.js";
+export * from "./canvas.js";

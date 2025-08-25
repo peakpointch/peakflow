@@ -38,15 +38,12 @@ export class FormMessage {
     );
 
     if (!component) {
-      console.warn(
-        `No FormMessage component was found: ${componentName}, ${this.messageFor}`,
-      );
+      console.warn(`No FormMessage component was found: ${componentName}, ${this.messageFor}`);
       return;
     }
 
     this.component = component;
-    this.messageElement =
-      this.component?.querySelector('[data-message-element="message"]') || null;
+    this.messageElement = this.component?.querySelector('[data-message-element="message"]') || null;
     this.reset();
     this.initialized = true;
   }
@@ -148,9 +145,7 @@ export class FormMessage {
 
     // Set class based on type
     this.component.classList.remove(this.className.info, this.className.error);
-    this.component.classList.add(
-      type === "info" ? this.className.info : this.className.error,
-    );
+    this.component.classList.add(type === "info" ? this.className.info : this.className.error);
 
     if (silent) return;
 

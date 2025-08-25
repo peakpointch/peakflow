@@ -46,12 +46,12 @@ export async function initCal(namespace) {
     const element = document.querySelector(`[cal-id="${namespace}"]`);
     if (!element)
         throw new Error("Embed container not found");
-    const calLink = element.getAttribute('cal-link');
+    const calLink = element.getAttribute("cal-link");
     if (!calLink)
         throw new Error(`Please specify a cal link`);
     const calDOMOptions = {
         link: calLink,
-        hideEventTypeDetails: element.getAttribute('cal-hide-event-details') === 'true',
+        hideEventTypeDetails: element.getAttribute("cal-hide-event-details") === "true",
     };
     Cal.ns[namespace]("inline", {
         elementOrSelector: element,
@@ -65,7 +65,7 @@ export async function initCal(namespace) {
             light: { "cal-brand": "#333" },
             dark: { "cal-brand": "#eee" },
         },
-        theme: "light"
+        theme: "light",
     });
     return Cal;
 }

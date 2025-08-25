@@ -92,16 +92,12 @@ class FormField implements FieldData {
   }
 }
 
-function fieldFromInput(
-  input: HTMLFormInput,
-  index: string | number,
-): FormField {
+function fieldFromInput(input: HTMLFormInput, index: string | number): FormField {
   if (input.type === "radio" && !(input as HTMLInputElement).checked) {
     return new FormField();
   }
 
-  const id =
-    input.id || parameterize(input.dataset.name || `untitled ${index}`);
+  const id = input.id || parameterize(input.dataset.name || `untitled ${index}`);
 
   const field = new FormField({
     id: isRadioInput(input) ? input.name : id,
@@ -109,8 +105,7 @@ function fieldFromInput(
     value: input.value,
     required: input.required || false,
     type: input.type,
-    checked:
-      isCheckboxInput(input) || isRadioInput(input) ? input.checked : undefined,
+    checked: isCheckboxInput(input) || isRadioInput(input) ? input.checked : undefined,
   });
 
   return field;

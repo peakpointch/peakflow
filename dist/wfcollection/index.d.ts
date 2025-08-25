@@ -1,2 +1,2 @@
-export * from './wfcollection.js';
-export * from './filtercollection.js';
+export * from "./wfcollection.js";
+export * from "./filtercollection.js";

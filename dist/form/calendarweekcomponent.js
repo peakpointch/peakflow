@@ -1,5 +1,5 @@
-import { getISOWeek, getISOWeeksInYear, getISOWeekYear, setISOWeekYear, setISOWeek, startOfISOWeek, format } from 'date-fns';
-import createAttribute from '../attributeselector/index.js';
+import { getISOWeek, getISOWeeksInYear, getISOWeekYear, setISOWeekYear, setISOWeek, startOfISOWeek, format, } from "date-fns";
+import createAttribute from "../attributeselector/index.js";
 function getISOWeeksOfYear(year) {
     return getISOWeeksInYear(new Date(year, 5, 1));
 }
@@ -7,7 +7,7 @@ export class CalendarweekComponent {
     constructor(container, mode) {
         this.minDate = null;
         this.maxDate = null;
-        this.mode = 'continuous';
+        this.mode = "continuous";
         this.onChangeActions = [];
         this.container = container;
         const weekInput = container.querySelector(CalendarweekComponent.select("week"));
@@ -19,7 +19,7 @@ export class CalendarweekComponent {
         this.yearInput = yearInput;
         // Read the mode from a data attribute (defaults to 'continuous' if not set)
         if (!mode) {
-            mode = container.getAttribute('data-mode');
+            mode = container.getAttribute("data-mode");
             if (!["continuous", "loop", "fixed"].some((validMode) => validMode === mode)) {
                 mode = "continuous";
                 console.info(`Mode parsed from attribute was invalid. Mode was set to "${mode}".`);
@@ -27,23 +27,22 @@ export class CalendarweekComponent {
         }
         this.setMode(mode);
         // Read min and max dates from the data attributes
-        const minDateStr = container.getAttribute('data-min-date') || '';
-        const maxDateStr = container.getAttribute('data-max-date') || '';
+        const minDateStr = container.getAttribute("data-min-date") || "";
+        const maxDateStr = container.getAttribute("data-max-date") || "";
         this.setMinMaxDates(new Date(minDateStr), new Date(maxDateStr));
         this.updateWeekMinMax();
         // Bind event listeners
-        this.weekInput.addEventListener('keydown', (event) => this.onWeekKeydown(event));
-        this.yearInput.addEventListener('keydown', (event) => this.onYearKeydown(event));
-        this.weekInput.addEventListener('change', () => this.onWeekChange());
-        this.yearInput.addEventListener('change', () => this.onYearChange());
+        this.weekInput.addEventListener("keydown", (event) => this.onWeekKeydown(event));
+        this.yearInput.addEventListener("keydown", (event) => this.onYearKeydown(event));
+        this.weekInput.addEventListener("change", () => this.onWeekChange());
+        this.yearInput.addEventListener("change", () => this.onYearChange());
     }
     setDate(date, silent = false) {
         const year = getISOWeekYear(date);
         const week = getISOWeek(date);
         // Ensure that the date is within the valid range (minDate and maxDate)
-        if ((this.minDate && date < this.minDate) ||
-            (this.maxDate && date > this.maxDate)) {
-            throw new Error('The provided date is out of range.');
+        if ((this.minDate && date < this.minDate) || (this.maxDate && date > this.maxDate)) {
+            throw new Error("The provided date is out of range.");
         }
         // Set the year and calendar week
         this.year = year;
@@ -81,8 +80,8 @@ export class CalendarweekComponent {
             this.minDate = null;
             this.minDateYear = null;
             this.minDateWeek = null;
-            this.yearInput.min = '';
-            this.container.dataset.minDate = '';
+            this.yearInput.min = "";
+            this.container.dataset.minDate = "";
         }
         if (newMaxDate instanceof Date && !isNaN(newMaxDate.getTime())) {
             this.maxDate = newMaxDate;
@@ -95,8 +94,8 @@ export class CalendarweekComponent {
             this.maxDate = null;
             this.maxDateYear = null;
             this.maxDateWeek = null;
-            this.yearInput.max = '';
-            this.container.dataset.maxDate = '';
+            this.yearInput.max = "";
+            this.container.dataset.maxDate = "";
         }
         this.updateWeekMinMax();
     }
@@ -104,7 +103,7 @@ export class CalendarweekComponent {
         this.onChangeActions.push(callback);
     }
     removeOnChange(callback) {
-        this.onChangeActions = this.onChangeActions.filter(fn => fn !== callback);
+        this.onChangeActions = this.onChangeActions.filter((fn) => fn !== callback);
     }
     getCurrentDate() {
         // Create a date representing the given ISO year and week
@@ -227,11 +226,12 @@ export class CalendarweekComponent {
         const isArrowUp = event.key === "ArrowUp";
         const isArrowDown = event.key === "ArrowDown";
         this.parseWeekAndYear();
-        if ((isArrowUp && this.year === this.maxDateYear) || (isArrowDown && this.year === this.minDateYear)) {
+        if ((isArrowUp && this.year === this.maxDateYear) ||
+            (isArrowDown && this.year === this.minDateYear)) {
             event.preventDefault();
-            this.year = (isArrowUp ? this.minDateYear : this.maxDateYear);
+            this.year = isArrowUp ? this.minDateYear : this.maxDateYear;
             this.onChange();
         }
     }
 }
-CalendarweekComponent.select = createAttribute('data-cweek-element');
+CalendarweekComponent.select = createAttribute("data-cweek-element");

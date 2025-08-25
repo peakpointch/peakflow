@@ -12,18 +12,18 @@ export interface OverrideScrollOptions {
 
 export const defaultScrollOptions: DefaultScrollOptions = {
   defaultOffset: 0,
-  defaultBehaviour: 'smooth'
-}
+  defaultBehaviour: "smooth",
+};
 
 export function scrollToSection(
   id: string,
   selectorType: "id" | "any" = "id",
-  options: Partial<OverrideScrollOptions> = {}
+  options: Partial<OverrideScrollOptions> = {},
 ): void {
   const opts: OverrideScrollOptions = {
     offset: options.offset ?? defaultScrollOptions.defaultOffset,
-    behaviour: options.behaviour ?? defaultScrollOptions.defaultBehaviour
-  }
+    behaviour: options.behaviour ?? defaultScrollOptions.defaultBehaviour,
+  };
   setTimeout(() => {
     const selector = selectorType === "id" ? `#${id}` : id;
     const section = document.querySelector(selector);
@@ -41,27 +41,27 @@ export function scrollToSection(
   }, 10);
 }
 
-export function onScroll(link: HTMLAnchorElement, event: Event, options: Partial<DefaultScrollOptions> = {}): void {
+export function onScroll(
+  link: HTMLAnchorElement,
+  event: Event,
+  options: Partial<DefaultScrollOptions> = {},
+): void {
   event.preventDefault();
   const opts: DefaultScrollOptions = {
     defaultOffset: options.defaultOffset ?? defaultScrollOptions.defaultOffset,
     defaultBehaviour: options.defaultBehaviour ?? defaultScrollOptions.defaultBehaviour,
-  }
+  };
   if (!link) throw new Error(`Event target is undefined. Cannot scroll from an undefined link.`);
-  const scrollId =
-    link.getAttribute("href")?.slice(1) ||
-    link.getAttribute("scroll-to") ||
-    "";
+  const scrollId = link.getAttribute("href")?.slice(1) || link.getAttribute("scroll-to") || "";
 
   const offset = parseInt(link.getAttribute("scroll-offset") || `${opts.defaultOffset}`, 10);
-  const behaviour = link.getAttribute("scroll-behaviour") as ScrollBehavior || opts.defaultBehaviour;
-  scrollToSection(scrollId, 'id', { offset, behaviour });
+  const behaviour =
+    (link.getAttribute("scroll-behaviour") as ScrollBehavior) || opts.defaultBehaviour;
+  scrollToSection(scrollId, "id", { offset, behaviour });
 }
 
 export function initCMSScrollLinks(): void {
-  const cmsScrollLinks = document.querySelectorAll<HTMLAnchorElement>(
-    "a[data-href-scroll]"
-  );
+  const cmsScrollLinks = document.querySelectorAll<HTMLAnchorElement>("a[data-href-scroll]");
   cmsScrollLinks.forEach((link) => {
     const hrefPrefix = link.dataset.hrefPrefix || "";
     const hrefScroll = link.dataset.hrefScroll || "";
@@ -71,7 +71,7 @@ export function initCMSScrollLinks(): void {
 
 export function initGlobalScrollLinks(): void {
   const globalScrollLinks = document.querySelectorAll<HTMLAnchorElement>(
-    'a[data-global-scroll="true"]'
+    'a[data-global-scroll="true"]',
   );
 
   const globalFiltered = Array.from(globalScrollLinks).filter((link) => {
@@ -90,7 +90,7 @@ export function disableWebflowScroll(): void {
   var Webflow = window.Webflow || [];
   Webflow.push(function () {
     $(function () {
-      $(document).off('click.wf-scroll');
+      $(document).off("click.wf-scroll");
     });
   });
 }
@@ -99,9 +99,9 @@ export function overrideDefaultScroll(options: Partial<DefaultScrollOptions> = {
   initCMSScrollLinks();
   initGlobalScrollLinks();
 
-  const href = createAttribute('href');
+  const href = createAttribute("href");
   const allScrollLinks = document.querySelectorAll<HTMLAnchorElement>(
-    `${href('#', { matchType: 'startsWith' })}, [scroll-to]`
+    `${href("#", { matchType: "startsWith" })}, [scroll-to]`,
   );
 
   allScrollLinks.forEach((link) => {

@@ -57,9 +57,7 @@ export class FilterCollection<
         entry.props.date.getTime() <= endDate.getTime();
 
       // Check all additional conditions
-      const allAdditionalConditions = additionalConditions.every((condition) =>
-        condition(entry),
-      );
+      const allAdditionalConditions = additionalConditions.every((condition) => condition(entry));
 
       return baseCondition && allAdditionalConditions;
     });
@@ -96,13 +94,9 @@ export class FilterCollection<
         entry.props.endDate.getTime() >= endDate.getTime();
 
       // Check all additional conditions
-      const allAdditionalConditions = additionalConditions.every((condition) =>
-        condition(entry),
-      );
+      const allAdditionalConditions = additionalConditions.every((condition) => condition(entry));
 
-      return (
-        (startOrEndInRange || startBeforeEndAfter) && allAdditionalConditions
-      );
+      return (startOrEndInRange || startBeforeEndAfter) && allAdditionalConditions;
     });
 
     this.log("Filtered Data:", filtered);

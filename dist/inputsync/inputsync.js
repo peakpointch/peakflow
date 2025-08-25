@@ -2,7 +2,7 @@ import createAttribute from "../attributeselector/index.js";
 /**
  * Returns the *"input-sync"* attribute as a CSSSelector.
  */
-export const syncSelector = createAttribute('input-sync');
+export const syncSelector = createAttribute("input-sync");
 /**
  * Groups the inputs to be synced by their sync names
  * into a `Map`.
@@ -10,7 +10,7 @@ export const syncSelector = createAttribute('input-sync');
 function constructInputMap(inputs) {
     const inputMap = new Map();
     inputs.forEach((input) => {
-        const value = input.getAttribute('input-sync');
+        const value = input.getAttribute("input-sync");
         if (inputMap.has(value)) {
             inputMap.get(value).push(input);
         }
@@ -27,8 +27,8 @@ function constructInputMap(inputs) {
 function syncGroup(input, groupInputs) {
     // Sync the value of the current input with all the other inputs
     groupInputs
-        .filter(otherInput => otherInput !== input)
-        .forEach((otherInput) => otherInput.value = input.value);
+        .filter((otherInput) => otherInput !== input)
+        .forEach((otherInput) => (otherInput.value = input.value));
 }
 /**
  * Sync all the inputs that belong to the same group.
@@ -50,7 +50,7 @@ export function inputSync(container = document.body) {
             return;
         }
         groupInputs.forEach((currentInput) => {
-            currentInput.addEventListener('change', () => {
+            currentInput.addEventListener("change", () => {
                 syncGroup(currentInput, groupInputs);
             });
         });

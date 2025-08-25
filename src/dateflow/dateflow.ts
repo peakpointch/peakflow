@@ -14,17 +14,13 @@ function getDomElements(...elements: ElementsArg): HTMLElement[] {
     if (entry instanceof HTMLElement) {
       containers.push(entry);
     } else if (typeof entry === "string") {
-      containers.push(
-        ...Array.from(document.querySelectorAll<HTMLElement>(entry)),
-      );
+      containers.push(...Array.from(document.querySelectorAll<HTMLElement>(entry)));
     } else if (entry instanceof NodeList) {
       containers.push(...Array.from(entry));
     } else if (entry === null) {
       return;
     } else {
-      throw new Error(
-        `Passed container entry was not of type "string" or "HTMLElement".`,
-      );
+      throw new Error(`Passed container entry was not of type "string" or "HTMLElement".`);
     }
   });
   return containers;
@@ -51,9 +47,7 @@ export function parseDateflow(element: HTMLElement): Date {
   const minute = Math.round(time * 100) % 10 ** 2;
   const date = new Date(year, month - 1, day, hour, minute);
   if (!(date instanceof Date) || isNaN(date.getTime())) {
-    throw new Error(
-      `Invalid date string "${dateString}" or invalid time string "${time}".`,
-    );
+    throw new Error(`Invalid date string "${dateString}" or invalid time string "${time}".`);
   }
   return date;
 }
@@ -91,9 +85,7 @@ export function dateflow(locale: Locale, ...containers: ElementsArg): void {
         date = parseDateflow(element);
       } catch (error) {
         if (error instanceof Error) {
-          console.warn(
-            `Failed to parse date #${i}. ${error.message} Skipping date.`,
-          );
+          console.warn(`Failed to parse date #${i}. ${error.message} Skipping date.`);
         } else {
           console.warn(
             `Failed to parse date #${i}. Unknown error: ${String(error)} Skipping date.`,

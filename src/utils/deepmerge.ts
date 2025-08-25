@@ -1,6 +1,6 @@
 /**
  * Deeply merges two objects, giving precedence to the properties in the `source` object.
- * 
+ *
  * This function is particularly useful when working with configuration objects
  * where you want to provide defaults and allow overrides at any level of nesting.
  *
@@ -30,7 +30,7 @@ function isPlainObject(value: any): value is Record<string, any> {
   return (
     value !== undefined &&
     value !== null &&
-    typeof value === 'object' &&
+    typeof value === "object" &&
     Object.getPrototypeOf(value) === Object.prototype
   );
 }

@@ -29,8 +29,7 @@ export function toDashCase(str) {
  * @returns {string} - The resulting string in camelCase format.
  */
 export function toCamelCase(str) {
-    return str
-        .replace(/-([a-z])/g, (_, char) => char.toUpperCase());
+    return str.replace(/-([a-z])/g, (_, char) => char.toUpperCase());
 }
 /**
  * Capitalizes the first character of a string while leaving the rest unchanged.

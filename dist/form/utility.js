@@ -191,18 +191,14 @@ export function initWfInputs(container) {
         ["radio", wf.select.radio],
     ];
     // Add change event listener for checkboxes
-    container
-        .querySelectorAll(wf.select.checkboxInput)
-        .forEach((input) => {
+    container.querySelectorAll(wf.select.checkboxInput).forEach((input) => {
         input.addEventListener("change", (event) => {
             const target = event.target;
             setChecked(target, target.checked, true);
         });
     });
     // Add change event listener for radio buttons
-    container
-        .querySelectorAll('input[type="radio"]')
-        .forEach((input) => {
+    container.querySelectorAll('input[type="radio"]').forEach((input) => {
         input.addEventListener("change", (event) => {
             const target = event.target;
             if (!target.checked)
@@ -221,9 +217,7 @@ export function initWfInputs(container) {
             .forEach((input) => {
             input.addEventListener("focus", (event) => {
                 const target = event.target;
-                const customElement = target
-                    .closest(".w-checkbox, .w-radio")
-                    ?.querySelector(customClass);
+                const customElement = target.closest(".w-checkbox, .w-radio")?.querySelector(customClass);
                 if (customElement) {
                     customElement.classList.add(wf.class.focus);
                     if (target.matches(wf.select.focused)) {
@@ -233,9 +227,7 @@ export function initWfInputs(container) {
             });
             input.addEventListener("blur", (event) => {
                 const target = event.target;
-                const customElement = target
-                    .closest(".w-checkbox, .w-radio")
-                    ?.querySelector(customClass);
+                const customElement = target.closest(".w-checkbox, .w-radio")?.querySelector(customClass);
                 if (customElement) {
                     customElement.classList.remove(wf.class.focus, wf.class.focusVisible);
                 }
@@ -247,9 +239,7 @@ export function reportValidity(input) {
     input.reportValidity();
     input.classList.add("has-error");
     if (isCheckboxInput(input)) {
-        input.parentElement
-            ?.querySelector(wf.select.checkbox)
-            ?.classList.add("has-error");
+        input.parentElement?.querySelector(wf.select.checkbox)?.classList.add("has-error");
     }
     if (input.type !== "checkbox" && input.type !== "radio") {
         input.addEventListener("input", () => removeErrorClasses(input), {
@@ -265,9 +255,7 @@ export function reportValidity(input) {
 export function removeErrorClasses(input) {
     input.classList.remove("has-error");
     if (isCheckboxInput(input)) {
-        input.parentElement
-            ?.querySelector(wf.select.checkbox)
-            ?.classList.remove("has-error");
+        input.parentElement?.querySelector(wf.select.checkbox)?.classList.remove("has-error");
     }
 }
 export function validateFields(inputs, report = true) {

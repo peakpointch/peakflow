@@ -26,6 +26,6 @@ export default function deepMerge(target, source) {
 function isPlainObject(value) {
     return (value !== undefined &&
         value !== null &&
-        typeof value === 'object' &&
+        typeof value === "object" &&
         Object.getPrototypeOf(value) === Object.prototype);
 }

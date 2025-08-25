@@ -225,9 +225,7 @@ function getRenderedLineMap(textNode, returnType) {
     const parent = textNode.parentElement;
     if (!parent)
         throw new Error("Text node must be in DOM.");
-    const lineMap = returnType === "indices"
-        ? new Map()
-        : new Map();
+    const lineMap = returnType === "indices" ? new Map() : new Map();
     let lastTop = null;
     let currentLine = 0;
     let lineText = "";

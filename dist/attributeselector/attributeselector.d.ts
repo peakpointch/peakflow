@@ -1,4 +1,4 @@
-type AttributeMatchType = 'startsWith' | 'endsWith' | 'includes' | 'whitespace' | 'hyphen' | 'exact';
+type AttributeMatchType = "startsWith" | "endsWith" | "includes" | "whitespace" | "hyphen" | "exact";
 export type AttributeSelector<T = string> = (name?: T, options?: Partial<AttributeOptions>) => string;
 export interface AttributeDefaultOptions<T extends string> {
     defaultMatchType: AttributeMatchType;

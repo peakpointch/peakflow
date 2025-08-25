@@ -1,6 +1,6 @@
 /**
  * Converts a string into a URL-friendly, kebab-case format.
- * 
+ *
  * @param {string} text - The input string to be parameterized.
  * @returns {string} - The parameterized string.
  */
@@ -31,8 +31,7 @@ export function toDashCase(str: string): string {
  * @returns {string} - The resulting string in camelCase format.
  */
 export function toCamelCase(str: string): string {
-  return str
-    .replace(/-([a-z])/g, (_, char) => char.toUpperCase());
+  return str.replace(/-([a-z])/g, (_, char) => char.toUpperCase());
 }
 
 /**
@@ -44,4 +43,3 @@ export function toCamelCase(str: string): string {
 export function toDataset(str: string): string {
   return `${str.charAt(0).toUpperCase() + str.slice(1)}`;
 }
-

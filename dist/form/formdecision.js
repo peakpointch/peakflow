@@ -63,9 +63,7 @@ export class FormDecision {
         }
         this.component = component;
         this.opts = {
-            id: options.id ||
-                this.component.getAttribute(this.attr.component) ||
-                this.opts.id,
+            id: options.id || this.component.getAttribute(this.attr.component) || this.opts.id,
             clearPathOnChange: options.clearPathOnChange || this.opts.clearPathOnChange,
             defaultPath: options.defaultPath || this.opts.defaultPath,
         };
@@ -87,8 +85,7 @@ export class FormDecision {
         }
         // Iterate through the decision inputs
         this.decisionInputs.forEach((input) => {
-            const pathId = input.getAttribute(this.attr.pathId) ||
-                input.value;
+            const pathId = input.getAttribute(this.attr.pathId) || input.value;
             const pathSelector = `${this.selector("path")}[${this.attr.pathId}="${pathId}"]`;
             const path = this.component.querySelector(pathSelector);
             if (path) {
@@ -185,8 +182,7 @@ export class FormDecision {
             this.handleValidationMessages(false);
             return false;
         }
-        const pathId = selectedInput.getAttribute(this.attr.pathId) ||
-            selectedInput.value;
+        const pathId = selectedInput.getAttribute(this.attr.pathId) || selectedInput.value;
         // If no corresponding path, consider it valid
         const isValid = !this.paths.has(pathId) || this.checkPathValidity(pathId);
         this.handleValidationMessages(isValid);

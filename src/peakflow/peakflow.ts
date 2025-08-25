@@ -25,10 +25,7 @@ export class Peakflow<R extends Record<string, AnyFn>> {
     return this._config;
   }
 
-  execute<K extends keyof R>(
-    name: K,
-    ...args: Parameters<R[K]>
-  ): ReturnType<R[K]> {
+  execute<K extends keyof R>(name: K, ...args: Parameters<R[K]>): ReturnType<R[K]> {
     return this.registry[name](...args);
   }
 
@@ -41,11 +38,8 @@ export class Peakflow<R extends Record<string, AnyFn>> {
   }
 }
 
-export const peakflow: Peakflow<DefaultRegistry> = new Peakflow(
-  defaultRegistry,
-  {
-    language: "de",
-    timezone: "Europe/Zurich",
-    debug: false,
-  },
-);
+export const peakflow: Peakflow<DefaultRegistry> = new Peakflow(defaultRegistry, {
+  language: "de",
+  timezone: "Europe/Zurich",
+  debug: false,
+});

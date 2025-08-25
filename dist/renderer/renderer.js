@@ -202,8 +202,7 @@ export class Renderer {
             }
             // If it's neither, check if any descendants are renderable
             else {
-                const hasRenderableChild = child.querySelectorAll(`[${this.elementAttr}], [${this.fieldAttr}]`)
-                    .length > 0;
+                const hasRenderableChild = child.querySelectorAll(`[${this.elementAttr}], [${this.fieldAttr}]`).length > 0;
                 // If there are renderable children, recurse on this child
                 if (hasRenderableChild) {
                     renderData.push(...this.read(child, stopRecursionMatches));
@@ -244,8 +243,7 @@ export class Renderer {
             props: {},
         };
         element.instance = instance || undefined;
-        if (child.classList.contains(wf.class.invisible) ||
-            child.closest(wf.select.invisible)) {
+        if (child.classList.contains(wf.class.invisible) || child.closest(wf.select.invisible)) {
             element.visibility = false;
         }
         else {
@@ -259,11 +257,7 @@ export class Renderer {
         const instance = child.getAttribute(`data-${fieldName}-instance`);
         // Determine field type (handle date, text, html)
         let value = child.innerHTML.trim();
-        const type = child.children.length > 0
-            ? "html"
-            : child.hasAttribute("data-date")
-                ? "date"
-                : "text";
+        const type = child.children.length > 0 ? "html" : child.hasAttribute("data-date") ? "date" : "text";
         switch (type) {
             case "date":
                 value = value;
@@ -279,8 +273,7 @@ export class Renderer {
             props: {},
         };
         field.instance = instance || undefined;
-        if (child.classList.contains(wf.class.invisible) ||
-            child.closest(wf.select.invisible)) {
+        if (child.classList.contains(wf.class.invisible) || child.closest(wf.select.invisible)) {
             field.visibility = false;
         }
         else {

@@ -95,8 +95,7 @@ export class Pdf {
     }
     freeze() {
         this.pages.forEach((page) => {
-            this.freezeSelector =
-                '*:not([pdf-freeze="exclude"], [pdf-freeze="exclude"] *, svg, svg *)';
+            this.freezeSelector = '*:not([pdf-freeze="exclude"], [pdf-freeze="exclude"] *, svg, svg *)';
             const children = page.querySelectorAll(this.freezeSelector);
             children.forEach((child) => {
                 this.freezeElement(child);
@@ -165,8 +164,7 @@ export class Pdf {
     }
     isPageHidden(page) {
         return (window.getComputedStyle(page).getPropertyValue("display") === "none" ||
-            window.getComputedStyle(page).getPropertyValue("visibility") ===
-                "hidden" ||
+            window.getComputedStyle(page).getPropertyValue("visibility") === "hidden" ||
             page.classList.contains("hide") ||
             page.offsetWidth === 0 ||
             page.offsetHeight === 0);
@@ -227,9 +225,7 @@ export class Pdf {
     }
     async save(format, filename, clientScale = 1) {
         // Save the PDF
-        filename =
-            filename ||
-                `Dokument generiert am ${new Date().toLocaleDateString("de-DE")}`;
+        filename = filename || `Dokument generiert am ${new Date().toLocaleDateString("de-DE")}`;
         filename = filename.endsWith(".pdf") ? filename : `${filename}.pdf`;
         // Scale the pdf on client
         this.scale(clientScale, false);

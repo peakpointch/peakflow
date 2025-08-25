@@ -1,7 +1,7 @@
 export default class Script {
   element: HTMLScriptElement;
   constructor(src: string) {
-    this.element = document.createElement('script');
+    this.element = document.createElement("script");
     this.element.src = src;
   }
 

@@ -1,7 +1,7 @@
 import createAttribute from "../attributeselector/index.js";
 import { getAllElements, getElement } from "../utils/getelements.js";
 
-type CMSSelectElement = 'source' | 'target' | 'option';
+type CMSSelectElement = "source" | "target" | "option";
 type OnChangeCallback = () => void;
 
 interface CMSSelectAttr {
@@ -19,20 +19,20 @@ interface CMSSelectOptions {
 
 export class CMSSelect {
   public opts: CMSSelectOptions = {
-    id: undefined
-  }
+    id: undefined,
+  };
   public id: string;
   public source: HTMLElement;
   public targets: HTMLSelectElement[];
   public values: string[];
   public waitEvent: string;
   public static attr: CMSSelectAttr = {
-    id: 'data-cms-select-id',
-    element: 'data-cms-select-element',
-    prefix: 'data-cms-select-prefix',
-    value: 'data-cms-select-value',
-    wait: 'data-cms-select-wait',
-    status: 'data-cms-select-status',
+    id: "data-cms-select-id",
+    element: "data-cms-select-element",
+    prefix: "data-cms-select-prefix",
+    value: "data-cms-select-value",
+    wait: "data-cms-select-wait",
+    status: "data-cms-select-status",
   };
   public attr: CMSSelectAttr = CMSSelect.attr;
 
@@ -52,7 +52,7 @@ export class CMSSelect {
       this.source.setAttribute(this.attr.id, this.opts.id);
 
       this.waitEvent = this.source.dataset.formSelectWait || null;
-      this.targets = getAllElements<HTMLSelectElement>(this.selector('target'));
+      this.targets = getAllElements<HTMLSelectElement>(this.selector("target"));
       this.readValues();
       this.initOnChange();
     } catch (e) {
@@ -60,21 +60,19 @@ export class CMSSelect {
     }
   }
 
-  private static attributeSelector = createAttribute<CMSSelectElement>('data-cms-select-element');
+  private static attributeSelector = createAttribute<CMSSelectElement>("data-cms-select-element");
 
   /**
    * Static selector
    */
   public static selector(element: CMSSelectElement, instance?: string): string {
     const base = CMSSelect.attributeSelector(element);
-    const instanceSelector = instance
-      ? `[${CMSSelect.attr.id}="${instance}"]`
-      : "";
+    const instanceSelector = instance ? `[${CMSSelect.attr.id}="${instance}"]` : "";
 
-    if (element === 'option') {
+    if (element === "option") {
       return `${instanceSelector} ${base}`.trim();
     } else {
-      return `${base}${instanceSelector}`
+      return `${base}${instanceSelector}`;
     }
   }
 
@@ -82,15 +80,13 @@ export class CMSSelect {
    * Instance selector
    */
   public selector(element: CMSSelectElement, local = true): string {
-    return local
-      ? CMSSelect.selector(element, this.id)
-      : CMSSelect.selector(element);
+    return local ? CMSSelect.selector(element, this.id) : CMSSelect.selector(element);
   }
 
   public static initializeAll(): void {
     try {
-      const sourceLists = getAllElements(CMSSelect.selector('source'));
-      sourceLists.forEach(list => {
+      const sourceLists = getAllElements(CMSSelect.selector("source"));
+      sourceLists.forEach((list) => {
         const cmsSelect = new CMSSelect(list);
         if (cmsSelect.initWaitEvent(true)) return;
         cmsSelect.insertOptions();
@@ -101,8 +97,8 @@ export class CMSSelect {
   }
 
   public static createOption(value: string): HTMLOptionElement {
-    const optionElement = document.createElement('option');
-    optionElement.setAttribute('value', value);
+    const optionElement = document.createElement("option");
+    optionElement.setAttribute("value", value);
     optionElement.innerText = value;
 
     return optionElement;
@@ -110,22 +106,25 @@ export class CMSSelect {
 
   public static insertOptions(targets: HTMLSelectElement | HTMLSelectElement[], values: string[]) {
     const targetList = getAllElements<HTMLSelectElement>(targets, { single: true });
-    values.forEach(val => {
+    values.forEach((val) => {
       if (val) {
         const option = CMSSelect.createOption(val);
-        targetList.forEach(target => target.appendChild(option));
+        targetList.forEach((target) => target.appendChild(option));
       } else {
-        console.warn('CMS select: skip empty option');
+        console.warn("CMS select: skip empty option");
       }
     });
   }
 
-  public static clearOptions(targets: HTMLSelectElement | HTMLSelectElement[], keepEmpty: boolean): void {
+  public static clearOptions(
+    targets: HTMLSelectElement | HTMLSelectElement[],
+    keepEmpty: boolean,
+  ): void {
     const targetList = getAllElements<HTMLSelectElement>(targets, { single: true });
-    targetList.forEach(target => {
-      let options = Array.from(target.querySelectorAll('option'));
-      if (keepEmpty) options = options.filter(option => Boolean(option.value));
-      options.forEach(option => option.remove());
+    targetList.forEach((target) => {
+      let options = Array.from(target.querySelectorAll("option"));
+      if (keepEmpty) options = options.filter((option) => Boolean(option.value));
+      options.forEach((option) => option.remove());
     });
   }
 
@@ -136,7 +135,7 @@ export class CMSSelect {
   public initWaitEvent(graceful: boolean = false): boolean {
     if (this.waitEvent) {
       this.source.addEventListener(this.waitEvent, () => {
-        this.insertOptions()
+        this.insertOptions();
       });
       return true;
     } else {
@@ -148,8 +147,8 @@ export class CMSSelect {
 
   public readValues(): void {
     this.values = [];
-    const optionElements = this.source.querySelectorAll<HTMLElement>(CMSSelect.selector('option'));
-    optionElements.forEach(element => {
+    const optionElements = this.source.querySelectorAll<HTMLElement>(CMSSelect.selector("option"));
+    optionElements.forEach((element) => {
       this.values.push(this.getSelectValue(element));
     });
   }
@@ -167,8 +166,8 @@ export class CMSSelect {
   }
 
   private initOnChange(): void {
-    this.targets.forEach(target => {
-      target.addEventListener('change', () => {
+    this.targets.forEach((target) => {
+      target.addEventListener("change", () => {
         this.triggerOnChange();
       });
     });

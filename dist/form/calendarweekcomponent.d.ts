@@ -1,5 +1,5 @@
-type UXMode = 'continuous' | 'loop' | 'fixed';
-type CalendarweekElements = 'component' | 'week' | 'year';
+type UXMode = "continuous" | "loop" | "fixed";
+type CalendarweekElements = "component" | "week" | "year";
 type Action = (week: number, year: number, date: Date) => any;
 export declare class CalendarweekComponent {
     private container;

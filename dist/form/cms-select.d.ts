@@ -1,4 +1,4 @@
-type CMSSelectElement = 'source' | 'target' | 'option';
+type CMSSelectElement = "source" | "target" | "option";
 type OnChangeCallback = () => void;
 interface CMSSelectAttr {
     id: string;

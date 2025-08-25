@@ -1,1 +1,1 @@
-export * from './hyphenizer.js';
+export * from "./hyphenizer.js";

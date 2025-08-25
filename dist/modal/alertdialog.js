@@ -4,8 +4,8 @@ export class AlertDialog extends Modal {
         this.message = message;
         this.open();
         return new Promise((resolve) => {
-            const confirmBtn = this.select('confirm');
-            const cancelBtn = this.select('cancel');
+            const confirmBtn = this.select("confirm");
+            const cancelBtn = this.select("cancel");
             const onConfirm = () => {
                 cleanup();
                 this.close();
@@ -17,11 +17,11 @@ export class AlertDialog extends Modal {
                 resolve(false);
             };
             const cleanup = () => {
-                confirmBtn.removeEventListener('click', onConfirm);
-                cancelBtn.removeEventListener('click', onCancel);
+                confirmBtn.removeEventListener("click", onConfirm);
+                cancelBtn.removeEventListener("click", onCancel);
             };
-            confirmBtn.addEventListener('click', onConfirm);
-            cancelBtn.addEventListener('click', onCancel);
+            confirmBtn.addEventListener("click", onConfirm);
+            cancelBtn.addEventListener("click", onCancel);
         });
     }
     set message(message) {

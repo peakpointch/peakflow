@@ -1,11 +1,11 @@
 import createAttribute from "../attributeselector/index.js";
-export const marqueeSelector = createAttribute('data-marquee-element');
+export const marqueeSelector = createAttribute("data-marquee-element");
 export function setMarqueeSpeed(speed, trackOrComponent) {
     if (!trackOrComponent || !(trackOrComponent instanceof HTMLElement)) {
         throw new Error(`Get track element: Please pass a valid HTMLElement.`);
     }
     const track = getTrackElement(trackOrComponent);
-    if (speed === 'auto') {
+    if (speed === "auto") {
         speed = parseInt(track.dataset.speed || "100", 10) || 100;
     }
     const distance = track.offsetWidth;
@@ -20,8 +20,8 @@ export function isComponentElement(element) {
             throw new Error(`Can't verify an invalid HTMLElement.`);
         }
         let component = element;
-        if (!component.matches(marqueeSelector('component'))) {
-            throw new Error(`The passed element is not a marquee component. Tag a marquee component by adding the attribute '${marqueeSelector('component')}'.`);
+        if (!component.matches(marqueeSelector("component"))) {
+            throw new Error(`The passed element is not a marquee component. Tag a marquee component by adding the attribute '${marqueeSelector("component")}'.`);
         }
         return true;
     }
@@ -35,16 +35,16 @@ export function getTrackElement(trackOrComponent) {
         throw new Error(`Get track element: Please pass a valid HTMLElement.`);
     }
     let track = trackOrComponent;
-    if (track.matches(`${marqueeSelector('component')} ${marqueeSelector('track')}`)) {
+    if (track.matches(`${marqueeSelector("component")} ${marqueeSelector("track")}`)) {
         return trackOrComponent;
     }
     try {
-        if (!track.matches(marqueeSelector('component'))) {
+        if (!track.matches(marqueeSelector("component"))) {
             throw new Error(`The passed element is neither a track element nor a marquee component element.`);
         }
-        track = track.querySelector(marqueeSelector('track'));
+        track = track.querySelector(marqueeSelector("track"));
         if (!track) {
-            throw new Error(`The passed marquee component is missing the track element. Tag a track element by adding the attribute '${marqueeSelector('track')}'.`);
+            throw new Error(`The passed marquee component is missing the track element. Tag a track element by adding the attribute '${marqueeSelector("track")}'.`);
         }
         return track;
     }
@@ -55,13 +55,13 @@ export function getTrackElement(trackOrComponent) {
 export function getButtonElement(marquee) {
     if (!isComponentElement(marquee))
         return;
-    let button = marquee.querySelector(marqueeSelector('button'));
+    let button = marquee.querySelector(marqueeSelector("button"));
     if (button)
         return button;
-    const marqueeId = marquee.getAttribute('data-marquee-id');
+    const marqueeId = marquee.getAttribute("data-marquee-id");
     if (!marqueeId)
         return undefined;
-    button = document.querySelector(`${marqueeSelector('button')}[data-marquee-id="${marqueeId}"]`);
+    button = document.querySelector(`${marqueeSelector("button")}[data-marquee-id="${marqueeId}"]`);
     return button ? button : undefined;
 }
 export function initMarqueeEvents(marquee) {
@@ -72,19 +72,19 @@ export function initMarqueeEvents(marquee) {
     if (!btn || !track)
         return;
     function toggleState() {
-        if (marquee.getAttribute('data-marquee-paused') === 'true') {
-            marquee.setAttribute('data-marquee-paused', 'false');
-            btn.innerText = 'pause';
+        if (marquee.getAttribute("data-marquee-paused") === "true") {
+            marquee.setAttribute("data-marquee-paused", "false");
+            btn.innerText = "pause";
         }
         else {
-            marquee.setAttribute('data-marquee-paused', 'true');
-            btn.innerText = 'play';
+            marquee.setAttribute("data-marquee-paused", "true");
+            btn.innerText = "play";
         }
     }
     btn.addEventListener("click", toggleState);
 }
 export function initializeMarquees(main) {
-    const allMarquees = main.querySelectorAll(marqueeSelector('component'));
+    const allMarquees = main.querySelectorAll(marqueeSelector("component"));
     allMarquees.forEach((marquee) => {
         if (!isComponentElement(marquee))
             return;

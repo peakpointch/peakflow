@@ -11,14 +11,14 @@ type GetElementOptions = {
  */
 export function getAllElements<T extends HTMLElement = HTMLElement>(
   input: string | T | T[] | NodeListOf<T>,
-  options: Partial<GetElementOptions> = {}
+  options: Partial<GetElementOptions> = {},
 ): T[] {
   const opts: GetElementOptions = {
     single: options.single ?? false,
-    node: options.node ?? document
-  }
+    node: options.node ?? document,
+  };
 
-  if (typeof input === 'string') {
+  if (typeof input === "string") {
     const elements = Array.from(opts.node.querySelectorAll<T>(input)).filter(Boolean);
     if (elements.length === 0) {
       throw new Error(`No elements found matching selector: ${input}`);
@@ -34,31 +34,33 @@ export function getAllElements<T extends HTMLElement = HTMLElement>(
   } else if (input instanceof NodeList) {
     return Array.from(input);
   } else {
-    throw new Error('Invalid input provided: must be a string, HTMLElement, array or node list.');
+    throw new Error("Invalid input provided: must be a string, HTMLElement, array or node list.");
   }
 }
 
 export function getElement<T extends HTMLElement = HTMLElement>(
   input: string | T,
-  options: Partial<GetElementOptions> = {}
+  options: Partial<GetElementOptions> = {},
 ): T {
   const opts: GetElementOptions = {
     single: options.single ?? true,
-    node: options.node ?? document
-  }
-  if (typeof input === 'string') {
+    node: options.node ?? document,
+  };
+  if (typeof input === "string") {
     const elements = Array.from(opts.node.querySelectorAll<T>(input));
 
     if (elements.length === 0) {
       throw new Error(`No elements found matching selector: "${input}".`);
     } else if (opts.single && elements.length > 1) {
-      throw new Error(`More than 1 element found matching selector "${input}". Make your selector more specific.`);
+      throw new Error(
+        `More than 1 element found matching selector "${input}". Make your selector more specific.`,
+      );
     }
 
     return elements[0];
   } else if (input instanceof HTMLElement) {
     return input;
   } else {
-    throw new Error('Invalid input provided: must be a string or HTMLElement.');
+    throw new Error("Invalid input provided: must be a string or HTMLElement.");
   }
 }

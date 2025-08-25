@@ -13,20 +13,21 @@ export class EditableCanvas {
 
     // Prepeare custom selectors
     if (customSelectors && customSelectors.length) {
-      this.selectAll = `${this.selectAll}, ${customSelectors.join(', ')}`;
+      this.selectAll = `${this.selectAll}, ${customSelectors.join(", ")}`;
     }
 
     this.elements.all = Array.from(this.canvas.querySelectorAll<HTMLElement>(this.selectAll));
-    this.canvas.querySelectorAll<HTMLElement>(`[data-canvas-editable]:not(${this.defaultSelector})`)
-      .forEach(element => element.classList.remove('canvas-editable'));
+    this.canvas
+      .querySelectorAll<HTMLElement>(`[data-canvas-editable]:not(${this.defaultSelector})`)
+      .forEach((element) => element.classList.remove("canvas-editable"));
 
     this.initialize();
   }
 
   private initialize() {
     // Initialize all editable elements
-    this.elements.all.forEach(element => {
-      element.classList.add('canvas-editable');
+    this.elements.all.forEach((element) => {
+      element.classList.add("canvas-editable");
       this.attachEditListener(element);
     });
 
@@ -44,42 +45,42 @@ export class EditableCanvas {
    * Enable editing for a specific element.
    */
   private enableEditing(element: HTMLElement): void {
-    element.contentEditable = 'true';
+    element.contentEditable = "true";
 
     // Attach Escape key listener dynamically
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         this.disableEditing(element);
       }
 
-      if (event.ctrlKey && event.key === 'd') {
+      if (event.ctrlKey && event.key === "d") {
         event.preventDefault();
         const hiddenElement = event.target as HTMLElement;
-        hiddenElement.style.display = 'none';
+        hiddenElement.style.display = "none";
         this.elements.hidden.push(hiddenElement);
       }
     };
 
-    element.addEventListener('keydown', handleEscape);
+    element.addEventListener("keydown", handleEscape);
 
     // Store the handleEscape function for later removal
     (element as any)._escapeListener = handleEscape;
   }
 
   public showHiddenElements(): void {
-    this.elements.hidden.forEach(e => e.style.removeProperty('display'));
+    this.elements.hidden.forEach((e) => e.style.removeProperty("display"));
   }
 
   /**
    * Disable editing for a specific element.
    */
   private disableEditing(element: HTMLElement): void {
-    element.contentEditable = 'false';
+    element.contentEditable = "false";
 
     // Remove the Escape key listener if it exists
     const handleEscape = (element as any)._escapeListener;
     if (handleEscape) {
-      element.removeEventListener('keydown', handleEscape);
+      element.removeEventListener("keydown", handleEscape);
       delete (element as any)._escapeListener; // Clean up the reference
     }
   }
@@ -89,7 +90,7 @@ export class EditableCanvas {
    */
   private attachEditListener(element: HTMLElement): void {
     const handleClick = () => this.enableEditing(element);
-    element.addEventListener('click', handleClick);
+    element.addEventListener("click", handleClick);
 
     // Store the click listener for potential cleanup if needed
     (element as any)._clickListener = handleClick;
@@ -106,11 +107,11 @@ export class EditableCanvas {
         !event.target.closest(this.selectAll)
       ) {
         // Disable content editing for all editable elements
-        this.elements.all.forEach(element => this.disableEditing(element));
+        this.elements.all.forEach((element) => this.disableEditing(element));
       }
     };
 
-    document.addEventListener('click', handleDocumentClick);
+    document.addEventListener("click", handleDocumentClick);
 
     // Store the document click listener for potential cleanup
     (this as any)._documentClickListener = handleDocumentClick;
@@ -122,16 +123,16 @@ export class EditableCanvas {
    */
   private cleanupListeners(): void {
     // Remove listeners from editable elements
-    this.elements.all.forEach(element => {
+    this.elements.all.forEach((element) => {
       const clickListener = (element as any)._clickListener;
       const escapeListener = (element as any)._escapeListener;
 
-      if (clickListener) element.removeEventListener('click', clickListener);
-      if (escapeListener) element.removeEventListener('keydown', escapeListener);
+      if (clickListener) element.removeEventListener("click", clickListener);
+      if (escapeListener) element.removeEventListener("keydown", escapeListener);
     });
 
     // Remove document click listener
     const documentClickListener = (this as any)._documentClickListener;
-    if (documentClickListener) document.removeEventListener('click', documentClickListener);
+    if (documentClickListener) document.removeEventListener("click", documentClickListener);
   }
 }

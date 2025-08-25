@@ -37,7 +37,9 @@ function extractTargetFromAttribute(container) {
         throw new Error(`Container is missing ${INLINECMS_TARGET_ATTR} attribute.`);
     }
     let target;
-    if (targetSelector === "parentNode" || targetSelector === "parent" || targetSelector === "parentElement") {
+    if (targetSelector === "parentNode" ||
+        targetSelector === "parent" ||
+        targetSelector === "parentElement") {
         target = container.parentElement;
     }
     else {
@@ -60,9 +62,7 @@ export function inlineCmsDev(container, target) {
         const componentName = container.getAttribute(INLINECMS_COMPONENT_ATTR) || `index ${index}`;
         validateContainer(container);
         // Determine the target element
-        const targetElement = target
-            ? getAllElements(target)[0]
-            : container.parentElement;
+        const targetElement = target ? getAllElements(target)[0] : container.parentElement;
         if (!targetElement) {
             throw new Error("Target element not found or specified.");
         }
@@ -90,7 +90,7 @@ export function inlineCms(containers) {
         containerElements = Array.from(containers);
     }
     if (containerElements.length === 0) {
-        throw new Error(`No containers found matching: ${(typeof containers === "string") ? containers : ''} `);
+        throw new Error(`No containers found matching: ${typeof containers === "string" ? containers : ""} `);
     }
     containerElements.forEach((container, index) => {
         const componentName = container.getAttribute(INLINECMS_COMPONENT_ATTR) || `index ${index}`;

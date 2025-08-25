@@ -42,4 +42,3 @@ export function unlockBodyScroll(smooth: boolean): void {
     document.body.style.removeProperty("overflow");
   }
 }
-

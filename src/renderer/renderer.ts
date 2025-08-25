@@ -43,13 +43,9 @@ export type RenderElement<F extends FilterAttributes<keyof F & string> = {}> = {
   props?: PropsFromFilterAttributes<F>;
 };
 
-export type RenderData<F extends FilterAttributes = {}> = Array<
-  RenderField<F> | RenderElement<F>
->;
+export type RenderData<F extends FilterAttributes = {}> = Array<RenderField<F> | RenderElement<F>>;
 
-export interface RendererOptions<
-  F extends FilterAttributes<keyof F & string> = {},
-> {
+export interface RendererOptions<F extends FilterAttributes<keyof F & string> = {}> {
   /**
    * The base attribute used to identify render elements in the DOM.
    *
@@ -100,16 +96,10 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   private collectionAttr: string = `data-is-collection`;
   private attributeName: string = "render";
 
-  constructor(
-    canvas: HTMLElement | null,
-    options?: Partial<RendererOptions<F>>,
-  ) {
+  constructor(canvas: HTMLElement | null, options?: Partial<RendererOptions<F>>) {
     if (!canvas) throw new Error(`Canvas can't be undefined.`);
     this.canvas = canvas;
-    this.options = deepMerge(
-      Renderer.defaultOptions as RendererOptions<F>,
-      options,
-    );
+    this.options = deepMerge(Renderer.defaultOptions as RendererOptions<F>, options);
     this.attributeName = this.options.attributeName;
     this.elementAttr = `data-${this.attributeName}-element`;
     this.fieldAttr = `data-${this.attributeName}-field`;
@@ -125,10 +115,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     this._render(data, canvas);
   }
 
-  private _render(
-    data: RenderData<F>,
-    canvas: HTMLElement = this.canvas,
-  ): void {
+  private _render(data: RenderData<F>, canvas: HTMLElement = this.canvas): void {
     this.data = data;
 
     this.data.forEach((renderItem) => {
@@ -149,8 +136,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
    */
   private renderElement(renderElement: RenderElement<F>, canvas: HTMLElement) {
     const selector = this.elementSelector(renderElement);
-    const htmlRenderElements: NodeListOf<HTMLElement> =
-      canvas.querySelectorAll(selector);
+    const htmlRenderElements: NodeListOf<HTMLElement> = canvas.querySelectorAll(selector);
 
     if (!htmlRenderElements.length) {
       console.warn(`Element "${selector}" was not found.`);
@@ -159,8 +145,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
     // Recursion with visibility check
     htmlRenderElements.forEach((htmlRenderElement) => {
-      let isCollection =
-        htmlRenderElement.getAttribute(this.collectionAttr) === "true";
+      let isCollection = htmlRenderElement.getAttribute(this.collectionAttr) === "true";
       if (isCollection) {
         this.renderCollection(renderElement, htmlRenderElement);
       } else {
@@ -169,10 +154,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     });
   }
 
-  private renderCollection(
-    renderElement: RenderElement<F>,
-    htmlRenderCollection: HTMLElement,
-  ) {
+  private renderCollection(renderElement: RenderElement<F>, htmlRenderCollection: HTMLElement) {
     switch (this.readVisibilityControl(htmlRenderCollection)) {
       case "emptyState":
         // TODO: Support "emptyState" for render collections
@@ -188,9 +170,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
         break;
     }
 
-    let max = parseInt(
-      htmlRenderCollection.getAttribute("data-limit-items") || "-1",
-    );
+    let max = parseInt(htmlRenderCollection.getAttribute("data-limit-items") || "-1");
     if (max === -1) max = renderElement.fields.length;
     max = Math.min(renderElement.fields.length, max);
     max = Math.max(max, 0);
@@ -205,15 +185,9 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
       for (let i = 0; i < max; i++) {
         const template = htmlTemplate.cloneNode(true) as HTMLElement;
         if (Renderer.isRenderElement(renderElement.fields[i])) {
-          this.renderElementToTemplate(
-            renderElement.fields[i] as RenderElement<F>,
-            template,
-          );
+          this.renderElementToTemplate(renderElement.fields[i] as RenderElement<F>, template);
         } else if (Renderer.isRenderField(renderElement.fields[i])) {
-          this.renderFieldToTemplate(
-            renderElement.fields[i] as RenderField<F>,
-            template,
-          );
+          this.renderFieldToTemplate(renderElement.fields[i] as RenderField<F>, template);
         }
 
         fragment.appendChild<HTMLElement>(template);
@@ -228,10 +202,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   /**
    * Render a `RenderElement` to a single `HTMLRenderElement`
    */
-  private renderElementToTemplate(
-    renderElement: RenderElement<F>,
-    htmlTemplate: HTMLElement,
-  ) {
+  private renderElementToTemplate(renderElement: RenderElement<F>, htmlTemplate: HTMLElement) {
     switch (this.readVisibilityControl(htmlTemplate)) {
       case "emptyState":
         const emptyStateElement = htmlTemplate.querySelector<HTMLElement>(
@@ -277,10 +248,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   /**
    * Render a `RenderField` to a single `HTMLRenderField`
    */
-  private renderFieldToTemplate(
-    field: RenderField<F>,
-    htmlTemplate: HTMLElement,
-  ) {
+  private renderFieldToTemplate(field: RenderField<F>, htmlTemplate: HTMLElement) {
     if (!field.visibility || !field.value.trim()) {
       switch (this.readVisibilityControl(htmlTemplate)) {
         case "emptyState":
@@ -318,10 +286,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
    * @param node The root node to start reading from.
    * @returns `RenderData` An array of RenderElement and RenderField objects representing the node structure.
    */
-  public read(
-    node: HTMLElement,
-    stopRecursionMatches: string[] = [],
-  ): RenderData<F> {
+  public read(node: HTMLElement, stopRecursionMatches: string[] = []): RenderData<F> {
     const renderData: RenderData<F> = [];
 
     Array.from(node.children).forEach((child) => {
@@ -331,9 +296,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
       // If it's a RenderElement
       if (child.hasAttribute(this.elementAttr)) {
-        renderData.push(
-          this.readRenderElement(child as HTMLElement, stopRecursionMatches),
-        );
+        renderData.push(this.readRenderElement(child as HTMLElement, stopRecursionMatches));
       }
       // If it's a RenderField
       else if (child.hasAttribute(this.fieldAttr)) {
@@ -342,14 +305,11 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
       // If it's neither, check if any descendants are renderable
       else {
         const hasRenderableChild =
-          child.querySelectorAll(`[${this.elementAttr}], [${this.fieldAttr}]`)
-            .length > 0;
+          child.querySelectorAll(`[${this.elementAttr}], [${this.fieldAttr}]`).length > 0;
 
         // If there are renderable children, recurse on this child
         if (hasRenderableChild) {
-          renderData.push(
-            ...this.read(child as HTMLElement, stopRecursionMatches),
-          );
+          renderData.push(...this.read(child as HTMLElement, stopRecursionMatches));
         }
       }
     });
@@ -400,10 +360,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     };
 
     element.instance = instance || undefined;
-    if (
-      child.classList.contains(wf.class.invisible) ||
-      child.closest(wf.select.invisible)
-    ) {
+    if (child.classList.contains(wf.class.invisible) || child.closest(wf.select.invisible)) {
       element.visibility = false;
     } else {
       element.visibility = true;
@@ -421,11 +378,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     // Determine field type (handle date, text, html)
     let value: string = child.innerHTML.trim();
     const type =
-      child.children.length > 0
-        ? "html"
-        : child.hasAttribute("data-date")
-          ? "date"
-          : "text";
+      child.children.length > 0 ? "html" : child.hasAttribute("data-date") ? "date" : "text";
 
     switch (type) {
       case "date":
@@ -444,10 +397,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     };
 
     field.instance = instance || undefined;
-    if (
-      child.classList.contains(wf.class.invisible) ||
-      child.closest(wf.select.invisible)
-    ) {
+    if (child.classList.contains(wf.class.invisible) || child.closest(wf.select.invisible)) {
       field.visibility = false;
     } else {
       field.visibility = true;
@@ -508,9 +458,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
               );
             }
 
-            value = Boolean(
-              !targetElement.classList.contains(wf.class.invisible),
-            );
+            value = Boolean(!targetElement.classList.contains(wf.class.invisible));
           } else {
             // Handles attribute values directly
             value = JSON.parse(value);
@@ -574,9 +522,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   }
 
   private showElement(element: HTMLElement): void {
-    const ancestorToHide = element.getAttribute(
-      `data-${this.attributeName}-hide-ancestor`,
-    );
+    const ancestorToHide = element.getAttribute(`data-${this.attributeName}-hide-ancestor`);
 
     this.showHTMLElement(element);
 
@@ -595,9 +541,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     const hideSelf = JSON.parse(
       element.getAttribute(`data-${this.attributeName}-hide-self`) || "false",
     );
-    const ancestorToHide = element.getAttribute(
-      `data-${this.attributeName}-hide-ancestor`,
-    );
+    const ancestorToHide = element.getAttribute(`data-${this.attributeName}-hide-ancestor`);
 
     if (hideSelf) {
       // Hide the element itself
@@ -633,10 +577,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
     let selectorString = elementAttrSelector(element.element);
     if (element.instance) {
-      selectorString += this.instanceSelector(
-        element.element,
-        element.instance,
-      );
+      selectorString += this.instanceSelector(element.element, element.instance);
     }
     return selectorString;
   }

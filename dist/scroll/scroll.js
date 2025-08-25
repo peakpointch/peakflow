@@ -1,12 +1,12 @@
 import createAttribute from "../attributeselector/index.js";
 export const defaultScrollOptions = {
     defaultOffset: 0,
-    defaultBehaviour: 'smooth'
+    defaultBehaviour: "smooth",
 };
 export function scrollToSection(id, selectorType = "id", options = {}) {
     const opts = {
         offset: options.offset ?? defaultScrollOptions.defaultOffset,
-        behaviour: options.behaviour ?? defaultScrollOptions.defaultBehaviour
+        behaviour: options.behaviour ?? defaultScrollOptions.defaultBehaviour,
     };
     setTimeout(() => {
         const selector = selectorType === "id" ? `#${id}` : id;
@@ -32,12 +32,10 @@ export function onScroll(link, event, options = {}) {
     };
     if (!link)
         throw new Error(`Event target is undefined. Cannot scroll from an undefined link.`);
-    const scrollId = link.getAttribute("href")?.slice(1) ||
-        link.getAttribute("scroll-to") ||
-        "";
+    const scrollId = link.getAttribute("href")?.slice(1) || link.getAttribute("scroll-to") || "";
     const offset = parseInt(link.getAttribute("scroll-offset") || `${opts.defaultOffset}`, 10);
     const behaviour = link.getAttribute("scroll-behaviour") || opts.defaultBehaviour;
-    scrollToSection(scrollId, 'id', { offset, behaviour });
+    scrollToSection(scrollId, "id", { offset, behaviour });
 }
 export function initCMSScrollLinks() {
     const cmsScrollLinks = document.querySelectorAll("a[data-href-scroll]");
@@ -63,15 +61,15 @@ export function disableWebflowScroll() {
     var Webflow = window.Webflow || [];
     Webflow.push(function () {
         $(function () {
-            $(document).off('click.wf-scroll');
+            $(document).off("click.wf-scroll");
         });
     });
 }
 export function overrideDefaultScroll(options = {}) {
     initCMSScrollLinks();
     initGlobalScrollLinks();
-    const href = createAttribute('href');
-    const allScrollLinks = document.querySelectorAll(`${href('#', { matchType: 'startsWith' })}, [scroll-to]`);
+    const href = createAttribute("href");
+    const allScrollLinks = document.querySelectorAll(`${href("#", { matchType: "startsWith" })}, [scroll-to]`);
     allScrollLinks.forEach((link) => {
         link.addEventListener("click", (event) => onScroll(link, event, options));
     });

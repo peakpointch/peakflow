@@ -68,17 +68,9 @@ export function solidHyphens(container: HTMLElement) {
         lastWord = replaceCharAt(lastWord, lastWord.length - 1, "-");
         const firstWord = getFirstWordOfLine(stringLineMap, lineIndex + 1);
 
-        const currLineWithoutLastWord = testLine.slice(
-          0,
-          testLine.length - lastWord.length,
-        );
-        const prefixText =
-          Array.from(newLines.values()).join("") + currLineWithoutLastWord;
-        const didWordBreak = doesWordBreak(
-          textNode,
-          prefixText,
-          lastWord + firstWord,
-        );
+        const currLineWithoutLastWord = testLine.slice(0, testLine.length - lastWord.length);
+        const prefixText = Array.from(newLines.values()).join("") + currLineWithoutLastWord;
+        const didWordBreak = doesWordBreak(textNode, prefixText, lastWord + firstWord);
 
         if (didWordBreak) {
           newLineText = replaceCharAt(lineText, lastIndex, "-");
@@ -94,12 +86,7 @@ export function solidHyphens(container: HTMLElement) {
       newLines.set(lineIndex, newLineText);
 
       if (lineReflow) {
-        const updatedLineMap = finalizeLineWithReflow(
-          textNode,
-          stringLineMap,
-          newLines,
-          lineIndex,
-        );
+        const updatedLineMap = finalizeLineWithReflow(textNode, stringLineMap, newLines, lineIndex);
         stringLineMap = updatedLineMap;
         continue;
       }
@@ -153,10 +140,7 @@ function finalizeLineWithReflow(
  * @param lineIndex The index of the line to retrieve the first word from.
  * @returns The first word of the line, or an empty string if not found.
  */
-function getFirstWordOfLine(
-  lineMap: StringsLineMap,
-  lineIndex: number,
-): string {
+function getFirstWordOfLine(lineMap: StringsLineMap, lineIndex: number): string {
   const line = lineMap.get(lineIndex) ?? "";
   return getFirstWord(line);
 }
@@ -202,11 +186,7 @@ function getLastWord(str: string): string {
  * @param index The index of the character to replace
  * @param replacement The string to replace the character with
  */
-function replaceCharAt(
-  str: string,
-  index: number,
-  replacement: string,
-): string {
+function replaceCharAt(str: string, index: number, replacement: string): string {
   if (index < 0 || index >= str.length) {
     throw new RangeError("Index out of bounds");
   }
@@ -224,10 +204,7 @@ function getSoftHyphenIndices(word: string): number[] {
   return indices;
 }
 
-function findLineForCharIndex(
-  index: number,
-  lineMap: Map<number, number[]>,
-): number | null {
+function findLineForCharIndex(index: number, lineMap: Map<number, number[]>): number | null {
   for (const [line, indices] of lineMap.entries()) {
     if (indices.includes(index)) return line;
   }
@@ -243,11 +220,7 @@ function findLineForCharIndex(
  * @param word The word to test for line-breaking behavior (may contain soft hyphens).
  * @returns Boolean: true if the word breaks across lines, false otherwise.
  */
-export function doesWordBreak(
-  referenceNode: Text,
-  prefixText: string,
-  word: string,
-): boolean {
+export function doesWordBreak(referenceNode: Text, prefixText: string, word: string): boolean {
   const parent = referenceNode.parentElement;
   if (!parent) return false;
 
@@ -294,10 +267,7 @@ type LineMap = IndicesLineMap | StringsLineMap;
  * @param returnType "strings" returns each line as a string.
  * @returns A map of line index to line text.
  */
-function getRenderedLineMap(
-  textNode: Text,
-  returnType: "strings",
-): StringsLineMap;
+function getRenderedLineMap(textNode: Text, returnType: "strings"): StringsLineMap;
 
 /**
  * Get each rendered line of `textNode` as character indices of its text content.
@@ -307,10 +277,7 @@ function getRenderedLineMap(
  * These indices are global offsets within the `Text` node's text content.
  * @returns A map of line index to character indices.
  */
-function getRenderedLineMap(
-  textNode: Text,
-  returnType: "indices",
-): IndicesLineMap;
+function getRenderedLineMap(textNode: Text, returnType: "indices"): IndicesLineMap;
 
 /**
  * Get each rendered line of `textNode`.
@@ -320,19 +287,14 @@ function getRenderedLineMap(
  * - "indices": returns each line as an array of character indices.
  * - "strings": returns each line as a string.
  */
-function getRenderedLineMap(
-  textNode: Text,
-  returnType: LineMapReturnType,
-): LineMap {
+function getRenderedLineMap(textNode: Text, returnType: LineMapReturnType): LineMap {
   const range = document.createRange();
   const content = textNode.textContent || "";
   const parent = textNode.parentElement;
   if (!parent) throw new Error("Text node must be in DOM.");
 
   const lineMap =
-    returnType === "indices"
-      ? new Map<number, number[]>()
-      : new Map<number, string>();
+    returnType === "indices" ? new Map<number, number[]>() : new Map<number, string>();
 
   let lastTop: number | null = null;
   let currentLine = 0;

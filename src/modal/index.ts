@@ -1,2 +1,2 @@
-export * from './modal.js';
-export * from './alertdialog.js';
+export * from "./modal.js";
+export * from "./alertdialog.js";

@@ -6,16 +6,18 @@
 // var page = pageIframe ? pageIframe.contentDocument || pageIframe.contentWindow.document : document;
 let liveSource;
 
-const webflow = window ? {
-  designer: location.href.includes('design'),
-  development: location.href.includes('webflow'),
-  staging: location.href.includes('webflow') && !location.href.includes('design'),
-} : {};
+const webflow = window
+  ? {
+      designer: location.href.includes("design"),
+      development: location.href.includes("webflow"),
+      staging: location.href.includes("webflow") && !location.href.includes("design"),
+    }
+  : {};
 
 class Script {
   constructor(src, emptyAttribute) {
-    this.element = document.createElement('script');
-    this.element.setAttribute(emptyAttribute, '');
+    this.element = document.createElement("script");
+    this.element.setAttribute(emptyAttribute, "");
     this.element.src = src;
   }
 
@@ -25,17 +27,17 @@ class Script {
 }
 
 function scriptExists(src) {
-  const allPageScripts = Array.from(page.getElementsByTagName('script'));
-  const scripts = allPageScripts.some(script => script.src.split('?')[0] === src);
+  const allPageScripts = Array.from(page.getElementsByTagName("script"));
+  const scripts = allPageScripts.some((script) => script.src.split("?")[0] === src);
   return scripts;
 }
 
 function appendDevScripts(sources) {
-  sources.forEach(file => {
+  sources.forEach((file) => {
     let src = `http://localhost:3000/assets/${file}`;
     if (!scriptExists(src)) {
-      let script = new Script(src, 'data-dyn-js');
-      script.addAttribute('data-dyn-js', true);
+      let script = new Script(src, "data-dyn-js");
+      script.addAttribute("data-dyn-js", true);
       page.body.appendChild(script.element);
     }
   });
@@ -43,25 +45,25 @@ function appendDevScripts(sources) {
 
 function reloadCSS() {
   const links = page.querySelectorAll('[data-dyn-css="true"]');
-  links.forEach(link => {
-    const href = link.getAttribute('href');
-    const newHref = href.split('?')[0] + '?reload=' + new Date().getTime();
-    link.setAttribute('href', newHref);
+  links.forEach((link) => {
+    const href = link.getAttribute("href");
+    const newHref = href.split("?")[0] + "?reload=" + new Date().getTime();
+    link.setAttribute("href", newHref);
   });
 }
 
 function reloadJS() {
-  const scripts = page.querySelectorAll('[data-dyn-js="true"]')
-  scripts.forEach(script => {
+  const scripts = page.querySelectorAll('[data-dyn-js="true"]');
+  scripts.forEach((script) => {
     if (script) {
       // Store href for creation of new script
-      const src = script.getAttribute('src');
+      const src = script.getAttribute("src");
       const parentNode = script.parentNode;
       script.parentNode.removeChild(script);
 
-      const newSrc = src.split('?')[0] + '?reload=' + new Date().getTime();
-      let newScript = new Script(newSrc, 'data-dyn-js');
-      newScript.addAttribute('data-dyn-js', true);
+      const newSrc = src.split("?")[0] + "?reload=" + new Date().getTime();
+      let newScript = new Script(newSrc, "data-dyn-js");
+      newScript.addAttribute("data-dyn-js", true);
 
       parentNode.appendChild(newScript.element);
     }
@@ -104,12 +106,11 @@ function deactivateLiveReload() {
 if (webflow && webflow.designer) {
   parent.activateLiveReload = activateLiveReload;
 
-  const scripts = ['dynamic.js', 'copy.js'];
+  const scripts = ["dynamic.js", "copy.js"];
   appendDevScripts(scripts);
   activateLiveReload();
 } else if (webflow && webflow.staging) {
-
-  document.addEventListener('DOMContentLoaded', activateLiveReload);
+  document.addEventListener("DOMContentLoaded", activateLiveReload);
 }
 
 window.liveSource = liveSource;

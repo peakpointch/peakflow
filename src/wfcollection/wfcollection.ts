@@ -1,9 +1,5 @@
 import Renderer from "../renderer/index.js";
-import type {
-  FilterAttributes,
-  RenderData,
-  RendererOptions,
-} from "../renderer/index.js";
+import type { FilterAttributes, RenderData, RendererOptions } from "../renderer/index.js";
 
 type GlobalWfCollections = {
   initialized: boolean;
@@ -38,9 +34,7 @@ class CollectionList<F extends FilterAttributes = {}> {
     this.container = container;
     this.listElement = container.querySelector(".w-dyn-items");
     this.items = Array.from(
-      this.listElement?.querySelectorAll(
-        ".w-dyn-item:not(.w-dyn-list .w-dyn-list *)",
-      ) ?? [],
+      this.listElement?.querySelectorAll(".w-dyn-item:not(.w-dyn-list .w-dyn-list *)") ?? [],
     );
     this.renderer = new Renderer(container, this.options.rendererOptions);
   }
@@ -51,9 +45,7 @@ class CollectionList<F extends FilterAttributes = {}> {
   }
 
   public isEmpty(): boolean {
-    const isEmpty =
-      !this.listElement &&
-      this.container.querySelector(".w-dyn-empty") !== null;
+    const isEmpty = !this.listElement && this.container.querySelector(".w-dyn-empty") !== null;
 
     if (isEmpty) {
       console.warn(`Collection "${this.options.name}" is empty.`);
@@ -86,9 +78,7 @@ class CollectionList<F extends FilterAttributes = {}> {
     if (this.isEmpty()) return;
 
     this.listElement
-      .querySelectorAll(
-        `.w-condition-invisible:not([data-render-condition="true"])`,
-      )
+      .querySelectorAll(`.w-condition-invisible:not([data-render-condition="true"])`)
       .forEach((element) => element.remove());
   }
 

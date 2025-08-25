@@ -1,7 +1,7 @@
 import type { GlobalCal } from "@calcom/embed-core";
 
 interface CalDOMOptions {
-  link: string,
+  link: string;
   hideEventTypeDetails: boolean;
 }
 
@@ -56,19 +56,19 @@ export async function loadCal(namespace: string): Promise<GlobalCal> {
   return Cal;
 }
 
-export async function initCal(namespace: string,): Promise<GlobalCal> {
+export async function initCal(namespace: string): Promise<GlobalCal> {
   const Cal = await loadCal(namespace);
 
   const element = document.querySelector<HTMLElement>(`[cal-id="${namespace}"]`);
   if (!element) throw new Error("Embed container not found");
 
-  const calLink= element.getAttribute('cal-link');
+  const calLink = element.getAttribute("cal-link");
   if (!calLink) throw new Error(`Please specify a cal link`);
 
   const calDOMOptions: CalDOMOptions = {
     link: calLink,
-    hideEventTypeDetails: element.getAttribute('cal-hide-event-details') === 'true',
-  }
+    hideEventTypeDetails: element.getAttribute("cal-hide-event-details") === "true",
+  };
 
   Cal.ns[namespace]("inline", {
     elementOrSelector: element,
@@ -83,7 +83,7 @@ export async function initCal(namespace: string,): Promise<GlobalCal> {
       light: { "cal-brand": "#333" },
       dark: { "cal-brand": "#eee" },
     },
-    theme: "light"
+    theme: "light",
   });
 
   return Cal;

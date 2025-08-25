@@ -26,7 +26,9 @@ export class ScrollHandler {
     this.stickyBottom = config.stickyBottom ?? null;
 
     if (!this.scrollWrapper) {
-      throw new Error(`Couldn't construct ScrollHandler: The property "scrollWrapper" can't be undefined`);
+      throw new Error(
+        `Couldn't construct ScrollHandler: The property "scrollWrapper" can't be undefined`,
+      );
     }
   }
 
@@ -37,17 +39,12 @@ export class ScrollHandler {
     }
   }
 
-  public scrollTo(
-    element: HTMLElement,
-    options: Partial<ScrollToOptions> = {}
-  ): Promise<void> {
+  public scrollTo(element: HTMLElement, options: Partial<ScrollToOptions> = {}): Promise<void> {
     this.clearScrollTimeout();
 
     if (!element || !this.scrollWrapper.contains(element)) {
       return Promise.reject(
-        new Error(
-          "The element to scroll into view is not inside the scroll container."
-        )
+        new Error("The element to scroll into view is not inside the scroll container."),
       );
     }
 

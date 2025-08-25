@@ -76,41 +76,27 @@ export class FormDecision<PathId extends string = string> {
    * @param component The FormDecision element.
    * @param id Unique identifier for the specific instance.
    */
-  constructor(
-    component: HTMLElement | null,
-    options: Partial<FormDecisionOptions<PathId>>,
-  ) {
+  constructor(component: HTMLElement | null, options: Partial<FormDecisionOptions<PathId>>) {
     if (!component) {
       console.error(`FormDecision: Component not found.`);
       return;
     } else if (!component.hasAttribute("data-decision-component")) {
-      console.error(
-        `FormDecision: Selected element is not a FormDecision component:`,
-        component,
-      );
+      console.error(`FormDecision: Selected element is not a FormDecision component:`, component);
       return;
     }
 
     this.component = component;
     this.opts = {
-      id:
-        options.id ||
-        this.component.getAttribute(this.attr.component) ||
-        this.opts.id,
-      clearPathOnChange:
-        options.clearPathOnChange || this.opts.clearPathOnChange,
+      id: options.id || this.component.getAttribute(this.attr.component) || this.opts.id,
+      clearPathOnChange: options.clearPathOnChange || this.opts.clearPathOnChange,
       defaultPath: options.defaultPath || this.opts.defaultPath,
     };
     this.formMessage = new FormMessage("FormDecision", this.opts.id); // Assuming you want to initialize a FormMessage
     this.initialize();
   }
 
-  public static selector = createAttribute<FormDecisionElement>(
-    FormDecision.attr.element,
-  );
-  public selector = createAttribute<FormDecisionElement>(
-    FormDecision.attr.element,
-  );
+  public static selector = createAttribute<FormDecisionElement>(FormDecision.attr.element);
+  public selector = createAttribute<FormDecisionElement>(FormDecision.attr.element);
 
   /**
    * Initializes the FormDecision instance by setting up decision inputs & paths as well as their event listeners.
@@ -119,10 +105,9 @@ export class FormDecision<PathId extends string = string> {
     // Find the decision element wrapper
     const decisionFieldsWrapper: HTMLElement =
       this.component.querySelector(this.selector("decision")) || this.component;
-    const decisionInputsList =
-      decisionFieldsWrapper.querySelectorAll<HTMLInputElement>(
-        this.selector("input"),
-      );
+    const decisionInputsList = decisionFieldsWrapper.querySelectorAll<HTMLInputElement>(
+      this.selector("input"),
+    );
     this.decisionInputs = Array.from(decisionInputsList);
 
     // Ensure there are decision inputs
@@ -135,12 +120,9 @@ export class FormDecision<PathId extends string = string> {
 
     // Iterate through the decision inputs
     this.decisionInputs.forEach((input) => {
-      const pathId =
-        (input.getAttribute(this.attr.pathId) as PathId) ||
-        (input.value as PathId);
+      const pathId = (input.getAttribute(this.attr.pathId) as PathId) || (input.value as PathId);
       const pathSelector = `${this.selector("path")}[${this.attr.pathId}="${pathId}"]`;
-      const path: HTMLElement | null =
-        this.component.querySelector(pathSelector);
+      const path: HTMLElement | null = this.component.querySelector(pathSelector);
       if (path) {
         path.style.display = "none";
         this.initRequiredAttributes(path);
@@ -248,8 +230,7 @@ export class FormDecision<PathId extends string = string> {
     }
 
     const pathId =
-      (selectedInput.getAttribute(this.attr.pathId) as PathId) ||
-      (selectedInput.value as PathId);
+      (selectedInput.getAttribute(this.attr.pathId) as PathId) || (selectedInput.value as PathId);
 
     // If no corresponding path, consider it valid
     const isValid = !this.paths.has(pathId) || this.checkPathValidity(pathId);
@@ -263,10 +244,7 @@ export class FormDecision<PathId extends string = string> {
    * @param messages An object mapping decision input values to error messages.
    * @param defaultMessage An optional default error message to use when no specific message is provided.
    */
-  public setErrorMessages(
-    messages: { [key: string]: string },
-    defaultMessage?: string,
-  ): void {
+  public setErrorMessages(messages: { [key: string]: string }, defaultMessage?: string): void {
     this.errorMessages = messages;
     if (defaultMessage) {
       this.defaultErrorMessage = defaultMessage;
@@ -282,9 +260,7 @@ export class FormDecision<PathId extends string = string> {
     // Get the path element and the form inputs inside it
     const pathElement = this.paths.get(pathId);
     if (!pathElement) return true;
-    const inputs: NodeListOf<HTMLFormInput> = pathElement.querySelectorAll(
-      wf.select.formInput,
-    );
+    const inputs: NodeListOf<HTMLFormInput> = pathElement.querySelectorAll(wf.select.formInput);
 
     // Validate the fields within the path element
     const { isValid } = validateFields(inputs, true);
@@ -293,9 +269,7 @@ export class FormDecision<PathId extends string = string> {
 
   private initRequiredAttributes(path: HTMLElement): void {
     // For all paths, make inputs non-required by default
-    const inputs: NodeListOf<HTMLFormInput> = path.querySelectorAll(
-      wf.select.input,
-    );
+    const inputs: NodeListOf<HTMLFormInput> = path.querySelectorAll(wf.select.input);
     inputs.forEach((input) => {
       input.setAttribute(this.attr.required, `${input.required}`);
       input.required = false;
@@ -311,9 +285,7 @@ export class FormDecision<PathId extends string = string> {
     if (!path) return;
 
     if (pathId === this.currentPath) {
-      const pathInputs = path.querySelectorAll<HTMLFormInput>(
-        wf.select.formInput,
-      );
+      const pathInputs = path.querySelectorAll<HTMLFormInput>(wf.select.formInput);
       pathInputs.forEach((input) => {
         const isRequired = input.matches(
           `[${this.attr.required}="required"], [${this.attr.required}="true"]`,
@@ -321,9 +293,7 @@ export class FormDecision<PathId extends string = string> {
         input.required = isRequired;
       });
     } else {
-      const pathInputs = path.querySelectorAll<HTMLFormInput>(
-        wf.select.formInput,
-      );
+      const pathInputs = path.querySelectorAll<HTMLFormInput>(wf.select.formInput);
       pathInputs.forEach((input) => {
         input.required = false;
       });
@@ -334,9 +304,7 @@ export class FormDecision<PathId extends string = string> {
     const path = this.paths.get(pathId);
     if (!path) return;
 
-    const pathInputs = path.querySelectorAll<HTMLFormInput>(
-      wf.select.formInput,
-    );
+    const pathInputs = path.querySelectorAll<HTMLFormInput>(wf.select.formInput);
     pathInputs.forEach((input) => {
       input.value = null;
       if (silent) return;
@@ -360,8 +328,7 @@ export class FormDecision<PathId extends string = string> {
    */
   private handleValidationMessages(currentGroupValid: boolean): void {
     if (!currentGroupValid) {
-      const customMessage =
-        this.errorMessages[this.currentPath] || this.defaultErrorMessage;
+      const customMessage = this.errorMessages[this.currentPath] || this.defaultErrorMessage;
       this.formMessage.error(customMessage);
     } else {
       this.formMessage.reset();

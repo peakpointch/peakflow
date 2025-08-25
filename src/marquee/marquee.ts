@@ -1,16 +1,16 @@
 import createAttribute from "../attributeselector/index.js";
 
-export type MarqueeElement = 'component' | 'track' | 'button';
+export type MarqueeElement = "component" | "track" | "button";
 
-export const marqueeSelector = createAttribute<MarqueeElement>('data-marquee-element')
+export const marqueeSelector = createAttribute<MarqueeElement>("data-marquee-element");
 
-export function setMarqueeSpeed(speed: number | 'auto', trackOrComponent: HTMLElement): number {
+export function setMarqueeSpeed(speed: number | "auto", trackOrComponent: HTMLElement): number {
   if (!trackOrComponent || !(trackOrComponent instanceof HTMLElement)) {
     throw new Error(`Get track element: Please pass a valid HTMLElement.`);
   }
 
   const track = getTrackElement(trackOrComponent);
-  if (speed === 'auto') {
+  if (speed === "auto") {
     speed = parseInt(track.dataset.speed || "100", 10) || 100;
   }
   const distance = track.offsetWidth;
@@ -27,8 +27,10 @@ export function isComponentElement(element: HTMLElement): element is HTMLElement
     }
 
     let component = element as HTMLElement;
-    if (!component.matches(marqueeSelector('component'))) {
-      throw new Error(`The passed element is not a marquee component. Tag a marquee component by adding the attribute '${marqueeSelector('component')}'.`);
+    if (!component.matches(marqueeSelector("component"))) {
+      throw new Error(
+        `The passed element is not a marquee component. Tag a marquee component by adding the attribute '${marqueeSelector("component")}'.`,
+      );
     }
 
     return true;
@@ -44,34 +46,42 @@ export function getTrackElement(trackOrComponent: HTMLElement): HTMLElement {
   }
 
   let track = trackOrComponent as HTMLElement;
-  if (track.matches(`${marqueeSelector('component')} ${marqueeSelector('track')}`)) {
+  if (track.matches(`${marqueeSelector("component")} ${marqueeSelector("track")}`)) {
     return trackOrComponent;
   }
 
   try {
-    if (!track.matches(marqueeSelector('component'))) {
-      throw new Error(`The passed element is neither a track element nor a marquee component element.`);
+    if (!track.matches(marqueeSelector("component"))) {
+      throw new Error(
+        `The passed element is neither a track element nor a marquee component element.`,
+      );
     }
-    track = track.querySelector(marqueeSelector('track'));
+    track = track.querySelector(marqueeSelector("track"));
     if (!track) {
-      throw new Error(`The passed marquee component is missing the track element. Tag a track element by adding the attribute '${marqueeSelector('track')}'.`);
+      throw new Error(
+        `The passed marquee component is missing the track element. Tag a track element by adding the attribute '${marqueeSelector("track")}'.`,
+      );
     }
     return track;
   } catch (e) {
-    console.error(`Couldn't get marquee track: ${e.message}`)
+    console.error(`Couldn't get marquee track: ${e.message}`);
   }
 }
 
-export function getButtonElement<T extends HTMLElement = HTMLElement>(marquee: HTMLElement): T | undefined {
+export function getButtonElement<T extends HTMLElement = HTMLElement>(
+  marquee: HTMLElement,
+): T | undefined {
   if (!isComponentElement(marquee)) return;
 
-  let button = marquee.querySelector<T>(marqueeSelector('button'));
+  let button = marquee.querySelector<T>(marqueeSelector("button"));
   if (button) return button;
 
-  const marqueeId = marquee.getAttribute('data-marquee-id');
+  const marqueeId = marquee.getAttribute("data-marquee-id");
   if (!marqueeId) return undefined;
 
-  button = document.querySelector<T>(`${marqueeSelector('button')}[data-marquee-id="${marqueeId}"]`);
+  button = document.querySelector<T>(
+    `${marqueeSelector("button")}[data-marquee-id="${marqueeId}"]`,
+  );
   return button ? button : undefined;
 }
 
@@ -83,12 +93,12 @@ export function initMarqueeEvents(marquee: HTMLElement): void {
   if (!btn || !track) return;
 
   function toggleState(): void {
-    if (marquee.getAttribute('data-marquee-paused') === 'true') {
-      marquee.setAttribute('data-marquee-paused', 'false');
-      btn.innerText = 'pause';
+    if (marquee.getAttribute("data-marquee-paused") === "true") {
+      marquee.setAttribute("data-marquee-paused", "false");
+      btn.innerText = "pause";
     } else {
-      marquee.setAttribute('data-marquee-paused', 'true');
-      btn.innerText = 'play';
+      marquee.setAttribute("data-marquee-paused", "true");
+      btn.innerText = "play";
     }
   }
 
@@ -96,7 +106,7 @@ export function initMarqueeEvents(marquee: HTMLElement): void {
 }
 
 export function initializeMarquees(main: HTMLElement): void {
-  const allMarquees = main.querySelectorAll<HTMLElement>(marqueeSelector('component'));
+  const allMarquees = main.querySelectorAll<HTMLElement>(marqueeSelector("component"));
   allMarquees.forEach((marquee) => {
     if (!isComponentElement(marquee)) return;
 

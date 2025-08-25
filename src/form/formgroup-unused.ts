@@ -8,11 +8,7 @@ class FormGroup {
   private validationMessage: string;
   public formMessage: FormMessage;
 
-  constructor(
-    container: HTMLElement,
-    groupNames: string[],
-    validationMessage: string,
-  ) {
+  constructor(container: HTMLElement, groupNames: string[], validationMessage: string) {
     this.container = container;
     this.groupNames = groupNames;
     this.validationMessage = validationMessage;

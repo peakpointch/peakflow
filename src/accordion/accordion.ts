@@ -6,7 +6,7 @@ export class Accordion {
   public isOpen: boolean = false;
   private trigger: HTMLElement;
   private icon: HTMLElement;
-  private onClickCallback: () => void = () => { };
+  private onClickCallback: () => void = () => {};
 
   constructor(component: HTMLElement) {
     this.component = component;
@@ -18,11 +18,11 @@ export class Accordion {
   public onClick(callback: () => void): void {
     this.removeOnClick();
     this.onClickCallback = callback;
-    this.uiTrigger.addEventListener('click', this.onClickCallback);
+    this.uiTrigger.addEventListener("click", this.onClickCallback);
   }
 
   public removeOnClick(): void {
-    this.uiTrigger.removeEventListener('click', this.onClickCallback);
+    this.uiTrigger.removeEventListener("click", this.onClickCallback);
   }
 
   public open() {

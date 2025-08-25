@@ -20,8 +20,7 @@ export class FilterForm<FieldId extends string = string> {
   private fieldChangeActions: Map<FieldId, FilterAction<FieldId>[]> = new Map();
   private globalChangeActions: FilterAction<FieldId>[] = []; // Stores wildcard ('*') actions
   private defaultDayRange: number = 7;
-  private resizeResetFields: Map<FieldId, () => string | number | Date> =
-    new Map();
+  private resizeResetFields: Map<FieldId, () => string | number | Date> = new Map();
 
   public static select = createAttribute<ActionElement>("data-action");
 
@@ -43,12 +42,8 @@ export class FilterForm<FieldId extends string = string> {
     });
 
     this.container = container;
-    this.filterFields = container.querySelectorAll<HTMLFormInput>(
-      wf.select.formInput,
-    );
-    this.actionElements = container.querySelectorAll<HTMLActionElement>(
-      FilterForm.select(),
-    );
+    this.filterFields = container.querySelectorAll<HTMLFormInput>(wf.select.formInput);
+    this.actionElements = container.querySelectorAll<HTMLActionElement>(FilterForm.select());
 
     this.attachChangeListeners();
   }
@@ -216,9 +211,7 @@ export class FilterForm<FieldId extends string = string> {
    * Use this method to get all the form field values as structured data
    * alongside field metadata.
    */
-  public getFieldGroup(
-    fields: NodeListOf<HTMLFormInput> | HTMLFormInput[],
-  ): FieldGroup<FieldId> {
+  public getFieldGroup(fields: NodeListOf<HTMLFormInput> | HTMLFormInput[]): FieldGroup<FieldId> {
     this.data = new FieldGroup();
     fields = fields as NodeListOf<HTMLFormInput>;
     fields.forEach((input, index) => {
@@ -233,10 +226,7 @@ export class FilterForm<FieldId extends string = string> {
   /**
    * Reset a field to a specific value on `window.resize` event.
    */
-  public addResizeReset(
-    fieldId: FieldId,
-    getValue: () => string | number | Date,
-  ): void {
+  public addResizeReset(fieldId: FieldId, getValue: () => string | number | Date): void {
     const existingFields = this.getFieldIds(this.filterFields);
     if (!this.fieldExists(fieldId, existingFields)) {
       throw new Error(`Field with ID "${fieldId}" was not found`);
@@ -302,12 +292,8 @@ export class FilterForm<FieldId extends string = string> {
     endDateFieldId: FieldId,
     customDayRange?: number,
   ): void {
-    const startDateInput = this.getFilterInput(
-      startDateFieldId,
-    ) as HTMLInputElement;
-    const endDateInput = this.getFilterInput(
-      endDateFieldId,
-    ) as HTMLInputElement;
+    const startDateInput = this.getFilterInput(startDateFieldId) as HTMLInputElement;
+    const endDateInput = this.getFilterInput(endDateFieldId) as HTMLInputElement;
 
     const startDate = new Date(startDateInput.value);
     const endDate = new Date(endDateInput.value);
@@ -316,8 +302,7 @@ export class FilterForm<FieldId extends string = string> {
     activeRange -= 1;
 
     if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
-      const diffInDays =
-        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+      const diffInDays = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
 
       // Determine which field was changed (by checking focus or value)
       let activeField = "other";

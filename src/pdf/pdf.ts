@@ -8,19 +8,8 @@ import { softHyphenizer, solidHyphens } from "../hyphenizer/index.js";
 import german from "hyphenation.de";
 
 // Types
-export type PdfElement =
-  | "container"
-  | "scale"
-  | "page"
-  | "page-wrapper"
-  | "weekday"
-  | "dish";
-export type PdfFieldName =
-  | string
-  | "dishName"
-  | "dishDescription"
-  | "price"
-  | "priceSmall";
+export type PdfElement = "container" | "scale" | "page" | "page-wrapper" | "weekday" | "dish";
+export type PdfFieldName = string | "dishName" | "dishDescription" | "price" | "priceSmall";
 export type PdfFormat = "a3" | "a4" | "a5";
 
 // Variables
@@ -84,9 +73,7 @@ export class Pdf {
   }
 
   public getPageWrappers(): HTMLElement[] {
-    const pageWrappers = this.canvas.querySelectorAll<HTMLElement>(
-      Pdf.select("page-wrapper"),
-    );
+    const pageWrappers = this.canvas.querySelectorAll<HTMLElement>(Pdf.select("page-wrapper"));
     return Array.from(pageWrappers);
   }
 
@@ -147,11 +134,8 @@ export class Pdf {
 
   public freeze(): void {
     this.pages.forEach((page) => {
-      this.freezeSelector =
-        '*:not([pdf-freeze="exclude"], [pdf-freeze="exclude"] *, svg, svg *)';
-      const children: NodeListOf<HTMLElement> = page.querySelectorAll(
-        this.freezeSelector,
-      );
+      this.freezeSelector = '*:not([pdf-freeze="exclude"], [pdf-freeze="exclude"] *, svg, svg *)';
+      const children: NodeListOf<HTMLElement> = page.querySelectorAll(this.freezeSelector);
       children.forEach((child) => {
         this.freezeElement(child);
       });
@@ -171,9 +155,7 @@ export class Pdf {
 
   public unFreeze(): void {
     this.pages.forEach((page) => {
-      const children: NodeListOf<HTMLElement> = page.querySelectorAll(
-        this.freezeSelector,
-      );
+      const children: NodeListOf<HTMLElement> = page.querySelectorAll(this.freezeSelector);
       children.forEach((child) => {
         this.unFreezeElement(child);
       });
@@ -242,8 +224,7 @@ export class Pdf {
   private isPageHidden(page: HTMLElement): boolean {
     return (
       window.getComputedStyle(page).getPropertyValue("display") === "none" ||
-      window.getComputedStyle(page).getPropertyValue("visibility") ===
-        "hidden" ||
+      window.getComputedStyle(page).getPropertyValue("visibility") === "hidden" ||
       page.classList.contains("hide") ||
       page.offsetWidth === 0 ||
       page.offsetHeight === 0
@@ -263,12 +244,9 @@ export class Pdf {
     this.freeze();
 
     const zoom = 0.1; // crop 0.1mm on each side
-    const canvasScale =
-      format === "a3" ? 2 * 4.17 : format === "a4" ? 1 * 4.17 : 0.5 * 4.17;
+    const canvasScale = format === "a3" ? 2 * 4.17 : format === "a4" ? 1 * 4.17 : 0.5 * 4.17;
 
-    const getHtml2CanvasOptions = (
-      canvas?: HTMLCanvasElement,
-    ): Html2CanvasOptions => {
+    const getHtml2CanvasOptions = (canvas?: HTMLCanvasElement): Html2CanvasOptions => {
       return {
         scale: canvasScale,
         useCORS: true,
@@ -287,22 +265,13 @@ export class Pdf {
         const page = this.pages[i];
 
         if (this.isPageHidden(page)) {
-          console.warn(
-            `Hidden page detected, skipping current page. \nPage:`,
-            page,
-          );
+          console.warn(`Hidden page detected, skipping current page. \nPage:`, page);
           continue;
         }
 
         // Convert HTML element to canvas
-        const defaultCanvas: HTMLCanvasElement = this.prepareCanvas(
-          page,
-          canvasScale,
-        );
-        const canvas = await html2canvas(
-          page,
-          getHtml2CanvasOptions(defaultCanvas),
-        );
+        const defaultCanvas: HTMLCanvasElement = this.prepareCanvas(page, canvasScale);
+        const canvas = await html2canvas(page, getHtml2CanvasOptions(defaultCanvas));
         const imgData = canvas.toDataURL("image/png");
 
         const adjustedWidth = pdfWidth + 2 * zoom;
@@ -334,15 +303,9 @@ export class Pdf {
     }
   }
 
-  public async save(
-    format: PdfFormat,
-    filename?: string,
-    clientScale: number = 1,
-  ): Promise<void> {
+  public async save(format: PdfFormat, filename?: string, clientScale: number = 1): Promise<void> {
     // Save the PDF
-    filename =
-      filename ||
-      `Dokument generiert am ${new Date().toLocaleDateString("de-DE")}`;
+    filename = filename || `Dokument generiert am ${new Date().toLocaleDateString("de-DE")}`;
     filename = filename.endsWith(".pdf") ? filename : `${filename}.pdf`;
 
     // Scale the pdf on client

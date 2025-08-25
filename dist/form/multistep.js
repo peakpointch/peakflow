@@ -1,5 +1,5 @@
 // Imports
-import createAttribute, { exclude, extend, } from "../attributeselector/index.js";
+import createAttribute, { exclude, extend } from "../attributeselector/index.js";
 import { initWfInputs, sendFormData, validateFields, formElementSelector, fieldFromInput, enforceButtonTypes, } from "./index.js";
 import wf from "../webflow/index.js";
 // import mapToObject from "../utils/maptoobject.js";
@@ -7,9 +7,7 @@ import wf from "../webflow/index.js";
 import { mapToObject, deepMerge } from "../utils";
 // Selector functions
 const stepsElementSelector = createAttribute("data-steps-element", {
-    defaultExclusions: [
-        '[data-steps-element="component"] [data-steps-element="component"] *',
-    ],
+    defaultExclusions: ['[data-steps-element="component"] [data-steps-element="component"] *'],
 });
 const stepsTargetSelector = createAttribute("data-step-target");
 const stepsNavSelector = createAttribute("data-steps-nav");
@@ -114,8 +112,7 @@ export class MultiStepForm {
         this.formElement.dataset.state = "sending";
         if (this.submitButton) {
             this.submitButton.dataset.defaultText = this.submitButton.value;
-            this.submitButton.value =
-                this.submitButton.dataset.wait || "Wird gesendet ...";
+            this.submitButton.value = this.submitButton.dataset.wait || "Wird gesendet ...";
         }
         const formData = this.buildJsonForWebflow();
         debugger;
@@ -134,7 +131,8 @@ export class MultiStepForm {
         }
         const fields = this.getFormData();
         if (this.options.recaptcha) {
-            const recaptcha = this.formElement.querySelector("#g-recaptcha-response").value;
+            const recaptcha = this.formElement.querySelector("#g-recaptcha-response")
+                .value;
             fields["g-recaptcha-response"] = recaptcha;
         }
         return {
@@ -156,8 +154,7 @@ export class MultiStepForm {
         this.formElement.dataset.state = "success";
         this.formElement.dispatchEvent(new CustomEvent("formSuccess"));
         if (this.submitButton) {
-            this.submitButton.value =
-                this.submitButton.dataset.defaultText || "Submit";
+            this.submitButton.value = this.submitButton.dataset.defaultText || "Submit";
         }
     }
     onFormError() {
@@ -168,8 +165,7 @@ export class MultiStepForm {
         this.formElement.dataset.state = "error";
         this.formElement.dispatchEvent(new CustomEvent("formError"));
         if (this.submitButton) {
-            this.submitButton.value =
-                this.submitButton.dataset.defaultText || "Submit";
+            this.submitButton.value = this.submitButton.dataset.defaultText || "Submit";
         }
     }
     initChangeStepOnKeydown() {

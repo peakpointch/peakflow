@@ -3,7 +3,7 @@ import { getAllElements, getElement } from "../utils/getelements.js";
 export class CMSSelect {
     constructor(component, options = {}) {
         this.opts = {
-            id: undefined
+            id: undefined,
         };
         this.attr = CMSSelect.attr;
         this.onChangeCallbacks = new Map();
@@ -17,7 +17,7 @@ export class CMSSelect {
             this.id = this.opts.id || this.source.getAttribute(this.attr.id);
             this.source.setAttribute(this.attr.id, this.opts.id);
             this.waitEvent = this.source.dataset.formSelectWait || null;
-            this.targets = getAllElements(this.selector('target'));
+            this.targets = getAllElements(this.selector("target"));
             this.readValues();
             this.initOnChange();
         }
@@ -30,10 +30,8 @@ export class CMSSelect {
      */
     static selector(element, instance) {
         const base = CMSSelect.attributeSelector(element);
-        const instanceSelector = instance
-            ? `[${CMSSelect.attr.id}="${instance}"]`
-            : "";
-        if (element === 'option') {
+        const instanceSelector = instance ? `[${CMSSelect.attr.id}="${instance}"]` : "";
+        if (element === "option") {
             return `${instanceSelector} ${base}`.trim();
         }
         else {
@@ -44,14 +42,12 @@ export class CMSSelect {
      * Instance selector
      */
     selector(element, local = true) {
-        return local
-            ? CMSSelect.selector(element, this.id)
-            : CMSSelect.selector(element);
+        return local ? CMSSelect.selector(element, this.id) : CMSSelect.selector(element);
     }
     static initializeAll() {
         try {
-            const sourceLists = getAllElements(CMSSelect.selector('source'));
-            sourceLists.forEach(list => {
+            const sourceLists = getAllElements(CMSSelect.selector("source"));
+            sourceLists.forEach((list) => {
                 const cmsSelect = new CMSSelect(list);
                 if (cmsSelect.initWaitEvent(true))
                     return;
@@ -63,30 +59,30 @@ export class CMSSelect {
         }
     }
     static createOption(value) {
-        const optionElement = document.createElement('option');
-        optionElement.setAttribute('value', value);
+        const optionElement = document.createElement("option");
+        optionElement.setAttribute("value", value);
         optionElement.innerText = value;
         return optionElement;
     }
     static insertOptions(targets, values) {
         const targetList = getAllElements(targets, { single: true });
-        values.forEach(val => {
+        values.forEach((val) => {
             if (val) {
                 const option = CMSSelect.createOption(val);
-                targetList.forEach(target => target.appendChild(option));
+                targetList.forEach((target) => target.appendChild(option));
             }
             else {
-                console.warn('CMS select: skip empty option');
+                console.warn("CMS select: skip empty option");
             }
         });
     }
     static clearOptions(targets, keepEmpty) {
         const targetList = getAllElements(targets, { single: true });
-        targetList.forEach(target => {
-            let options = Array.from(target.querySelectorAll('option'));
+        targetList.forEach((target) => {
+            let options = Array.from(target.querySelectorAll("option"));
             if (keepEmpty)
-                options = options.filter(option => Boolean(option.value));
-            options.forEach(option => option.remove());
+                options = options.filter((option) => Boolean(option.value));
+            options.forEach((option) => option.remove());
         });
     }
     /**
@@ -109,8 +105,8 @@ export class CMSSelect {
     }
     readValues() {
         this.values = [];
-        const optionElements = this.source.querySelectorAll(CMSSelect.selector('option'));
-        optionElements.forEach(element => {
+        const optionElements = this.source.querySelectorAll(CMSSelect.selector("option"));
+        optionElements.forEach((element) => {
             this.values.push(this.getSelectValue(element));
         });
     }
@@ -124,8 +120,8 @@ export class CMSSelect {
         return optionValue;
     }
     initOnChange() {
-        this.targets.forEach(target => {
-            target.addEventListener('change', () => {
+        this.targets.forEach((target) => {
+            target.addEventListener("change", () => {
                 this.triggerOnChange();
             });
         });
@@ -143,11 +139,11 @@ export class CMSSelect {
     }
 }
 CMSSelect.attr = {
-    id: 'data-cms-select-id',
-    element: 'data-cms-select-element',
-    prefix: 'data-cms-select-prefix',
-    value: 'data-cms-select-value',
-    wait: 'data-cms-select-wait',
-    status: 'data-cms-select-status',
+    id: "data-cms-select-id",
+    element: "data-cms-select-element",
+    prefix: "data-cms-select-prefix",
+    value: "data-cms-select-value",
+    wait: "data-cms-select-wait",
+    status: "data-cms-select-status",
 };
-CMSSelect.attributeSelector = createAttribute('data-cms-select-element');
+CMSSelect.attributeSelector = createAttribute("data-cms-select-element");

@@ -1,8 +1,16 @@
-import { getISOWeek, getISOWeeksInYear, getISOWeekYear, setISOWeekYear, setISOWeek, startOfISOWeek, format } from 'date-fns';
-import createAttribute from '../attributeselector/index.js';
+import {
+  getISOWeek,
+  getISOWeeksInYear,
+  getISOWeekYear,
+  setISOWeekYear,
+  setISOWeek,
+  startOfISOWeek,
+  format,
+} from "date-fns";
+import createAttribute from "../attributeselector/index.js";
 
-type UXMode = 'continuous' | 'loop' | 'fixed';
-type CalendarweekElements = 'component' | 'week' | 'year';
+type UXMode = "continuous" | "loop" | "fixed";
+type CalendarweekElements = "component" | "week" | "year";
 type Action = (week: number, year: number, date: Date) => any;
 
 function getISOWeeksOfYear(year: number): number {
@@ -23,23 +31,29 @@ export class CalendarweekComponent {
   private maxDateWeek: number | null;
   private currentMinWeek: number;
   private currentMaxWeek: number;
-  private mode: UXMode = 'continuous';
+  private mode: UXMode = "continuous";
   private onChangeActions: Action[] = [];
 
   constructor(container: HTMLElement, mode?: UXMode) {
     this.container = container;
-    const weekInput = container.querySelector<HTMLInputElement>(CalendarweekComponent.select("week"));
-    const yearInput = container.querySelector<HTMLInputElement>(CalendarweekComponent.select("year"));
+    const weekInput = container.querySelector<HTMLInputElement>(
+      CalendarweekComponent.select("week"),
+    );
+    const yearInput = container.querySelector<HTMLInputElement>(
+      CalendarweekComponent.select("year"),
+    );
 
     if (!weekInput || !yearInput) {
-      throw new Error(`Couldn't find required "week" or "year" input element. Check the attribute selector "${CalendarweekComponent.select()}"`);
+      throw new Error(
+        `Couldn't find required "week" or "year" input element. Check the attribute selector "${CalendarweekComponent.select()}"`,
+      );
     }
     this.weekInput = weekInput;
     this.yearInput = yearInput;
 
     // Read the mode from a data attribute (defaults to 'continuous' if not set)
     if (!mode) {
-      mode = container.getAttribute('data-mode') as UXMode;
+      mode = container.getAttribute("data-mode") as UXMode;
       if (!["continuous", "loop", "fixed"].some((validMode) => validMode === mode)) {
         mode = "continuous";
         console.info(`Mode parsed from attribute was invalid. Mode was set to "${mode}".`);
@@ -49,30 +63,27 @@ export class CalendarweekComponent {
     this.setMode(mode);
 
     // Read min and max dates from the data attributes
-    const minDateStr = container.getAttribute('data-min-date') || '';
-    const maxDateStr = container.getAttribute('data-max-date') || '';
+    const minDateStr = container.getAttribute("data-min-date") || "";
+    const maxDateStr = container.getAttribute("data-max-date") || "";
     this.setMinMaxDates(new Date(minDateStr), new Date(maxDateStr));
     this.updateWeekMinMax();
 
     // Bind event listeners
-    this.weekInput.addEventListener('keydown', (event) => this.onWeekKeydown(event));
-    this.yearInput.addEventListener('keydown', (event) => this.onYearKeydown(event));
-    this.weekInput.addEventListener('change', () => this.onWeekChange());
-    this.yearInput.addEventListener('change', () => this.onYearChange());
+    this.weekInput.addEventListener("keydown", (event) => this.onWeekKeydown(event));
+    this.yearInput.addEventListener("keydown", (event) => this.onYearKeydown(event));
+    this.weekInput.addEventListener("change", () => this.onWeekChange());
+    this.yearInput.addEventListener("change", () => this.onYearChange());
   }
 
-  public static select = createAttribute<CalendarweekElements>('data-cweek-element');
+  public static select = createAttribute<CalendarweekElements>("data-cweek-element");
 
   public setDate(date: Date, silent: boolean = false): void {
     const year = getISOWeekYear(date);
     const week = getISOWeek(date);
 
     // Ensure that the date is within the valid range (minDate and maxDate)
-    if (
-      (this.minDate && date < this.minDate) ||
-      (this.maxDate && date > this.maxDate)
-    ) {
-      throw new Error('The provided date is out of range.');
+    if ((this.minDate && date < this.minDate) || (this.maxDate && date > this.maxDate)) {
+      throw new Error("The provided date is out of range.");
     }
 
     // Set the year and calendar week
@@ -113,8 +124,8 @@ export class CalendarweekComponent {
       this.minDate = null;
       this.minDateYear = null;
       this.minDateWeek = null;
-      this.yearInput.min = '';
-      this.container.dataset.minDate = '';
+      this.yearInput.min = "";
+      this.container.dataset.minDate = "";
     }
 
     if (newMaxDate instanceof Date && !isNaN(newMaxDate.getTime())) {
@@ -127,8 +138,8 @@ export class CalendarweekComponent {
       this.maxDate = null;
       this.maxDateYear = null;
       this.maxDateWeek = null;
-      this.yearInput.max = '';
-      this.container.dataset.maxDate = '';
+      this.yearInput.max = "";
+      this.container.dataset.maxDate = "";
     }
 
     this.updateWeekMinMax();
@@ -139,7 +150,7 @@ export class CalendarweekComponent {
   }
 
   public removeOnChange(callback: Action): void {
-    this.onChangeActions = this.onChangeActions.filter(fn => fn !== callback);
+    this.onChangeActions = this.onChangeActions.filter((fn) => fn !== callback);
   }
 
   public getCurrentDate(): Date {
@@ -166,7 +177,9 @@ export class CalendarweekComponent {
 
   private onChange(): void {
     this.updateClient();
-    this.onChangeActions.forEach((callback) => callback(this.week, this.year, this.getCurrentDate()));
+    this.onChangeActions.forEach((callback) =>
+      callback(this.week, this.year, this.getCurrentDate()),
+    );
   }
 
   private updateClient(): void {
@@ -281,12 +294,14 @@ export class CalendarweekComponent {
     const isArrowDown = event.key === "ArrowDown";
     this.parseWeekAndYear();
 
-    if ((isArrowUp && this.year === this.maxDateYear) || (isArrowDown && this.year === this.minDateYear)) {
+    if (
+      (isArrowUp && this.year === this.maxDateYear) ||
+      (isArrowDown && this.year === this.minDateYear)
+    ) {
       event.preventDefault();
-      this.year = (isArrowUp ? this.minDateYear : this.maxDateYear);
+      this.year = isArrowUp ? this.minDateYear : this.maxDateYear;
 
       this.onChange();
     }
   }
 }
-

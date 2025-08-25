@@ -7,17 +7,9 @@ import { getAllElements } from "../utils/getelements.js";
 /**
  * Represents any standard form input element <input>, <select>, or <textarea>.
  */
-export type HTMLFormInput =
-  | HTMLInputElement
-  | HTMLTextAreaElement
-  | HTMLSelectElement;
+export type HTMLFormInput = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 export type CustomValidator = () => boolean;
-export type FormComponentElement =
-  | "component"
-  | "success"
-  | "error"
-  | "submit"
-  | "modal";
+export type FormComponentElement = "component" | "success" | "error" | "submit" | "modal";
 type FilterFormElement = "component" | "field";
 
 export interface RadioGroup {
@@ -26,10 +18,8 @@ export interface RadioGroup {
 }
 
 // Form selector functions
-const formElementSelector =
-  createAttribute<FormComponentElement>("data-form-element");
-const filterFormSelector =
-  createAttribute<FilterFormElement>("data-filter-form");
+const formElementSelector = createAttribute<FormComponentElement>("data-form-element");
+const filterFormSelector = createAttribute<FilterFormElement>("data-filter-form");
 
 /**
  * Check if a FormElement is a radio input.
@@ -45,9 +35,7 @@ export function isRadioInput(input: HTMLFormInput): input is HTMLInputElement {
  * @param {HTMLFormInput} input - The input that is to be checked.
  * @returns {boolean} True if the input is a checkbox, otherwise false.
  */
-export function isCheckboxInput(
-  input: HTMLFormInput,
-): input is HTMLInputElement {
+export function isCheckboxInput(input: HTMLFormInput): input is HTMLInputElement {
   return input instanceof HTMLInputElement && input.type === "checkbox";
 }
 
@@ -110,9 +98,7 @@ export function getRadioGroupStrict(
   }
 
   if (groups.length > 1) {
-    console.warn(
-      `Get radio group: Multiple groups found for name "${name}". Returning the first.`,
-    );
+    console.warn(`Get radio group: Multiple groups found for name "${name}". Returning the first.`);
   }
 
   if (!group.inputs.length) {
@@ -131,9 +117,7 @@ export function getRadioGroup(
   try {
     return getRadioGroupStrict(source, name);
   } catch (e: unknown) {
-    console.warn(
-      `Get radio group: ${e instanceof Error ? e.message : "Unknown error"}`,
-    );
+    console.warn(`Get radio group: ${e instanceof Error ? e.message : "Unknown error"}`);
     return null;
   }
 }
@@ -154,9 +138,7 @@ export function findFormInput<T extends HTMLFormInput = HTMLFormInput>(
   }
 
   if (matches.length > 1) {
-    throw new Error(
-      `Multiple form inputs found with selector "${selector}" - expected only one.`,
-    );
+    throw new Error(`Multiple form inputs found with selector "${selector}" - expected only one.`);
   }
 
   return matches[0];
@@ -293,43 +275,35 @@ export function initWfInputs(container: HTMLElement) {
   ];
 
   // Add change event listener for checkboxes
-  container
-    .querySelectorAll<HTMLInputElement>(wf.select.checkboxInput)
-    .forEach((input) => {
-      input.addEventListener("change", (event) => {
-        const target = event.target as HTMLInputElement;
-        setChecked(target, target.checked, true);
-      });
+  container.querySelectorAll<HTMLInputElement>(wf.select.checkboxInput).forEach((input) => {
+    input.addEventListener("change", (event) => {
+      const target = event.target as HTMLInputElement;
+      setChecked(target, target.checked, true);
     });
+  });
 
   // Add change event listener for radio buttons
-  container
-    .querySelectorAll<HTMLInputElement>('input[type="radio"]')
-    .forEach((input) => {
-      input.addEventListener("change", (event) => {
-        const target = event.target as HTMLInputElement;
-        if (!target.checked) return;
+  container.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach((input) => {
+    input.addEventListener("change", (event) => {
+      const target = event.target as HTMLInputElement;
+      if (!target.checked) return;
 
-        const radioGroup = getRadioGroup(container, target.name);
-        radioGroup.inputs.forEach((radio) => {
-          // Check the radio that was selected, uncheck all others in the group
-          setChecked(radio, radio.value === target.value, true);
-        });
+      const radioGroup = getRadioGroup(container, target.name);
+      radioGroup.inputs.forEach((radio) => {
+        // Check the radio that was selected, uncheck all others in the group
+        setChecked(radio, radio.value === target.value, true);
       });
     });
+  });
 
   // Add focus and blur event listeners for checkboxes and radios
   inputTypes.forEach(([type, customClass]) => {
     container
-      .querySelectorAll<HTMLInputElement>(
-        `input[type="${type}"]:not(${customClass})`,
-      )
+      .querySelectorAll<HTMLInputElement>(`input[type="${type}"]:not(${customClass})`)
       .forEach((input) => {
         input.addEventListener("focus", (event) => {
           const target = event.target as HTMLInputElement;
-          const customElement = target
-            .closest(".w-checkbox, .w-radio")
-            ?.querySelector(customClass);
+          const customElement = target.closest(".w-checkbox, .w-radio")?.querySelector(customClass);
           if (customElement) {
             customElement.classList.add(wf.class.focus);
             if (target.matches(wf.select.focused)) {
@@ -340,14 +314,9 @@ export function initWfInputs(container: HTMLElement) {
 
         input.addEventListener("blur", (event) => {
           const target = event.target as HTMLInputElement;
-          const customElement = target
-            .closest(".w-checkbox, .w-radio")
-            ?.querySelector(customClass);
+          const customElement = target.closest(".w-checkbox, .w-radio")?.querySelector(customClass);
           if (customElement) {
-            customElement.classList.remove(
-              wf.class.focus,
-              wf.class.focusVisible,
-            );
+            customElement.classList.remove(wf.class.focus, wf.class.focusVisible);
           }
         });
       });
@@ -358,9 +327,7 @@ export function reportValidity(input: HTMLFormInput): void {
   input.reportValidity();
   input.classList.add("has-error");
   if (isCheckboxInput(input)) {
-    input.parentElement
-      ?.querySelector(wf.select.checkbox)
-      ?.classList.add("has-error");
+    input.parentElement?.querySelector(wf.select.checkbox)?.classList.add("has-error");
   }
 
   if (input.type !== "checkbox" && input.type !== "radio") {
@@ -377,9 +344,7 @@ export function reportValidity(input: HTMLFormInput): void {
 export function removeErrorClasses(input: HTMLFormInput): void {
   input.classList.remove("has-error");
   if (isCheckboxInput(input)) {
-    input.parentElement
-      ?.querySelector(wf.select.checkbox)
-      ?.classList.remove("has-error");
+    input.parentElement?.querySelector(wf.select.checkbox)?.classList.remove("has-error");
   }
 }
 

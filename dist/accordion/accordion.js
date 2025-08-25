@@ -11,10 +11,10 @@ export class Accordion {
     onClick(callback) {
         this.removeOnClick();
         this.onClickCallback = callback;
-        this.uiTrigger.addEventListener('click', this.onClickCallback);
+        this.uiTrigger.addEventListener("click", this.onClickCallback);
     }
     removeOnClick() {
-        this.uiTrigger.removeEventListener('click', this.onClickCallback);
+        this.uiTrigger.removeEventListener("click", this.onClickCallback);
     }
     open() {
         if (!this.isOpen) {

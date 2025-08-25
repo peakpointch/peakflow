@@ -7,7 +7,7 @@ export function isScrollbarVisible(element: HTMLElement): boolean {
   const overflowY = style.overflowY;
 
   // If scrolling is explicitly prevented
-  if (overflowY === 'hidden' || overflowY === 'clip') {
+  if (overflowY === "hidden" || overflowY === "clip") {
     return false;
   }
 
@@ -25,17 +25,17 @@ export function isScrollbarVisible(element: HTMLElement): boolean {
  */
 export function getScrollbarWidth(element: HTMLElement): number {
   // Create an off-screen scrollable div to measure scrollbar width
-  const scrollDiv = document.createElement('div');
-  scrollDiv.style.visibility = 'hidden';
-  scrollDiv.style.overflow = 'scroll';
-  scrollDiv.style.position = 'absolute';
-  scrollDiv.style.top = '-9999px';
-  scrollDiv.style.width = '100px';
+  const scrollDiv = document.createElement("div");
+  scrollDiv.style.visibility = "hidden";
+  scrollDiv.style.overflow = "scroll";
+  scrollDiv.style.position = "absolute";
+  scrollDiv.style.top = "-9999px";
+  scrollDiv.style.width = "100px";
   element.appendChild(scrollDiv);
 
   // Add inner div to get inner width
-  const innerDiv = document.createElement('div');
-  innerDiv.style.width = '100%';
+  const innerDiv = document.createElement("div");
+  innerDiv.style.width = "100%";
   scrollDiv.appendChild(innerDiv);
 
   const scrollbarWidth = scrollDiv.offsetWidth - innerDiv.offsetWidth;
@@ -49,7 +49,7 @@ export function addScrollbarPadding(element: HTMLElement, scrollbarElement?: HTM
   if (!scrollbarElement) scrollbarElement = element;
 
   const scrollbarWidth = getVisibleScrollbarWidth(scrollbarElement);
-  const currentPadding = parseFloat(getComputedStyle(element).paddingRight || '0');
+  const currentPadding = parseFloat(getComputedStyle(element).paddingRight || "0");
 
   if (scrollbarWidth === 0) return;
 
@@ -67,8 +67,8 @@ export function removeScrollbarPadding(element: HTMLElement): void {
 
   if (originalPadding !== undefined) {
     element.style.paddingRight = `${originalPadding}px`;
-    if (originalPadding === '0') {
-      element.style.removeProperty('paddingRight');
+    if (originalPadding === "0") {
+      element.style.removeProperty("paddingRight");
     }
     delete element.dataset.originalPaddingRight;
   }

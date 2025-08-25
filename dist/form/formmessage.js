@@ -32,8 +32,7 @@ export class FormMessage {
             return;
         }
         this.component = component;
-        this.messageElement =
-            this.component?.querySelector('[data-message-element="message"]') || null;
+        this.messageElement = this.component?.querySelector('[data-message-element="message"]') || null;
         this.reset();
         this.initialized = true;
     }

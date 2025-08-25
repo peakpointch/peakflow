@@ -20,8 +20,7 @@ class CollectionList {
         console.log(`"${this.options.name}" CollectionList:`, ...args);
     }
     isEmpty() {
-        const isEmpty = !this.listElement &&
-            this.container.querySelector(".w-dyn-empty") !== null;
+        const isEmpty = !this.listElement && this.container.querySelector(".w-dyn-empty") !== null;
         if (isEmpty) {
             console.warn(`Collection "${this.options.name}" is empty.`);
         }

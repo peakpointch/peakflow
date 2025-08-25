@@ -1,8 +1,5 @@
 // Imports
-import createAttribute, {
-  exclude,
-  extend,
-} from "../attributeselector/index.js";
+import createAttribute, { exclude, extend } from "../attributeselector/index.js";
 import {
   initWfInputs,
   sendFormData,
@@ -62,14 +59,9 @@ type StepsComponentElement =
 type StepsNavElement = "prev" | "next";
 
 // Selector functions
-const stepsElementSelector = createAttribute<StepsComponentElement>(
-  "data-steps-element",
-  {
-    defaultExclusions: [
-      '[data-steps-element="component"] [data-steps-element="component"] *',
-    ],
-  },
-);
+const stepsElementSelector = createAttribute<StepsComponentElement>("data-steps-element", {
+  defaultExclusions: ['[data-steps-element="component"] [data-steps-element="component"] *'],
+});
 const stepsTargetSelector = createAttribute<string>("data-step-target");
 const stepsNavSelector = createAttribute<StepsNavElement>("data-steps-nav");
 
@@ -144,28 +136,14 @@ export class MultiStepForm {
       this.formElement = this.component;
     }
 
-    this.formSteps = this.component.querySelectorAll(
-      stepsElementSelector("step"),
-    );
-    this.paginationItems = this.component.querySelectorAll(
-      STEPS_PAGINATION_ITEM_SELECTOR,
-    );
-    this.navigationElement = this.component.querySelector(
-      stepsElementSelector("navigation"),
-    );
-    this.buttonsNext = this.component.querySelectorAll(
-      stepsNavSelector("next"),
-    );
-    this.buttonsPrev = this.component.querySelectorAll(
-      stepsNavSelector("prev"),
-    );
+    this.formSteps = this.component.querySelectorAll(stepsElementSelector("step"));
+    this.paginationItems = this.component.querySelectorAll(STEPS_PAGINATION_ITEM_SELECTOR);
+    this.navigationElement = this.component.querySelector(stepsElementSelector("navigation"));
+    this.buttonsNext = this.component.querySelectorAll(stepsNavSelector("next"));
+    this.buttonsPrev = this.component.querySelectorAll(stepsNavSelector("prev"));
 
-    this.successElement = this.component.querySelector(
-      formElementSelector("success"),
-    );
-    this.errorElement = this.component.querySelector(
-      formElementSelector("error"),
-    );
+    this.successElement = this.component.querySelector(formElementSelector("success"));
+    this.errorElement = this.component.querySelector(formElementSelector("error"));
     this.submitButton = this.component.querySelector<HTMLInputElement>(
       formElementSelector("submit"),
     );
@@ -230,8 +208,7 @@ export class MultiStepForm {
     this.formElement.dataset.state = "sending";
     if (this.submitButton) {
       this.submitButton.dataset.defaultText = this.submitButton.value;
-      this.submitButton.value =
-        this.submitButton.dataset.wait || "Wird gesendet ...";
+      this.submitButton.value = this.submitButton.dataset.wait || "Wird gesendet ...";
     }
 
     const formData = this.buildJsonForWebflow();
@@ -256,9 +233,8 @@ export class MultiStepForm {
     const fields = this.getFormData();
 
     if (this.options.recaptcha) {
-      const recaptcha = (
-        this.formElement.querySelector("#g-recaptcha-response") as HTMLFormInput
-      ).value;
+      const recaptcha = (this.formElement.querySelector("#g-recaptcha-response") as HTMLFormInput)
+        .value;
       fields["g-recaptcha-response"] = recaptcha;
     }
 
@@ -281,8 +257,7 @@ export class MultiStepForm {
     this.formElement.dispatchEvent(new CustomEvent("formSuccess"));
 
     if (this.submitButton) {
-      this.submitButton.value =
-        this.submitButton.dataset.defaultText || "Submit";
+      this.submitButton.value = this.submitButton.dataset.defaultText || "Submit";
     }
   }
 
@@ -293,8 +268,7 @@ export class MultiStepForm {
     this.formElement.dispatchEvent(new CustomEvent("formError"));
 
     if (this.submitButton) {
-      this.submitButton.value =
-        this.submitButton.dataset.defaultText || "Submit";
+      this.submitButton.value = this.submitButton.dataset.defaultText || "Submit";
     }
   }
 
@@ -456,10 +430,7 @@ export class MultiStepForm {
 
     this.paginationItems.forEach((step, index) => {
       step.classList.toggle(this.options.pagination.doneClass, index < target);
-      step.classList.toggle(
-        this.options.pagination.activeClass,
-        index === target,
-      );
+      step.classList.toggle(this.options.pagination.activeClass, index === target);
     });
   }
 
@@ -479,12 +450,11 @@ export class MultiStepForm {
 
   public validateCurrentStep(stepIndex: number): boolean {
     if (!this.options.validation.validate) return true;
-    const basicError = `Validation failed for step: ${stepIndex + 1}/${
-      this.formSteps.length
-    }`;
+    const basicError = `Validation failed for step: ${stepIndex + 1}/${this.formSteps.length}`;
     const currentStepElement = this.formSteps[stepIndex];
-    const inputs: NodeListOf<HTMLFormInput> =
-      currentStepElement.querySelectorAll(wf.select.formInput);
+    const inputs: NodeListOf<HTMLFormInput> = currentStepElement.querySelectorAll(
+      wf.select.formInput,
+    );
 
     // TODO: Fix this overkill approach
     const filteredInputs = Array.from(inputs).filter((input) => {
@@ -495,10 +465,7 @@ export class MultiStepForm {
       return !isExcluded;
     });
 
-    let { isValid } = validateFields(
-      filteredInputs,
-      this.options.validation.reportValidity,
-    );
+    let { isValid } = validateFields(filteredInputs, this.options.validation.reportValidity);
 
     if (!isValid && this.options.validation.reportValidity) {
       console.warn(`${basicError}: Standard validation is not valid`);
@@ -511,8 +478,7 @@ export class MultiStepForm {
       .map((entry) => () => entry.validator());
 
     // Custom validations
-    const customValid =
-      customValidators?.every((validator) => validator()) ?? true;
+    const customValid = customValidators?.every((validator) => validator()) ?? true;
     if (this.options.validation.reportValidity && !customValid) {
       console.warn(`${basicError}: Custom validation is not valid`);
     }

@@ -1,15 +1,18 @@
 type AttributeMatchType =
-  | 'startsWith'    // ^=
-  | 'endsWith'      // $=
-  | 'includes'      // *=
-  | 'whitespace'    // ~=
-  | 'hyphen'        // |=
-  | 'exact';        // =
-type AttributeMatchOperator = '^' | '$' | '*' | '~' | '|' | '';
+  | "startsWith" // ^=
+  | "endsWith" // $=
+  | "includes" // *=
+  | "whitespace" // ~=
+  | "hyphen" // |=
+  | "exact"; // =
+type AttributeMatchOperator = "^" | "$" | "*" | "~" | "|" | "";
 type AttributeMatchTypeMap = {
   [key in AttributeMatchType]: AttributeMatchOperator;
 };
-export type AttributeSelector<T = string> = (name?: T, options?: Partial<AttributeOptions>) => string;
+export type AttributeSelector<T = string> = (
+  name?: T,
+  options?: Partial<AttributeOptions>,
+) => string;
 
 export interface AttributeDefaultOptions<T extends string> {
   defaultMatchType: AttributeMatchType;
@@ -23,19 +26,19 @@ export interface AttributeOptions {
 }
 
 const attrMatchTypes: AttributeMatchTypeMap = {
-  startsWith: '^',
-  endsWith: '$',
-  includes: '*',
-  whitespace: '~',
-  hyphen: '|',
-  exact: ''
+  startsWith: "^",
+  endsWith: "$",
+  includes: "*",
+  whitespace: "~",
+  hyphen: "|",
+  exact: "",
 };
 
 /**
  * Converts a human-friendly `AttributeType` to a CSS `AttributeOperator`.
  */
 function getOperator(type: AttributeMatchType): AttributeMatchOperator {
-  return attrMatchTypes[type] || '';
+  return attrMatchTypes[type] || "";
 }
 
 /**
@@ -48,7 +51,7 @@ function getOperator(type: AttributeMatchType): AttributeMatchOperator {
 export function exclude(selector: string, ...exclusions: string[]): string {
   if (exclusions.length === 0) return selector;
 
-  return extend(selector, `:not(${exclusions.join(', ')})`);
+  return extend(selector, `:not(${exclusions.join(", ")})`);
 }
 
 export function extend(selector: string, ...extensions: string[]): string {
@@ -60,36 +63,36 @@ export function extend(selector: string, ...extensions: string[]): string {
     return append(selectors, extension);
   });
 
-  return selectorsWithExtensions.join(', ');
+  return selectorsWithExtensions.join(", ");
 }
 
 export function append(selectorList: string[], suffix: string): string {
   return selectorList.reduce((acc, string) => {
-    const prefix = acc === '' ? '' : `${acc}, `;
+    const prefix = acc === "" ? "" : `${acc}, `;
     return `${prefix}${string}${suffix}`;
-  }, '');
+  }, "");
 }
 
 export function split(selector: string): string[] {
   const result: string[] = [];
-  let current = '';
+  let current = "";
   let depth = 0;
   let i = 0;
 
   while (i < selector.length) {
     const char = selector[i];
 
-    if (char === '(') {
+    if (char === "(") {
       depth++;
-    } else if (char === ')') {
+    } else if (char === ")") {
       depth--;
     }
 
-    if (char === ',' && depth === 0) {
+    if (char === "," && depth === 0) {
       result.push(current.trim());
-      current = '';
+      current = "";
       i++; // skip comma
-      while (selector[i] === ' ') i++; // skip all spaces after comma
+      while (selector[i] === " ") i++; // skip all spaces after comma
       continue;
     }
 
@@ -108,7 +111,7 @@ export function split(selector: string): string[] {
  * Creates a selector function based on the provided attribute name.
  * The returned selector function can be used to generate a string selector for the given name.
  * If no name is provided, it will return a selector with just the attribute name.
- * 
+ *
  * @template T - The type of the name that will be passed to the generated selector function (e.g., string).
  * @param attrName - The name of the attribute that will be used in the selector.
  * @param defaultOptions - Options to configure selector generation.
@@ -116,19 +119,22 @@ export function split(selector: string): string[] {
  */
 export const createAttribute = <T extends string = string>(
   attrName: string,
-  defaultOptions?: Partial<AttributeDefaultOptions<T>>
+  defaultOptions?: Partial<AttributeDefaultOptions<T>>,
 ): AttributeSelector<T> => {
   const mergedDefaultOptions: AttributeDefaultOptions<T> = {
-    defaultMatchType: defaultOptions?.defaultMatchType ?? 'exact',
+    defaultMatchType: defaultOptions?.defaultMatchType ?? "exact",
     defaultValue: defaultOptions?.defaultValue ?? undefined,
     defaultExclusions: defaultOptions?.defaultExclusions ?? [],
-  }
+  };
 
-  return (name: T | undefined = mergedDefaultOptions.defaultValue, options?: Partial<AttributeOptions>): string => {
+  return (
+    name: T | undefined = mergedDefaultOptions.defaultValue,
+    options?: Partial<AttributeOptions>,
+  ): string => {
     const mergedOptions: AttributeOptions = {
       matchType: options?.matchType ?? mergedDefaultOptions.defaultMatchType,
       exclusions: options?.exclusions ?? mergedDefaultOptions.defaultExclusions,
-    }
+    };
 
     if (!name) {
       return exclude(`[${attrName}]`, ...mergedOptions.exclusions);
@@ -139,4 +145,4 @@ export const createAttribute = <T extends string = string>(
 
     return exclude(selector, ...(mergedOptions.exclusions ?? []));
   };
-}
+};

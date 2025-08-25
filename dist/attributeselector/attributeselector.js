@@ -1,16 +1,16 @@
 const attrMatchTypes = {
-    startsWith: '^',
-    endsWith: '$',
-    includes: '*',
-    whitespace: '~',
-    hyphen: '|',
-    exact: ''
+    startsWith: "^",
+    endsWith: "$",
+    includes: "*",
+    whitespace: "~",
+    hyphen: "|",
+    exact: "",
 };
 /**
  * Converts a human-friendly `AttributeType` to a CSS `AttributeOperator`.
  */
 function getOperator(type) {
-    return attrMatchTypes[type] || '';
+    return attrMatchTypes[type] || "";
 }
 /**
  * Excludes a CSS selector from a CSS selector.
@@ -22,7 +22,7 @@ function getOperator(type) {
 export function exclude(selector, ...exclusions) {
     if (exclusions.length === 0)
         return selector;
-    return extend(selector, `:not(${exclusions.join(', ')})`);
+    return extend(selector, `:not(${exclusions.join(", ")})`);
 }
 export function extend(selector, ...extensions) {
     if (extensions.length === 0)
@@ -31,32 +31,32 @@ export function extend(selector, ...extensions) {
     const selectorsWithExtensions = extensions.map((extension) => {
         return append(selectors, extension);
     });
-    return selectorsWithExtensions.join(', ');
+    return selectorsWithExtensions.join(", ");
 }
 export function append(selectorList, suffix) {
     return selectorList.reduce((acc, string) => {
-        const prefix = acc === '' ? '' : `${acc}, `;
+        const prefix = acc === "" ? "" : `${acc}, `;
         return `${prefix}${string}${suffix}`;
-    }, '');
+    }, "");
 }
 export function split(selector) {
     const result = [];
-    let current = '';
+    let current = "";
     let depth = 0;
     let i = 0;
     while (i < selector.length) {
         const char = selector[i];
-        if (char === '(') {
+        if (char === "(") {
             depth++;
         }
-        else if (char === ')') {
+        else if (char === ")") {
             depth--;
         }
-        if (char === ',' && depth === 0) {
+        if (char === "," && depth === 0) {
             result.push(current.trim());
-            current = '';
+            current = "";
             i++; // skip comma
-            while (selector[i] === ' ')
+            while (selector[i] === " ")
                 i++; // skip all spaces after comma
             continue;
         }
@@ -80,7 +80,7 @@ export function split(selector) {
  */
 export const createAttribute = (attrName, defaultOptions) => {
     const mergedDefaultOptions = {
-        defaultMatchType: defaultOptions?.defaultMatchType ?? 'exact',
+        defaultMatchType: defaultOptions?.defaultMatchType ?? "exact",
         defaultValue: defaultOptions?.defaultValue ?? undefined,
         defaultExclusions: defaultOptions?.defaultExclusions ?? [],
     };

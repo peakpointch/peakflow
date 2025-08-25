@@ -1,2 +1,2 @@
-export { Pdf as default } from './pdf.js';
-export * from './pdf.js';
+export { Pdf as default } from "./pdf.js";
+export * from "./pdf.js";

@@ -7,9 +7,9 @@
 export function getAllElements(input, options = {}) {
     const opts = {
         single: options.single ?? false,
-        node: options.node ?? document
+        node: options.node ?? document,
     };
-    if (typeof input === 'string') {
+    if (typeof input === "string") {
         const elements = Array.from(opts.node.querySelectorAll(input)).filter(Boolean);
         if (elements.length === 0) {
             throw new Error(`No elements found matching selector: ${input}`);
@@ -31,15 +31,15 @@ export function getAllElements(input, options = {}) {
         return Array.from(input);
     }
     else {
-        throw new Error('Invalid input provided: must be a string, HTMLElement, array or node list.');
+        throw new Error("Invalid input provided: must be a string, HTMLElement, array or node list.");
     }
 }
 export function getElement(input, options = {}) {
     const opts = {
         single: options.single ?? true,
-        node: options.node ?? document
+        node: options.node ?? document,
     };
-    if (typeof input === 'string') {
+    if (typeof input === "string") {
         const elements = Array.from(opts.node.querySelectorAll(input));
         if (elements.length === 0) {
             throw new Error(`No elements found matching selector: "${input}".`);
@@ -53,6 +53,6 @@ export function getElement(input, options = {}) {
         return input;
     }
     else {
-        throw new Error('Invalid input provided: must be a string or HTMLElement.');
+        throw new Error("Invalid input provided: must be a string or HTMLElement.");
     }
 }
