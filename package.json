@@ -27,6 +27,10 @@
       "types": "./dist/canvas/index.d.ts",
       "default": "./dist/canvas/index.js"
     },
+    "./copy": {
+      "types": "./dist/copy/index.d.ts",
+      "default": "./dist/copy/index.js"
+    },
     "./dateflow": {
       "types": "./dist/dateflow/index.d.ts",
       "default": "./dist/dateflow/index.js"
@@ -109,6 +113,9 @@
       ],
       "canvas": [
         "dist/canvas/index.d.ts"
+      ],
+      "copy": [
+        "dist/copy/index.d.ts"
       ],
       "dateflow": [
         "dist/dateflow/index.d.ts"
