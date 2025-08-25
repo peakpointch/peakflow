@@ -25,8 +25,10 @@ export class Peakflow<R extends Record<string, AnyFn>> {
     return this._config;
   }
 
-  execute<K extends keyof R>(name: K, ...args: Parameters<R[K]>): ReturnType<R[K]> {
-    return this.registry[name](...args);
+  execute<K extends keyof R>(...name: K[]): void {
+    name.forEach((fn) => {
+      this.registry[fn]();
+    });
   }
 
   register<T extends string, F extends AnyFn>(

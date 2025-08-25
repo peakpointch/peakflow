@@ -10,8 +10,10 @@ export class Peakflow {
     getConfig() {
         return this._config;
     }
-    execute(name, ...args) {
-        return this.registry[name](...args);
+    execute(...name) {
+        name.forEach((fn) => {
+            this.registry[fn]();
+        });
     }
     register(name, fn) {
         this.registry[name] = fn;
