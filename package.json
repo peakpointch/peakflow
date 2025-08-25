@@ -1,6 +1,6 @@
 {
   "name": "peakflow",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "A TypeScript based Webflow library",
   "author": "Lukas Manuel Graf",
   "license": "ISC",
