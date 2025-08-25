@@ -83,6 +83,10 @@
       "types": "./dist/utils/index.d.ts",
       "default": "./dist/utils/index.js"
     },
+    "./video": {
+      "types": "./dist/video/index.d.ts",
+      "default": "./dist/video/index.js"
+    },
     "./webflow": {
       "types": "./dist/webflow/index.d.ts",
       "default": "./dist/webflow/index.js"
@@ -147,6 +151,9 @@
       ],
       "utils": [
         "dist/utils/index.d.ts"
+      ],
+      "video": [
+        "dist/video/index.d.ts"
       ],
       "webflow": [
         "dist/webflow/index.d.ts"
