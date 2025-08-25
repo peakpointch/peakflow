@@ -44,7 +44,9 @@ export class CopyComponent {
 }
 
 export function initCopyComponents(): void {
-  const selector = [CopyComponent.selector("component"), CopyComponent.attr.component].join("");
+  const selector = [CopyComponent.selector("component"), `[${CopyComponent.attr.component}]`].join(
+    " ",
+  );
   const allComponents = document.querySelectorAll<HTMLElement>(selector);
   allComponents.forEach((component) => CopyComponent.create(component));
 }

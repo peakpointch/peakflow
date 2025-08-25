@@ -34,7 +34,7 @@ CopyComponent.attr = {
 };
 CopyComponent.selector = createAttribute(_a.attr.element);
 export function initCopyComponents() {
-    const selector = [CopyComponent.selector("component"), CopyComponent.attr.component].join("");
+    const selector = [CopyComponent.selector("component"), `[${CopyComponent.attr.component}]`].join(" ");
     const allComponents = document.querySelectorAll(selector);
     allComponents.forEach((component) => CopyComponent.create(component));
 }

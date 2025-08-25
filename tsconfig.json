@@ -3,7 +3,10 @@
     "target": "ES2020",
     "module": "ESNext",
     "moduleResolution": "node",
-    "lib": ["DOM", "ES2020"],
+    "lib": [
+      "DOM",
+      "ES2020"
+    ],
     "outDir": "dist",
     "strict": false,
     "declaration": true,
@@ -12,10 +15,19 @@
     "noImplicitAny": false,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "types": [
+      "@vime/core/dist/types"
+    ]
   },
-  "include": ["src/**/index.ts"],
-  "exclude": ["dist", "node_modules", "./**/*.test.ts"],
+  "include": [
+    "src/**/index.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "./**/*.test.ts"
+  ],
   "tsc-alias": {
     "resolveFullPaths": true
   }
