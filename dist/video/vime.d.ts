@@ -1,4 +1,3 @@
-import "@vime/core";
 interface VimeConfig {
     customPoster: boolean;
 }

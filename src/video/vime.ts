@@ -1,4 +1,3 @@
-import "@vime/core";
 import Script from "../utils/script";
 import Stylesheet from "../utils/stylesheet";
 
