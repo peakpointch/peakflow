@@ -29,23 +29,16 @@
   "devDependencies": {
     "@types/html2canvas": "^0.5.35",
     "@types/jspdf": "^1.3.3",
-    "@types/validator": "^13.15.0",
-    "iana-tz-data": "^2019.1.0",
     "rimraf": "^6.0.1",
-    "tsc-alias": "^1.8.16",
     "typescript": "^5.8.3"
   },
   "dependencies": {
     "@calcom/embed-core": "^1.5.3",
-    "@vime/core": "^5.4.1",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "html2canvas": "^1.4.1",
     "hyphenation.de": "^0.2.1",
     "hypher": "^0.2.5",
-    "jspdf": "^3.0.1",
-    "lenis": "^1.3.7",
-    "swiper": "^11.2.10",
-    "validator": "^13.15.0"
+    "jspdf": "^3.0.1"
   }
 }
