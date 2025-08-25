@@ -1,5 +1,5 @@
-import { initVimePlayer, defaultConfig } from "./vime";
+import { initVimePlayer, vimeDefault } from "./vime";
 
 export function initVimePlayerDefault(): void {
-  initVimePlayer(defaultConfig);
+  initVimePlayer(vimeDefault);
 }

@@ -2,10 +2,12 @@ import Script from "../utils/script";
 import Stylesheet from "../utils/stylesheet";
 
 interface VimeConfig {
+  container: HTMLElement;
   customPoster: boolean;
 }
 
-export const defaultConfig: VimeConfig = {
+export const vimeDefault: VimeConfig = {
+  container: document.body,
   customPoster: false,
 };
 
@@ -35,9 +37,14 @@ export async function loadVimeAssets(): Promise<void> {
   }
 }
 
+const vimeSelector = {
+  component: `[data-vime-component]`,
+  customPoster: `[data-vime-element="custom-poster"], [vm-custom-poster]`,
+} as const;
+
 function getCustomPoster(player: HTMLVmPlayerElement): HTMLElement {
   const wrapper = player.parentElement;
-  const poster = wrapper?.querySelector<HTMLElement>("[vm-custom-poster]");
+  const poster = wrapper?.querySelector<HTMLElement>(vimeSelector.customPoster);
 
   if (!poster) {
     throw new Error(
@@ -48,6 +55,11 @@ function getCustomPoster(player: HTMLVmPlayerElement): HTMLElement {
   return poster;
 }
 
+function disableAllCustomPosters(container: HTMLElement): void {
+  const allPosters = container.querySelectorAll(vimeSelector.customPoster);
+  allPosters.forEach((poster) => poster.classList.add("hide"));
+}
+
 function getPlayerControls(player: HTMLVmPlayerElement): HTMLVmControlsElement {
   const controls = player.querySelector("vm-controls");
   if (!controls) {
@@ -56,10 +68,10 @@ function getPlayerControls(player: HTMLVmPlayerElement): HTMLVmControlsElement {
   return controls;
 }
 
-async function setup(player: HTMLVmPlayerElement, config: VimeConfig): Promise<void> {
+async function vimeCustomPoster(player: HTMLVmPlayerElement): Promise<void> {
   const adapter = await player.getAdapter();
   const controls = getPlayerControls(player);
-  const poster = config.customPoster ? getCustomPoster(player) : null;
+  const poster = getCustomPoster(player);
 
   if (!adapter) {
     throw new Error(`Vime: Failed to get adapter.`);
@@ -72,8 +84,6 @@ async function setup(player: HTMLVmPlayerElement, config: VimeConfig): Promise<v
   controls.style.opacity = "0";
 
   player.addEventListener("vmPausedChange", () => {
-    if (!config.customPoster) return;
-
     switch (player.paused) {
       case true:
         poster.style.removeProperty("display");
@@ -88,13 +98,24 @@ async function setup(player: HTMLVmPlayerElement, config: VimeConfig): Promise<v
   });
 }
 
-export async function initVimePlayer(config: VimeConfig = defaultConfig): Promise<void> {
+export async function initVimePlayer(config: Partial<VimeConfig> = vimeDefault): Promise<void> {
+  config.container = config.container || document.body;
+  const cfg: VimeConfig = {
+    container: config.container ?? vimeDefault.container,
+    customPoster: config.customPoster ?? vimeDefault.customPoster,
+  };
+
   await loadVimeAssets();
-  const allPlayers = document.querySelectorAll("vm-player");
+  const allPlayers = cfg.container.querySelectorAll("vm-player");
+
+  if (!config.customPoster) {
+    disableAllCustomPosters(cfg.container);
+    return;
+  }
 
   allPlayers.forEach((player) => {
     player.addEventListener("vmReady", () => {
-      setup(player, config);
+      vimeCustomPoster(player);
     });
   });
 }

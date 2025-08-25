@@ -1,6 +1,7 @@
 import Script from "../utils/script";
 import Stylesheet from "../utils/stylesheet";
-export const defaultConfig = {
+export const vimeDefault = {
+    container: document.body,
     customPoster: false,
 };
 export async function loadVimeAssets() {
@@ -25,13 +26,21 @@ export async function loadVimeAssets() {
         await script.load();
     }
 }
+const vimeSelector = {
+    component: `[data-vime-component]`,
+    customPoster: `[data-vime-element="custom-poster"], [vm-custom-poster]`,
+};
 function getCustomPoster(player) {
     const wrapper = player.parentElement;
-    const poster = wrapper?.querySelector("[vm-custom-poster]");
+    const poster = wrapper?.querySelector(vimeSelector.customPoster);
     if (!poster) {
         throw new Error(`Vime: Custom poster not found. Did you forget the "[vm-custom-poster]" attribute?`);
     }
     return poster;
+}
+function disableAllCustomPosters(container) {
+    const allPosters = container.querySelectorAll(vimeSelector.customPoster);
+    allPosters.forEach((poster) => poster.classList.add("hide"));
 }
 function getPlayerControls(player) {
     const controls = player.querySelector("vm-controls");
@@ -40,10 +49,10 @@ function getPlayerControls(player) {
     }
     return controls;
 }
-async function setup(player, config) {
+async function vimeCustomPoster(player) {
     const adapter = await player.getAdapter();
     const controls = getPlayerControls(player);
-    const poster = config.customPoster ? getCustomPoster(player) : null;
+    const poster = getCustomPoster(player);
     if (!adapter) {
         throw new Error(`Vime: Failed to get adapter.`);
     }
@@ -52,8 +61,6 @@ async function setup(player, config) {
     });
     controls.style.opacity = "0";
     player.addEventListener("vmPausedChange", () => {
-        if (!config.customPoster)
-            return;
         switch (player.paused) {
             case true:
                 poster.style.removeProperty("display");
@@ -66,12 +73,21 @@ async function setup(player, config) {
         }
     });
 }
-export async function initVimePlayer(config = defaultConfig) {
+export async function initVimePlayer(config = vimeDefault) {
+    config.container = config.container || document.body;
+    const cfg = {
+        container: config.container ?? vimeDefault.container,
+        customPoster: config.customPoster ?? vimeDefault.customPoster,
+    };
     await loadVimeAssets();
-    const allPlayers = document.querySelectorAll("vm-player");
+    const allPlayers = cfg.container.querySelectorAll("vm-player");
+    if (!config.customPoster) {
+        disableAllCustomPosters(cfg.container);
+        return;
+    }
     allPlayers.forEach((player) => {
         player.addEventListener("vmReady", () => {
-            setup(player, config);
+            vimeCustomPoster(player);
         });
     });
 }
