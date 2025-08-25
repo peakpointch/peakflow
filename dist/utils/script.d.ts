@@ -11,6 +11,10 @@ export interface ScriptOptions {
 export default class Script {
     /** The underlying HTMLScriptElement instance */
     element: HTMLScriptElement;
+    readonly src: string;
+    readonly type: string;
+    readonly async: boolean;
+    readonly defer: boolean;
     /** Tracks whether the script has finished loading */
     private loaded;
     /**
@@ -34,10 +38,15 @@ export default class Script {
     /**
      * Appends the script to the document head and returns a Promise
      * that resolves when the script finishes loading.
-     * If the script is already loaded, resolves immediately.
+     * If the script is already loaded or exists in the DOM, resolves immediately.
      *
      * @returns A Promise that resolves when the script is loaded.
      * @throws If the script fails to load.
      */
     load(): Promise<void>;
+    /**
+     * Checks if a script with the given URL already exists in the document.
+     * @param url - The src of the script to check
+     */
+    static exists(url: string): boolean;
 }

@@ -12,6 +12,10 @@ export interface ScriptOptions {
 export default class Script {
   /** The underlying HTMLScriptElement instance */
   public element: HTMLScriptElement;
+  public readonly src: string;
+  public readonly type: string;
+  public readonly async: boolean;
+  public readonly defer: boolean;
   /** Tracks whether the script has finished loading */
   private loaded = false;
 
@@ -26,21 +30,27 @@ export default class Script {
    * @param options.defer - Whether the script should defer execution until after parsing.
    */
   constructor(config: ScriptOptions) {
-    // Avoid adding the same script twice
+    // Check if script already exists in the DOM
     const existing = Array.from(document.querySelectorAll("script")).find(
       (el) => el.src === config.src,
     );
     if (existing) {
       this.element = existing as HTMLScriptElement;
       this.loaded = (this.element as any)._scriptLoaded || false;
-      return;
+    } else {
+      // Create new script element
+      this.element = document.createElement("script");
+      this.element.src = config.src;
+      this.element.type = config.type ?? "text/javascript";
+      this.element.async = config.async ?? false;
+      this.element.defer = config.defer ?? false;
     }
 
-    this.element = document.createElement("script");
-    this.element.src = config.src;
-    this.element.type = config.type ?? "text/javascript";
-    if (config.async) this.element.async = true;
-    if (config.defer) this.element.defer = true;
+    // Initialize readonly properties
+    this.src = this.element.src;
+    this.type = this.element.type;
+    this.async = this.element.async;
+    this.defer = this.element.defer;
   }
 
   /**
@@ -56,18 +66,20 @@ export default class Script {
   /**
    * Appends the script to the document head and returns a Promise
    * that resolves when the script finishes loading.
-   * If the script is already loaded, resolves immediately.
+   * If the script is already loaded or exists in the DOM, resolves immediately.
    *
    * @returns A Promise that resolves when the script is loaded.
    * @throws If the script fails to load.
    */
   public load(): Promise<void> {
-    if (this.loaded) return Promise.resolve();
+    if (this.loaded || Script.exists(this.src)) {
+      this.loaded = true;
+      return Promise.resolve();
+    }
 
     return new Promise<void>((resolve, reject) => {
       this.element.onload = () => {
         this.loaded = true;
-        // mark the element to avoid reloading
         (this.element as any)._scriptLoaded = true;
         resolve();
       };
@@ -75,5 +87,15 @@ export default class Script {
 
       document.head.appendChild(this.element);
     });
+  }
+
+  /**
+   * Checks if a script with the given URL already exists in the document.
+   * @param url - The src of the script to check
+   */
+  static exists(url: string): boolean {
+    return Array.from(document.querySelectorAll("script")).some((el) =>
+      (el as HTMLScriptElement).src.includes(url),
+    );
   }
 }
