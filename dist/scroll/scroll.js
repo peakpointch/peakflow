@@ -57,12 +57,9 @@ export function initGlobalScrollLinks() {
     });
 }
 export function disableWebflowScroll() {
-    //@ts-ignore
-    var Webflow = window.Webflow || [];
-    Webflow.push(function () {
-        $(function () {
-            $(document).off("click.wf-scroll");
-        });
+    const Webflow = window.Webflow || [];
+    Webflow.push(() => {
+        document.removeEventListener("click", window.Webflow?.scroll, true);
     });
 }
 export function overrideDefaultScroll(options = {}) {

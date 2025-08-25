@@ -86,12 +86,9 @@ export function initGlobalScrollLinks(): void {
 }
 
 export function disableWebflowScroll(): void {
-  //@ts-ignore
-  var Webflow = window.Webflow || [];
-  Webflow.push(function () {
-    $(function () {
-      $(document).off("click.wf-scroll");
-    });
+  const Webflow = (window as any).Webflow || [];
+  Webflow.push(() => {
+    document.removeEventListener("click", (window as any).Webflow?.scroll, true);
   });
 }
 
