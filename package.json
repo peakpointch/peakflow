@@ -2,9 +2,10 @@
   "name": "peakflow",
   "version": "0.0.1",
   "description": "A TypeScript based Webflow library",
-  "author": "Lukas Manuel Graf",
-  "license": "ISC",
-  "sideEffects": false,
+  "type": "module",
+  "typings": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -13,6 +14,14 @@
     "./*": {
       "types": "./dist/*/index.d.ts",
       "default": "./dist/*/index.js"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "default": "./dist/utils/index.js"
+    },
+    "./attributeselector/": {
+      "types": "./dist/attributeselector/index.d.ts",
+      "default": "./dist/attributeselector/index.js"
     }
   },
   "files": [
@@ -22,7 +31,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rimraf ./dist",
-    "build": "npm run clean && tsc",
+    "build": "npm run clean --silent && tsc",
     "livereload": "node esbuild.config.js",
     "update-time-zones": "npm install -D iana-tz-data && node ./utils/extract-timezones.js"
   },
@@ -40,5 +49,7 @@
     "hyphenation.de": "^0.2.1",
     "hypher": "^0.2.5",
     "jspdf": "^3.0.1"
-  }
+  },
+  "author": "Lukas Manuel Graf",
+  "license": "MIT"
 }
