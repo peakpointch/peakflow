@@ -1,20 +1,24 @@
-export * from './accordion/index.js';
-export * from './attributeselector/index.js';
-export * from './cal/index.js';
-export * from './canvas/index.js';
-export * from './dateflow/index.js';
-export * from './form/index.js';
-export * from './hyphenizer/index.js';
-export * from './inlinecms/index.js';
-export * from './inputsync/index.js';
-export * from './marquee/index.js';
-export * from './modal/index.js';
-export * from './pdf/index.js';
-export * from './renderer/index.js';
-export * from './scroll/index.js';
-export * from './timezones/index.js';
-export * from './webflow/index.js';
-export * from './wfcollection/index.js';
+export { peakflow as default } from "./peakflow";
+export * from "./peakflow";
 
-export * from './utils/index.js';
-export * from './typeutils/index.js';
+export * from "./accordion/index.js";
+export * from "./attributeselector/index.js";
+export * from "./cal/index.js";
+export * from "./canvas/index.js";
+export * from "./dateflow/index.js";
+export * from "./form/index.js";
+export * from "./hyphenizer/index.js";
+export * from "./inlinecms/index.js";
+export * from "./inputsync/index.js";
+export * from "./marquee/index.js";
+export * from "./modal/index.js";
+export * from "./pdf/index.js";
+export * from "./renderer/index.js";
+export * from "./scroll/index.js";
+export * from "./timezones/index.js";
+export * from "./webflow/index.js";
+export * from "./wfcollection/index.js";
+
+export * from "./utils/index.js";
+export * from "./typeutils/index.js";
+
