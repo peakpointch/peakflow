@@ -1,3 +1,4 @@
+import type { PartialExcept } from "../typeutils/index.js";
 export declare const UCLocaleMap: {
     readonly ar: {
         'locale-id': string;
@@ -4263,14 +4264,20 @@ export declare const UCLocaleMap: {
     };
 };
 export type UCLocale = keyof typeof UCLocaleMap;
+type UCTheme = "light" | "dark" | "auto";
 declare const UCSelector: {
-    readonly component: "[data-uploadcare-component]";
+    readonly id: "[data-uploadcare-id]";
     readonly fields: {
         readonly url: "[data-uploadcare-field=\"url\"]";
         readonly uuid: "[data-uploadcare-field=\"uuid\"]";
     };
+    readonly elements: {
+        readonly component: "[data-uploadcare-element=\"component\"]";
+        readonly target: "[data-uploadcare-element=\"target\"]";
+    };
 };
 interface UCFileUploaderConfig {
+    /** Uploadcare component name (must be unique if multiple uploaders) */
     name?: string;
     component: HTMLElement;
     locale: UCLocale;
@@ -4278,11 +4285,35 @@ interface UCFileUploaderConfig {
     fields: {
         [T in keyof (typeof UCSelector)["fields"]]: HTMLInputElement;
     };
+    /** Uploadcare public key */
+    pubkey: string;
+    /** File uploader theme */
+    theme: UCTheme;
+    className: string;
+    /** Where to insert the uploader */
+    target: HTMLElement;
+    /** Whether to replace the target
+     * - true: the file uploader will replace the target element
+     * - false: the file uploader will be appended as a child to the target element
+     */
+    replaceTarget: boolean;
 }
+type PartialUCFileUploaderConfig = PartialExcept<UCFileUploaderConfig, "pubkey" | "component">;
+/**
+ * Injects Uploadcare File Uploader web components (config, uploader, ctx-provider)
+ * and ensures the stylesheet is loaded once.
+ *
+ * @returns References to the created elements, esp. ctxProvider.
+ */
+export declare function mountUCFileUploader(config: UCFileUploaderConfig): {
+    configEl: HTMLElement;
+    uploaderEl: HTMLElement;
+    ctxProvider: HTMLElement;
+};
 /**
  * Initialize Uploadcare file-uploader instance and attach the files to a form field.
  */
-export declare function initUCFileUploader(config: Partial<UCFileUploaderConfig>): void;
-export declare function initUploadcare(container: HTMLElement, config: Partial<Omit<UCFileUploaderConfig, "name" | "component">>): void;
+export declare function initUCFileUploader(config: PartialUCFileUploaderConfig): void;
+export declare function initUploadcare(container: HTMLElement, config: Partial<Omit<PartialUCFileUploaderConfig, "name" | "component">>): void;
 export declare function initUploadcareDefault(): void;
 export {};

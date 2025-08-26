@@ -1,4 +1,5 @@
 import { logPrefix } from "../utils/logger.js";
+import Stylesheet from "../utils/stylesheet.js";
 import * as UC from "@uploadcare/file-uploader";
 import ar from "@uploadcare/file-uploader/locales/file-uploader/ar.js";
 import az from "@uploadcare/file-uploader/locales/file-uploader/az.js";
@@ -71,21 +72,55 @@ export const UCLocaleMap = {
     zh,
 };
 const UCAttr = {
-    component: "data-uploadcare-component",
+    id: "data-uploadcare-id",
+    element: "data-uploadcare-element",
     field: "data-uploadcare-field",
 };
 const UCSelector = {
-    component: `[${UCAttr.component}]`,
+    id: `[${UCAttr.id}]`,
     fields: {
         url: `[${UCAttr.field}="url"]`,
         uuid: `[${UCAttr.field}="uuid"]`,
     },
+    elements: {
+        component: `[${UCAttr.element}="component"]`,
+        target: `[${UCAttr.element}="target"]`,
+    },
 };
+function getUploaderClass(theme, className, componentName) {
+    const baseClass = `${className} ${componentName}`.trim();
+    switch (theme) {
+        case "light":
+            return `${baseClass} uc-light`;
+        case "dark":
+            return `${baseClass} uc-dark`;
+        case "auto":
+        default:
+            return baseClass;
+    }
+}
+function getTarget(cfg, prefix) {
+    let target = cfg.target;
+    if (target)
+        return target;
+    const idSuffix = cfg.name ? `[${UCAttr.id}="${cfg.name}"]` : "";
+    const globalTargetSelector = `${UCSelector.elements.target}${idSuffix}`;
+    target = cfg.component.querySelector(UCSelector.elements.target);
+    if (target)
+        return target;
+    if (idSuffix) {
+        target = document.body.querySelector(globalTargetSelector);
+        if (target)
+            return target;
+    }
+    throw new Error(`${prefix}Target element not found. Please specify a target element or tag it correctly with "${UCSelector.elements.target}" or with "${globalTargetSelector}" if the target element is not a descendant of the component element.`);
+}
 function initUCConfig(config) {
+    const prefix = logPrefix("Uploadcare", config.name);
     const defaultFields = Object.fromEntries(Object.entries(UCSelector.fields).map(([key, selector]) => {
         const el = config.component.querySelector(selector);
         if (!el) {
-            throw new Error(`Uploadcare: Default field with selector "${selector}" not found.`);
+            throw new Error(`${prefix}Default field with selector "${selector}" not found.`);
         }
         return [key, el];
     }));
@@ -95,10 +130,15 @@ function initUCConfig(config) {
         locale: config.locale ?? "en",
         fields: {
             ...defaultFields,
-            ...config.fields, // override defaults if provided
+            ...config.fields,
         },
+        theme: config.theme ?? "auto",
+        className: config.className ?? "my-config",
+        pubkey: config.pubkey,
+        target: config.target,
+        replaceTarget: config.replaceTarget ?? false,
     };
-    const prefix = logPrefix("Uploadcare", cfg.name);
+    cfg.target = getTarget(cfg, prefix);
     if (!cfg.component) {
         throw new Error(`${prefix}Component element for file uploader not found.`);
     }
@@ -126,6 +166,42 @@ function initUCEvents(ctxProvider, prefix, cfg) {
     });
 }
 /**
+ * Injects Uploadcare File Uploader web components (config, uploader, ctx-provider)
+ * and ensures the stylesheet is loaded once.
+ *
+ * @returns References to the created elements, esp. ctxProvider.
+ */
+export function mountUCFileUploader(config) {
+    // 1. Ensure stylesheet is present
+    new Stylesheet({
+        href: "https://cdn.jsdelivr.net/npm/@uploadcare/file-uploader@v1/web/uc-file-uploader-regular.min.css",
+    }).load();
+    const { pubkey, name, locale, theme, className, target, replaceTarget } = config;
+    // 2. Create <uc-config>
+    const configEl = document.createElement("uc-config");
+    configEl.setAttribute("locale-name", locale);
+    configEl.setAttribute("ctx-name", name);
+    configEl.setAttribute("pubkey", pubkey);
+    configEl.setAttribute("group-output", "");
+    // 3. Create <uc-file-uploader-minimal>
+    const uploaderEl = document.createElement("uc-file-uploader-minimal");
+    uploaderEl.setAttribute("ctx-name", name);
+    uploaderEl.className = getUploaderClass(theme, className, name);
+    // 4. Create <uc-upload-ctx-provider>
+    const ctxProvider = document.createElement("uc-upload-ctx-provider");
+    ctxProvider.setAttribute("ctx-name", name);
+    // Insert them into DOM (order matters: config + uploader + provider)
+    if (replaceTarget) {
+        target.replaceWith(configEl, uploaderEl, ctxProvider);
+    }
+    else {
+        target.appendChild(configEl);
+        target.appendChild(uploaderEl);
+        target.appendChild(ctxProvider);
+    }
+    return { configEl, uploaderEl, ctxProvider };
+}
+/**
  * Initialize Uploadcare file-uploader instance and attach the files to a form field.
  */
 export function initUCFileUploader(config) {
@@ -133,23 +209,19 @@ export function initUCFileUploader(config) {
     const prefix = logPrefix("Uploadcare", cfg.name);
     UC.defineLocale(cfg.locale, UCLocaleMap[cfg.locale]);
     UC.defineComponents(UC);
-    // Submit files
-    const ctxProvider = cfg.component.querySelector("uc-upload-ctx-provider");
-    if (!ctxProvider) {
-        throw new Error(`${prefix}Element "uc-upload-ctx-provider" not found inside component element.`);
-    }
+    const { ctxProvider } = mountUCFileUploader(cfg);
     initUCEvents(ctxProvider, prefix, cfg);
 }
 export function initUploadcare(container, config) {
     const prefix = logPrefix("Uploadcare");
-    const components = container.querySelectorAll(UCSelector.component);
+    const components = container.querySelectorAll(UCSelector.id);
     if (!components.length) {
-        console.warn(`${prefix}No component elements found inside container. Tag components with the "${UCSelector.component}" attribute.`);
+        console.warn(`${prefix}No component elements found inside container. Tag components with the "${UCSelector.id}" attribute.`);
     }
     components.forEach((component) => {
         const newConfig = {
             ...config,
-            name: component.getAttribute(UCAttr.component) ?? undefined,
+            name: component.getAttribute(UCAttr.id) ?? undefined,
             component: component,
         };
         initUCFileUploader(newConfig);
