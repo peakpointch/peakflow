@@ -4314,6 +4314,6 @@ export declare function mountUCFileUploader(config: UCFileUploaderConfig): {
  * Initialize Uploadcare file-uploader instance and attach the files to a form field.
  */
 export declare function initUCFileUploader(config: PartialUCFileUploaderConfig): void;
-export declare function initUploadcare(container: HTMLElement, config: Partial<Omit<PartialUCFileUploaderConfig, "name" | "component">>): void;
+export declare function initUploadcare(container: HTMLElement, config: Omit<PartialUCFileUploaderConfig, "pubkey" | "name" | "component">): void;
 export declare function initUploadcareDefault(): void;
 export {};

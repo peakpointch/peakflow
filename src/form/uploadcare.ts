@@ -81,6 +81,7 @@ const UCAttr = {
   id: "data-uploadcare-id",
   element: "data-uploadcare-element",
   field: "data-uploadcare-field",
+  pubkey: "data-uploadcare-pubkey",
 } as const;
 
 const UCSelector = {
@@ -187,6 +188,10 @@ function initUCConfig(config: PartialUCFileUploaderConfig): UCFileUploaderConfig
     throw new Error(`${prefix}Component element for file uploader not found.`);
   }
 
+  if (!cfg.pubkey) {
+    throw new Error(`${prefix}Public api key is missing.`);
+  }
+
   return cfg;
 }
 
@@ -273,7 +278,7 @@ export function initUCFileUploader(config: PartialUCFileUploaderConfig): void {
 
 export function initUploadcare(
   container: HTMLElement,
-  config: Partial<Omit<PartialUCFileUploaderConfig, "name" | "component">>,
+  config: Omit<PartialUCFileUploaderConfig, "pubkey" | "name" | "component">,
 ): void {
   const prefix = logPrefix("Uploadcare");
 
@@ -289,6 +294,7 @@ export function initUploadcare(
       ...(config as PartialUCFileUploaderConfig),
       name: component.getAttribute(UCAttr.id) ?? undefined,
       component: component,
+      pubkey: component.getAttribute(UCAttr.pubkey),
     };
     initUCFileUploader(newConfig);
   });
@@ -296,6 +302,6 @@ export function initUploadcare(
 
 export function initUploadcareDefault(): void {
   return initUploadcare(document.body, {
-    locale: "en",
+    locale: "de",
   });
 }
