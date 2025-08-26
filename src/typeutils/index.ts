@@ -7,3 +7,5 @@ export type CamelToDash<T extends string> = T extends `${infer Head}${infer Tail
 export type DashToCamelCase<T extends string> = T extends `${infer Head}-${infer Tail}`
   ? `${Head}${Capitalize<DashToCamelCase<Tail>>}` // Capitalize the first character of Tail
   : T;
+
+export type PartialExcept<T, K extends keyof T> = Partial<T> & Pick<T, K>;
