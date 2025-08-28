@@ -75,6 +75,10 @@
       "types": "./dist/scroll/index.d.ts",
       "default": "./dist/scroll/index.js"
     },
+    "./swiper": {
+      "types": "./dist/swiper/index.d.ts",
+      "default": "./dist/swiper/index.js"
+    },
     "./timezones": {
       "types": "./dist/timezones/index.d.ts",
       "default": "./dist/timezones/index.js"
@@ -150,6 +154,9 @@
       "scroll": [
         "dist/scroll/index.d.ts"
       ],
+      "swiper": [
+        "dist/swiper/index.d.ts"
+      ],
       "timezones": [
         "dist/timezones/index.d.ts"
       ],
@@ -198,7 +205,8 @@
     "html2canvas": "^1.4.1",
     "hyphenation.de": "^0.2.1",
     "hypher": "^0.2.5",
-    "jspdf": "^3.0.1"
+    "jspdf": "^3.0.1",
+    "swiper": "^11.2.10"
   },
   "author": "Lukas Manuel Graf",
   "license": "MIT"
