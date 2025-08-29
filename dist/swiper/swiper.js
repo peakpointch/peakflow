@@ -1,6 +1,6 @@
 import Swiper from "swiper";
 import { Autoplay, Navigation, Pagination, Manipulation } from "swiper/modules";
-import { toCamelCase } from "../utils";
+import { Stylesheet, toCamelCase } from "../utils";
 import { createAttribute } from "../attributeselector/index.js";
 const swiperSelector = createAttribute("data-swiper-element");
 function swiperEmpty(swiperElement) {
@@ -199,6 +199,9 @@ export function initWebflowSwiper(swiperElement) {
     return swiper;
 }
 export function initWebflowSwipers() {
+    new Stylesheet({
+        href: "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css",
+    }).load();
     // Remove all empty slides
     document.querySelectorAll(".w-slide:empty").forEach((e) => e.remove());
     const webflowSwipers = document.querySelectorAll('[swiper-component]:not([swiper-component="default"])');
@@ -207,6 +210,9 @@ export function initWebflowSwipers() {
     });
 }
 export function initDefaultSwipers() {
+    new Stylesheet({
+        href: "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css",
+    }).load();
     const defaultSwipers = document.querySelectorAll(`[default-swiper-component]`);
     defaultSwipers.forEach((swiperElement) => {
         if (swiperEmpty(swiperElement))

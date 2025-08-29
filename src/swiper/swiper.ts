@@ -1,6 +1,6 @@
 import Swiper from "swiper";
 import { Autoplay, Navigation, Pagination, Manipulation } from "swiper/modules";
-import { toCamelCase } from "../utils";
+import { Stylesheet, toCamelCase } from "../utils";
 import type { AutoplayOptions, NavigationOptions, SwiperOptions } from "swiper/types";
 import type { CamelToDash } from "../typeutils";
 import { createAttribute } from "../attributeselector/index.js";
@@ -268,6 +268,10 @@ export function initWebflowSwiper(swiperElement: HTMLElement): Swiper {
 }
 
 export function initWebflowSwipers() {
+  new Stylesheet({
+    href: "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css",
+  }).load();
+
   // Remove all empty slides
   document.querySelectorAll(".w-slide:empty").forEach((e) => e.remove());
 
@@ -281,6 +285,10 @@ export function initWebflowSwipers() {
 }
 
 export function initDefaultSwipers() {
+  new Stylesheet({
+    href: "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css",
+  }).load();
+
   const defaultSwipers = document.querySelectorAll<HTMLElement>(`[default-swiper-component]`);
 
   defaultSwipers.forEach((swiperElement) => {
