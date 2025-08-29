@@ -4,9 +4,11 @@ import { initVimePlayerDefault } from "../video/default.js";
 import { initCopyComponents } from "../copy/index.js";
 import { initUploadcareDefault } from "../form/uploadcare.js";
 import { initWebflowSwipers } from "../swiper/swiper.js";
+import { CMSSelect } from "../form/cms-select.js";
 // instead of forcing PeakflowRegistry, let TS infer the literal key
 export const defaultRegistry = {
     inlinecms: inlineCmsDefault,
+    cmsselect: CMSSelect.initializeAll,
     dateflow: dateflowDefault,
     vimePlayer: initVimePlayerDefault,
     copyComponent: initCopyComponents,
