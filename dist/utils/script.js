@@ -25,10 +25,10 @@ export default class Script {
         else {
             // Create new script element
             this.element = document.createElement("script");
-            this.element.src = config.src;
-            this.element.type = config.type ?? "text/javascript";
             this.element.async = config.async ?? false;
             this.element.defer = config.defer ?? false;
+            this.element.type = config.type ?? "text/javascript";
+            this.element.src = config.src;
         }
         // Initialize readonly properties
         this.src = this.element.src;
