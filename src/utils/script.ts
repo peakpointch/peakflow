@@ -3,6 +3,7 @@ export interface ScriptOptions {
   type?: "module" | "text/javascript";
   async?: boolean;
   defer?: boolean;
+  attributes?: Record<string, string | null | undefined>;
 }
 
 /**
@@ -51,10 +52,36 @@ export default class Script {
     this.type = this.element.type;
     this.async = this.element.async;
     this.defer = this.element.defer;
+
+    this.setAttributes(config.attributes ?? {});
+  }
+
+  /**
+   * Adds or updates multiple attributes on the script element.
+   * Passing `null` or `undefined` sets the attribute to an empty string.
+   *
+   * @param attributes - Object mapping attribute names to values.
+   */
+  public setAttributes(attributes: Record<string, string | null | undefined>): void {
+    for (const [name, value] of Object.entries(attributes)) {
+      this.setAttribute(name, value);
+    }
+  }
+
+  /**
+   * Removes one or more attributes from the script element.
+   *
+   * @param attributes - Attribute names to remove.
+   */
+  public removeAttributes(...attributes: string[]): void {
+    for (const attribute of attributes) {
+      this.removeAttribute(attribute);
+    }
   }
 
   /**
    * Adds or updates an attribute on the script element.
+   * Passing `null` or `undefined` sets the attribute to an empty string. It does not remove the attribute.
    *
    * @param name - The attribute name.
    * @param value - The attribute value.

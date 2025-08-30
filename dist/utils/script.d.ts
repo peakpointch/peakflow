@@ -3,6 +3,7 @@ export interface ScriptOptions {
     type?: "module" | "text/javascript";
     async?: boolean;
     defer?: boolean;
+    attributes?: Record<string, string | null | undefined>;
 }
 /**
  * Represents a dynamically loadable <script> element.
@@ -29,7 +30,21 @@ export default class Script {
      */
     constructor(config: ScriptOptions);
     /**
+     * Adds or updates multiple attributes on the script element.
+     * Passing `null` or `undefined` sets the attribute to an empty string.
+     *
+     * @param attributes - Object mapping attribute names to values.
+     */
+    setAttributes(attributes: Record<string, string | null | undefined>): void;
+    /**
+     * Removes one or more attributes from the script element.
+     *
+     * @param attributes - Attribute names to remove.
+     */
+    removeAttributes(...attributes: string[]): void;
+    /**
      * Adds or updates an attribute on the script element.
+     * Passing `null` or `undefined` sets the attribute to an empty string. It does not remove the attribute.
      *
      * @param name - The attribute name.
      * @param value - The attribute value.
