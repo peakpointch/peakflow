@@ -34,7 +34,13 @@ export default class Script {
      * @param name - The attribute name.
      * @param value - The attribute value.
      */
-    setAttribute(name: string, value: string): void;
+    setAttribute(name: string, value?: string): void;
+    /**
+     * Removes an attribute on the script element.
+     *
+     * @param name - The attribute name.
+     */
+    removeAttribute(name: string): void;
     /**
      * Appends the script to the document head and returns a Promise
      * that resolves when the script finishes loading.

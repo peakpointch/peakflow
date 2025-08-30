@@ -43,7 +43,15 @@ export default class Script {
      * @param value - The attribute value.
      */
     setAttribute(name, value) {
-        this.element.setAttribute(name, value);
+        this.element.setAttribute(name, value ?? "");
+    }
+    /**
+     * Removes an attribute on the script element.
+     *
+     * @param name - The attribute name.
+     */
+    removeAttribute(name) {
+        this.element.removeAttribute(name);
     }
     /**
      * Appends the script to the document head and returns a Promise
