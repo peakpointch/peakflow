@@ -12,6 +12,9 @@ export interface WebflowClassNames {
   cmsWrapper: "w-dyn-list";
   cmsList: "w-dyn-items";
   cmsItem: "w-dyn-item";
+  paginationPrev: "w-pagination-previous";
+  paginationNext: "w-pagination-next";
+  paginationCount: "w-page-count";
 }
 
 type InputSelectorList = Array<
@@ -36,6 +39,9 @@ export interface WebflowSelectors {
   cmsWrapper: `.${WebflowClassNames["cmsWrapper"]}`;
   cmsList: `.${WebflowClassNames["cmsList"]}`;
   cmsItem: `.${WebflowClassNames["cmsItem"]}`;
+  paginationPrev: `.${WebflowClassNames["paginationPrev"]}`;
+  paginationNext: `.${WebflowClassNames["paginationNext"]}`;
+  paginationCount: `.${WebflowClassNames["paginationCount"]}`;
 
   /** CSS Selector to select all `HTMLFormInput`'s. */
   formInput: string;

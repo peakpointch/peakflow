@@ -24,6 +24,9 @@ export const wfclass: WebflowClassNames = {
   cmsWrapper: "w-dyn-list",
   cmsList: "w-dyn-items",
   cmsItem: "w-dyn-item",
+  paginationPrev: "w-pagination-previous",
+  paginationNext: "w-pagination-next",
+  paginationCount: "w-page-count",
 };
 
 const inputSelectorList: InputSelectorList = [
@@ -48,6 +51,9 @@ export const wfselect: WebflowSelectors = {
   cmsWrapper: `.${wfclass.cmsWrapper}`,
   cmsList: `.${wfclass.cmsList}`,
   cmsItem: `.${wfclass.cmsItem}`,
+  paginationPrev: `.${wfclass.paginationPrev}`,
+  paginationNext: `.${wfclass.paginationNext}`,
+  paginationCount: `.${wfclass.paginationCount}`,
   formInput: inputSelectorList.join(", "),
   radioInput: `.${wfclass.wradio} input[type="radio"]`,
   checkboxInput: `.${wfclass.wcheckbox} input[type="checkbox"]:not(.${wfclass.checkbox})`,
