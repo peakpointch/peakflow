@@ -10,7 +10,7 @@ export function softHyphenizer(container, language) {
         const parent = node?.parentElement;
         if (parent &&
             !["SCRIPT", "STYLE", "NOSCRIPT"].includes(parent.tagName) &&
-            !parent.matches(`[data-hyphenate="false"], [data-hyphenate="false"] *`) &&
+            !parent.matches(`[data-hyphenate="false"], [data-hyphenate="false"] *, [data-hyphenize="false"], [data-hyphenize="false"] *`) &&
             node.nodeValue?.trim()) {
             const hyphenated = hypher.hyphenateText(node.nodeValue);
             node.nodeValue = hyphenated;
