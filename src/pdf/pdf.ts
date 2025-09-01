@@ -6,6 +6,7 @@ import type { Html2CanvasOptions } from "jspdf";
 import createAttribute from "../attributeselector/index.js";
 import { softHyphenizer, solidHyphens } from "../hyphenizer/index.js";
 import german from "hyphenation.de";
+import { freezeElement, unFreezeElement } from "./freeze.js";
 
 // Types
 export type PdfElement = "container" | "scale" | "page" | "page-wrapper" | "weekday" | "dish";
@@ -137,41 +138,18 @@ export class Pdf {
       this.freezeSelector = '*:not([pdf-freeze="exclude"], [pdf-freeze="exclude"] *, svg, svg *)';
       const children: NodeListOf<HTMLElement> = page.querySelectorAll(this.freezeSelector);
       children.forEach((child) => {
-        this.freezeElement(child);
+        freezeElement(child);
       });
     });
-  }
-
-  private freezeElement(element: HTMLElement): void {
-    if (element.tagName === "svg") return;
-
-    const elementRect = element.getBoundingClientRect();
-
-    element.style.width = `${elementRect.width}px`;
-    element.style.minWidth = `${elementRect.width}px`;
-    element.style.maxWidth = `${elementRect.width}px`;
-    element.style.height = `${elementRect.height}px`;
   }
 
   public unFreeze(): void {
     this.pages.forEach((page) => {
       const children: NodeListOf<HTMLElement> = page.querySelectorAll(this.freezeSelector);
       children.forEach((child) => {
-        this.unFreezeElement(child);
+        unFreezeElement(child);
       });
     });
-  }
-
-  private unFreezeElement(element: HTMLElement): void {
-    // Reset the inline styles to allow for dynamic layout adjustments
-    element.style.removeProperty("width");
-    element.style.removeProperty("min-width");
-    element.style.removeProperty("max-width");
-    element.style.removeProperty("height");
-    element.style.removeProperty("position");
-    element.style.removeProperty("left");
-    element.style.removeProperty("top");
-    element.style.removeProperty("margin");
   }
 
   /**
@@ -241,8 +219,6 @@ export class Pdf {
   }
 
   private async create(format: PdfFormat): Promise<jsPDF> {
-    this.freeze();
-
     const zoom = 0.1; // crop 0.1mm on each side
     const canvasScale = format === "a3" ? 2 * 4.17 : format === "a4" ? 1 * 4.17 : 0.5 * 4.17;
 
@@ -299,7 +275,7 @@ export class Pdf {
     } catch (error) {
       console.error("Error creating PDF:", error);
     } finally {
-      this.unFreeze();
+      // this.unFreeze();
     }
   }
 
@@ -312,9 +288,13 @@ export class Pdf {
     this.scale(clientScale, false);
 
     setTimeout(async () => {
+      this.freeze();
+
       // Create the jsPDF instance
       const pdf = await this.create(format);
       pdf.save(filename);
+
+      this.unFreeze();
 
       this.resetScale();
     }, 0);

@@ -46,9 +46,7 @@ export declare class Pdf {
     resetScale(): void;
     resetDefaultScale(): void;
     freeze(): void;
-    private freezeElement;
     unFreeze(): void;
-    private unFreezeElement;
     /**
      * @param page The current page element as an `HTMLElement`.
      * @param scale The scale of the canvas.

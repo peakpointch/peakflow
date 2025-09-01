@@ -4,6 +4,7 @@ import jsPDF from "jspdf";
 import createAttribute from "../attributeselector/index.js";
 import { softHyphenizer, solidHyphens } from "../hyphenizer/index.js";
 import german from "hyphenation.de";
+import { freezeElement, unFreezeElement } from "./freeze.js";
 // Variables
 export class Pdf {
     constructor(container) {
@@ -98,37 +99,17 @@ export class Pdf {
             this.freezeSelector = '*:not([pdf-freeze="exclude"], [pdf-freeze="exclude"] *, svg, svg *)';
             const children = page.querySelectorAll(this.freezeSelector);
             children.forEach((child) => {
-                this.freezeElement(child);
+                freezeElement(child);
             });
         });
-    }
-    freezeElement(element) {
-        if (element.tagName === "svg")
-            return;
-        const elementRect = element.getBoundingClientRect();
-        element.style.width = `${elementRect.width}px`;
-        element.style.minWidth = `${elementRect.width}px`;
-        element.style.maxWidth = `${elementRect.width}px`;
-        element.style.height = `${elementRect.height}px`;
     }
     unFreeze() {
         this.pages.forEach((page) => {
             const children = page.querySelectorAll(this.freezeSelector);
             children.forEach((child) => {
-                this.unFreezeElement(child);
+                unFreezeElement(child);
             });
         });
-    }
-    unFreezeElement(element) {
-        // Reset the inline styles to allow for dynamic layout adjustments
-        element.style.removeProperty("width");
-        element.style.removeProperty("min-width");
-        element.style.removeProperty("max-width");
-        element.style.removeProperty("height");
-        element.style.removeProperty("position");
-        element.style.removeProperty("left");
-        element.style.removeProperty("top");
-        element.style.removeProperty("margin");
     }
     /**
      * @param page The current page element as an `HTMLElement`.
@@ -180,7 +161,6 @@ export class Pdf {
         });
     }
     async create(format) {
-        this.freeze();
         const zoom = 0.1; // crop 0.1mm on each side
         const canvasScale = format === "a3" ? 2 * 4.17 : format === "a4" ? 1 * 4.17 : 0.5 * 4.17;
         const getHtml2CanvasOptions = (canvas) => {
@@ -220,7 +200,7 @@ export class Pdf {
             console.error("Error creating PDF:", error);
         }
         finally {
-            this.unFreeze();
+            // this.unFreeze();
         }
     }
     async save(format, filename, clientScale = 1) {
@@ -230,9 +210,11 @@ export class Pdf {
         // Scale the pdf on client
         this.scale(clientScale, false);
         setTimeout(async () => {
+            this.freeze();
             // Create the jsPDF instance
             const pdf = await this.create(format);
             pdf.save(filename);
+            this.unFreeze();
             this.resetScale();
         }, 0);
     }
