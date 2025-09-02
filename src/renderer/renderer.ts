@@ -165,16 +165,16 @@ export type RenderNode<F extends FilterAttributes = {}> = RenderField<F> | Rende
 export type RenderData<F extends FilterAttributes = {}> = RenderNode<F>[];
 
 /**
- * A `RenderHTMLElement` is the DOM element where a `RenderNode` is rendered.
+ * A `HTMLRenderNode` is the DOM element where a `RenderNode` is rendered.
  *
  * These elements are marked with `data-render-*` attributes, which tell the
  * `Renderer` where in the DOM the data from a `RenderField` or `RenderBlock`
  * should be rendered.
  *
- * In other words, a `RenderHTMLElement` is the *target container* for a
+ * In other words, a `HTMLRenderNode` is the *target container* for a
  * `RenderNode`’s content.
  */
-export interface RenderHTMLElement extends HTMLElement { }
+export interface HTMLRenderNode extends HTMLElement {}
 
 /**
  * Defines the options of a `Renderer` instance.
@@ -215,7 +215,7 @@ export interface RendererOptions<F extends FilterAttributes<keyof F & string> = 
 
   /**
    * Fallback options for `RenderNode`s when no options are set on the
-   * RenderHTMLElement.
+   * HTMLRenderNode.
    */
   defaults: {
     visibilityControl: VisibilityControl;
@@ -306,15 +306,15 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
    */
   private renderBlock(renderBlock: RenderBlock<F>, canvas: HTMLElement) {
     const selector = this.blockSelector(renderBlock);
-    const htmlRenderBlocks: NodeListOf<HTMLElement> = canvas.querySelectorAll(selector);
+    const htmlNodes = canvas.querySelectorAll<HTMLRenderNode>(selector);
 
-    if (!htmlRenderBlocks.length) {
+    if (!htmlNodes.length) {
       console.warn(`Block "${selector}" was not found.`);
       return;
     }
 
     // Recursion with visibility check
-    htmlRenderBlocks.forEach((htmlRenderBlock) => {
+    htmlNodes.forEach((htmlRenderBlock) => {
       let isCollection = htmlRenderBlock.getAttribute(this.attr.collection) === "true";
       if (isCollection) {
         this.renderCollection(renderBlock, htmlRenderBlock);
@@ -324,14 +324,14 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     });
   }
 
-  private renderCollection(renderBlock: RenderBlock<F>, htmlRenderCollection: HTMLElement) {
-    switch (this.readVisibilityControl(htmlRenderCollection)) {
+  private renderCollection(renderBlock: RenderBlock<F>, htmlNode: HTMLRenderNode) {
+    switch (this.readVisibilityControl(htmlNode)) {
       case "emptyState":
         // TODO: Support "emptyState" for render collections
         break;
       case true:
         if (this.shouldHideBlock(renderBlock)) {
-          this.hideNode(htmlRenderCollection);
+          this.hideNode(htmlNode);
           return;
         }
         break;
@@ -340,44 +340,44 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
         break;
     }
 
-    let max = parseInt(htmlRenderCollection.getAttribute("data-limit-items") || "-1");
+    let max = parseInt(htmlNode.getAttribute("data-limit-items") || "-1");
     if (max === -1) max = renderBlock.children.length;
     max = Math.min(renderBlock.children.length, max);
     max = Math.max(max, 0);
 
-    const firstChild = htmlRenderCollection.firstElementChild;
+    const firstChild = htmlNode.firstElementChild;
     if (firstChild) {
       const htmlTemplate = firstChild.cloneNode(true) as HTMLElement;
-      htmlRenderCollection.innerHTML = "";
+      htmlNode.innerHTML = "";
 
       // Use DocumentFragment for performance improvement
       const fragment = document.createDocumentFragment();
       for (let i = 0; i < max; i++) {
-        const template = htmlTemplate.cloneNode(true) as HTMLElement;
+        const htmlItemNode = htmlTemplate.cloneNode(true) as HTMLElement;
         if (Renderer.isRenderBlock(renderBlock.children[i])) {
-          this.renderBlockToTemplate(renderBlock.children[i] as RenderBlock<F>, template);
+          this.renderBlockToTemplate(renderBlock.children[i] as RenderBlock<F>, htmlItemNode);
         } else if (Renderer.isRenderField(renderBlock.children[i])) {
-          this.renderFieldToTemplate(renderBlock.children[i] as RenderField<F>, template);
+          this.renderFieldToTemplate(renderBlock.children[i] as RenderField<F>, htmlItemNode);
         }
 
-        fragment.appendChild<HTMLElement>(template);
+        fragment.appendChild<HTMLElement>(htmlItemNode);
       }
 
-      htmlRenderCollection.appendChild(fragment);
+      htmlNode.appendChild(fragment);
     } else {
       console.warn("No first child found to clone");
     }
   }
 
   /**
-   * Render a `RenderBlock` to a single `HTMLRenderBlock`
+   * Render a `RenderBlock` to a single `HTMLRenderNode`
    */
-  private renderBlockToTemplate(renderBlock: RenderBlock<F>, htmlTemplate: HTMLElement) {
-    switch (this.readVisibilityControl(htmlTemplate)) {
+  private renderBlockToTemplate(renderBlock: RenderBlock<F>, htmlNode: HTMLRenderNode) {
+    switch (this.readVisibilityControl(htmlNode)) {
       case "emptyState":
-        const emptyState = this.getEmptyStateFor(renderBlock, htmlTemplate);
+        const emptyState = this.getEmptyStateFor(renderBlock, htmlNode);
         if (this.shouldHideBlock(renderBlock)) {
-          this.hideChildrenExceptEmptyState(htmlTemplate);
+          this.hideChildrenExceptEmptyState(htmlNode);
           this.showHTMLElement(emptyState);
 
           // Only render nodes that are inside the empty state element
@@ -385,19 +385,19 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
           this._render(emptyStateNodes, emptyState);
         } else {
           this.hideHTMLElement(emptyState);
-          this._render(renderBlock.children, htmlTemplate);
+          this._render(renderBlock.children, htmlNode);
         }
         break;
       case true:
         if (this.shouldHideBlock(renderBlock)) {
-          this.hideNode(htmlTemplate);
+          this.hideNode(htmlNode);
         } else {
-          this._render(renderBlock.children, htmlTemplate); // Recursively render children
+          this._render(renderBlock.children, htmlNode); // Recursively render children
         }
         break;
       case false:
       default:
-        this._render(renderBlock.children, htmlTemplate); // Recursively render children
+        this._render(renderBlock.children, htmlNode); // Recursively render children
         break;
     }
   }
@@ -421,60 +421,60 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
    */
   private renderField(renderField: RenderField<F>, canvas: HTMLElement) {
     const selector = this.fieldSelector(renderField);
-    const fields: NodeListOf<HTMLElement> = canvas.querySelectorAll(selector);
-    fields.forEach((htmlRenderField) => {
-      this.renderFieldToTemplate(renderField, htmlRenderField);
+    const htmlFields = canvas.querySelectorAll<HTMLRenderNode>(selector);
+    htmlFields.forEach((htmlNode) => {
+      this.renderFieldToTemplate(renderField, htmlNode);
     });
   }
 
   /**
    * Render a `RenderField` to a single `HTMLRenderField`
    */
-  private renderFieldToTemplate(renderField: RenderField<F>, htmlTemplate: HTMLElement) {
+  private renderFieldToTemplate(renderField: RenderField<F>, htmlNode: HTMLRenderNode) {
     const isVisible = !renderField.visibility || !renderField.value.trim();
-    switch (this.readVisibilityControl(htmlTemplate)) {
+    switch (this.readVisibilityControl(htmlNode)) {
       case "emptyState":
-        const emptyStateElement = this.getEmptyStateFor(renderField, htmlTemplate);
+        const emptyStateElement = this.getEmptyStateFor(renderField, htmlNode);
         if (isVisible) {
-          this.hideNode(htmlTemplate); // Hide empty field
+          this.hideNode(htmlNode); // Hide empty field
           this.showHTMLElement(emptyStateElement);
         } else {
           this.hideHTMLElement(emptyStateElement);
-          this.renderFieldValue(renderField, htmlTemplate);
+          this.renderFieldValue(renderField, htmlNode);
         }
         break;
       case true:
         if (isVisible) {
-          this.hideNode(htmlTemplate); // Hide empty field
+          this.hideNode(htmlNode); // Hide empty field
         } else {
-          this.renderFieldValue(renderField, htmlTemplate);
+          this.renderFieldValue(renderField, htmlNode);
         }
         break;
       case false:
       default:
-        this.renderFieldValue(renderField, htmlTemplate);
+        this.renderFieldValue(renderField, htmlNode);
         break;
     }
   }
 
   /**
-   * Render the value of a `renderField` into its corresponding `htmlTemplate`,
+   * Render the value of a `renderField` into its corresponding `htmlNode`,
    * based on the type of its value defined through the `type` property defined
    * on the `renderField`.
    */
-  private renderFieldValue(renderField: RenderField, htmlTemplate: HTMLElement): void {
+  private renderFieldValue(renderField: RenderField, htmlNode: HTMLRenderNode): void {
     switch (renderField.type) {
       case "html":
-        htmlTemplate.innerHTML = renderField.value;
+        htmlNode.innerHTML = renderField.value;
         break;
       case "date":
-        const formatStr = htmlTemplate.dataset.dateFormat || "d.M.yyyy";
-        htmlTemplate.innerText = format(new Date(renderField.value), formatStr, {
+        const formatStr = htmlNode.dataset.dateFormat || "d.M.yyyy";
+        htmlNode.innerText = format(new Date(renderField.value), formatStr, {
           locale: de,
         });
         break;
       default:
-        htmlTemplate.innerText = renderField.value;
+        htmlNode.innerText = renderField.value;
     }
   }
 
@@ -489,18 +489,18 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   public read(node: HTMLElement, stopRecursionMatches: string[] = []): RenderData<F> {
     const renderData: RenderData<F> = [];
 
-    Array.from(node.children).forEach((child) => {
+    Array.from(node.children).forEach((child: HTMLRenderNode) => {
       if (stopRecursionMatches.some((selector) => child.matches(selector))) {
         return; // Stop recursion for this element
       }
 
       // If it's a RenderBlock
       if (child.hasAttribute(this.attr.block)) {
-        renderData.push(this.readRenderBlock(child as HTMLElement, stopRecursionMatches));
+        renderData.push(this.readRenderBlock(child, stopRecursionMatches));
       }
       // If it's a RenderField
       else if (child.hasAttribute(this.attr.field)) {
-        renderData.push(this.readRenderField(child as HTMLElement));
+        renderData.push(this.readRenderField(child));
       }
       // If it's neither, check if any descendants are renderable
       else {
@@ -509,7 +509,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
         // If there are renderable children, recurse on this child
         if (hasRenderableChild) {
-          renderData.push(...this.read(child as HTMLElement, stopRecursionMatches));
+          renderData.push(...this.read(child, stopRecursionMatches));
         }
       }
     });
@@ -523,7 +523,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
    */
   public clear(node: HTMLElement = this.canvas): void {
     /** Check whether the value of a field is allowed to be cleared. */
-    const allowedToClear = (child: HTMLElement): boolean => {
+    const allowedToClear = (child: HTMLRenderNode): boolean => {
       if (child.hasAttribute(this.attr.clear)) {
         return wf.hasAttr(child, this.attr.clear);
       } else {
@@ -531,37 +531,40 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
       }
     };
 
-    const collections = node.querySelectorAll<HTMLElement>(
+    const collections = node.querySelectorAll<HTMLRenderNode>(
       `${this.blockSelector()}[${this.attr.collection}]`,
     );
     collections.forEach((collection) => {
-      const template = collection.firstElementChild.cloneNode(true);
+      const htmlTemplate = collection.firstElementChild.cloneNode(true);
       collection.innerHTML = "";
-      collection.appendChild(template);
+      collection.appendChild(htmlTemplate);
     });
 
-    const fields = node.querySelectorAll<HTMLElement>(this.fieldSelector());
-    fields.forEach((field) => {
-      if (allowedToClear(field)) field.innerText = "";
-      field.innerText = "";
-      const fieldVisibility = this.readVisibilityControl(field);
+    const htmlFields = node.querySelectorAll<HTMLRenderNode>(this.fieldSelector());
+    htmlFields.forEach((htmlNode) => {
+      if (allowedToClear(htmlNode)) htmlNode.innerText = "";
+      htmlNode.innerText = "";
+      const fieldVisibility = this.readVisibilityControl(htmlNode);
       if (fieldVisibility === true || fieldVisibility === "emptyState") {
-        this.showNode(field);
+        this.showNode(htmlNode);
       }
     });
 
-    const blocks = node.querySelectorAll<HTMLElement>(this.blockSelector());
+    const blocks = node.querySelectorAll<HTMLRenderNode>(this.blockSelector());
     blocks.forEach((block) => {
       this.showNode(block);
     });
   }
 
-  private readRenderBlock(child: HTMLElement, stopRecursionAttributes: string[]): RenderBlock<F> {
+  private readRenderBlock(
+    child: HTMLRenderNode,
+    stopRecursionAttributes: string[],
+  ): RenderBlock<F> {
     const blockName = child.getAttribute(this.attr.block);
     const instance = child.getAttribute(`data-${blockName}-instance`);
 
     // Recursively read child elements
-    const children = this.read(child as HTMLElement, stopRecursionAttributes); // Recurse on children
+    const children = this.read(child, stopRecursionAttributes); // Recurse on children
 
     const block: RenderBlock<F> = {
       name: blockName!,
@@ -577,14 +580,14 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     return block;
   }
 
-  private readRenderField(child: HTMLElement): RenderField<F> {
-    const fieldName = child.getAttribute(this.attr.field);
-    const instance = child.getAttribute(`data-${fieldName}-instance`);
+  private readRenderField(htmlNode: HTMLRenderNode): RenderField<F> {
+    const fieldName = htmlNode.getAttribute(this.attr.field);
+    const instance = htmlNode.getAttribute(`data-${fieldName}-instance`);
 
     // Determine field type (handle date, text, html)
-    let value: string = child.innerHTML.trim();
+    let value: string = htmlNode.innerHTML.trim();
     const type =
-      child.children.length > 0 ? "html" : child.hasAttribute("data-date") ? "date" : "text";
+      htmlNode.children.length > 0 ? "html" : htmlNode.hasAttribute("data-date") ? "date" : "text";
 
     switch (type) {
       case "date":
@@ -599,13 +602,13 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
       instance: instance || undefined,
       value,
       type,
-      visibility: wf.isVisible(child),
-      decorative: wf.hasAttr(child, this.attr.decorative),
+      visibility: wf.isVisible(htmlNode),
+      decorative: wf.hasAttr(htmlNode, this.attr.decorative),
       props: {},
     };
 
     // Optionally, handle additional properties for filtering purposes
-    this.readFilteringProperties(field, child);
+    this.readFilteringProperties(field, htmlNode);
 
     return field;
   }
@@ -616,7 +619,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
    */
   private readFilteringProperties(
     field: RenderField<F> | RenderBlock<F>,
-    child: HTMLElement,
+    child: HTMLRenderNode,
   ): void {
     for (let [attr, type] of Object.entries(this.options.filterAttributes)) {
       if (!child.hasAttribute(attr)) {
@@ -697,15 +700,15 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
    * - `false`: Disables the visibility control, meaning no elements get
    *   shown or hidden
    */
-  private readVisibilityControl(child: HTMLElement): VisibilityControl {
+  private readVisibilityControl(htmlNode: HTMLRenderNode): VisibilityControl {
     // INFO: This method is also used during the clear process.
-    const raw = child
+    const raw = htmlNode
       .getAttribute(this.attr.visibilityControl)
       ?.trim() as StringifyBoolean<VisibilityControl>;
     if (raw === "emptyState") {
       return "emptyState";
-    } else if (child.hasAttribute(this.attr.visibilityControl)) {
-      return wf.hasAttr(child, this.attr.visibilityControl);
+    } else if (htmlNode.hasAttribute(this.attr.visibilityControl)) {
+      return wf.hasAttr(htmlNode, this.attr.visibilityControl);
     } else {
       return this.options.defaults.visibilityControl;
     }
@@ -713,15 +716,16 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
   private getEmptyStateFor(
     node: RenderBlock<F> | RenderField<F>,
-    template: HTMLElement,
+    htmlNode: HTMLRenderNode,
   ): HTMLElement {
     let emptyState: HTMLElement;
+
     if (Renderer.isRenderField) {
-      emptyState = template.parentElement?.querySelector<HTMLElement>(
+      emptyState = htmlNode.parentElement?.querySelector<HTMLElement>(
         `[${this.attr.emptyState}="${node.name}"]`,
       );
     } else {
-      emptyState = template.querySelector<HTMLElement>(`[${this.attr.emptyState}="${node.name}"]`);
+      emptyState = htmlNode.querySelector<HTMLElement>(`[${this.attr.emptyState}="${node.name}"]`);
     }
 
     if (emptyState) return emptyState;
@@ -754,14 +758,14 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     }
   }
 
-  private showNode(node: HTMLElement): void {
-    const ancestorToHide = node.getAttribute(this.attr.hideAncestor);
+  private showNode(htmlNode: HTMLRenderNode): void {
+    const ancestorToHide = htmlNode.getAttribute(this.attr.hideAncestor);
 
-    this.showHTMLElement(node);
+    this.showHTMLElement(htmlNode);
 
     if (ancestorToHide) {
       // Hide the specified ancestor
-      const ancestor: HTMLElement = node.closest(ancestorToHide);
+      const ancestor: HTMLRenderNode = htmlNode.closest(ancestorToHide);
       if (ancestor) {
         this.showHTMLElement(ancestor);
       } else {
@@ -774,7 +778,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     element.style.display = "none";
   }
 
-  private hideNode(node: HTMLElement): void {
+  private hideNode(node: HTMLRenderNode): void {
     const hideSelf = wf.hasAttr(node, this.attr.hideSelf);
     const ancestorToHide = node.getAttribute(this.attr.hideAncestor);
 
@@ -792,12 +796,12 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     }
   }
 
-  private hideChildrenExceptEmptyState(parent: HTMLElement): void {
+  private hideChildrenExceptEmptyState(parent: HTMLRenderNode): void {
     const nodes = `[${this.attr.block}], [${this.attr.field}]`;
     const emptyStateAttr = `[${this.attr.emptyState}]`;
     const emptyStateChildren = `[${this.attr.emptyState}] *`;
     const selector = exclude(nodes, emptyStateAttr, emptyStateChildren);
-    const elements = Array.from(parent.querySelectorAll<HTMLElement>(selector));
+    const elements = Array.from(parent.querySelectorAll<HTMLRenderNode>(selector));
     for (const el of elements) {
       this.hideHTMLElement(el);
     }

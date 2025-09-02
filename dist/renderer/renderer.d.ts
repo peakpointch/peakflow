@@ -138,16 +138,16 @@ export type RenderBlock<F extends FilterAttributes<keyof F & string> = {}> = {
 export type RenderNode<F extends FilterAttributes = {}> = RenderField<F> | RenderBlock<F>;
 export type RenderData<F extends FilterAttributes = {}> = RenderNode<F>[];
 /**
- * A `RenderHTMLElement` is the DOM element where a `RenderNode` is rendered.
+ * A `HTMLRenderNode` is the DOM element where a `RenderNode` is rendered.
  *
  * These elements are marked with `data-render-*` attributes, which tell the
  * `Renderer` where in the DOM the data from a `RenderField` or `RenderBlock`
  * should be rendered.
  *
- * In other words, a `RenderHTMLElement` is the *target container* for a
+ * In other words, a `HTMLRenderNode` is the *target container* for a
  * `RenderNode`’s content.
  */
-export interface RenderHTMLElement extends HTMLElement {
+export interface HTMLRenderNode extends HTMLElement {
 }
 /**
  * Defines the options of a `Renderer` instance.
@@ -185,7 +185,7 @@ export interface RendererOptions<F extends FilterAttributes<keyof F & string> = 
     timezone?: false | IANATimeZone;
     /**
      * Fallback options for `RenderNode`s when no options are set on the
-     * RenderHTMLElement.
+     * HTMLRenderNode.
      */
     defaults: {
         visibilityControl: VisibilityControl;
@@ -211,9 +211,14 @@ export declare class Renderer<F extends FilterAttributes<keyof F & string> = {}>
     private renderBlock;
     private renderCollection;
     /**
-     * Render a `RenderBlock` to a single `HTMLRenderBlock`
+     * Render a `RenderBlock` to a single `HTMLRenderNode`
      */
     private renderBlockToTemplate;
+    /**
+     * Returns the subset of children of a RenderBlock that correspond
+     * to elements inside the given container element.
+     */
+    private getChildrenForContainer;
     /**
      * Render a `RenderField` to all its instances
      */
@@ -223,7 +228,7 @@ export declare class Renderer<F extends FilterAttributes<keyof F & string> = {}>
      */
     private renderFieldToTemplate;
     /**
-     * Render the value of a `renderField` into its corresponding `htmlTemplate`,
+     * Render the value of a `renderField` into its corresponding `htmlNode`,
      * based on the type of its value defined through the `type` property defined
      * on the `renderField`.
      */
