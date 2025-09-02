@@ -1,4 +1,4 @@
-import createAttribute from "../attributeselector/index.js";
+import createAttribute, { exclude } from "../attributeselector/index.js";
 import { toCamelCase } from "../utils/parameterize.js";
 import { format, parse } from "date-fns";
 import { fromZonedTime } from "date-fns-tz";
@@ -83,6 +83,7 @@ export interface RendererOptions<F extends FilterAttributes<keyof F & string> = 
   timezone?: false | IANATimeZone;
   defaults: {
     visibilityControl: VisibilityControl;
+    clear: boolean;
   };
 }
 
@@ -93,6 +94,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     timezone: false,
     defaults: {
       visibilityControl: false,
+      clear: true,
     },
   };
 
@@ -380,6 +382,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
     const fields = node.querySelectorAll<HTMLElement>(this.fieldSelector());
     fields.forEach((field) => {
+      if (this.allowedToClear(field)) field.innerText = "";
       field.innerText = "";
       const fieldVisibility = this.readVisibilityControl(field);
       if (fieldVisibility === true || fieldVisibility === "emptyState") {
@@ -537,6 +540,14 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
       return wf.hasAttr(child, this.attr.visibilityControl);
     } else {
       return this.options.defaults.visibilityControl;
+    }
+  }
+
+  private allowedToClear(child: HTMLElement): boolean {
+    if (child.hasAttribute(this.attr.clear)) {
+      return wf.hasAttr(child, this.attr.clear);
+    } else {
+      return this.options.defaults.clear;
     }
   }
 
