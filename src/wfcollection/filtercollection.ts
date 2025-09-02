@@ -7,6 +7,7 @@ import type {
   RenderElement,
   RenderField,
 } from "../renderer/index.js";
+import type { PartialDeep } from "type-fest";
 
 type MenuDataCondition = (menuData: RenderElement | RenderField) => boolean;
 
@@ -29,9 +30,10 @@ export class FilterCollection<
       rendererOptions: {},
     },
   ) {
+    const filterAttributes = options.rendererOptions?.filterAttributes ?? {};
     const mergedFilterAttributes = Renderer.defineAttributes({
       ...FilterCollection.defaultAttributes,
-      ...options.rendererOptions.filterAttributes,
+      ...filterAttributes,
     });
 
     const newOptions = {
@@ -42,7 +44,7 @@ export class FilterCollection<
       },
     };
 
-    super(container, newOptions);
+    super(container, newOptions as CollectionListOptions<Merged<F>>);
   }
 
   public filterByDate(

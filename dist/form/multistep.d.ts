@@ -1,4 +1,5 @@
 import type { FormFieldMap, HTMLFormInput, CustomValidator } from "./index.js";
+import type { PartialDeep } from "type-fest";
 interface FormOptions {
     excludeInputSelectors: string[];
     recaptcha: boolean;
@@ -30,6 +31,7 @@ type CustomFormComponent = {
     getData?: () => {};
 };
 export declare class MultiStepForm {
+    static readonly defaultOptions: MultiStepFormOptions;
     options: MultiStepFormOptions;
     initialized: boolean;
     component: HTMLElement;
@@ -46,7 +48,7 @@ export declare class MultiStepForm {
     private successElement;
     private errorElement;
     private submitButton;
-    constructor(component: HTMLElement, options: Partial<MultiStepFormOptions>);
+    constructor(component: HTMLElement, options: PartialDeep<MultiStepFormOptions>);
     private validateComponent;
     private cacheDomElements;
     private setupForm;

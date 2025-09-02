@@ -5,9 +5,10 @@ export class FilterCollection extends CollectionList {
         name: "",
         rendererOptions: {},
     }) {
+        const filterAttributes = options.rendererOptions?.filterAttributes ?? {};
         const mergedFilterAttributes = Renderer.defineAttributes({
             ...FilterCollection.defaultAttributes,
-            ...options.rendererOptions.filterAttributes,
+            ...filterAttributes,
         });
         const newOptions = {
             ...options,

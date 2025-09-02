@@ -13,6 +13,7 @@ import wf from "../webflow/index.js";
 // import mapToObject from "../utils/maptoobject.js";
 // import deepMerge from "../utils/deepmerge.js";
 import { mapToObject, deepMerge } from "../utils";
+import type { PartialDeep } from "type-fest";
 
 // Types
 interface FormOptions {
@@ -68,7 +69,7 @@ const stepsNavSelector = createAttribute<StepsNavElement>("data-steps-nav");
 const STEPS_PAGINATION_ITEM_SELECTOR: string = `button${stepsTargetSelector()}`;
 
 export class MultiStepForm {
-  public options: MultiStepFormOptions = {
+  public static readonly defaultOptions: MultiStepFormOptions = {
     recaptcha: false,
     navigation: {
       hideInStep: -1,
@@ -85,6 +86,7 @@ export class MultiStepForm {
     },
   };
 
+  public options: MultiStepFormOptions;
   public initialized: boolean = false;
   public component: HTMLElement;
   public formElement: HTMLFormElement | HTMLElement;
@@ -105,9 +107,9 @@ export class MultiStepForm {
   private errorElement: HTMLElement | null;
   private submitButton: HTMLInputElement | null;
 
-  constructor(component: HTMLElement, options: Partial<MultiStepFormOptions>) {
+  constructor(component: HTMLElement, options: PartialDeep<MultiStepFormOptions>) {
     this.component = component;
-    this.options = deepMerge(this.options, options);
+    this.options = deepMerge(MultiStepForm.defaultOptions, options);
 
     this.validateComponent();
     this.cacheDomElements();

@@ -20,27 +20,11 @@ export class MultiStepForm {
         return this._currentStep;
     }
     constructor(component, options) {
-        this.options = {
-            recaptcha: false,
-            navigation: {
-                hideInStep: -1,
-            },
-            excludeInputSelectors: [],
-            nested: false,
-            pagination: {
-                doneClass: "is-done",
-                activeClass: "is-active",
-            },
-            validation: {
-                validate: true,
-                reportValidity: true,
-            },
-        };
         this.initialized = false;
         this._currentStep = 0;
         this.customComponents = [];
         this.component = component;
-        this.options = deepMerge(this.options, options);
+        this.options = deepMerge(MultiStepForm.defaultOptions, options);
         this.validateComponent();
         this.cacheDomElements();
         this.setupForm();
@@ -401,3 +385,19 @@ export class MultiStepForm {
         return this.component.querySelector(selector);
     }
 }
+MultiStepForm.defaultOptions = {
+    recaptcha: false,
+    navigation: {
+        hideInStep: -1,
+    },
+    excludeInputSelectors: [],
+    nested: false,
+    pagination: {
+        doneClass: "is-done",
+        activeClass: "is-active",
+    },
+    validation: {
+        validate: true,
+        reportValidity: true,
+    },
+};

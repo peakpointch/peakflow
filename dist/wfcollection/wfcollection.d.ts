@@ -1,3 +1,4 @@
+import type { PartialDeep } from "type-fest";
 import Renderer from "../renderer/index.js";
 import type { FilterAttributes, RenderData, RendererOptions } from "../renderer/index.js";
 type GlobalWfCollections = {
@@ -7,7 +8,7 @@ type GlobalWfCollections = {
 type GlobalCollection = Array<object>;
 interface CollectionListOptions<F extends FilterAttributes> {
     name: string;
-    readonly rendererOptions: Partial<RendererOptions<F>>;
+    readonly rendererOptions: PartialDeep<RendererOptions<F>>;
 }
 declare class CollectionList<F extends FilterAttributes = {}> {
     options: CollectionListOptions<F>;
