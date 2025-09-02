@@ -125,7 +125,7 @@ export class Renderer {
                     const childrenElementTypes = Array.from(children).map((el) => el.hasAttribute(this.attr.block)
                         ? el.getAttribute(this.attr.block)
                         : el.getAttribute(this.attr.field));
-                    const fields = renderBlock.fields.filter((field) => childrenElementTypes.includes(field.element));
+                    const fields = renderBlock.fields.filter((field) => childrenElementTypes.includes(field.name));
                     // Only render fields and blocks that are inside the empty state element
                     this._render(fields, emptyStateElement);
                 }
@@ -283,7 +283,7 @@ export class Renderer {
         // Recursively read child elements
         const fields = this.read(child, stopRecursionAttributes); // Recurse on children
         const block = {
-            element: blockName,
+            name: blockName,
             instance: instance || undefined,
             fields,
             visibility: wf.isVisible(child),
@@ -307,7 +307,7 @@ export class Renderer {
                 break;
         }
         const field = {
-            element: fieldName,
+            name: fieldName,
             instance: instance || undefined,
             value,
             type,
@@ -383,7 +383,7 @@ export class Renderer {
      * - "emptyState": Hides the `child` and shows an empty state tagged with
      *   the `[data-*-empty-state]` attribute. The attribute value tells the
      *   `Renderer` which render item this empty state belongs to.
-     *   TODO: Make it clear that it matches RenderNodes and empty states based on the `element` property on the render block or render item.
+     *   TODO: Make it clear that it matches RenderNodes and empty states based on the `name` property on the render block or render item.
      *
      * - `true`: Hides the `child`
      * - `false`: Disables the visibility control, meaning no elements get
@@ -407,14 +407,14 @@ export class Renderer {
     getEmptyStateFor(node, template) {
         let emptyState;
         if (Renderer.isRenderField) {
-            emptyState = template.parentElement?.querySelector(`[${this.attr.emptyState}="${node.element}"]`);
+            emptyState = template.parentElement?.querySelector(`[${this.attr.emptyState}="${node.name}"]`);
         }
         else {
-            emptyState = template.querySelector(`[${this.attr.emptyState}="${node.element}"]`);
+            emptyState = template.querySelector(`[${this.attr.emptyState}="${node.name}"]`);
         }
         if (emptyState)
             return emptyState;
-        throw new Error(`${this.lp}No empty state found for "${node.element}"`);
+        throw new Error(`${this.lp}No empty state found for "${node.name}"`);
     }
     shouldHideBlock(block) {
         if (block.visibility === false)
@@ -503,9 +503,9 @@ export class Renderer {
         if (!block) {
             return blockAttrSelector();
         }
-        let selectorString = blockAttrSelector(block.element);
+        let selectorString = blockAttrSelector(block.name);
         if (block.instance) {
-            selectorString += this.instanceSelector(block.element, block.instance);
+            selectorString += this.instanceSelector(block.name, block.instance);
         }
         return selectorString;
     }
@@ -514,9 +514,9 @@ export class Renderer {
         if (!field) {
             return fieldAttrSelector();
         }
-        let selectorString = fieldAttrSelector(field.element);
+        let selectorString = fieldAttrSelector(field.name);
         if (field.instance) {
-            selectorString += this.instanceSelector(field.element, field.instance);
+            selectorString += this.instanceSelector(field.name, field.instance);
         }
         return selectorString;
     }

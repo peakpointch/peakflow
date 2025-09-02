@@ -2,11 +2,6 @@ import type { DashToCamelCase } from "../typeutils/index.js";
 import type { IANATimeZone } from "../timezones/index.js";
 import type { PartialDeep } from "type-fest";
 /**
- * A RenderHTMLElement represents a RenderNode inside the DOM.
- */
-export interface RenderHTMLElement extends HTMLElement {
-}
-/**
  * Tells the `Renderer` how to handle the visibility of a rendered element
  * in case all its children are empty.
  */
@@ -31,14 +26,28 @@ type PropsFromFilterAttributes<F extends FilterAttributes> = {
  */
 export type RenderField<F extends FilterAttributes<keyof F & string> = {}> = {
     /**
-     * The name or identifier of this `RenderField` type.
-     * Typically corresponds to the kind of content it represents, e.g., "title" or "description".
+     * The name of this `RenderField`.
+     *
+     * This defines what kind of data this field represents, for example
+     * `"title"`, `"price"`, or `"description"`.
+     *
+     * While it can be human-readable, its main purpose is to tell the `Renderer`
+     * how to interpret and map this field.
      */
-    element: string;
+    name: string;
     /**
-     * An optional instance identifier for distinguishing between multiple fields
-     * of the same `element` type within a parent. Useful for indexing or targeting
-     * specific fields in a set.
+     * An optional instance identifier for differentiating between multiple
+     * nodes with the same `name` within the same parent.
+     *
+     * While `name` defines the type of node (e.g., "dish", "title"),
+     * `instance` uniquely identifies one occurrence of that type.
+     *
+     * This is useful when a parent contains repeated blocks or fields
+     * of the same type and you need to distinguish or target them individually.
+     *
+     * @example
+     * { name: "dish", instance: "1" }
+     * { name: "dish", instance: "2" }
      */
     instance?: string;
     /**
@@ -78,15 +87,28 @@ export type RenderField<F extends FilterAttributes<keyof F & string> = {}> = {
  */
 export type RenderBlock<F extends FilterAttributes<keyof F & string> = {}> = {
     /**
-     * The name or identifier of this `RenderBlock` type.
-     * Typically corresponds to the kind of content its fields make up, for
-     * example "dish" or "day".
+     * The name of this `RenderBlock`.
+     *
+     * This property is often used as a type identifier, which specifies the type
+     * of content this block holds, for example `"dish"`, `"day"`, or `"event"`.
+     *
+     * It is used by the `Renderer` to map the block to the corresponding DOM
+     * elements and child nodes.
      */
-    element: string;
+    name: string;
     /**
-     * An optional instance identifier for distinguishing between multiple blocks
-     * of the same `element` type within a parent. Useful for indexing or targeting
-     * specific fields in a set.
+     * An optional instance identifier for differentiating between multiple
+     * nodes with the same `name` within the same parent.
+     *
+     * While `name` defines the type of node (e.g., "dish", "title"),
+     * `instance` uniquely identifies one occurrence of that type.
+     *
+     * This is useful when a parent contains repeated blocks or fields
+     * of the same type and you need to distinguish or target them individually.
+     *
+     * @example
+     * { name: "dish", instance: "1" }
+     * { name: "dish", instance: "2" }
      */
     instance?: string;
     /**
@@ -108,13 +130,28 @@ export type RenderBlock<F extends FilterAttributes<keyof F & string> = {}> = {
     /**
      * Additional properties for this `RenderBlock`.
      *
-     * Can be used to filter, sort, or otherwise categorize `RenderNode's based on
+     * Can be used to filter, sort, or otherwise categorize `RenderNode`s based on
      * custom metadata.
      */
     props?: PropsFromFilterAttributes<F>;
 };
 export type RenderNode<F extends FilterAttributes = {}> = RenderField<F> | RenderBlock<F>;
 export type RenderData<F extends FilterAttributes = {}> = RenderNode<F>[];
+/**
+ * A `RenderHTMLElement` is the DOM element where a `RenderNode` is rendered.
+ *
+ * These elements are marked with `data-render-*` attributes, which tell the
+ * `Renderer` where in the DOM the data from a `RenderField` or `RenderBlock`
+ * should be rendered.
+ *
+ * In other words, a `RenderHTMLElement` is the *target container* for a
+ * `RenderNode`’s content.
+ */
+export interface RenderHTMLElement extends HTMLElement {
+}
+/**
+ * Defines the options of a `Renderer` instance.
+ */
 export interface RendererOptions<F extends FilterAttributes<keyof F & string> = {}> {
     /**
      * The base attribute used to identify render nodes in the DOM.
@@ -224,7 +261,7 @@ export declare class Renderer<F extends FilterAttributes<keyof F & string> = {}>
      * - "emptyState": Hides the `child` and shows an empty state tagged with
      *   the `[data-*-empty-state]` attribute. The attribute value tells the
      *   `Renderer` which render item this empty state belongs to.
-     *   TODO: Make it clear that it matches RenderNodes and empty states based on the `element` property on the render block or render item.
+     *   TODO: Make it clear that it matches RenderNodes and empty states based on the `name` property on the render block or render item.
      *
      * - `true`: Hides the `child`
      * - `false`: Disables the visibility control, meaning no elements get
