@@ -5,6 +5,7 @@ import { fromZonedTime } from "date-fns-tz";
 import { de } from "date-fns/locale";
 import wf from "../webflow/index.js";
 import deepMerge from "../utils/deepmerge.js";
+import { logPrefix } from "../utils/logger.js";
 import type { DashToCamelCase } from "../typeutils/index.js";
 import type { IANATimeZone } from "../timezones/index.js";
 
@@ -90,6 +91,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
   private canvas: HTMLElement;
   private data: RenderData<F>;
+  private lp: string = "Renderer:";
   private attributeName: string = "render";
 
   private attr: {
@@ -105,7 +107,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   };
 
   constructor(canvas: HTMLElement | null, options?: Partial<RendererOptions<F>>) {
-    if (!canvas) throw new Error(`Canvas can't be undefined.`);
+    if (!canvas) throw new Error(`${this.lp}Canvas can't be undefined.`);
     this.canvas = canvas;
     this.options = deepMerge(Renderer.defaultOptions as RendererOptions<F>, options);
 
@@ -122,6 +124,8 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
       visibilityControl: `data-${this.attributeName}-visibility-control`,
       clear: `data-${this.attributeName}-clear`,
     };
+
+    this.lp = logPrefix("Renderer", this.attributeName);
   }
 
   public static defineAttributes<T extends FilterAttributes>(obj: T): T {
@@ -461,7 +465,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
             const targetElement = child.querySelector(`[${attr}]`);
             if (!targetElement) {
               throw new Error(
-                `Can't parse boolean filter: No element found with attribute "[${attr}]". Perhaps you misspelled the attribute?`,
+                `${this.lp}Can't parse boolean filter: No element found with attribute "[${attr}]". Perhaps you misspelled the attribute?`,
               );
             }
 
@@ -557,7 +561,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
       if (ancestor) {
         ancestor.style.display = "none";
       } else {
-        console.warn(`Ancestor "${ancestorToHide}" not found for element.`);
+        console.warn(`${this.lp}Ancestor "${ancestorToHide}" not found for element.`);
       }
     }
   }
