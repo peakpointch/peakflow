@@ -206,7 +206,9 @@
     "hyphenation.de": "^0.2.1",
     "hypher": "^0.2.5",
     "jspdf": "^3.0.1",
-    "swiper": "^11.2.10"
+    "swiper": "^11.2.10",
+    "ts-deepmerge": "^7.0.3",
+    "type-fest": "^4.41.0"
   },
   "author": "Lukas Manuel Graf",
   "license": "MIT"

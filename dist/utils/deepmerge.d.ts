@@ -1,12 +1,13 @@
+import type { PartialDeep } from "type-fest";
 /**
- * Deeply merges two objects, giving precedence to the properties in the `source` object.
+ * Deeply merges user-provided options into a set of default options.
  *
- * This function is particularly useful when working with configuration objects
- * where you want to provide defaults and allow overrides at any level of nesting.
- *
- * @template T The type of the target and resulting merged object.
- * @param {T} target - The base object containing default values.
- * @param {Partial<T>} source - An object with partial overrides to apply to the target.
- * @returns {T} A new object resulting from deeply merging `source` into `target`.
+ * This function is immutable and uses `ts-deepmerge` under the hood.
+ * ---
+ * @param defaults - The default options object providing base values.
+ * @param options - A deep partial options object that can override
+ * the defaults.
+ * @returns A new object containing the deeply merged result of
+ * defaults and options.
  */
-export default function deepMerge<T>(target: T, source: Partial<T>): T;
+export default function mergeOptions<T, U extends PartialDeep<T>>(defaults: T, options: U): T;
