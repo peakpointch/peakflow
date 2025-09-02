@@ -90,20 +90,38 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
   private canvas: HTMLElement;
   private data: RenderData<F>;
-  private fieldAttr: string;
-  private elementAttr: string;
-  private emptyStateAttr: string;
-  private collectionAttr: string = `data-is-collection`;
   private attributeName: string = "render";
+
+  private attr: {
+    element: string;
+    field: string;
+    emptyState: string;
+    collection: string;
+    decorative: string;
+    hideSelf: string;
+    hideAncestor: string;
+    visibilityControl: string;
+    clear: string;
+  };
 
   constructor(canvas: HTMLElement | null, options?: Partial<RendererOptions<F>>) {
     if (!canvas) throw new Error(`Canvas can't be undefined.`);
     this.canvas = canvas;
     this.options = deepMerge(Renderer.defaultOptions as RendererOptions<F>, options);
+
     this.attributeName = this.options.attributeName;
-    this.elementAttr = `data-${this.attributeName}-element`;
-    this.fieldAttr = `data-${this.attributeName}-field`;
-    this.emptyStateAttr = `data-${this.attributeName}-empty-state`;
+
+    this.attr = {
+      element: `data-${this.attributeName}-element`,
+      field: `data-${this.attributeName}-field`,
+      emptyState: `data-${this.attributeName}-empty-state`,
+      collection: `data-${this.attributeName}-collection`,
+      decorative: `data-${this.attributeName}-decorative`,
+      hideSelf: `data-${this.attributeName}-hide-self`,
+      hideAncestor: `data-${this.attributeName}-hide-ancestor`,
+      visibilityControl: `data-${this.attributeName}-visibility-control`,
+      clear: `data-${this.attributeName}-clear`,
+    };
   }
 
   public static defineAttributes<T extends FilterAttributes>(obj: T): T {
@@ -145,7 +163,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
     // Recursion with visibility check
     htmlRenderElements.forEach((htmlRenderElement) => {
-      let isCollection = htmlRenderElement.getAttribute(this.collectionAttr) === "true";
+      let isCollection = htmlRenderElement.getAttribute(this.attr.collection) === "true";
       if (isCollection) {
         this.renderCollection(renderElement, htmlRenderElement);
       } else {
@@ -295,17 +313,17 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
       }
 
       // If it's a RenderElement
-      if (child.hasAttribute(this.elementAttr)) {
+      if (child.hasAttribute(this.attr.element)) {
         renderData.push(this.readRenderElement(child as HTMLElement, stopRecursionMatches));
       }
       // If it's a RenderField
-      else if (child.hasAttribute(this.fieldAttr)) {
+      else if (child.hasAttribute(this.attr.field)) {
         renderData.push(this.readRenderField(child as HTMLElement));
       }
       // If it's neither, check if any descendants are renderable
       else {
         const hasRenderableChild =
-          child.querySelectorAll(`[${this.elementAttr}], [${this.fieldAttr}]`).length > 0;
+          child.querySelectorAll(`[${this.attr.element}], [${this.attr.field}]`).length > 0;
 
         // If there are renderable children, recurse on this child
         if (hasRenderableChild) {
@@ -319,7 +337,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
   public clear(node: HTMLElement = this.canvas): void {
     const collections = node.querySelectorAll<HTMLElement>(
-      `${this.elementSelector()}[${this.collectionAttr}]`,
+      `${this.elementSelector()}[${this.attr.collection}]`,
     );
     collections.forEach((collection) => {
       const template = collection.firstElementChild.cloneNode(true);
@@ -346,7 +364,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     child: HTMLElement,
     stopRecursionAttributes: string[],
   ): RenderElement<F> {
-    const elementName = child.getAttribute(this.elementAttr);
+    const elementName = child.getAttribute(this.attr.element);
     const instance = child.getAttribute(`data-${elementName}-instance`);
 
     // Recursively read child elements
@@ -372,7 +390,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   }
 
   private readRenderField(child: HTMLElement): RenderField<F> {
-    const fieldName = child.getAttribute(this.fieldAttr);
+    const fieldName = child.getAttribute(this.attr.field);
     const instance = child.getAttribute(`data-${fieldName}-instance`);
 
     // Determine field type (handle date, text, html)
@@ -487,8 +505,8 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
    * - `false`: Disable visibility control, do not mess with the element's visibility.
    */
   private readVisibilityControl(child: HTMLElement): VisibilityControl {
-    const visibilityControlAttr = child
-      .getAttribute(`data-${this.attributeName}-visibility-control`)
+    const raw = child
+      .getAttribute(this.attr.visibilityControl)
       ?.trim() as UnparsedBoolean<VisibilityControl>;
     switch (visibilityControlAttr) {
       case "emptyState":
@@ -522,7 +540,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   }
 
   private showElement(element: HTMLElement): void {
-    const ancestorToHide = element.getAttribute(`data-${this.attributeName}-hide-ancestor`);
+    const ancestorToHide = element.getAttribute(this.attr.hideAncestor);
 
     this.showHTMLElement(element);
 
@@ -538,10 +556,8 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   }
 
   private hideElement(element: HTMLElement): void {
-    const hideSelf = JSON.parse(
-      element.getAttribute(`data-${this.attributeName}-hide-self`) || "false",
-    );
-    const ancestorToHide = element.getAttribute(`data-${this.attributeName}-hide-ancestor`);
+    const hideSelf = wf.hasAttr(element, this.attr.hideSelf);
+    const ancestorToHide = element.getAttribute(this.attr.hideAncestor);
 
     if (hideSelf) {
       // Hide the element itself
@@ -570,7 +586,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   }
 
   private elementSelector(element?: RenderElement<F>): string {
-    const elementAttrSelector = createAttribute(this.elementAttr);
+    const elementAttrSelector = createAttribute(this.attr.element);
     if (!element) {
       return elementAttrSelector();
     }
@@ -583,7 +599,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   }
 
   private fieldSelector(field?: RenderField<F>): string {
-    const fieldAttrSelector = createAttribute(this.fieldAttr);
+    const fieldAttrSelector = createAttribute(this.attr.field);
     if (!field) {
       return fieldAttrSelector();
     }
