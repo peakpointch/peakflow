@@ -55,7 +55,7 @@ export class Renderer {
         const selector = this.blockSelector(renderBlock);
         const htmlNodes = canvas.querySelectorAll(selector);
         if (!htmlNodes.length) {
-            console.warn(`Block "${selector}" was not found.`);
+            console.warn(`${this.lp}Block "${selector}" was not found.`);
             return;
         }
         // Recursion with visibility check
@@ -108,7 +108,7 @@ export class Renderer {
             htmlNode.appendChild(fragment);
         }
         else {
-            console.warn("No first child found to clone");
+            console.warn(`${this.lp}No first child found to clone`);
         }
     }
     /**
@@ -460,7 +460,7 @@ export class Renderer {
                 this.showHTMLElement(ancestor);
             }
             else {
-                console.warn(`Ancestor "${ancestorToHide}" not found for element.`);
+                console.warn(`${this.lp}Ancestor "${ancestorToHide}" not found for element.`);
             }
         }
     }

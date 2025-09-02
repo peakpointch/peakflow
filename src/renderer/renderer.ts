@@ -309,7 +309,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     const htmlNodes = canvas.querySelectorAll<HTMLRenderNode>(selector);
 
     if (!htmlNodes.length) {
-      console.warn(`Block "${selector}" was not found.`);
+      console.warn(`${this.lp}Block "${selector}" was not found.`);
       return;
     }
 
@@ -365,7 +365,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
       htmlNode.appendChild(fragment);
     } else {
-      console.warn("No first child found to clone");
+      console.warn(`${this.lp}No first child found to clone`);
     }
   }
 
@@ -769,7 +769,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
       if (ancestor) {
         this.showHTMLElement(ancestor);
       } else {
-        console.warn(`Ancestor "${ancestorToHide}" not found for element.`);
+        console.warn(`${this.lp}Ancestor "${ancestorToHide}" not found for element.`);
       }
     }
   }
