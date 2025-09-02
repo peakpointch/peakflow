@@ -370,6 +370,15 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   }
 
   public clear(node: HTMLElement = this.canvas): void {
+    /** Check whether the value of a field is allowed to be cleared. */
+    function allowedToClear(child: HTMLElement): boolean {
+      if (child.hasAttribute(this.attr.clear)) {
+        return wf.hasAttr(child, this.attr.clear);
+      } else {
+        return this.options.defaults.clear;
+      }
+    }
+
     const collections = node.querySelectorAll<HTMLElement>(
       `${this.elementSelector()}[${this.attr.collection}]`,
     );
@@ -381,7 +390,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
     const fields = node.querySelectorAll<HTMLElement>(this.fieldSelector());
     fields.forEach((field) => {
-      if (this.allowedToClear(field)) field.innerText = "";
+      if (allowedToClear(field)) field.innerText = "";
       field.innerText = "";
       const fieldVisibility = this.readVisibilityControl(field);
       if (fieldVisibility === true || fieldVisibility === "emptyState") {
@@ -539,14 +548,6 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
       return wf.hasAttr(child, this.attr.visibilityControl);
     } else {
       return this.options.defaults.visibilityControl;
-    }
-  }
-
-  private allowedToClear(child: HTMLElement): boolean {
-    if (child.hasAttribute(this.attr.clear)) {
-      return wf.hasAttr(child, this.attr.clear);
-    } else {
-      return this.options.defaults.clear;
     }
   }
 
