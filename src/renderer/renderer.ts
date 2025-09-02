@@ -33,6 +33,7 @@ export type RenderField<F extends FilterAttributes<keyof F & string> = {}> = {
   value: string;
   type?: "text" | "html" | "date";
   visibility: boolean;
+  decorative?: boolean;
   props?: PropsFromFilterAttributes<F>;
 };
 
@@ -41,6 +42,7 @@ export type RenderElement<F extends FilterAttributes<keyof F & string> = {}> = {
   instance?: string;
   fields: RenderData<F>;
   visibility: boolean;
+  decorative?: boolean;
   props?: PropsFromFilterAttributes<F>;
 };
 
@@ -379,6 +381,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
       instance: instance || undefined,
       fields,
       visibility: wf.isVisible(child),
+      decorative: wf.hasAttr(child, this.attr.decorative),
       props: {},
     };
 
@@ -514,9 +517,11 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     // Check if all child fields and elements are empty
     return element.fields.every((child) => {
       if (Renderer.isRenderField(child)) {
+        if (child.decorative) return true;
         return !child.value.trim(); // Empty field
       }
       if (Renderer.isRenderElement(child)) {
+        if (child.decorative) return true;
         return child.fields.length === 0 ? true : this.shouldHideElement(child); // Recursively check child elements
       }
       return false; // Default case
