@@ -235,20 +235,27 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   private renderElementToTemplate(renderElement: RenderElement<F>, htmlTemplate: HTMLElement) {
     switch (this.readVisibilityControl(htmlTemplate)) {
       case "emptyState":
-        const emptyStateElement = htmlTemplate.querySelector<HTMLElement>(
-          `[${this.emptyStateAttr}]`,
-        );
+        const emptyStateElement = this.getEmptyStateFor(renderElement, htmlTemplate);
         if (this.shouldHideElement(renderElement)) {
-          emptyStateElement.classList.remove("hide");
-          if (emptyStateElement.style.display === "none") {
-            emptyStateElement.style.removeProperty("display");
-          }
+          this.hideChildrenExceptEmptyState(htmlTemplate);
+          this.showHTMLElement(emptyStateElement);
+          const childrenElements = emptyStateElement.querySelectorAll(
+            `[${this.attr.element}], [${this.attr.field}]`,
+          );
+          const childrenElementTypes = Array.from(childrenElements).map((el) =>
+            el.hasAttribute(this.attr.element)
+              ? el.getAttribute(this.attr.element)
+              : el.getAttribute(this.attr.field),
+          );
+          const fields = renderElement.fields.filter((field) =>
+            childrenElementTypes.includes(field.element),
+          );
+          // Only render fields and elements that are inside the empty state element
+          this._render(fields, emptyStateElement);
         } else {
-          emptyStateElement.classList.add("hide");
-          emptyStateElement.style.display = "none";
+          this.hideHTMLElement(emptyStateElement);
+          this._render(renderElement.fields, htmlTemplate);
         }
-        // For both cases since the children next to the `emptyStateElement` have to be hidden if the empty state is shown.
-        this._render(renderElement.fields, htmlTemplate);
         break;
       case true:
         if (this.shouldHideElement(renderElement)) {
