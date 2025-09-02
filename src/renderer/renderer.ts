@@ -8,6 +8,7 @@ import deepMerge from "../utils/deepmerge.js";
 import { logPrefix } from "../utils/logger.js";
 import type { DashToCamelCase } from "../typeutils/index.js";
 import type { IANATimeZone } from "../timezones/index.js";
+import type { PartialDeep } from "type-fest";
 
 type VisibilityControl = boolean | "emptyState";
 type UnparsedBoolean<T> = Exclude<T, boolean> | "true" | "false";
@@ -114,7 +115,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     clear: string;
   };
 
-  constructor(canvas: HTMLElement | null, options?: Partial<RendererOptions<F>>) {
+  constructor(canvas: HTMLElement | null, options?: PartialDeep<RendererOptions<F>>) {
     if (!canvas) throw new Error(`${this.lp}Canvas can't be undefined.`);
     this.canvas = canvas;
     this.options = deepMerge(Renderer.defaultOptions as RendererOptions<F>, options);
