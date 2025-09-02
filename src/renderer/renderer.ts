@@ -10,8 +10,15 @@ import type { DashToCamelCase, StringifyBoolean } from "../typeutils/index.js";
 import type { IANATimeZone } from "../timezones/index.js";
 import type { PartialDeep } from "type-fest";
 
+/**
+ * Tells the `Renderer` how to handle the visibility of an element
+ * or field in case all its children are empty.
+ */
 type VisibilityControl = boolean | "emptyState";
 
+/**
+ * Defines the type of a `FilterAttribute`.
+ */
 type FilterAttributeType = {
   string: string;
   number: number;
@@ -27,22 +34,104 @@ type PropsFromFilterAttributes<F extends FilterAttributes> = {
   [K in keyof F as DashToCamelCase<K & string>]?: FilterAttributeType[F[K]];
 };
 
+/**
+ * A `RenderField` ...
+ */
 export type RenderField<F extends FilterAttributes<keyof F & string> = {}> = {
+  /**
+   * The name or identifier of this `RenderField` type.
+   * Typically corresponds to the kind of content it represents, e.g., "title" or "description".
+   */
   element: string;
+
+  /**
+   * An optional instance identifier for distinguishing between multiple fields
+   * of the same `element` type within a parent. Useful for indexing or targeting
+   * specific fields in a set.
+   */
   instance?: string;
+
+  /**
+   * The value of this field as a string.
+   * The format or interpretation of this value depends on the `type` property.
+   */
   value: string;
+
+  /**
+   * The type of this field.
+   *
+   * This tells the Renderer how to render the `value`
+   */
   type?: "text" | "html" | "date";
+
+  /**
+   * Whether this `RenderField` should be visible when it's rendered.
+   */
   visibility: boolean;
+
+  /**
+   * Marks this field as decorative.
+   *
+   * Decorative fields are ignored when determining whether their parent element
+   * should be hidden. In other words, even if a decorative field has a value,
+   * it does not prevent the parent element from being considered empty.
+   */
   decorative?: boolean;
+
+  /**
+   * Additional properties for this field.
+   *
+   * Can be used to filter, sort, or otherwise categorize fields based on custom
+   * metadata.
+   */
   props?: PropsFromFilterAttributes<F>;
 };
 
+/**
+ * A `RenderElement` can wrap multiple `RenderField`'s or even `RenderElement`'s.
+ * It is helpful when grouping data together in an object oriented way.
+ */
 export type RenderElement<F extends FilterAttributes<keyof F & string> = {}> = {
+  /**
+   * The name or identifier of this `RenderElement` type.
+   * Typically corresponds to the kind of content its fields make up, for
+   * example "dish" or "day".
+   */
   element: string;
+
+  /**
+   * An optional instance identifier for distinguishing between multiple elements
+   * of the same `element` type within a parent. Useful for indexing or targeting
+   * specific fields in a set.
+   */
   instance?: string;
+
+  /**
+   * The children as `RenderData` this `RenderElement` groups together
+   */
   fields: RenderData<F>;
+
+  /**
+   * Whether this `RenderElement` should be visible when it's rendered.
+   */
   visibility: boolean;
+
+  /**
+   * Marks this `RenderElement` as decorative.
+   *
+   * Decorative `RenderElement`s are ignored when determining whether their
+   * parent element should be hidden. In other words, even if a decorative field
+   * has a value, it does not prevent the parent element from being considered
+   * empty.
+   */
   decorative?: boolean;
+
+  /**
+   * Additional properties for this element.
+   *
+   * Can be used to filter, sort, or otherwise categorize elements based on
+   * custom metadata.
+   */
   props?: PropsFromFilterAttributes<F>;
 };
 
@@ -57,6 +146,7 @@ export interface RendererOptions<F extends FilterAttributes<keyof F & string> = 
    *   <div data-render-element="example" />.
    */
   attributeName: string;
+
   /**
    * Defines which HTML attributes should be read as typed values on `props`
    * of `RenderField` and `RenderElement`. Keys must be in dash-case and will
@@ -80,8 +170,14 @@ export interface RendererOptions<F extends FilterAttributes<keyof F & string> = 
    * timezone: "Europe/Zurich"
    */
   timezone?: false | IANATimeZone;
+
+  /**
+   * Fallback options for `RenderElement`'s and `RenderItem`'s when no
+   * options are set on the HTML target.
+   */
   defaults: {
     visibilityControl: VisibilityControl;
+    /** Whether to clear the value of a `RenderField`. */
     clear: boolean;
   };
 }
@@ -314,6 +410,11 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     }
   }
 
+  /**
+   * Render the value of a `renderField` into its corresponding `htmlTemplate`,
+   * based on the type of its value defined through the `type` property defined
+   * on the `renderField`.
+   */
   private renderFieldValue(renderField: RenderField, htmlTemplate: HTMLElement): void {
     switch (renderField.type) {
       case "html":
@@ -369,6 +470,10 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     return renderData;
   }
 
+  /**
+   * Clears the canvas from previous renders and reset's all element's visibility
+   * to its initial state.
+   */
   public clear(node: HTMLElement = this.canvas): void {
     /** Check whether the value of a field is allowed to be cleared. */
     function allowedToClear(child: HTMLElement): boolean {
@@ -531,14 +636,25 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   }
 
   /**
-   * Parse the visibility control attribute value of a Render-`child`.
+   * Parse the visibility control attribute value of a `child` that represents
+   * a render item in the DOM.
    *
-   * ### "VisibilityControl" tells the `Renderer` wether it should mess with a `RenderElement`'s or `RenderField`'s visibility
-   * - `emptyState`: Shows an empty state if the children are hidden
-   * - `true`: Hides the element if there is no content to be shown.
-   * - `false`: Disable visibility control, do not mess with the element's visibility.
+   * # VisibilityControl
+   * This tells the `Renderer` wether it should dynamically show or hide a
+   * `child`, if the `Renderer` decides it has no critical content.
+   *
+   * ## Values:
+   * - "emptyState": Hides the `child` and shows an empty state tagged with
+   *   the `[data-*-empty-state]` attribute. The attribute value tells the
+   *   `Renderer` which render item this empty state belongs to.
+   *   TODO: Make it clear that it matches elements and empty states based on the `element` property on the render element or render item.
+   *
+   * - `true`: Hides the `child`
+   * - `false`: Disables the visibility control, meaning no elements get
+   *   shown or hidden
    */
   private readVisibilityControl(child: HTMLElement): VisibilityControl {
+    // INFO: This method is also used during the clear process.
     const raw = child
       .getAttribute(this.attr.visibilityControl)
       ?.trim() as StringifyBoolean<VisibilityControl>;

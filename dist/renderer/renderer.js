@@ -189,6 +189,11 @@ export class Renderer {
                 break;
         }
     }
+    /**
+     * Render the value of a `renderField` into its corresponding `htmlTemplate`,
+     * based on the type of its value defined through the `type` property defined
+     * on the `renderField`.
+     */
     renderFieldValue(renderField, htmlTemplate) {
         switch (renderField.type) {
             case "html":
@@ -237,7 +242,12 @@ export class Renderer {
         });
         return renderData;
     }
+    /**
+     * Clears the canvas from previous renders and reset's all element's visibility
+     * to its initial state.
+     */
     clear(node = this.canvas) {
+        /** Check whether the value of a field is allowed to be cleared. */
         function allowedToClear(child) {
             if (child.hasAttribute(this.attr.clear)) {
                 return wf.hasAttr(child, this.attr.clear);
@@ -362,12 +372,22 @@ export class Renderer {
         }
     }
     /**
-     * Parse the visibility control attribute value of a Render-`child`.
+     * Parse the visibility control attribute value of a `child` that represents
+     * a render item in the DOM.
      *
-     * ### "VisibilityControl" tells the `Renderer` wether it should mess with a `RenderElement`'s or `RenderField`'s visibility
-     * - `emptyState`: Shows an empty state if the children are hidden
-     * - `true`: Hides the element if there is no content to be shown.
-     * - `false`: Disable visibility control, do not mess with the element's visibility.
+     * # VisibilityControl
+     * This tells the `Renderer` wether it should dynamically show or hide a
+     * `child`, if the `Renderer` decides it has no critical content.
+     *
+     * ## Values:
+     * - "emptyState": Hides the `child` and shows an empty state tagged with
+     *   the `[data-*-empty-state]` attribute. The attribute value tells the
+     *   `Renderer` which render item this empty state belongs to.
+     *   TODO: Make it clear that it matches elements and empty states based on the `element` property on the render element or render item.
+     *
+     * - `true`: Hides the `child`
+     * - `false`: Disables the visibility control, meaning no elements get
+     *   shown or hidden
      */
     readVisibilityControl(child) {
         // INFO: This method is also used during the clear process.
