@@ -1,5 +1,7 @@
 import type { DashToCamelCase } from "../typeutils/index.js";
 import type { IANATimeZone } from "../timezones/index.js";
+import type { PartialDeep } from "type-fest";
+type VisibilityControl = boolean | "emptyState";
 type FilterAttributeType = {
     string: string;
     number: number;
@@ -18,6 +20,7 @@ export type RenderField<F extends FilterAttributes<keyof F & string> = {}> = {
     value: string;
     type?: "text" | "html" | "date";
     visibility: boolean;
+    decorative?: boolean;
     props?: PropsFromFilterAttributes<F>;
 };
 export type RenderElement<F extends FilterAttributes<keyof F & string> = {}> = {
@@ -25,6 +28,7 @@ export type RenderElement<F extends FilterAttributes<keyof F & string> = {}> = {
     instance?: string;
     fields: RenderData<F>;
     visibility: boolean;
+    decorative?: boolean;
     props?: PropsFromFilterAttributes<F>;
 };
 export type RenderData<F extends FilterAttributes = {}> = Array<RenderField<F> | RenderElement<F>>;
@@ -59,18 +63,20 @@ export interface RendererOptions<F extends FilterAttributes<keyof F & string> = 
      * timezone: "Europe/Zurich"
      */
     timezone?: false | IANATimeZone;
+    defaults: {
+        visibilityControl: VisibilityControl;
+        clear: boolean;
+    };
 }
 export declare class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     static readonly defaultOptions: RendererOptions;
     options: RendererOptions<F>;
     private canvas;
     private data;
-    private fieldAttr;
-    private elementAttr;
-    private emptyStateAttr;
-    private collectionAttr;
+    private lp;
     private attributeName;
-    constructor(canvas: HTMLElement | null, options?: Partial<RendererOptions<F>>);
+    private attr;
+    constructor(canvas: HTMLElement | null, options?: PartialDeep<RendererOptions<F>>);
     static defineAttributes<T extends FilterAttributes>(obj: T): T;
     render(data: RenderData<F>, canvas?: HTMLElement): void;
     private _render;
@@ -91,6 +97,7 @@ export declare class Renderer<F extends FilterAttributes<keyof F & string> = {}>
      * Render a `RenderField` to a single `HTMLRenderField`
      */
     private renderFieldToTemplate;
+    private renderFieldValue;
     /**
      * Recursively reads the DOM node and its descendants to build a structured RenderData.
      * It identifies elements with `data-${elementAttr}-element` and `data-${fieldAttr}-field` attributes,
@@ -117,10 +124,13 @@ export declare class Renderer<F extends FilterAttributes<keyof F & string> = {}>
      * - `false`: Disable visibility control, do not mess with the element's visibility.
      */
     private readVisibilityControl;
+    private getEmptyStateFor;
     private shouldHideElement;
     private showHTMLElement;
     private showElement;
+    private hideHTMLElement;
     private hideElement;
+    private hideChildrenExceptEmptyState;
     addFilterAttributes(newAttributes: FilterAttributes): void;
     removeFilterAttributes(...attributesToRemove: string[]): void;
     private elementSelector;
