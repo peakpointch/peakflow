@@ -16,7 +16,7 @@ export class Renderer {
         this.options = deepMerge(Renderer.defaultOptions, options);
         this.attributeName = this.options.attributeName;
         this.attr = {
-            element: `data-${this.attributeName}-element`,
+            block: `data-${this.attributeName}-element`,
             field: `data-${this.attributeName}-field`,
             emptyState: `data-${this.attributeName}-empty-state`,
             collection: `data-${this.attributeName}-collection`,
@@ -38,9 +38,9 @@ export class Renderer {
     _render(data, canvas = this.canvas) {
         this.data = data;
         this.data.forEach((renderItem) => {
-            // Render Elements
-            if (Renderer.isRenderElement(renderItem)) {
-                this.renderElement(renderItem, canvas);
+            // Render Blocks
+            if (Renderer.isRenderBlock(renderItem)) {
+                this.renderBlock(renderItem, canvas);
             }
             // Render Fields
             if (Renderer.isRenderField(renderItem)) {
@@ -49,34 +49,34 @@ export class Renderer {
         });
     }
     /**
-     * Render a `RenderElement` to all its instances
+     * Render a `RenderBlock` to all its instances
      */
-    renderElement(renderElement, canvas) {
-        const selector = this.elementSelector(renderElement);
-        const htmlRenderElements = canvas.querySelectorAll(selector);
-        if (!htmlRenderElements.length) {
-            console.warn(`Element "${selector}" was not found.`);
+    renderBlock(renderBlock, canvas) {
+        const selector = this.blockSelector(renderBlock);
+        const htmlRenderBlocks = canvas.querySelectorAll(selector);
+        if (!htmlRenderBlocks.length) {
+            console.warn(`Block "${selector}" was not found.`);
             return;
         }
         // Recursion with visibility check
-        htmlRenderElements.forEach((htmlRenderElement) => {
-            let isCollection = htmlRenderElement.getAttribute(this.attr.collection) === "true";
+        htmlRenderBlocks.forEach((htmlRenderBlock) => {
+            let isCollection = htmlRenderBlock.getAttribute(this.attr.collection) === "true";
             if (isCollection) {
-                this.renderCollection(renderElement, htmlRenderElement);
+                this.renderCollection(renderBlock, htmlRenderBlock);
             }
             else {
-                this.renderElementToTemplate(renderElement, htmlRenderElement);
+                this.renderBlockToTemplate(renderBlock, htmlRenderBlock);
             }
         });
     }
-    renderCollection(renderElement, htmlRenderCollection) {
+    renderCollection(renderBlock, htmlRenderCollection) {
         switch (this.readVisibilityControl(htmlRenderCollection)) {
             case "emptyState":
                 // TODO: Support "emptyState" for render collections
                 break;
             case true:
-                if (this.shouldHideElement(renderElement)) {
-                    this.hideElement(htmlRenderCollection);
+                if (this.shouldHideBlock(renderBlock)) {
+                    this.hideNode(htmlRenderCollection);
                     return;
                 }
                 break;
@@ -86,8 +86,8 @@ export class Renderer {
         }
         let max = parseInt(htmlRenderCollection.getAttribute("data-limit-items") || "-1");
         if (max === -1)
-            max = renderElement.fields.length;
-        max = Math.min(renderElement.fields.length, max);
+            max = renderBlock.fields.length;
+        max = Math.min(renderBlock.fields.length, max);
         max = Math.max(max, 0);
         const firstChild = htmlRenderCollection.firstElementChild;
         if (firstChild) {
@@ -97,11 +97,11 @@ export class Renderer {
             const fragment = document.createDocumentFragment();
             for (let i = 0; i < max; i++) {
                 const template = htmlTemplate.cloneNode(true);
-                if (Renderer.isRenderElement(renderElement.fields[i])) {
-                    this.renderElementToTemplate(renderElement.fields[i], template);
+                if (Renderer.isRenderBlock(renderBlock.fields[i])) {
+                    this.renderBlockToTemplate(renderBlock.fields[i], template);
                 }
-                else if (Renderer.isRenderField(renderElement.fields[i])) {
-                    this.renderFieldToTemplate(renderElement.fields[i], template);
+                else if (Renderer.isRenderField(renderBlock.fields[i])) {
+                    this.renderFieldToTemplate(renderBlock.fields[i], template);
                 }
                 fragment.appendChild(template);
             }
@@ -112,39 +112,39 @@ export class Renderer {
         }
     }
     /**
-     * Render a `RenderElement` to a single `HTMLRenderElement`
+     * Render a `RenderBlock` to a single `HTMLRenderBlock`
      */
-    renderElementToTemplate(renderElement, htmlTemplate) {
+    renderBlockToTemplate(renderBlock, htmlTemplate) {
         switch (this.readVisibilityControl(htmlTemplate)) {
             case "emptyState":
-                const emptyStateElement = this.getEmptyStateFor(renderElement, htmlTemplate);
-                if (this.shouldHideElement(renderElement)) {
+                const emptyStateElement = this.getEmptyStateFor(renderBlock, htmlTemplate);
+                if (this.shouldHideBlock(renderBlock)) {
                     this.hideChildrenExceptEmptyState(htmlTemplate);
                     this.showHTMLElement(emptyStateElement);
-                    const childrenElements = emptyStateElement.querySelectorAll(`[${this.attr.element}], [${this.attr.field}]`);
-                    const childrenElementTypes = Array.from(childrenElements).map((el) => el.hasAttribute(this.attr.element)
-                        ? el.getAttribute(this.attr.element)
+                    const children = emptyStateElement.querySelectorAll(`[${this.attr.block}], [${this.attr.field}]`);
+                    const childrenElementTypes = Array.from(children).map((el) => el.hasAttribute(this.attr.block)
+                        ? el.getAttribute(this.attr.block)
                         : el.getAttribute(this.attr.field));
-                    const fields = renderElement.fields.filter((field) => childrenElementTypes.includes(field.element));
-                    // Only render fields and elements that are inside the empty state element
+                    const fields = renderBlock.fields.filter((field) => childrenElementTypes.includes(field.element));
+                    // Only render fields and blocks that are inside the empty state element
                     this._render(fields, emptyStateElement);
                 }
                 else {
                     this.hideHTMLElement(emptyStateElement);
-                    this._render(renderElement.fields, htmlTemplate);
+                    this._render(renderBlock.fields, htmlTemplate);
                 }
                 break;
             case true:
-                if (this.shouldHideElement(renderElement)) {
-                    this.hideElement(htmlTemplate);
+                if (this.shouldHideBlock(renderBlock)) {
+                    this.hideNode(htmlTemplate);
                 }
                 else {
-                    this._render(renderElement.fields, htmlTemplate); // Recursively render children
+                    this._render(renderBlock.fields, htmlTemplate); // Recursively render children
                 }
                 break;
             case false:
             default:
-                this._render(renderElement.fields, htmlTemplate); // Recursively render children
+                this._render(renderBlock.fields, htmlTemplate); // Recursively render children
                 break;
         }
     }
@@ -167,7 +167,7 @@ export class Renderer {
             case "emptyState":
                 const emptyStateElement = this.getEmptyStateFor(renderField, htmlTemplate);
                 if (isVisible) {
-                    this.hideElement(htmlTemplate); // Hide empty field
+                    this.hideNode(htmlTemplate); // Hide empty field
                     this.showHTMLElement(emptyStateElement);
                 }
                 else {
@@ -177,7 +177,7 @@ export class Renderer {
                 break;
             case true:
                 if (isVisible) {
-                    this.hideElement(htmlTemplate); // Hide empty field
+                    this.hideNode(htmlTemplate); // Hide empty field
                 }
                 else {
                     this.renderFieldValue(renderField, htmlTemplate);
@@ -212,10 +212,10 @@ export class Renderer {
     /**
      * Recursively reads the DOM node and its descendants to build a structured RenderData.
      * It identifies elements with `data-${elementAttr}-element` and `data-${fieldAttr}-field` attributes,
-     * and processes them into RenderElement and RenderField objects.
+     * and processes them into `RenderBlock` and `RenderField` objects.
      *
      * @param node The root node to start reading from.
-     * @returns `RenderData` An array of RenderElement and RenderField objects representing the node structure.
+     * @returns `RenderData` An array of `RenderBlock` and `RenderField` objects representing the node structure.
      */
     read(node, stopRecursionMatches = []) {
         const renderData = [];
@@ -223,9 +223,9 @@ export class Renderer {
             if (stopRecursionMatches.some((selector) => child.matches(selector))) {
                 return; // Stop recursion for this element
             }
-            // If it's a RenderElement
-            if (child.hasAttribute(this.attr.element)) {
-                renderData.push(this.readRenderElement(child, stopRecursionMatches));
+            // If it's a RenderBlock
+            if (child.hasAttribute(this.attr.block)) {
+                renderData.push(this.readRenderBlock(child, stopRecursionMatches));
             }
             // If it's a RenderField
             else if (child.hasAttribute(this.attr.field)) {
@@ -233,7 +233,7 @@ export class Renderer {
             }
             // If it's neither, check if any descendants are renderable
             else {
-                const hasRenderableChild = child.querySelectorAll(`[${this.attr.element}], [${this.attr.field}]`).length > 0;
+                const hasRenderableChild = child.querySelectorAll(`[${this.attr.block}], [${this.attr.field}]`).length > 0;
                 // If there are renderable children, recurse on this child
                 if (hasRenderableChild) {
                     renderData.push(...this.read(child, stopRecursionMatches));
@@ -243,8 +243,8 @@ export class Renderer {
         return renderData;
     }
     /**
-     * Clears the canvas from previous renders and reset's all element's visibility
-     * to its initial state.
+     * Clears the canvas from previous renders and resets the visibility of all
+     * elements to its initial state.
      */
     clear(node = this.canvas) {
         /** Check whether the value of a field is allowed to be cleared. */
@@ -256,7 +256,7 @@ export class Renderer {
                 return this.options.defaults.clear;
             }
         };
-        const collections = node.querySelectorAll(`${this.elementSelector()}[${this.attr.collection}]`);
+        const collections = node.querySelectorAll(`${this.blockSelector()}[${this.attr.collection}]`);
         collections.forEach((collection) => {
             const template = collection.firstElementChild.cloneNode(true);
             collection.innerHTML = "";
@@ -269,29 +269,29 @@ export class Renderer {
             field.innerText = "";
             const fieldVisibility = this.readVisibilityControl(field);
             if (fieldVisibility === true || fieldVisibility === "emptyState") {
-                this.showElement(field);
+                this.showNode(field);
             }
         });
-        const elements = node.querySelectorAll(this.elementSelector());
-        elements.forEach((element) => {
-            this.showElement(element);
+        const blocks = node.querySelectorAll(this.blockSelector());
+        blocks.forEach((block) => {
+            this.showNode(block);
         });
     }
-    readRenderElement(child, stopRecursionAttributes) {
-        const elementName = child.getAttribute(this.attr.element);
-        const instance = child.getAttribute(`data-${elementName}-instance`);
+    readRenderBlock(child, stopRecursionAttributes) {
+        const blockName = child.getAttribute(this.attr.block);
+        const instance = child.getAttribute(`data-${blockName}-instance`);
         // Recursively read child elements
         const fields = this.read(child, stopRecursionAttributes); // Recurse on children
-        const element = {
-            element: elementName,
+        const block = {
+            element: blockName,
             instance: instance || undefined,
             fields,
             visibility: wf.isVisible(child),
             decorative: wf.hasAttr(child, this.attr.decorative),
             props: {},
         };
-        this.readFilteringProperties(element, child);
-        return element;
+        this.readFilteringProperties(block, child);
+        return block;
     }
     readRenderField(child) {
         const fieldName = child.getAttribute(this.attr.field);
@@ -383,7 +383,7 @@ export class Renderer {
      * - "emptyState": Hides the `child` and shows an empty state tagged with
      *   the `[data-*-empty-state]` attribute. The attribute value tells the
      *   `Renderer` which render item this empty state belongs to.
-     *   TODO: Make it clear that it matches elements and empty states based on the `element` property on the render element or render item.
+     *   TODO: Make it clear that it matches RenderNodes and empty states based on the `element` property on the render block or render item.
      *
      * - `true`: Hides the `child`
      * - `false`: Disables the visibility control, meaning no elements get
@@ -404,32 +404,33 @@ export class Renderer {
             return this.options.defaults.visibilityControl;
         }
     }
-    getEmptyStateFor(element, template) {
+    getEmptyStateFor(node, template) {
         let emptyState;
         if (Renderer.isRenderField) {
-            emptyState = template.parentElement?.querySelector(`[${this.attr.emptyState}="${element.element}"]`);
+            emptyState = template.parentElement?.querySelector(`[${this.attr.emptyState}="${node.element}"]`);
         }
         else {
-            emptyState = template.querySelector(`[${this.attr.emptyState}="${element.element}"]`);
+            emptyState = template.querySelector(`[${this.attr.emptyState}="${node.element}"]`);
         }
         if (emptyState)
             return emptyState;
-        throw new Error(`${this.lp}No empty state found for "${element.element}"`);
+        throw new Error(`${this.lp}No empty state found for "${node.element}"`);
     }
-    shouldHideElement(element) {
-        if (element.visibility === false)
+    shouldHideBlock(block) {
+        if (block.visibility === false)
             return true;
-        // Check if all child fields and elements are empty
-        return element.fields.every((child) => {
+        // Check if all child blocks and fields are empty
+        return block.fields.every((child) => {
             if (Renderer.isRenderField(child)) {
                 if (child.decorative)
                     return true;
                 return !child.value.trim(); // Empty field
             }
-            if (Renderer.isRenderElement(child)) {
+            if (Renderer.isRenderBlock(child)) {
                 if (child.decorative)
                     return true;
-                return child.fields.length === 0 ? true : this.shouldHideElement(child); // Recursively check child elements
+                // Recursively check child nodes
+                return child.fields.length === 0 ? true : this.shouldHideBlock(child);
             }
             return false; // Default case
         });
@@ -442,12 +443,12 @@ export class Renderer {
             element.classList.remove("hide");
         }
     }
-    showElement(element) {
-        const ancestorToHide = element.getAttribute(this.attr.hideAncestor);
-        this.showHTMLElement(element);
+    showNode(node) {
+        const ancestorToHide = node.getAttribute(this.attr.hideAncestor);
+        this.showHTMLElement(node);
         if (ancestorToHide) {
             // Hide the specified ancestor
-            const ancestor = element.closest(ancestorToHide);
+            const ancestor = node.closest(ancestorToHide);
             if (ancestor) {
                 this.showHTMLElement(ancestor);
             }
@@ -459,29 +460,29 @@ export class Renderer {
     hideHTMLElement(element) {
         element.style.display = "none";
     }
-    hideElement(element) {
-        const hideSelf = wf.hasAttr(element, this.attr.hideSelf);
-        const ancestorToHide = element.getAttribute(this.attr.hideAncestor);
+    hideNode(node) {
+        const hideSelf = wf.hasAttr(node, this.attr.hideSelf);
+        const ancestorToHide = node.getAttribute(this.attr.hideAncestor);
         if (hideSelf) {
             // Hide the element itself
-            this.hideHTMLElement(element);
+            this.hideHTMLElement(node);
         }
         else if (ancestorToHide) {
             // Hide the specified ancestor
-            const ancestor = element.closest(ancestorToHide);
+            const ancestor = node.closest(ancestorToHide);
             if (ancestor) {
                 this.hideHTMLElement(ancestor);
             }
             else {
-                console.warn(`${this.lp}Ancestor "${ancestorToHide}" not found for element.`);
+                console.warn(`${this.lp}Ancestor "${ancestorToHide}" not found for node.`);
             }
         }
     }
     hideChildrenExceptEmptyState(parent) {
-        const elementsAndFields = `[${this.attr.element}], [${this.attr.field}]`;
+        const nodes = `[${this.attr.block}], [${this.attr.field}]`;
         const emptyStateAttr = `[${this.attr.emptyState}]`;
         const emptyStateChildren = `[${this.attr.emptyState}] *`;
-        const selector = exclude(elementsAndFields, emptyStateAttr, emptyStateChildren);
+        const selector = exclude(nodes, emptyStateAttr, emptyStateChildren);
         const elements = Array.from(parent.querySelectorAll(selector));
         for (const el of elements) {
             this.hideHTMLElement(el);
@@ -497,14 +498,14 @@ export class Renderer {
             delete this.options.filterAttributes[attr];
         });
     }
-    elementSelector(element) {
-        const elementAttrSelector = createAttribute(this.attr.element);
-        if (!element) {
-            return elementAttrSelector();
+    blockSelector(block) {
+        const blockAttrSelector = createAttribute(this.attr.block);
+        if (!block) {
+            return blockAttrSelector();
         }
-        let selectorString = elementAttrSelector(element.element);
-        if (element.instance) {
-            selectorString += this.instanceSelector(element.element, element.instance);
+        let selectorString = blockAttrSelector(block.element);
+        if (block.instance) {
+            selectorString += this.instanceSelector(block.element, block.instance);
         }
         return selectorString;
     }
@@ -519,11 +520,11 @@ export class Renderer {
         }
         return selectorString;
     }
-    instanceSelector(element, instanceId) {
-        return `[data-${element}-instance="${instanceId}"]`;
+    instanceSelector(node, instanceId) {
+        return `[data-${node}-instance="${instanceId}"]`;
     }
-    // Type Guard for RenderElement
-    static isRenderElement(item) {
+    // Type Guard for RenderBlock
+    static isRenderBlock(item) {
         return item.fields !== undefined;
     }
     // Type Guard for RenderField

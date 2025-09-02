@@ -2,8 +2,13 @@ import type { DashToCamelCase } from "../typeutils/index.js";
 import type { IANATimeZone } from "../timezones/index.js";
 import type { PartialDeep } from "type-fest";
 /**
- * Tells the `Renderer` how to handle the visibility of an element
- * or field in case all its children are empty.
+ * A RenderHTMLElement represents a RenderNode inside the DOM.
+ */
+export interface RenderHTMLElement extends HTMLElement {
+}
+/**
+ * Tells the `Renderer` how to handle the visibility of a rendered element
+ * in case all its children are empty.
  */
 type VisibilityControl = boolean | "emptyState";
 /**
@@ -52,67 +57,67 @@ export type RenderField<F extends FilterAttributes<keyof F & string> = {}> = {
      */
     visibility: boolean;
     /**
-     * Marks this field as decorative.
+     * Marks this `RenderField` as decorative.
      *
-     * Decorative fields are ignored when determining whether their parent element
+     * Decorative fields are ignored when determining whether their parent node
      * should be hidden. In other words, even if a decorative field has a value,
-     * it does not prevent the parent element from being considered empty.
+     * it does not prevent the parent node from being considered empty.
      */
     decorative?: boolean;
     /**
-     * Additional properties for this field.
+     * Additional properties for this `RenderField`.
      *
-     * Can be used to filter, sort, or otherwise categorize fields based on custom
-     * metadata.
+     * Can be used to filter, sort, or otherwise categorize `RenderNode`s based on
+     * custom metadata.
      */
     props?: PropsFromFilterAttributes<F>;
 };
 /**
- * A `RenderElement` can wrap multiple `RenderField`'s or even `RenderElement`'s.
+ * A `RenderBlock` can wrap multiple `RenderNode`s (fields or blocks).
  * It is helpful when grouping data together in an object oriented way.
  */
-export type RenderElement<F extends FilterAttributes<keyof F & string> = {}> = {
+export type RenderBlock<F extends FilterAttributes<keyof F & string> = {}> = {
     /**
-     * The name or identifier of this `RenderElement` type.
+     * The name or identifier of this `RenderBlock` type.
      * Typically corresponds to the kind of content its fields make up, for
      * example "dish" or "day".
      */
     element: string;
     /**
-     * An optional instance identifier for distinguishing between multiple elements
+     * An optional instance identifier for distinguishing between multiple blocks
      * of the same `element` type within a parent. Useful for indexing or targeting
      * specific fields in a set.
      */
     instance?: string;
     /**
-     * The children as `RenderData` this `RenderElement` groups together
+     * The children as `RenderData` this `RenderBlock` groups together
      */
     fields: RenderData<F>;
     /**
-     * Whether this `RenderElement` should be visible when it's rendered.
+     * Whether this `RenderBlock` should be visible when it's rendered.
      */
     visibility: boolean;
     /**
-     * Marks this `RenderElement` as decorative.
+     * Marks this `RenderBlock` as decorative.
      *
-     * Decorative `RenderElement`s are ignored when determining whether their
-     * parent element should be hidden. In other words, even if a decorative field
-     * has a value, it does not prevent the parent element from being considered
-     * empty.
+     * Decorative blocks are ignored when determining whether their parent node
+     * should be hidden. In other words, even if a decorative block's children do have
+     * values, it does not prevent the parent node from being considered empty.
      */
     decorative?: boolean;
     /**
-     * Additional properties for this element.
+     * Additional properties for this `RenderBlock`.
      *
-     * Can be used to filter, sort, or otherwise categorize elements based on
+     * Can be used to filter, sort, or otherwise categorize `RenderNode's based on
      * custom metadata.
      */
     props?: PropsFromFilterAttributes<F>;
 };
-export type RenderData<F extends FilterAttributes = {}> = Array<RenderField<F> | RenderElement<F>>;
+export type RenderNode<F extends FilterAttributes = {}> = RenderField<F> | RenderBlock<F>;
+export type RenderData<F extends FilterAttributes = {}> = RenderNode<F>[];
 export interface RendererOptions<F extends FilterAttributes<keyof F & string> = {}> {
     /**
-     * The base attribute used to identify render elements in the DOM.
+     * The base attribute used to identify render nodes in the DOM.
      *
      * @example
      * "render" will look for elements like:
@@ -121,7 +126,7 @@ export interface RendererOptions<F extends FilterAttributes<keyof F & string> = 
     attributeName: string;
     /**
      * Defines which HTML attributes should be read as typed values on `props`
-     * of `RenderField` and `RenderElement`. Keys must be in dash-case and will
+     * of `RenderField` and `RenderBlock`. Keys must be in dash-case and will
      * be converted to camelCase. Values indicate the expected type.
      * –
      * @example
@@ -142,8 +147,8 @@ export interface RendererOptions<F extends FilterAttributes<keyof F & string> = 
      */
     timezone?: false | IANATimeZone;
     /**
-     * Fallback options for `RenderElement`'s and `RenderItem`'s when no
-     * options are set on the HTML target.
+     * Fallback options for `RenderNode`s when no options are set on the
+     * RenderHTMLElement.
      */
     defaults: {
         visibilityControl: VisibilityControl;
@@ -164,14 +169,14 @@ export declare class Renderer<F extends FilterAttributes<keyof F & string> = {}>
     render(data: RenderData<F>, canvas?: HTMLElement): void;
     private _render;
     /**
-     * Render a `RenderElement` to all its instances
+     * Render a `RenderBlock` to all its instances
      */
-    private renderElement;
+    private renderBlock;
     private renderCollection;
     /**
-     * Render a `RenderElement` to a single `HTMLRenderElement`
+     * Render a `RenderBlock` to a single `HTMLRenderBlock`
      */
-    private renderElementToTemplate;
+    private renderBlockToTemplate;
     /**
      * Render a `RenderField` to all its instances
      */
@@ -189,18 +194,18 @@ export declare class Renderer<F extends FilterAttributes<keyof F & string> = {}>
     /**
      * Recursively reads the DOM node and its descendants to build a structured RenderData.
      * It identifies elements with `data-${elementAttr}-element` and `data-${fieldAttr}-field` attributes,
-     * and processes them into RenderElement and RenderField objects.
+     * and processes them into `RenderBlock` and `RenderField` objects.
      *
      * @param node The root node to start reading from.
-     * @returns `RenderData` An array of RenderElement and RenderField objects representing the node structure.
+     * @returns `RenderData` An array of `RenderBlock` and `RenderField` objects representing the node structure.
      */
     read(node: HTMLElement, stopRecursionMatches?: string[]): RenderData<F>;
     /**
-     * Clears the canvas from previous renders and reset's all element's visibility
-     * to its initial state.
+     * Clears the canvas from previous renders and resets the visibility of all
+     * elements to its initial state.
      */
     clear(node?: HTMLElement): void;
-    private readRenderElement;
+    private readRenderBlock;
     private readRenderField;
     /**
      * Modifies the `field` properties based on the filtering attributes from `child`.
@@ -219,7 +224,7 @@ export declare class Renderer<F extends FilterAttributes<keyof F & string> = {}>
      * - "emptyState": Hides the `child` and shows an empty state tagged with
      *   the `[data-*-empty-state]` attribute. The attribute value tells the
      *   `Renderer` which render item this empty state belongs to.
-     *   TODO: Make it clear that it matches elements and empty states based on the `element` property on the render element or render item.
+     *   TODO: Make it clear that it matches RenderNodes and empty states based on the `element` property on the render block or render item.
      *
      * - `true`: Hides the `child`
      * - `false`: Disables the visibility control, meaning no elements get
@@ -227,18 +232,18 @@ export declare class Renderer<F extends FilterAttributes<keyof F & string> = {}>
      */
     private readVisibilityControl;
     private getEmptyStateFor;
-    private shouldHideElement;
+    private shouldHideBlock;
     private showHTMLElement;
-    private showElement;
+    private showNode;
     private hideHTMLElement;
-    private hideElement;
+    private hideNode;
     private hideChildrenExceptEmptyState;
     addFilterAttributes(newAttributes: FilterAttributes): void;
     removeFilterAttributes(...attributesToRemove: string[]): void;
-    private elementSelector;
+    private blockSelector;
     private fieldSelector;
     private instanceSelector;
-    private static isRenderElement;
+    private static isRenderBlock;
     private static isRenderField;
 }
 export {};
