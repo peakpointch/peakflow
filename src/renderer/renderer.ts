@@ -570,6 +570,17 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     }
   }
 
+  private hideChildrenExceptEmptyState(parent: HTMLElement): void {
+    const elementsAndFields = `[${this.attr.element}], [${this.attr.field}]`;
+    const emptyStateAttr = `[${this.attr.emptyState}]`;
+    const emptyStateChildren = `[${this.attr.emptyState}] *`;
+    const selector = exclude(elementsAndFields, emptyStateAttr, emptyStateChildren);
+    const elements = Array.from(parent.querySelectorAll<HTMLElement>(selector));
+    for (const el of elements) {
+      this.hideHTMLElement(el);
+    }
+  }
+
   // Method to add filter attributes
   public addFilterAttributes(newAttributes: FilterAttributes): void {
     Object.assign(this.options.filterAttributes, newAttributes);
