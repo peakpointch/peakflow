@@ -372,17 +372,11 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
     const element: RenderElement<F> = {
       element: elementName!,
+      instance: instance || undefined,
       fields,
-      visibility: true,
+      visibility: wf.isVisible(child),
       props: {},
     };
-
-    element.instance = instance || undefined;
-    if (child.classList.contains(wf.class.invisible) || child.closest(wf.select.invisible)) {
-      element.visibility = false;
-    } else {
-      element.visibility = true;
-    }
 
     this.readFilteringProperties(element, child);
 
@@ -408,18 +402,13 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
     const field: RenderField<F> = {
       element: fieldName!,
+      instance: instance || undefined,
       value,
       type,
-      visibility: true,
+      visibility: wf.isVisible(child),
+      decorative: wf.hasAttr(child, this.attr.decorative),
       props: {},
     };
-
-    field.instance = instance || undefined;
-    if (child.classList.contains(wf.class.invisible) || child.closest(wf.select.invisible)) {
-      field.visibility = false;
-    } else {
-      field.visibility = true;
-    }
 
     // Optionally, handle additional properties for filtering purposes
     this.readFilteringProperties(field, child);
