@@ -518,6 +518,24 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
       return this.options.defaults.visibilityControl;
     }
   }
+
+  private getEmptyStateFor(
+    element: RenderElement<F> | RenderField<F>,
+    template: HTMLElement,
+  ): HTMLElement {
+    let emptyState: HTMLElement;
+    if (Renderer.isRenderField) {
+      emptyState = template.parentElement?.querySelector<HTMLElement>(
+        `[${this.attr.emptyState}="${element.element}"]`,
+      );
+    } else {
+      emptyState = template.querySelector<HTMLElement>(
+        `[${this.attr.emptyState}="${element.element}"]`,
+      );
+    }
+
+    if (emptyState) return emptyState;
+    throw new Error(`${this.lp}No empty state found for "${element.element}"`);
   }
 
   private shouldHideElement(element: RenderElement<F>): boolean {
