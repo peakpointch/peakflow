@@ -80,6 +80,9 @@ export interface RendererOptions<F extends FilterAttributes<keyof F & string> = 
    * timezone: "Europe/Zurich"
    */
   timezone?: false | IANATimeZone;
+  defaults: {
+    visibilityControl: VisibilityControl;
+  };
 }
 
 export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
@@ -87,6 +90,9 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     attributeName: "render",
     filterAttributes: {},
     timezone: false,
+    defaults: {
+      visibilityControl: false,
+    },
   };
 
   public options: RendererOptions<F>;
@@ -504,12 +510,14 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     const raw = child
       .getAttribute(this.attr.visibilityControl)
       ?.trim() as UnparsedBoolean<VisibilityControl>;
-    switch (visibilityControlAttr) {
-      case "emptyState":
-        return "emptyState";
-      default:
-        return JSON.parse(visibilityControlAttr ?? "false") || false;
+    if (raw === "emptyState") {
+      return "emptyState";
+    } else if (child.hasAttribute(this.attr.visibilityControl)) {
+      return wf.hasAttr(child, this.attr.visibilityControl);
+    } else {
+      return this.options.defaults.visibilityControl;
     }
+  }
   }
 
   private shouldHideElement(element: RenderElement<F>): boolean {
