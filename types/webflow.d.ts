@@ -59,6 +59,23 @@ export interface Webflow {
   pageId: WfPageId;
   class: WebflowClassNames;
   select: WebflowSelectors;
+
+  /**
+   * Determines whether a given element is visible accordion to Webflow's
+   * conditional visibility rules.
+   */
+  isVisible: (element: HTMLElement) => boolean;
+
+  /**
+   * Returns true if an attribute is present and not explicitly "false".
+   * Works like a boolean HTML attribute.
+   */
+  hasAttr: (element: HTMLElement, attribute: string) => boolean;
+
+  /**
+   * Returns true if an attribute is present and explicitly "true".
+   */
+  hasTrueAttr: (element: HTMLElement, attribute: string) => boolean;
 }
 
 export interface WfFormData {

@@ -54,4 +54,13 @@ export const wf = {
     pageId,
     class: wfclass,
     select: wfselect,
+    isVisible: (el) => {
+        return !(el.classList.contains(wfclass.invisible) || el.closest(wfselect.invisible));
+    },
+    hasAttr: (element, attribute) => {
+        return element.hasAttribute(attribute) && element.getAttribute(attribute) !== "false";
+    },
+    hasTrueAttr: (element, attribute) => {
+        return element.hasAttribute(attribute) && element.getAttribute(attribute) === "true";
+    },
 };
