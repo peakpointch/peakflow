@@ -548,18 +548,22 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     }
   }
 
+  private hideHTMLElement(element: HTMLElement): void {
+    element.style.display = "none";
+  }
+
   private hideElement(element: HTMLElement): void {
     const hideSelf = wf.hasAttr(element, this.attr.hideSelf);
     const ancestorToHide = element.getAttribute(this.attr.hideAncestor);
 
     if (hideSelf) {
       // Hide the element itself
-      element.style.display = "none";
+      this.hideHTMLElement(element);
     } else if (ancestorToHide) {
       // Hide the specified ancestor
       const ancestor: HTMLElement = element.closest(ancestorToHide);
       if (ancestor) {
-        ancestor.style.display = "none";
+        this.hideHTMLElement(ancestor);
       } else {
         console.warn(`${this.lp}Ancestor "${ancestorToHide}" not found for element.`);
       }
