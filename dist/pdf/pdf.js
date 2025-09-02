@@ -11,7 +11,12 @@ export class Pdf {
         if (!container)
             throw new Error("PDF Element not found.");
         this.canvas = container;
-        this.renderer = new Renderer(container, { attributeName: "pdf" });
+        this.renderer = new Renderer(container, {
+            attributeName: "pdf",
+            defaults: {
+                visibilityControl: true,
+            },
+        });
         this.getPages();
         this.getScaleElement();
     }
