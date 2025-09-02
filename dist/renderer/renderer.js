@@ -248,14 +248,14 @@ export class Renderer {
      */
     clear(node = this.canvas) {
         /** Check whether the value of a field is allowed to be cleared. */
-        function allowedToClear(child) {
+        const allowedToClear = (child) => {
             if (child.hasAttribute(this.attr.clear)) {
                 return wf.hasAttr(child, this.attr.clear);
             }
             else {
                 return this.options.defaults.clear;
             }
-        }
+        };
         const collections = node.querySelectorAll(`${this.elementSelector()}[${this.attr.collection}]`);
         collections.forEach((collection) => {
             const template = collection.firstElementChild.cloneNode(true);

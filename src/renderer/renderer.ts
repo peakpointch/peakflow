@@ -476,13 +476,13 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
    */
   public clear(node: HTMLElement = this.canvas): void {
     /** Check whether the value of a field is allowed to be cleared. */
-    function allowedToClear(child: HTMLElement): boolean {
+    const allowedToClear = (child: HTMLElement): boolean => {
       if (child.hasAttribute(this.attr.clear)) {
         return wf.hasAttr(child, this.attr.clear);
       } else {
         return this.options.defaults.clear;
       }
-    }
+    };
 
     const collections = node.querySelectorAll<HTMLElement>(
       `${this.elementSelector()}[${this.attr.collection}]`,
