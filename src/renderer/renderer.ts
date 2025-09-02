@@ -6,12 +6,11 @@ import { de } from "date-fns/locale";
 import wf from "../webflow/index.js";
 import deepMerge from "../utils/deepmerge.js";
 import { logPrefix } from "../utils/logger.js";
-import type { DashToCamelCase } from "../typeutils/index.js";
+import type { DashToCamelCase, StringifyBoolean } from "../typeutils/index.js";
 import type { IANATimeZone } from "../timezones/index.js";
 import type { PartialDeep } from "type-fest";
 
 type VisibilityControl = boolean | "emptyState";
-type UnparsedBoolean<T> = Exclude<T, boolean> | "true" | "false";
 
 type FilterAttributeType = {
   string: string;
@@ -533,7 +532,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   private readVisibilityControl(child: HTMLElement): VisibilityControl {
     const raw = child
       .getAttribute(this.attr.visibilityControl)
-      ?.trim() as UnparsedBoolean<VisibilityControl>;
+      ?.trim() as StringifyBoolean<VisibilityControl>;
     if (raw === "emptyState") {
       return "emptyState";
     } else if (child.hasAttribute(this.attr.visibilityControl)) {
