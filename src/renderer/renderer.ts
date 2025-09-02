@@ -285,33 +285,46 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   /**
    * Render a `RenderField` to a single `HTMLRenderField`
    */
-  private renderFieldToTemplate(field: RenderField<F>, htmlTemplate: HTMLElement) {
-    if (!field.visibility || !field.value.trim()) {
-      switch (this.readVisibilityControl(htmlTemplate)) {
-        case "emptyState":
+  private renderFieldToTemplate(renderField: RenderField<F>, htmlTemplate: HTMLElement) {
+    const isVisible = !renderField.visibility || !renderField.value.trim();
+    switch (this.readVisibilityControl(htmlTemplate)) {
+      case "emptyState":
+        const emptyStateElement = this.getEmptyStateFor(renderField, htmlTemplate);
+        if (isVisible) {
           this.hideElement(htmlTemplate); // Hide empty field
-          break;
-        case true:
+          this.showHTMLElement(emptyStateElement);
+        } else {
+          this.hideHTMLElement(emptyStateElement);
+          this.renderFieldValue(renderField, htmlTemplate);
+        }
+        break;
+      case true:
+        if (isVisible) {
           this.hideElement(htmlTemplate); // Hide empty field
-          break;
-        case false:
-        default:
-          break;
-      }
-    } else {
-      switch (field.type) {
-        case "html":
-          htmlTemplate.innerHTML = field.value;
-          break;
-        case "date":
-          const formatStr = htmlTemplate.dataset.dateFormat || "d.M.yyyy";
-          htmlTemplate.innerText = format(new Date(field.value), formatStr, {
-            locale: de,
-          });
-          break;
-        default:
-          htmlTemplate.innerText = field.value;
-      }
+        } else {
+          this.renderFieldValue(renderField, htmlTemplate);
+        }
+        break;
+      case false:
+      default:
+        this.renderFieldValue(renderField, htmlTemplate);
+        break;
+    }
+  }
+
+  private renderFieldValue(renderField: RenderField, htmlTemplate: HTMLElement): void {
+    switch (renderField.type) {
+      case "html":
+        htmlTemplate.innerHTML = renderField.value;
+        break;
+      case "date":
+        const formatStr = htmlTemplate.dataset.dateFormat || "d.M.yyyy";
+        htmlTemplate.innerText = format(new Date(renderField.value), formatStr, {
+          locale: de,
+        });
+        break;
+      default:
+        htmlTemplate.innerText = renderField.value;
     }
   }
 
