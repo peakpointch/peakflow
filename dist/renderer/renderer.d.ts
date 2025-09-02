@@ -114,7 +114,7 @@ export type RenderBlock<F extends FilterAttributes<keyof F & string> = {}> = {
     /**
      * The children as `RenderData` this `RenderBlock` groups together
      */
-    fields: RenderData<F>;
+    children: RenderData<F>;
     /**
      * Whether this `RenderBlock` should be visible when it's rendered.
      */
