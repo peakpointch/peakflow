@@ -6,15 +6,15 @@ import { de } from "date-fns/locale";
 import wf from "../webflow/index.js";
 import deepMerge from "../utils/deepmerge.js";
 import { logPrefix } from "../utils/logger.js";
-import type { DashToCamelCase, StringifyBoolean } from "../typeutils/index.js";
+import type { DashToCamelCase } from "../typeutils/index.js";
 import type { IANATimeZone } from "../timezones/index.js";
-import type { PartialDeep } from "type-fest";
+import type { PartialDeep, UnionToTuple } from "type-fest";
 
 /**
  * Tells the `Renderer` how to handle the visibility of a rendered element
  * in case all its children are empty.
  */
-type VisibilityControl = boolean | "emptyState";
+type VisibilityControl = "emptyState" | "hideSelf" | "hideAncestor" | "none";
 
 /**
  * Defines the type of a `FilterAttribute`.
@@ -230,7 +230,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     filterAttributes: {},
     timezone: false,
     defaults: {
-      visibilityControl: false,
+      visibilityControl: "none",
       clear: true,
     },
   };
@@ -248,8 +248,8 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     emptyState: string;
     collection: string;
     decorative: string;
-    hideSelf: string;
     hideAncestor: string;
+    inheritVisibility: string;
     visibilityControl: string;
     clear: string;
   };
@@ -267,8 +267,8 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
       emptyState: `data-${this.attributeName}-empty-state`,
       collection: `data-${this.attributeName}-collection`,
       decorative: `data-${this.attributeName}-decorative`,
-      hideSelf: `data-${this.attributeName}-hide-self`,
       hideAncestor: `data-${this.attributeName}-hide-ancestor`,
+      inheritVisibility: `data-${this.attributeName}-inherit-visibility`,
       visibilityControl: `data-${this.attributeName}-visibility-control`,
       clear: `data-${this.attributeName}-clear`,
     };
@@ -325,17 +325,23 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   }
 
   private renderCollection(renderBlock: RenderBlock<F>, htmlNode: HTMLRenderNode) {
+    const shouldHide = this.shouldHideBlock(renderBlock);
     switch (this.readVisibilityControl(htmlNode)) {
       case "emptyState":
         // TODO: Support "emptyState" for render collections
         break;
-      case true:
-        if (this.shouldHideBlock(renderBlock)) {
-          this.hideNode(htmlNode);
+      case "hideSelf":
+        if (shouldHide) {
+          this.hideHTMLElement(htmlNode);
           return;
         }
         break;
-      case false:
+      case "hideAncestor":
+        if (shouldHide) {
+          this.hideAncestor(renderBlock.name, htmlNode);
+        }
+        break;
+      case "none":
       default:
         break;
     }
@@ -373,10 +379,11 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
    * Render a `RenderBlock` to a single `HTMLRenderNode`
    */
   private renderBlockToTemplate(renderBlock: RenderBlock<F>, htmlNode: HTMLRenderNode) {
+    const shouldHide = this.shouldHideBlock(renderBlock);
     switch (this.readVisibilityControl(htmlNode)) {
       case "emptyState":
         const emptyState = this.getEmptyStateFor(renderBlock, htmlNode);
-        if (this.shouldHideBlock(renderBlock)) {
+        if (shouldHide) {
           this.hideChildrenExceptEmptyState(htmlNode);
           this.showHTMLElement(emptyState);
 
@@ -388,14 +395,21 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
           this._render(renderBlock.children, htmlNode);
         }
         break;
-      case true:
-        if (this.shouldHideBlock(renderBlock)) {
-          this.hideNode(htmlNode);
+      case "hideSelf":
+        if (shouldHide) {
+          this.hideHTMLElement(htmlNode);
         } else {
           this._render(renderBlock.children, htmlNode); // Recursively render children
         }
         break;
-      case false:
+      case "hideAncestor":
+        if (shouldHide) {
+          this.hideAncestor(renderBlock.name, htmlNode);
+        } else {
+          this._render(renderBlock.children, htmlNode); // Recursively render children
+        }
+        break;
+      case "none":
       default:
         this._render(renderBlock.children, htmlNode); // Recursively render children
         break;
@@ -431,26 +445,33 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
    * Render a `RenderField` to a single `HTMLRenderField`
    */
   private renderFieldToTemplate(renderField: RenderField<F>, htmlNode: HTMLRenderNode) {
-    const isVisible = !renderField.visibility || !renderField.value.trim();
+    const shouldHide = this.shouldHideField(renderField);
     switch (this.readVisibilityControl(htmlNode)) {
       case "emptyState":
         const emptyStateElement = this.getEmptyStateFor(renderField, htmlNode);
-        if (isVisible) {
-          this.hideNode(htmlNode); // Hide empty field
+        if (shouldHide) {
+          this.hideHTMLElement(htmlNode); // Hide empty field
           this.showHTMLElement(emptyStateElement);
         } else {
           this.hideHTMLElement(emptyStateElement);
           this.renderFieldValue(renderField, htmlNode);
         }
         break;
-      case true:
-        if (isVisible) {
-          this.hideNode(htmlNode); // Hide empty field
+      case "hideSelf":
+        if (shouldHide) {
+          this.hideHTMLElement(htmlNode);
         } else {
           this.renderFieldValue(renderField, htmlNode);
         }
         break;
-      case false:
+      case "hideAncestor":
+        if (shouldHide) {
+          this.hideAncestor(renderField.name, htmlNode);
+        } else {
+          this.renderFieldValue(renderField, htmlNode);
+        }
+        break;
+      case "none":
       default:
         this.renderFieldValue(renderField, htmlNode);
         break;
@@ -543,16 +564,24 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     const htmlFields = node.querySelectorAll<HTMLRenderNode>(this.fieldSelector());
     htmlFields.forEach((htmlNode) => {
       if (allowedToClear(htmlNode)) htmlNode.innerText = "";
-      htmlNode.innerText = "";
+      const nodeName = htmlNode.getAttribute(this.attr.field);
       const fieldVisibility = this.readVisibilityControl(htmlNode);
-      if (fieldVisibility === true || fieldVisibility === "emptyState") {
-        this.showNode(htmlNode);
+      if (fieldVisibility === "hideSelf" || fieldVisibility === "emptyState") {
+        this.showHTMLElement(htmlNode);
+      } else if (fieldVisibility === "hideAncestor") {
+        this.showAncestor(nodeName, htmlNode);
       }
     });
 
     const blocks = node.querySelectorAll<HTMLRenderNode>(this.blockSelector());
-    blocks.forEach((block) => {
-      this.showNode(block);
+    blocks.forEach((htmlNode) => {
+      const nodeName = htmlNode.getAttribute(this.attr.field);
+      const fieldVisibility = this.readVisibilityControl(htmlNode);
+      if (fieldVisibility === "hideSelf" || fieldVisibility === "emptyState") {
+        this.showHTMLElement(htmlNode);
+      } else if (fieldVisibility === "hideAncestor") {
+        this.showAncestor(nodeName, htmlNode);
+      }
     });
   }
 
@@ -702,13 +731,16 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
    */
   private readVisibilityControl(htmlNode: HTMLRenderNode): VisibilityControl {
     // INFO: This method is also used during the clear process.
-    const raw = htmlNode
-      .getAttribute(this.attr.visibilityControl)
-      ?.trim() as StringifyBoolean<VisibilityControl>;
-    if (raw === "emptyState") {
-      return "emptyState";
-    } else if (htmlNode.hasAttribute(this.attr.visibilityControl)) {
-      return wf.hasAttr(htmlNode, this.attr.visibilityControl);
+    const value = htmlNode.getAttribute(this.attr.visibilityControl)?.trim() as VisibilityControl;
+
+    const validOptions: UnionToTuple<VisibilityControl> = [
+      "emptyState",
+      "hideSelf",
+      "hideAncestor",
+      "none",
+    ];
+    if (validOptions.includes(value)) {
+      return value;
     } else {
       return this.options.defaults.visibilityControl;
     }
@@ -762,42 +794,52 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     }
   }
 
-  private showNode(htmlNode: HTMLRenderNode): void {
-    const ancestorToHide = htmlNode.getAttribute(this.attr.hideAncestor);
-
-    this.showHTMLElement(htmlNode);
-
-    if (ancestorToHide) {
-      // Hide the specified ancestor
-      const ancestor: HTMLRenderNode = htmlNode.closest(ancestorToHide);
-      if (ancestor) {
-        this.showHTMLElement(ancestor);
-      } else {
-        console.warn(`${this.lp}Ancestor "${ancestorToHide}" not found for element.`);
-      }
-    }
-  }
-
   private hideHTMLElement(element: HTMLElement): void {
     element.style.display = "none";
   }
 
-  private hideNode(node: HTMLRenderNode): void {
-    const hideSelf = wf.hasAttr(node, this.attr.hideSelf);
-    const ancestorToHide = node.getAttribute(this.attr.hideAncestor);
+  private showNode(nodeName: string, htmlNode: HTMLRenderNode): void {
+    this.showHTMLElement(htmlNode);
+  }
 
-    if (hideSelf) {
-      // Hide the element itself
-      this.hideHTMLElement(node);
-    } else if (ancestorToHide) {
-      // Hide the specified ancestor
-      const ancestor: HTMLElement = node.closest(ancestorToHide);
-      if (ancestor) {
-        this.hideHTMLElement(ancestor);
-      } else {
-        console.warn(`${this.lp}Ancestor "${ancestorToHide}" not found for node.`);
-      }
+  private hideNode(nodeName: string, htmlNode: HTMLRenderNode): void {
+    this.hideHTMLElement(htmlNode);
+  }
+
+  private showAncestor(nodeName: string, htmlNode: HTMLRenderNode): void {
+    const ancestor = this.findClosestAncestor(nodeName, htmlNode);
+
+    if (typeof ancestor === "string") {
+      console.warn(`${this.lp}Ancestor "${ancestor}" not found for node.`);
+    } else {
+      this.showHTMLElement(ancestor);
     }
+  }
+
+  private hideAncestor(nodeName: string, htmlNode: HTMLRenderNode): void {
+    const ancestor = this.findClosestAncestor(nodeName, htmlNode);
+
+    if (typeof ancestor === "string") {
+      console.warn(`${this.lp}Ancestor "${ancestor}" not found for node.`);
+    } else {
+      this.hideHTMLElement(ancestor);
+    }
+  }
+
+  /**
+   * Finds the closest ancestor to show or hide.
+   *
+   * @returns A HTMLElement if the ancestor was found. The selector string that was expected
+   * to find the ancestor, if no ancestor was found.
+   */
+  private findClosestAncestor(nodeName: string, htmlNode: HTMLRenderNode): HTMLElement | string {
+    const selectAncestor = createAttribute(this.attr.inheritVisibility);
+    const selector = [
+      selectAncestor(nodeName, { matchType: "whitespace" }),
+      htmlNode.getAttribute(this.attr.hideAncestor) ?? "",
+    ].join(",");
+    const ancestor = htmlNode.closest<HTMLElement>(selector);
+    return ancestor || selector;
   }
 
   private hideChildrenExceptEmptyState(parent: HTMLRenderNode): void {
