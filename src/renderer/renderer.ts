@@ -237,12 +237,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
   public options: RendererOptions<F>;
 
-  private canvas: HTMLElement;
-  private data: RenderData<F>;
-  private lp: string = "Renderer:";
-  private attributeName: string = "render";
-
-  private attr: {
+  public attr: {
     block: string;
     field: string;
     emptyState: string;
@@ -253,6 +248,11 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     visibilityControl: string;
     clear: string;
   };
+
+  private canvas: HTMLElement;
+  private data: RenderData<F>;
+  private lp: string = "Renderer:";
+  private attributeName: string = "render";
 
   constructor(canvas: HTMLElement | null, options?: PartialDeep<RendererOptions<F>>) {
     if (!canvas) throw new Error(`${this.lp}Canvas can't be undefined.`);
