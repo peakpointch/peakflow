@@ -732,6 +732,10 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     throw new Error(`${this.lp}No empty state found for "${node.name}"`);
   }
 
+  private shouldHideField(field: RenderField<F>): boolean {
+    return !field.visibility || !field.value.trim();
+  }
+
   private shouldHideBlock(block: RenderBlock<F>): boolean {
     if (block.visibility === false) return true;
     // Check if all child blocks and fields are empty
