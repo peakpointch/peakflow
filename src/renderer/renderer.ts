@@ -289,6 +289,8 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     this.data = data;
 
     this.data.forEach((renderItem) => {
+      this.assertNoSpaces(renderItem.name);
+
       // Render Blocks
       if (Renderer.isRenderBlock(renderItem)) {
         this.renderBlock(renderItem, canvas);
@@ -299,6 +301,12 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
         this.renderField(renderItem, canvas);
       }
     });
+  }
+
+  private assertNoSpaces(str: string): void {
+    if (/\s/.test(str)) {
+      throw new TypeError(`${this.lp}RenderNode name must not contain spaces: "${str}"`);
+    }
   }
 
   /**
@@ -606,6 +614,14 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
     this.readFilteringProperties(block, child);
 
+    try {
+      this.assertNoSpaces(block.name);
+    } catch (err) {
+      throw new TypeError(
+        `${this.lp}Error reading RenderBlock: The attribute value of "${this.attr.block}" must not contain spaces: "${block.name}"`,
+      );
+    }
+
     return block;
   }
 
@@ -638,6 +654,14 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
     // Optionally, handle additional properties for filtering purposes
     this.readFilteringProperties(field, htmlNode);
+
+    try {
+      this.assertNoSpaces(field.name);
+    } catch (err) {
+      throw new TypeError(
+        `${this.lp}Error reading RenderField: The attribute value of "${this.attr.field}" must not contain spaces: "${field.name}"`,
+      );
+    }
 
     return field;
   }
