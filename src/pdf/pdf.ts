@@ -30,7 +30,7 @@ export class Pdf {
     this.renderer = new Renderer(container, {
       attributeName: "pdf",
       defaults: {
-        visibilityControl: true,
+        visibilityControl: "hideSelf",
       },
     });
     this.getPages();
