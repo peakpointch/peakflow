@@ -8,7 +8,7 @@ import deepMerge from "../utils/deepmerge.js";
 import { logPrefix } from "../utils/logger.js";
 import type { DashToCamelCase } from "../typeutils/index.js";
 import type { IANATimeZone } from "../timezones/index.js";
-import type { PartialDeep, UnionToTuple } from "type-fest";
+import type { PartialDeep } from "type-fest";
 
 /**
  * Tells the `Renderer` how to handle the visibility of a rendered element
@@ -757,12 +757,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     // INFO: This method is also used during the clear process.
     const value = htmlNode.getAttribute(this.attr.visibilityControl)?.trim() as VisibilityControl;
 
-    const validOptions: UnionToTuple<VisibilityControl> = [
-      "emptyState",
-      "hideSelf",
-      "hideAncestor",
-      "none",
-    ];
+    const validOptions: VisibilityControl[] = ["emptyState", "hideSelf", "hideAncestor", "none"];
     if (validOptions.includes(value)) {
       return value;
     } else {
