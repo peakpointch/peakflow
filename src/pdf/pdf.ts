@@ -7,6 +7,7 @@ import createAttribute from "../attributeselector/index.js";
 import { softHyphenizer, solidHyphens } from "../hyphenizer/index.js";
 import german from "hyphenation.de";
 import { freezeElement, unFreezeElement } from "./freeze.js";
+import { asPrefix, asSuffix } from "../utils/logger.js";
 
 // Types
 export type PdfElement = "container" | "scale" | "page" | "page-wrapper" | "weekday" | "dish";
@@ -31,6 +32,9 @@ export class Pdf {
       attributeName: "pdf",
       defaults: {
         visibilityControl: "hideSelf",
+      },
+      warnings: {
+        autolog: false,
       },
     });
     this.getPages();
@@ -72,14 +76,19 @@ export class Pdf {
     return this.defaultScale;
   }
 
-  public getPages(): HTMLElement[] {
-    const pages = this.canvas.querySelectorAll<HTMLElement>(Pdf.select("page"));
-    this.pages = Array.from(pages);
-    return this.pages;
+  public getPages(container: HTMLElement = this.canvas): HTMLElement[] {
+    if (!container) throw new Error(`Pdf: Invalid container`);
+    const pages = container.querySelectorAll<HTMLElement>(Pdf.select("page"));
+    if (container === this.canvas) {
+      this.pages = Array.from(pages);
+      return this.pages;
+    }
+    return Array.from(pages);
   }
 
-  public getPageWrappers(): HTMLElement[] {
-    const pageWrappers = this.canvas.querySelectorAll<HTMLElement>(Pdf.select("page-wrapper"));
+  public getPageWrappers(container: HTMLElement = this.canvas): HTMLElement[] {
+    if (!container) throw new Error(`Pdf: Invalid container`);
+    const pageWrappers = container.querySelectorAll<HTMLElement>(Pdf.select("page-wrapper"));
     return Array.from(pageWrappers);
   }
 
@@ -92,7 +101,7 @@ export class Pdf {
    * @param designs - Optional list of design IDs to filter by. If empty, all designs are returned.
    * @returns Array of matching `HTMLElement` elements.
    */
-  public getDesigns(...designs: string[]): HTMLElement[] {
+  public getDesignWrappers(...designs: string[]): HTMLElement[] {
     const designWrappers = Array.from(
       this.canvas.querySelectorAll<HTMLElement>(`[data-pdf-design]`),
     );
@@ -108,15 +117,32 @@ export class Pdf {
     return filteredDesigns;
   }
 
+  public getDesign(designChild: HTMLElement): string {
+    const designWrapper = designChild.closest(`[data-pdf-design]`);
+    if (!designWrapper) return "";
+    return designWrapper.getAttribute(`data-pdf-design`) ?? "";
+  }
+
   /**
    * Render any data of type `RenderData` on the pdf canvas.
    *
    * @param data Data of type `RenderData`. This data will be given to the Renderer instance to render it.
    */
-  public render(data: RenderData): void {
-    this.pages.forEach((page) => {
-      this.renderer.render(data, page);
+  public render(data: RenderData, design?: string): void {
+    this.renderer.clearWarnings();
+
+    const designWrappers = design ? this.getDesignWrappers(design) : [this.canvas];
+    designWrappers.forEach((wrapper) => {
+      const pages = this.getPages(wrapper);
+      pages.forEach((page, index) => {
+        const designSuffix = asSuffix(design, ".");
+        const pageCount = asSuffix(`${index + 1}`, ".");
+        this.renderer.options.pathPrefix = `pdf${designSuffix}${pageCount}`;
+        this.renderer.render(data, page);
+      });
     });
+
+    this.renderer.logWarnings();
   }
 
   /**

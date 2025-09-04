@@ -19,8 +19,8 @@ export declare class Pdf {
     static select: import("../attributeselector/attributeselector.js").AttributeSelector<PdfElement>;
     private getScaleElement;
     getDefaultScale(): number;
-    getPages(): HTMLElement[];
-    getPageWrappers(): HTMLElement[];
+    getPages(container?: HTMLElement): HTMLElement[];
+    getPageWrappers(container?: HTMLElement): HTMLElement[];
     /**
      * Retrieves an array of `HTMLElement` objects representing design wrappers or design pages.
      *
@@ -30,13 +30,14 @@ export declare class Pdf {
      * @param designs - Optional list of design IDs to filter by. If empty, all designs are returned.
      * @returns Array of matching `HTMLElement` elements.
      */
-    getDesigns(...designs: string[]): HTMLElement[];
+    getDesignWrappers(...designs: string[]): HTMLElement[];
+    getDesign(designChild: HTMLElement): string;
     /**
      * Render any data of type `RenderData` on the pdf canvas.
      *
      * @param data Data of type `RenderData`. This data will be given to the Renderer instance to render it.
      */
-    render(data: RenderData): void;
+    render(data: RenderData, design?: string): void;
     /**
      * Scales the PDF to the given value.
      *

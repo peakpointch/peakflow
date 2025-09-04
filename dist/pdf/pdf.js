@@ -5,6 +5,7 @@ import createAttribute from "../attributeselector/index.js";
 import { softHyphenizer, solidHyphens } from "../hyphenizer/index.js";
 import german from "hyphenation.de";
 import { freezeElement, unFreezeElement } from "./freeze.js";
+import { asPrefix, asSuffix } from "../utils/logger.js";
 // Variables
 export class Pdf {
     constructor(container) {
@@ -14,7 +15,10 @@ export class Pdf {
         this.renderer = new Renderer(container, {
             attributeName: "pdf",
             defaults: {
-                visibilityControl: true,
+                visibilityControl: "hideSelf",
+            },
+            warnings: {
+                autolog: false,
             },
         });
         this.getPages();
@@ -44,13 +48,20 @@ export class Pdf {
         this.defaultScale = scaleValues.scale / scaleValues.container;
         return this.defaultScale;
     }
-    getPages() {
-        const pages = this.canvas.querySelectorAll(Pdf.select("page"));
-        this.pages = Array.from(pages);
-        return this.pages;
+    getPages(container = this.canvas) {
+        if (!container)
+            throw new Error(`Pdf: Invalid container`);
+        const pages = container.querySelectorAll(Pdf.select("page"));
+        if (container === this.canvas) {
+            this.pages = Array.from(pages);
+            return this.pages;
+        }
+        return Array.from(pages);
     }
-    getPageWrappers() {
-        const pageWrappers = this.canvas.querySelectorAll(Pdf.select("page-wrapper"));
+    getPageWrappers(container = this.canvas) {
+        if (!container)
+            throw new Error(`Pdf: Invalid container`);
+        const pageWrappers = container.querySelectorAll(Pdf.select("page-wrapper"));
         return Array.from(pageWrappers);
     }
     /**
@@ -62,7 +73,7 @@ export class Pdf {
      * @param designs - Optional list of design IDs to filter by. If empty, all designs are returned.
      * @returns Array of matching `HTMLElement` elements.
      */
-    getDesigns(...designs) {
+    getDesignWrappers(...designs) {
         const designWrappers = Array.from(this.canvas.querySelectorAll(`[data-pdf-design]`));
         if (designs.length === 0) {
             return designWrappers;
@@ -72,15 +83,30 @@ export class Pdf {
         });
         return filteredDesigns;
     }
+    getDesign(designChild) {
+        const designWrapper = designChild.closest(`[data-pdf-design]`);
+        if (!designWrapper)
+            return "";
+        return designWrapper.getAttribute(`data-pdf-design`) ?? "";
+    }
     /**
      * Render any data of type `RenderData` on the pdf canvas.
      *
      * @param data Data of type `RenderData`. This data will be given to the Renderer instance to render it.
      */
-    render(data) {
-        this.pages.forEach((page) => {
-            this.renderer.render(data, page);
+    render(data, design) {
+        this.renderer.clearWarnings();
+        const designWrappers = design ? this.getDesignWrappers(design) : [this.canvas];
+        designWrappers.forEach((wrapper) => {
+            const pages = this.getPages(wrapper);
+            pages.forEach((page, index) => {
+                const designSuffix = asSuffix(design, ".");
+                const pageCount = asSuffix(`${index + 1}`, ".");
+                this.renderer.options.pathPrefix = `pdf${designSuffix}${pageCount}`;
+                this.renderer.render(data, page);
+            });
         });
+        this.renderer.logWarnings();
     }
     /**
      * Scales the PDF to the given value.
