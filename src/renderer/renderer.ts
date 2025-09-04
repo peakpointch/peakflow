@@ -5,7 +5,7 @@ import { fromZonedTime } from "date-fns-tz";
 import { de } from "date-fns/locale";
 import wf from "../webflow/index.js";
 import deepMerge from "../utils/deepmerge.js";
-import { logPrefix } from "../utils/logger.js";
+import Path from "../path/index.js";
 import type { DashToCamelCase } from "../typeutils/index.js";
 import type { IANATimeZone } from "../timezones/index.js";
 import type { PartialDeep } from "type-fest";
@@ -237,6 +237,13 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
   public options: RendererOptions<F>;
 
+  /**
+   * The path keeps track of where the renderer is currently rendering.
+   *
+   * @example "weekday.Tuesday.dish"
+   */
+  public readonly path: Path = new Path();
+
   public attr: {
     block: string;
     field: string;
@@ -291,15 +298,12 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     this.data.forEach((renderItem) => {
       this.assertNoSpaces(renderItem.name);
 
-      // Render Blocks
-      if (Renderer.isRenderBlock(renderItem)) {
-        this.renderBlock(renderItem, canvas);
-      }
+      this.path.withSegment(renderItem.name, () => {
+        this.path.downSafe(renderItem.instance);
 
-      // Render Fields
-      if (Renderer.isRenderField(renderItem)) {
-        this.renderField(renderItem, canvas);
-      }
+        if (Renderer.isRenderBlock(renderItem)) this.renderBlock(renderItem, canvas);
+        if (Renderer.isRenderField(renderItem)) this.renderField(renderItem, canvas);
+      });
     });
   }
 
