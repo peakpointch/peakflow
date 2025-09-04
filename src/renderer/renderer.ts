@@ -292,8 +292,10 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     clear: string;
   };
 
+  public data: RenderData<F>;
+
   private canvas: HTMLElement;
-  private data: RenderData<F>;
+  private currentData: RenderData<F>;
   private lp: string = "Renderer:";
   private attributeName: string = "render";
   private warnings: RendererWarnings = {
@@ -383,6 +385,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   }
 
   public render(data: RenderData<F>, canvas: HTMLElement = this.canvas): void {
+    this.data = data;
     if (this.options.warnings.autolog) this.clearWarnings();
     this.clear(canvas);
     this.path.withPath(asPrefix(this.options.pathPrefix), () => {
@@ -392,9 +395,9 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   }
 
   private _render(data: RenderData<F>, canvas: HTMLElement = this.canvas): void {
-    this.data = data;
+    this.currentData = data;
 
-    this.data.forEach((renderItem) => {
+    this.currentData.forEach((renderItem) => {
       this.assertNoSpaces(renderItem.name);
 
       this.path.withSegment(renderItem.name, () => {
