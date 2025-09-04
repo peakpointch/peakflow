@@ -1,3 +1,4 @@
+import Path from "../path/index.js";
 import type { DashToCamelCase } from "../typeutils/index.js";
 import type { IANATimeZone } from "../timezones/index.js";
 import type { PartialDeep } from "type-fest";
@@ -5,7 +6,7 @@ import type { PartialDeep } from "type-fest";
  * Tells the `Renderer` how to handle the visibility of a rendered element
  * in case all its children are empty.
  */
-type VisibilityControl = boolean | "emptyState";
+type VisibilityControl = "emptyState" | "hideSelf" | "hideAncestor" | "none";
 /**
  * Defines the type of a `FilterAttribute`.
  */
@@ -183,6 +184,7 @@ export interface RendererOptions<F extends FilterAttributes<keyof F & string> = 
      * timezone: "Europe/Zurich"
      */
     timezone?: false | IANATimeZone;
+    pathPrefix?: string;
     /**
      * Fallback options for `RenderNode`s when no options are set on the
      * HTMLRenderNode.
@@ -192,19 +194,61 @@ export interface RendererOptions<F extends FilterAttributes<keyof F & string> = 
         /** Whether to clear the value of a `RenderField`. */
         clear: boolean;
     };
+    warnings: {
+        /**
+         * If true, warnings are automatically cleared before each render
+         * and logged after each render.
+         */
+        autolog: boolean;
+        /**
+         * Allows you omit any warning.
+         */
+        omit: {
+            [K in keyof RendererWarnings]: boolean;
+        };
+    };
+}
+interface MissingNodeWarning {
+    path: string;
+    message: string;
+    node: RenderNode;
+}
+interface RendererWarnings {
+    missingBlocks: MissingNodeWarning[];
+    missingFields: MissingNodeWarning[];
 }
 export declare class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     static readonly defaultOptions: RendererOptions;
     options: RendererOptions<F>;
+    /**
+     * The path keeps track of where the renderer is currently rendering.
+     *
+     * @example "weekday.Tuesday.dish"
+     */
+    readonly path: Path;
+    attr: {
+        block: string;
+        field: string;
+        emptyState: string;
+        collection: string;
+        decorative: string;
+        hideAncestor: string;
+        inheritVisibility: string;
+        visibilityControl: string;
+        clear: string;
+    };
     private canvas;
     private data;
     private lp;
     private attributeName;
-    private attr;
+    private warnings;
     constructor(canvas: HTMLElement | null, options?: PartialDeep<RendererOptions<F>>);
     static defineAttributes<T extends FilterAttributes>(obj: T): T;
+    logWarnings(...keys: (keyof RendererWarnings)[]): Partial<RendererWarnings>;
+    clearWarnings(...keys: (keyof RendererWarnings)[]): void;
     render(data: RenderData<F>, canvas?: HTMLElement): void;
     private _render;
+    private assertNoSpaces;
     /**
      * Render a `RenderBlock` to all its instances
      */
@@ -274,11 +318,21 @@ export declare class Renderer<F extends FilterAttributes<keyof F & string> = {}>
      */
     private readVisibilityControl;
     private getEmptyStateFor;
+    private shouldHideField;
     private shouldHideBlock;
     private showHTMLElement;
-    private showNode;
     private hideHTMLElement;
+    private showNode;
     private hideNode;
+    private showAncestor;
+    private hideAncestor;
+    /**
+     * Finds the closest ancestor to show or hide.
+     *
+     * @returns A HTMLElement if the ancestor was found. The selector string that was expected
+     * to find the ancestor, if no ancestor was found.
+     */
+    private findClosestAncestor;
     private hideChildrenExceptEmptyState;
     addFilterAttributes(newAttributes: FilterAttributes): void;
     removeFilterAttributes(...attributesToRemove: string[]): void;
