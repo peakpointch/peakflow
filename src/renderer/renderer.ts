@@ -176,6 +176,8 @@ export type RenderData<F extends FilterAttributes = {}> = RenderNode<F>[];
  * `RenderNode`’s content.
  */
 export interface HTMLRenderNode extends HTMLElement {}
+export interface HTMLRenderBlock extends HTMLRenderNode {}
+export interface HTMLRenderField extends HTMLRenderNode {}
 
 /**
  * Defines the options of a `Renderer` instance.
