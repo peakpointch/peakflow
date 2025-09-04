@@ -503,7 +503,8 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     switch (this.readVisibilityControl(htmlNode)) {
       case "emptyState":
         const emptyState = this.getEmptyStateFor(renderBlock, htmlNode);
-        if (shouldHide) {
+        let inheritedIsVisible = this.readInheritedVisibility(emptyState);
+        if (shouldHide && inheritedIsVisible) {
           this.hideChildrenExceptEmptyState(htmlNode);
           this.showHTMLElement(emptyState);
 
@@ -885,6 +886,21 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     } else {
       return this.options.defaults.visibilityControl;
     }
+  }
+
+  private readInheritedVisibility(htmlElement: HTMLElement): boolean {
+    if (htmlElement.hasAttribute(this.attr.inheritVisibility)) {
+      const targetName = htmlElement.getAttribute(this.attr.inheritVisibility);
+      const targetSelector = `${this.blockSelector(targetName)}, ${this.fieldSelector(targetName)}`;
+      const targetHTMLNode = htmlElement.querySelector<HTMLRenderNode>(targetSelector);
+      return this.readVisibility(targetHTMLNode);
+    } else {
+      return true;
+    }
+  }
+
+  private readVisibility(htmlNode: HTMLRenderNode): boolean {
+    return !wf.hasAttr(htmlNode, this.attr.invisible);
   }
 
   private getEmptyStateFor(
