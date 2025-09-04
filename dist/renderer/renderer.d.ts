@@ -150,6 +150,10 @@ export type RenderData<F extends FilterAttributes = {}> = RenderNode<F>[];
  */
 export interface HTMLRenderNode extends HTMLElement {
 }
+export interface HTMLRenderBlock extends HTMLRenderNode {
+}
+export interface HTMLRenderField extends HTMLRenderNode {
+}
 /**
  * Defines the options of a `Renderer` instance.
  */
@@ -235,10 +239,12 @@ export declare class Renderer<F extends FilterAttributes<keyof F & string> = {}>
         hideAncestor: string;
         inheritVisibility: string;
         visibilityControl: string;
+        invisible: string;
         clear: string;
     };
+    data: RenderData<F>;
     private canvas;
-    private data;
+    private currentData;
     private lp;
     private attributeName;
     private warnings;
@@ -317,6 +323,8 @@ export declare class Renderer<F extends FilterAttributes<keyof F & string> = {}>
      *   shown or hidden
      */
     private readVisibilityControl;
+    private readInheritedVisibility;
+    private readVisibility;
     private getEmptyStateFor;
     private shouldHideField;
     private shouldHideBlock;
@@ -339,6 +347,9 @@ export declare class Renderer<F extends FilterAttributes<keyof F & string> = {}>
     private blockSelector;
     private fieldSelector;
     private instanceSelector;
+    isHTMLRenderNode(element: HTMLElement): element is HTMLRenderNode;
+    isHTMLRenderBlock(element: HTMLElement): element is HTMLRenderBlock;
+    isHTMLRenderField(element: HTMLElement): element is HTMLRenderField;
     private static isRenderBlock;
     private static isRenderField;
 }
