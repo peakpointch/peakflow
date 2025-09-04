@@ -1026,10 +1026,12 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     });
   }
 
-  private blockSelector(block?: RenderBlock<F>): string {
+  private blockSelector(block?: RenderBlock<F> | string): string {
     const blockAttrSelector = createAttribute(this.attr.block);
     if (!block) {
       return blockAttrSelector();
+    } else if (typeof block === "string") {
+      return blockAttrSelector(block);
     }
 
     let selectorString = blockAttrSelector(block.name);
@@ -1039,10 +1041,12 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     return selectorString;
   }
 
-  private fieldSelector(field?: RenderField<F>): string {
+  private fieldSelector(field?: RenderField<F> | string): string {
     const fieldAttrSelector = createAttribute(this.attr.field);
     if (!field) {
       return fieldAttrSelector();
+    } else if (typeof field === "string") {
+      return fieldAttrSelector(field);
     }
 
     let selectorString = fieldAttrSelector(field.name);
