@@ -289,6 +289,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     hideAncestor: string;
     inheritVisibility: string;
     visibilityControl: string;
+    invisible: string;
     clear: string;
   };
 
@@ -319,6 +320,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
       hideAncestor: `data-${this.attributeName}-hide-ancestor`,
       inheritVisibility: `data-${this.attributeName}-inherit-visibility`,
       visibilityControl: `data-${this.attributeName}-visibility-control`,
+      invisible: `data-${this.attributeName}-invisible`,
       clear: `data-${this.attributeName}-clear`,
     };
 
