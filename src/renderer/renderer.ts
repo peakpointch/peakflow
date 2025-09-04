@@ -6,6 +6,7 @@ import { de } from "date-fns/locale";
 import wf from "../webflow/index.js";
 import deepMerge from "../utils/deepmerge.js";
 import Path from "../path/index.js";
+import { asPrefix, asSuffix, logPrefix } from "../utils/logger.js";
 import type { DashToCamelCase } from "../typeutils/index.js";
 import type { IANATimeZone } from "../timezones/index.js";
 import type { PartialDeep } from "type-fest";
@@ -213,6 +214,8 @@ export interface RendererOptions<F extends FilterAttributes<keyof F & string> = 
    */
   timezone?: false | IANATimeZone;
 
+  pathPrefix?: string;
+
   /**
    * Fallback options for `RenderNode`s when no options are set on the
    * HTMLRenderNode.
@@ -222,6 +225,32 @@ export interface RendererOptions<F extends FilterAttributes<keyof F & string> = 
     /** Whether to clear the value of a `RenderField`. */
     clear: boolean;
   };
+
+  warnings: {
+    /**
+     * If true, warnings are automatically cleared before each render
+     * and logged after each render.
+     */
+    autolog: boolean;
+
+    /**
+     * Allows you omit any warning.
+     */
+    omit: {
+      [K in keyof RendererWarnings]: boolean;
+    };
+  };
+}
+
+interface MissingNodeWarning {
+  path: string;
+  message: string;
+  node: RenderNode;
+}
+
+interface RendererWarnings {
+  missingBlocks: MissingNodeWarning[];
+  missingFields: MissingNodeWarning[];
 }
 
 export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
@@ -232,6 +261,13 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     defaults: {
       visibilityControl: "none",
       clear: true,
+    },
+    warnings: {
+      autolog: true,
+      omit: {
+        missingBlocks: false,
+        missingFields: true,
+      },
     },
   };
 
@@ -260,6 +296,10 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   private data: RenderData<F>;
   private lp: string = "Renderer:";
   private attributeName: string = "render";
+  private warnings: RendererWarnings = {
+    missingBlocks: [],
+    missingFields: [],
+  };
 
   constructor(canvas: HTMLElement | null, options?: PartialDeep<RendererOptions<F>>) {
     if (!canvas) throw new Error(`${this.lp}Canvas can't be undefined.`);
@@ -287,9 +327,68 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     return obj;
   }
 
+  public logWarnings(...keys: (keyof RendererWarnings)[]): Partial<RendererWarnings> {
+    let ownKeys = Array.from(keys);
+    if (!ownKeys.length) ownKeys = Object.keys(this.warnings) as (keyof RendererWarnings)[];
+
+    const collectedWarnings: Partial<RendererWarnings> = {};
+
+    for (const key of ownKeys) {
+      const warnings = this.warnings[key];
+      const omitWarning = this.options.warnings.omit[key];
+      if (!warnings.length || omitWarning) continue;
+      collectedWarnings[key] = warnings;
+
+      // console.groupCollapsed(`⚠️ ${this.lp}${key}`);
+      // warnings.forEach((warning) => {
+      //   const msg = `${warning.message}: %c${warning.node.name}${asSuffix(warning.node.instance, ".")} %cat %c${asPrefix(this.options.pathPrefix, ".")}${warning.path}`;
+      //   const grayStyle = "color: gray;";
+      //   const pathStyle = "color: #f19116; font-weight: bold;";
+      //   console.warn(msg, pathStyle, grayStyle, pathStyle);
+      // });
+      // console.groupEnd();
+
+      const lines: string[] = [];
+      const styles: string[] = [];
+
+      warnings.forEach((warning) => {
+        const line = `%c${warning.message}: %c${warning.node.name}${asSuffix(
+          warning.node.instance,
+          ".",
+        )} %cat %c${warning.path}`;
+
+        lines.push(line);
+
+        // push styles for the 3 %c in this line
+        styles.push(""); // warning message
+        styles.push("color: #f19116; font-weight: bold;"); // node name
+        styles.push("color: gray;"); // "at"
+        styles.push("color: #f19116; font-weight: bold;"); // path
+      });
+
+      // join all lines with newlines
+      console.warn(`${this.lp}${warnings.length} ${key}\n${lines.join("\n")}`, ...styles);
+    }
+
+    return collectedWarnings;
+  }
+
+  public clearWarnings(...keys: (keyof RendererWarnings)[]): void {
+    let ownKeys = Array.from(keys);
+    if (!ownKeys.length) ownKeys = Object.keys(this.warnings) as (keyof RendererWarnings)[];
+
+    for (const key of ownKeys) {
+      this.warnings[key] = [];
+    }
+  }
+
   public render(data: RenderData<F>, canvas: HTMLElement = this.canvas): void {
+    if (this.options.warnings.autolog) this.clearWarnings();
     this.clear(canvas);
-    this._render(data, canvas);
+    this.path.withPath(asPrefix(this.options.pathPrefix), () => {
+      this._render(data, canvas);
+    });
+    if (this.options.warnings.autolog) this.logWarnings();
   }
 
   private _render(data: RenderData<F>, canvas: HTMLElement = this.canvas): void {
@@ -321,7 +420,11 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     const htmlNodes = canvas.querySelectorAll<HTMLRenderNode>(selector);
 
     if (!htmlNodes.length) {
-      console.warn(`${this.lp}Block "${selector}" was not found.`);
+      this.warnings.missingBlocks.push({
+        path: this.path.toString(),
+        message: `Block missing`,
+        node: renderBlock,
+      });
       return;
     }
 
@@ -448,6 +551,16 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   private renderField(renderField: RenderField<F>, canvas: HTMLElement) {
     const selector = this.fieldSelector(renderField);
     const htmlFields = canvas.querySelectorAll<HTMLRenderNode>(selector);
+
+    if (!htmlFields.length) {
+      this.warnings.missingFields.push({
+        path: this.path.toString(),
+        message: `Field missing`,
+        node: renderField,
+      });
+      return;
+    }
+
     htmlFields.forEach((htmlNode) => {
       this.renderFieldToTemplate(renderField, htmlNode);
     });
