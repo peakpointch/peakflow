@@ -10,6 +10,8 @@ export declare class Path {
     restore(path: string): Path;
     snapshot(): string;
     leaf(): string;
+    prefix(path: string): Path;
+    peekPrefix(path: string): string;
     withPath<T>(path: string, callback: (path: Path) => T, options?: {
         keepPath: boolean;
     }): T;

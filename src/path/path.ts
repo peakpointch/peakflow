@@ -49,6 +49,17 @@ export class Path {
     return idx >= 0 ? this._path.slice(idx + 1) : "";
   }
 
+  public prefix(path: string): Path {
+    this._path = this.peekPrefix(path);
+    return this;
+  }
+
+  public peekPrefix(path: string): string {
+    if (!path) return this._path;
+    this.validate(path);
+    return `${path}.${this._path}`;
+  }
+
   public withPath<T>(
     path: string,
     callback: (path: Path) => T,

@@ -39,6 +39,16 @@ export class Path {
         const idx = this._path.lastIndexOf(".");
         return idx >= 0 ? this._path.slice(idx + 1) : "";
     }
+    prefix(path) {
+        this._path = this.peekPrefix(path);
+        return this;
+    }
+    peekPrefix(path) {
+        if (!path)
+            return this._path;
+        this.validate(path);
+        return `${path}.${this._path}`;
+    }
     withPath(path, callback, options = { keepPath: false }) {
         this.validate(path);
         const snapshot = this.snapshot();
