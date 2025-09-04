@@ -996,7 +996,9 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     const selector = [
       selectAncestor(nodeName, { matchType: "whitespace" }),
       htmlNode.getAttribute(this.attr.hideAncestor) ?? "",
-    ].join(",");
+    ]
+      .filter(Boolean)
+      .join(",");
     const ancestor = htmlNode.closest<HTMLElement>(selector);
     return ancestor || selector;
   }
