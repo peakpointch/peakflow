@@ -646,11 +646,15 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
 
       // If it's a RenderBlock
       if (child.hasAttribute(this.attr.block)) {
-        renderData.push(this.readRenderBlock(child, stopRecursionMatches));
+        this.path.withSnapshot(() => {
+          renderData.push(this.readRenderBlock(child, stopRecursionMatches));
+        });
       }
       // If it's a RenderField
       else if (child.hasAttribute(this.attr.field)) {
-        renderData.push(this.readRenderField(child));
+        this.path.withSnapshot(() => {
+          renderData.push(this.readRenderField(child));
+        });
       }
       // If it's neither, check if any descendants are renderable
       else {
@@ -721,6 +725,9 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     const blockName = child.getAttribute(this.attr.block);
     const instance = child.getAttribute(`data-${blockName}-instance`);
 
+    this.path.down(blockName);
+    this.path.downSafe(instance);
+
     // Recursively read child elements
     const children = this.read(child, stopRecursionAttributes); // Recurse on children
 
@@ -749,6 +756,8 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   private readRenderField(htmlNode: HTMLRenderNode): RenderField<F> {
     const fieldName = htmlNode.getAttribute(this.attr.field);
     const instance = htmlNode.getAttribute(`data-${fieldName}-instance`);
+    this.path.down(fieldName);
+    this.path.downSafe(instance);
 
     // Determine field type (handle date, text, html)
     let value: string = htmlNode.innerHTML.trim();
