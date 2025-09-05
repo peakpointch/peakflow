@@ -255,6 +255,19 @@ interface RendererWarnings {
   missingFields: MissingNodeWarning[];
 }
 
+interface RenderAttributes {
+  block: string;
+  field: string;
+  emptyState: string;
+  collection: string;
+  decorative: string;
+  hideAncestor: string;
+  inheritVisibility: string;
+  visibilityControl: string;
+  invisible: string;
+  clear: string;
+}
+
 export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   public static readonly defaultOptions: RendererOptions = {
     attributeName: "render",
@@ -282,19 +295,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
    */
   public readonly path: Path = new Path();
 
-  public attr: {
-    block: string;
-    field: string;
-    emptyState: string;
-    collection: string;
-    decorative: string;
-    hideAncestor: string;
-    inheritVisibility: string;
-    visibilityControl: string;
-    invisible: string;
-    clear: string;
-  };
-
+  public attr: RenderAttributes;
   public data: RenderData<F>;
 
   private canvas: HTMLElement;
@@ -312,25 +313,29 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     this.options = deepMerge(Renderer.defaultOptions as RendererOptions<F>, options);
 
     this.attributeName = this.options.attributeName;
-
-    this.attr = {
-      block: `data-${this.attributeName}-element`,
-      field: `data-${this.attributeName}-field`,
-      emptyState: `data-${this.attributeName}-empty-state`,
-      collection: `data-${this.attributeName}-collection`,
-      decorative: `data-${this.attributeName}-decorative`,
-      hideAncestor: `data-${this.attributeName}-hide-ancestor`,
-      inheritVisibility: `data-${this.attributeName}-inherit-visibility`,
-      visibilityControl: `data-${this.attributeName}-visibility-control`,
-      invisible: `data-${this.attributeName}-invisible`,
-      clear: `data-${this.attributeName}-clear`,
-    };
-
+    this.attr = Renderer.getAttributes(this.attributeName);
     this.lp = logPrefix("Renderer", this.attributeName);
   }
 
   public static defineAttributes<T extends FilterAttributes>(obj: T): T {
     return obj;
+  }
+
+  public static getAttributes(
+    attributeName: string = Renderer.defaultOptions.attributeName,
+  ): RenderAttributes {
+    return {
+      block: `data-${attributeName}-element`,
+      field: `data-${attributeName}-field`,
+      emptyState: `data-${attributeName}-empty-state`,
+      collection: `data-${attributeName}-collection`,
+      decorative: `data-${attributeName}-decorative`,
+      hideAncestor: `data-${attributeName}-hide-ancestor`,
+      inheritVisibility: `data-${attributeName}-inherit-visibility`,
+      visibilityControl: `data-${attributeName}-visibility-control`,
+      invisible: `data-${attributeName}-invisible`,
+      clear: `data-${attributeName}-clear`,
+    };
   }
 
   public logWarnings(...keys: (keyof RendererWarnings)[]): Partial<RendererWarnings> {
