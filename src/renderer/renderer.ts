@@ -36,10 +36,12 @@ type PropsFromFilterAttributes<F extends FilterAttributes> = {
   [K in keyof F as DashToCamelCase<K & string>]?: FilterAttributeType[F[K]];
 };
 
+export type RenderField<F extends FilterAttributes<keyof F & string> = {}> = RenderFieldBase<F>;
+
 /**
  * A `RenderField` ...
  */
-export type RenderField<F extends FilterAttributes<keyof F & string> = {}> = {
+export class RenderFieldBase<F extends FilterAttributes<keyof F & string> = {}> {
   /**
    * The name of this `RenderField`.
    *
@@ -101,7 +103,8 @@ export type RenderField<F extends FilterAttributes<keyof F & string> = {}> = {
    * custom metadata.
    */
   props?: PropsFromFilterAttributes<F>;
-};
+}
+
 
 /**
  * A `RenderBlock` can wrap multiple `RenderNode`s (fields or blocks).
