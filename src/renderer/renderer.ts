@@ -16,6 +16,7 @@ import type { PartialDeep } from "type-fest";
  * in case all its children are empty.
  */
 type VisibilityControl = "emptyState" | "hideSelf" | "hideAncestor" | "none";
+type RenderFieldType = "text" | "html" | "date";
 
 /**
  * Defines the type of a `FilterAttribute`.
@@ -77,7 +78,7 @@ export type RenderField<F extends FilterAttributes<keyof F & string> = {}> = {
    *
    * This tells the Renderer how to render the `value`
    */
-  type?: "text" | "html" | "date";
+  type?: RenderFieldType;
 
   /**
    * Whether this `RenderField` should be visible when it's rendered.
