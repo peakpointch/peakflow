@@ -759,28 +759,24 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     this.path.down(fieldName);
     this.path.downSafe(instance);
 
-    // Determine field type (handle date, text, html)
-    let value: string = htmlNode.innerHTML.trim();
-    const type =
+    const type: RenderFieldType =
       htmlNode.children.length > 0 ? "html" : htmlNode.hasAttribute("data-date") ? "date" : "text";
 
+    let field: RenderField<F>;
+
     switch (type) {
-      case "date":
-        value = value;
-        break;
       default:
+        field = {
+          name: fieldName!,
+          instance: instance || undefined,
+          value: htmlNode.innerHTML.trim(),
+          type,
+          visibility: wf.isVisible(htmlNode),
+          decorative: wf.hasAttr(htmlNode, this.attr.decorative),
+          props: {},
+        };
         break;
     }
-
-    const field: RenderField<F> = {
-      name: fieldName!,
-      instance: instance || undefined,
-      value,
-      type,
-      visibility: wf.isVisible(htmlNode),
-      decorative: wf.hasAttr(htmlNode, this.attr.decorative),
-      props: {},
-    };
 
     // Optionally, handle additional properties for filtering purposes
     this.readFilteringProperties(field, htmlNode);
