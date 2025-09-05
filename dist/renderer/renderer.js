@@ -54,14 +54,6 @@ export class Renderer {
             if (!warnings.length || omitWarning)
                 continue;
             collectedWarnings[key] = warnings;
-            // console.groupCollapsed(`⚠️ ${this.lp}${key}`);
-            // warnings.forEach((warning) => {
-            //   const msg = `${warning.message}: %c${warning.node.name}${asSuffix(warning.node.instance, ".")} %cat %c${asPrefix(this.options.pathPrefix, ".")}${warning.path}`;
-            //   const grayStyle = "color: gray;";
-            //   const pathStyle = "color: #f19116; font-weight: bold;";
-            //   console.warn(msg, pathStyle, grayStyle, pathStyle);
-            // });
-            // console.groupEnd();
             const lines = [];
             const styles = [];
             warnings.forEach((warning) => {
@@ -131,7 +123,7 @@ export class Renderer {
         }
         // Recursion with visibility check
         htmlNodes.forEach((htmlRenderBlock) => {
-            let isCollection = htmlRenderBlock.getAttribute(this.attr.collection) === "true";
+            let isCollection = wf.hasAttr(htmlRenderBlock, this.attr.collection);
             if (isCollection) {
                 this.renderCollection(renderBlock, htmlRenderBlock);
             }
