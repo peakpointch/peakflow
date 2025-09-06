@@ -257,7 +257,12 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
         const emptyState = this.getEmptyStateFor(renderBlock, htmlNode);
         const showEmptyState = this.readInheritedVisibility(emptyState);
         if (hideBlock && showEmptyState) {
-          this.hideChildrenExceptEmptyState(htmlNode);
+          if (htmlNode.contains(emptyState)) {
+            this.hideChildrenExceptEmptyState(htmlNode);
+          } else {
+            this.hideNode(renderBlock.name, htmlNode);
+          }
+
           this.showHTMLElement(emptyState);
 
           // Only render nodes that are inside the empty state element
@@ -687,15 +692,9 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     node: RenderBlock<F> | RenderField<F>,
     htmlNode: HTMLRenderNode,
   ): HTMLElement {
-    let emptyState: HTMLElement;
-
-    if (Renderer.isRenderField) {
-      emptyState = htmlNode.parentElement?.querySelector<HTMLElement>(
-        `[${this.attr.emptyState}="${node.name}"]`,
-      );
-    } else {
-      emptyState = htmlNode.querySelector<HTMLElement>(`[${this.attr.emptyState}="${node.name}"]`);
-    }
+    const emptyState = htmlNode.parentElement?.querySelector<HTMLElement>(
+      `[${this.attr.emptyState}="${node.name}"]`,
+    );
 
     if (emptyState) return emptyState;
     throw new Error(`${this.lp}No empty state found for "${node.name}"`);
