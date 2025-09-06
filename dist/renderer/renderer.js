@@ -553,7 +553,7 @@ export class Renderer {
         return !field.visibility || !field.value.trim();
     }
     shouldHideBlock(block) {
-        if (block.visibility === false)
+        if (block.visibility === false || block.children.length <= 0)
             return true;
         // Check if all child blocks and fields are empty
         return block.children.every((child) => {

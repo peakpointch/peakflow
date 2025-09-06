@@ -682,7 +682,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   }
 
   private shouldHideBlock(block: RenderBlock<F>): boolean {
-    if (block.visibility === false) return true;
+    if (block.visibility === false || block.children.length <= 0) return true;
     // Check if all child blocks and fields are empty
     return block.children.every((child) => {
       if (Renderer.isRenderField(child)) {
