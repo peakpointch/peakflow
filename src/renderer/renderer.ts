@@ -197,19 +197,19 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   }
 
   private renderCollection(renderBlock: RenderBlock<F>, htmlNode: HTMLRenderNode) {
-    const shouldHide = this.shouldHideBlock(renderBlock);
+    const hideBlock = this.shouldHideBlock(renderBlock);
     switch (this.readVisibilityControl(htmlNode)) {
       case "emptyState":
         // TODO: Support "emptyState" for render collections
         break;
       case "hideSelf":
-        if (shouldHide) {
+        if (hideBlock) {
           this.hideNode(renderBlock.name, htmlNode);
           return;
         }
         break;
       case "hideAncestor":
-        if (shouldHide) {
+        if (hideBlock) {
           this.hideAncestor(renderBlock.name, htmlNode);
         }
         break;
@@ -251,12 +251,12 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
    * Render a `RenderBlock` to a single `HTMLRenderNode`
    */
   private renderBlockToTemplate(renderBlock: RenderBlock<F>, htmlNode: HTMLRenderNode) {
-    const shouldHide = this.shouldHideBlock(renderBlock);
+    const hideBlock = this.shouldHideBlock(renderBlock);
     switch (this.readVisibilityControl(htmlNode)) {
       case "emptyState":
         const emptyState = this.getEmptyStateFor(renderBlock, htmlNode);
-        let inheritedIsVisible = this.readInheritedVisibility(emptyState);
-        if (shouldHide && inheritedIsVisible) {
+        const showEmptyState = this.readInheritedVisibility(emptyState);
+        if (hideBlock && showEmptyState) {
           this.hideChildrenExceptEmptyState(htmlNode);
           this.showHTMLElement(emptyState);
 
@@ -269,14 +269,14 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
         }
         break;
       case "hideSelf":
-        if (shouldHide) {
+        if (hideBlock) {
           this.hideNode(renderBlock.name, htmlNode);
         } else {
           this._render(renderBlock.children, htmlNode); // Recursively render children
         }
         break;
       case "hideAncestor":
-        if (shouldHide) {
+        if (hideBlock) {
           this.hideAncestor(renderBlock.name, htmlNode);
         } else {
           this._render(renderBlock.children, htmlNode); // Recursively render children
@@ -328,11 +328,11 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
    * Render a `RenderField` to a single `HTMLRenderField`
    */
   private renderFieldToTemplate(renderField: RenderField<F>, htmlNode: HTMLRenderNode) {
-    const shouldHide = this.shouldHideField(renderField);
+    const hideField = this.shouldHideField(renderField);
     switch (this.readVisibilityControl(htmlNode)) {
       case "emptyState":
         const emptyStateElement = this.getEmptyStateFor(renderField, htmlNode);
-        if (shouldHide) {
+        if (hideField) {
           this.hideNode(renderField.name, htmlNode);
           this.showHTMLElement(emptyStateElement);
         } else {
@@ -341,14 +341,14 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
         }
         break;
       case "hideSelf":
-        if (shouldHide) {
+        if (hideField) {
           this.hideNode(renderField.name, htmlNode);
         } else {
           this.renderFieldValue(renderField, htmlNode);
         }
         break;
       case "hideAncestor":
-        if (shouldHide) {
+        if (hideField) {
           this.hideAncestor(renderField.name, htmlNode);
         } else {
           this.renderFieldValue(renderField, htmlNode);
