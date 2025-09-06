@@ -8,6 +8,7 @@ import wf from "../webflow/index.js";
 import { createAttribute, exclude } from "../attributeselector/index.js";
 import { deepMerge, toCamelCase, asPrefix, asSuffix, logPrefix } from "../utils/index.js";
 
+import { ImageField } from "./fields/index.js";
 import { HTMLRenderNode, HTMLRenderField, HTMLRenderBlock } from "./dom/index.js";
 import type {
   RenderData,
@@ -376,9 +377,23 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
           locale: de,
         });
         break;
+      case "image":
+        ImageField.assertHTML(htmlNode);
+        ImageField.assertField(renderField);
+        this.renderImage(renderField as ImageField, htmlNode as HTMLImageElement);
+        break;
+      case "text":
       default:
         htmlNode.innerText = renderField.value;
     }
+  }
+
+  private renderImage(renderImage: ImageField<F>, htmlImage: HTMLImageElement): void {
+    htmlImage.src = renderImage.props.src;
+    htmlImage.loading = renderImage.props.loading;
+    htmlImage.alt = renderImage.props.alt;
+    htmlImage.sizes = renderImage.props.sizes;
+    htmlImage.srcset = ImageField.deserializeSrcset(renderImage.props.srcset);
   }
 
   /**
@@ -513,11 +528,20 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     this.path.downSafe(instance);
 
     const type: RenderFieldType =
-      htmlNode.children.length > 0 ? "html" : htmlNode.hasAttribute("data-date") ? "date" : "text";
+      htmlNode.children.length > 0
+        ? "html"
+        : htmlNode.hasAttribute("data-date")
+          ? "date"
+          : htmlNode instanceof HTMLImageElement
+            ? "image"
+            : "text";
 
     let field: RenderField<F>;
 
     switch (type) {
+      case "image":
+        field = ImageField.read(htmlNode, this.attributeName);
+        break;
       default:
         field = {
           name: fieldName!,

@@ -5,6 +5,7 @@ import Path from "../path/index.js";
 import wf from "../webflow/index.js";
 import { createAttribute, exclude } from "../attributeselector/index.js";
 import { deepMerge, toCamelCase, asPrefix, asSuffix, logPrefix } from "../utils/index.js";
+import { ImageField } from "./fields/index.js";
 import { HTMLRenderNode, HTMLRenderField, HTMLRenderBlock } from "./dom/index.js";
 export class Renderer {
     constructor(canvas, options) {
@@ -306,9 +307,22 @@ export class Renderer {
                     locale: de,
                 });
                 break;
+            case "image":
+                ImageField.assertHTML(htmlNode);
+                ImageField.assertField(renderField);
+                this.renderImage(renderField, htmlNode);
+                break;
+            case "text":
             default:
                 htmlNode.innerText = renderField.value;
         }
+    }
+    renderImage(renderImage, htmlImage) {
+        htmlImage.src = renderImage.props.src;
+        htmlImage.loading = renderImage.props.loading;
+        htmlImage.alt = renderImage.props.alt;
+        htmlImage.sizes = renderImage.props.sizes;
+        htmlImage.srcset = ImageField.deserializeSrcset(renderImage.props.srcset);
     }
     /**
      * Recursively reads the DOM node and its descendants to build a structured RenderData.
