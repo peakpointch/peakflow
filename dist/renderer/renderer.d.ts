@@ -54,6 +54,7 @@ export declare class Renderer<F extends FilterAttributes<keyof F & string> = {}>
      * on the `renderField`.
      */
     private renderFieldValue;
+    private renderImage;
     /**
      * Recursively reads the DOM node and its descendants to build a structured RenderData.
      * It identifies elements with `data-${elementAttr}-element` and `data-${fieldAttr}-field` attributes,

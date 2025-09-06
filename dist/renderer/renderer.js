@@ -26,22 +26,25 @@ export class Renderer {
         this.canvas = canvas;
         this.options = deepMerge(Renderer.defaultOptions, options);
         this.attributeName = this.options.attributeName;
-        this.attr = {
-            block: `data-${this.attributeName}-element`,
-            field: `data-${this.attributeName}-field`,
-            emptyState: `data-${this.attributeName}-empty-state`,
-            collection: `data-${this.attributeName}-collection`,
-            decorative: `data-${this.attributeName}-decorative`,
-            hideAncestor: `data-${this.attributeName}-hide-ancestor`,
-            inheritVisibility: `data-${this.attributeName}-inherit-visibility`,
-            visibilityControl: `data-${this.attributeName}-visibility-control`,
-            invisible: `data-${this.attributeName}-invisible`,
-            clear: `data-${this.attributeName}-clear`,
-        };
+        this.attr = Renderer.getAttributes(this.attributeName);
         this.lp = logPrefix("Renderer", this.attributeName);
     }
     static defineAttributes(obj) {
         return obj;
+    }
+    static getAttributes(attributeName = Renderer.defaultOptions.attributeName) {
+        return {
+            block: `data-${attributeName}-element`,
+            field: `data-${attributeName}-field`,
+            emptyState: `data-${attributeName}-empty-state`,
+            collection: `data-${attributeName}-collection`,
+            decorative: `data-${attributeName}-decorative`,
+            hideAncestor: `data-${attributeName}-hide-ancestor`,
+            inheritVisibility: `data-${attributeName}-inherit-visibility`,
+            visibilityControl: `data-${attributeName}-visibility-control`,
+            invisible: `data-${attributeName}-invisible`,
+            clear: `data-${attributeName}-clear`,
+        };
     }
     logWarnings(...keys) {
         let ownKeys = Array.from(keys);
@@ -133,19 +136,19 @@ export class Renderer {
         });
     }
     renderCollection(renderBlock, htmlNode) {
-        const shouldHide = this.shouldHideBlock(renderBlock);
+        const hideBlock = this.shouldHideBlock(renderBlock);
         switch (this.readVisibilityControl(htmlNode)) {
             case "emptyState":
                 // TODO: Support "emptyState" for render collections
                 break;
             case "hideSelf":
-                if (shouldHide) {
+                if (hideBlock) {
                     this.hideNode(renderBlock.name, htmlNode);
                     return;
                 }
                 break;
             case "hideAncestor":
-                if (shouldHide) {
+                if (hideBlock) {
                     this.hideAncestor(renderBlock.name, htmlNode);
                 }
                 break;
@@ -184,13 +187,18 @@ export class Renderer {
      * Render a `RenderBlock` to a single `HTMLRenderNode`
      */
     renderBlockToTemplate(renderBlock, htmlNode) {
-        const shouldHide = this.shouldHideBlock(renderBlock);
+        const hideBlock = this.shouldHideBlock(renderBlock);
         switch (this.readVisibilityControl(htmlNode)) {
             case "emptyState":
                 const emptyState = this.getEmptyStateFor(renderBlock, htmlNode);
-                let inheritedIsVisible = this.readInheritedVisibility(emptyState);
-                if (shouldHide && inheritedIsVisible) {
-                    this.hideChildrenExceptEmptyState(htmlNode);
+                const showEmptyState = this.readInheritedVisibility(emptyState);
+                if (hideBlock && showEmptyState) {
+                    if (htmlNode.contains(emptyState)) {
+                        this.hideChildrenExceptEmptyState(htmlNode);
+                    }
+                    else {
+                        this.hideNode(renderBlock.name, htmlNode);
+                    }
                     this.showHTMLElement(emptyState);
                     // Only render nodes that are inside the empty state element
                     const emptyStateNodes = this.getChildrenForContainer(renderBlock, emptyState);
@@ -202,7 +210,7 @@ export class Renderer {
                 }
                 break;
             case "hideSelf":
-                if (shouldHide) {
+                if (hideBlock) {
                     this.hideNode(renderBlock.name, htmlNode);
                 }
                 else {
@@ -210,7 +218,7 @@ export class Renderer {
                 }
                 break;
             case "hideAncestor":
-                if (shouldHide) {
+                if (hideBlock) {
                     this.hideAncestor(renderBlock.name, htmlNode);
                 }
                 else {
@@ -256,11 +264,11 @@ export class Renderer {
      * Render a `RenderField` to a single `HTMLRenderField`
      */
     renderFieldToTemplate(renderField, htmlNode) {
-        const shouldHide = this.shouldHideField(renderField);
+        const hideField = this.shouldHideField(renderField);
         switch (this.readVisibilityControl(htmlNode)) {
             case "emptyState":
                 const emptyStateElement = this.getEmptyStateFor(renderField, htmlNode);
-                if (shouldHide) {
+                if (hideField) {
                     this.hideNode(renderField.name, htmlNode);
                     this.showHTMLElement(emptyStateElement);
                 }
@@ -270,7 +278,7 @@ export class Renderer {
                 }
                 break;
             case "hideSelf":
-                if (shouldHide) {
+                if (hideField) {
                     this.hideNode(renderField.name, htmlNode);
                 }
                 else {
@@ -278,7 +286,7 @@ export class Renderer {
                 }
                 break;
             case "hideAncestor":
-                if (shouldHide) {
+                if (hideField) {
                     this.hideAncestor(renderField.name, htmlNode);
                 }
                 else {
@@ -340,11 +348,15 @@ export class Renderer {
             }
             // If it's a RenderBlock
             if (child.hasAttribute(this.attr.block)) {
-                renderData.push(this.readRenderBlock(child, stopRecursionMatches));
+                this.path.withSnapshot(() => {
+                    renderData.push(this.readRenderBlock(child, stopRecursionMatches));
+                });
             }
             // If it's a RenderField
             else if (child.hasAttribute(this.attr.field)) {
-                renderData.push(this.readRenderField(child));
+                this.path.withSnapshot(() => {
+                    renderData.push(this.readRenderField(child));
+                });
             }
             // If it's neither, check if any descendants are renderable
             else {
@@ -405,6 +417,8 @@ export class Renderer {
     readRenderBlock(child, stopRecursionAttributes) {
         const blockName = child.getAttribute(this.attr.block);
         const instance = child.getAttribute(`data-${blockName}-instance`);
+        this.path.down(blockName);
+        this.path.downSafe(instance);
         // Recursively read child elements
         const children = this.read(child, stopRecursionAttributes); // Recurse on children
         const block = {
@@ -427,25 +441,32 @@ export class Renderer {
     readRenderField(htmlNode) {
         const fieldName = htmlNode.getAttribute(this.attr.field);
         const instance = htmlNode.getAttribute(`data-${fieldName}-instance`);
-        // Determine field type (handle date, text, html)
-        let value = htmlNode.innerHTML.trim();
-        const type = htmlNode.children.length > 0 ? "html" : htmlNode.hasAttribute("data-date") ? "date" : "text";
+        this.path.down(fieldName);
+        this.path.downSafe(instance);
+        const type = htmlNode.children.length > 0
+            ? "html"
+            : htmlNode.hasAttribute("data-date")
+                ? "date"
+                : htmlNode instanceof HTMLImageElement
+                    ? "image"
+                    : "text";
+        let field;
         switch (type) {
-            case "date":
-                value = value;
+            case "image":
+                field = ImageField.read(htmlNode, this.attributeName);
                 break;
             default:
+                field = {
+                    name: fieldName,
+                    instance: instance || undefined,
+                    value: htmlNode.innerHTML.trim(),
+                    type,
+                    visibility: wf.isVisible(htmlNode),
+                    decorative: wf.hasAttr(htmlNode, this.attr.decorative),
+                    props: {},
+                };
                 break;
         }
-        const field = {
-            name: fieldName,
-            instance: instance || undefined,
-            value,
-            type,
-            visibility: wf.isVisible(htmlNode),
-            decorative: wf.hasAttr(htmlNode, this.attr.decorative),
-            props: {},
-        };
         // Optionally, handle additional properties for filtering purposes
         this.readFilteringProperties(field, htmlNode);
         try {
@@ -552,13 +573,7 @@ export class Renderer {
         return !wf.hasAttr(htmlNode, this.attr.invisible);
     }
     getEmptyStateFor(node, htmlNode) {
-        let emptyState;
-        if (Renderer.isRenderField) {
-            emptyState = htmlNode.parentElement?.querySelector(`[${this.attr.emptyState}="${node.name}"]`);
-        }
-        else {
-            emptyState = htmlNode.querySelector(`[${this.attr.emptyState}="${node.name}"]`);
-        }
+        const emptyState = htmlNode.parentElement?.querySelector(`[${this.attr.emptyState}="${node.name}"]`);
         if (emptyState)
             return emptyState;
         throw new Error(`${this.lp}No empty state found for "${node.name}"`);
