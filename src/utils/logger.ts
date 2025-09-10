@@ -7,10 +7,10 @@ export function logPrefix(name: string, instance?: string): string {
   return `${name} ${instanceStr}: `;
 }
 
-export function asPrefix(str: string, suffix: string = ""): string {
+export function asPrefix(str: string | null | undefined, suffix: string = ""): string {
   return str ? `${str}${suffix}` : "";
 }
 
-export function asSuffix(str: string, prefix: string = ""): string {
+export function asSuffix(str: string | null | undefined, prefix: string = ""): string {
   return str ? `${prefix}${str}` : "";
 }
