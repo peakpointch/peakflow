@@ -12,6 +12,7 @@ export * from "./inlinecms/index.js";
 export * from "./inputsync/index.js";
 export * from "./marquee/index.js";
 export * from "./modal/index.js";
+export * from "./path/index.js";
 export * from "./pdf/index.js";
 export * from "./renderer/index.js";
 export * from "./scroll/index.js";

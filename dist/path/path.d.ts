@@ -7,6 +7,8 @@ export declare class Path {
     peekDown(segment: string): string;
     downSafe(segment: string | null | undefined): Path;
     private _peekDown;
+    sibling(segment: string): Path;
+    peekSibling(segment: string): string;
     restore(path: string): Path;
     snapshot(): string;
     leaf(): string;

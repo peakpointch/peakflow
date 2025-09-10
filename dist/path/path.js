@@ -28,6 +28,16 @@ export class Path {
     _peekDown(segment) {
         return this._path ? `${this._path}.${segment}` : segment;
     }
+    sibling(segment) {
+        return this.up().down(segment);
+    }
+    peekSibling(segment) {
+        let result = "";
+        this.withSnapshot((path) => {
+            result = path.up().down(segment).toString();
+        });
+        return result;
+    }
     restore(path) {
         this._path = path;
         return this;
