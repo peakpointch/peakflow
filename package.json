@@ -59,6 +59,10 @@
       "types": "./dist/modal/index.d.ts",
       "default": "./dist/modal/index.js"
     },
+    "./path": {
+      "types": "./dist/path/index.d.ts",
+      "default": "./dist/path/index.js"
+    },
     "./pdf": {
       "types": "./dist/pdf/index.d.ts",
       "default": "./dist/pdf/index.js"
@@ -141,6 +145,9 @@
       ],
       "modal": [
         "dist/modal/index.d.ts"
+      ],
+      "path": [
+        "dist/path/index.d.ts"
       ],
       "pdf": [
         "dist/pdf/index.d.ts"
