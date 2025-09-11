@@ -21,6 +21,7 @@ export declare class Path {
         keepSegment: boolean;
     }): void;
     withSnapshot(callback: (path: Path) => void): void;
+    s(): string;
     toString(): string;
     private validate;
 }

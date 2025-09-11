@@ -91,6 +91,9 @@ export class Path {
             this.restore(snapshot);
         }
     }
+    s() {
+        return this._path;
+    }
     toString() {
         return this._path;
     }

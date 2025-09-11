@@ -112,6 +112,10 @@ export class Path {
     }
   }
 
+  public s(): string {
+    return this._path;
+  }
+
   public toString(): string {
     return this._path;
   }
