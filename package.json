@@ -39,6 +39,10 @@
       "types": "./dist/form/index.d.ts",
       "default": "./dist/form/index.js"
     },
+    "./fscc": {
+      "types": "./dist/fscc/index.d.ts",
+      "default": "./dist/fscc/index.js"
+    },
     "./hyphenizer": {
       "types": "./dist/hyphenizer/index.d.ts",
       "default": "./dist/hyphenizer/index.js"
@@ -130,6 +134,9 @@
       ],
       "form": [
         "dist/form/index.d.ts"
+      ],
+      "fscc": [
+        "dist/fscc/index.d.ts"
       ],
       "hyphenizer": [
         "dist/hyphenizer/index.d.ts"
