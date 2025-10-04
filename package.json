@@ -168,6 +168,9 @@
       "scroll": [
         "dist/scroll/index.d.ts"
       ],
+      "split-button": [
+        "dist/split-button/index.d.ts"
+      ],
       "swiper": [
         "dist/swiper/index.d.ts"
       ],
