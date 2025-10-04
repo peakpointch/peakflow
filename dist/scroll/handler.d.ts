@@ -1,6 +1,13 @@
 export type ScrollPosition = "start" | "center" | "end" | "nearest";
 interface ScrollToOptions extends ScrollOptions {
+    /**
+     * Delay in ms
+     * Defaults to 0
+     */
     delay: number;
+    /**
+     * Offset in px
+     */
     offset: number;
     position: ScrollPosition;
 }
