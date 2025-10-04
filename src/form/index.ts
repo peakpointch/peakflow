@@ -10,4 +10,5 @@ export * from "./formdecision.js";
 export * from "./formfield.js";
 export * from "./formmessage.js";
 export * from "./multistep.js";
+export * from "./progress-manager.js";
 export * from "./uploadcare.js";
