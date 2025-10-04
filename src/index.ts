@@ -16,6 +16,8 @@ export * from "./path/index.js";
 export * from "./pdf/index.js";
 export * from "./renderer/index.js";
 export * from "./scroll/index.js";
+export * from "./split-button/index.js";
+export * from "./swiper/index.js";
 export * from "./timezones/index.js";
 export * from "./webflow/index.js";
 export * from "./wfcollection/index.js";
