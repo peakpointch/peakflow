@@ -24,10 +24,10 @@ interface SplitButtonSettings {
 export class SplitButton<ActionKey extends string = string> {
   public static get attr(): SplitButtonAttributes {
     return {
-      id: "data-save-options-id",
-      element: "data-save-options-element",
-      key: "data-save-options-key",
-      label: "data-save-options-label",
+      id: "data-split-button-id",
+      element: "data-split-button-element",
+      key: "data-split-button-key",
+      label: "data-split-button-label",
     };
   }
   public static get defaultSettings(): SplitButtonSettings {
