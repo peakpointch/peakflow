@@ -53,7 +53,7 @@ export class FormProgressManager {
     try {
       const raw = localStorage.getItem(this.storageKey);
       const parsed = JSON.parse(raw) as StoredForms;
-      if (parsed === null) {
+      if (parsed === null || !("store" in parsed)) {
         this.clear();
       } else {
         this.data = parsed;
