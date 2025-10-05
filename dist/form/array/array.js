@@ -109,6 +109,7 @@ export class FormArray {
                 };
             });
             inputs.forEach((input) => {
+                const selected = input.value;
                 // Delete existing options coming from this component
                 input.querySelectorAll(`[data-origin="${this.id}"]`).forEach((el) => el.remove());
                 // Insert new options
@@ -119,8 +120,13 @@ export class FormArray {
                     option.dataset.origin = this.id;
                     input.appendChild(option);
                 });
-                if (!this.items.has(input.value))
+                // Restore previous value if possible
+                if (this.items.has(selected)) {
+                    input.value = selected;
+                }
+                else {
                     input.value = "";
+                }
             });
         });
     }

@@ -278,6 +278,8 @@ export class FormArray<Item extends FormArrayItem> {
       });
 
       inputs.forEach((input) => {
+        const selected = input.value;
+
         // Delete existing options coming from this component
         input.querySelectorAll(`[data-origin="${this.id}"]`).forEach((el) => el.remove());
 
@@ -290,7 +292,12 @@ export class FormArray<Item extends FormArrayItem> {
           input.appendChild(option);
         });
 
-        if (!this.items.has(input.value)) input.value = "";
+        // Restore previous value if possible
+        if (this.items.has(selected)) {
+          input.value = selected;
+        } else {
+          input.value = "";
+        }
       });
     });
   }
