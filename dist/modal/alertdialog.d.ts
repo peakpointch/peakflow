@@ -1,5 +1,5 @@
 import { Modal } from "./modal.js";
-interface AlertDialogMessage {
+export interface AlertDialogMessage {
     title: string;
     paragraph: string;
     confirm: string;
@@ -13,4 +13,3 @@ export declare class AlertDialog extends Modal {
     private renderMessage;
     private getElement;
 }
-export {};

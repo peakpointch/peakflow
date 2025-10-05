@@ -1,6 +1,6 @@
 import { Modal } from "./modal.js";
 
-interface AlertDialogMessage {
+export interface AlertDialogMessage {
   title: string;
   paragraph: string;
   confirm: string;
