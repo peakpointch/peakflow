@@ -2,14 +2,17 @@ export class FormArrayItem {
     constructor(key) {
         this.draft = false;
         this.linkedFields = new Map();
-        this.key = key ?? crypto.randomUUID(); // generate unique key
+        this.key = this.key ?? key ?? crypto.randomUUID(); // generate unique key
     }
     static deserialize(data) {
         if (data || !data)
             throw new Error(`You are trying to use an abstract class. Please write your own implementation of this class.`);
         return data;
     }
-    /** Compare two items, returns true if equal */
+    /**
+     * Compare two items
+     * @returns true if items contain equal values
+     */
     static areEqual(a, b) {
         // Must be implemented by subclass
         return JSON.stringify(a) === JSON.stringify(b);

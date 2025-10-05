@@ -1,8 +1,17 @@
 import type { FieldGroup } from "../fieldgroup";
 
-export interface SerializedItem {}
+export interface SerializedItem {
+  [x: string]: string | number | any;
+}
 
-export type ItemConstructor<T extends FormArrayItem> = new (...args: any[]) => T;
+// export type ItemConstructor<T extends FormArrayItem> = (new (...args: any[]) => T) &
+//   typeof FormArrayItem;
+
+export type ItemConstructor<T extends FormArrayItem> = {
+  new (...args: any[]): T;
+  deserialize(data: any): T;
+  areEqual(a: T, b: T): boolean;
+};
 
 export abstract class FormArrayItem {
   public key: string;
@@ -12,13 +21,18 @@ export abstract class FormArrayItem {
   public personalData: FieldGroup;
 
   constructor(key?: string) {
-    this.key = key ?? crypto.randomUUID(); // generate unique key
+    this.key = this.key ?? key ?? crypto.randomUUID(); // generate unique key
   }
 
-  /** Return a display name, e.g., "Full Name" */
+  /**
+   * @returns a display name
+   */
   abstract getFullName(): string;
 
-  /** Validate all required fields; return true if valid */
+  /**
+   * Validate all required fields
+   * @returns true if valid
+   */
   abstract validate(): boolean;
 
   abstract serialize(): any;
@@ -31,7 +45,10 @@ export abstract class FormArrayItem {
     return data as FormArrayItem;
   }
 
-  /** Compare two items, returns true if equal */
+  /**
+   * Compare two items
+   * @returns true if items contain equal values
+   */
   static areEqual(a: FormArrayItem, b: FormArrayItem): boolean {
     // Must be implemented by subclass
     return JSON.stringify(a) === JSON.stringify(b);

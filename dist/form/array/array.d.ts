@@ -1,39 +1,67 @@
-import { FormArrayItem, type ItemConstructor } from "./item";
-import { FormProgressManager, type FieldGroupValidation } from "../index.js";
+import { FormArrayItem, type ItemConstructor, type SerializedItem } from "./item";
+import { FormProgressManager, type FormProgressComponent, type FieldGroupValidation } from "../index.js";
 import SplitButton from "../../split-button";
 import { Modal, AlertDialog } from "../../modal";
+import { type Pluralized } from "../../pluralize";
 import type { PartialDeep } from "type-fest";
-interface ProspectArrayOptions<Item extends FormArrayItem> {
-    /** Unique identifier of this prospect array */
-    id: string | number;
-    /** Used to store progress of this component */
-    formId: string;
-    /** Limit the number of items allowed */
-    limit?: number;
-    /** Progress Manager of the parent form */
-    manager: FormProgressManager;
-    item: ItemConstructor<Item>;
-}
+type ArrayElement = "component" | "list" | "template" | "add" | "edit" | "delete" | "save" | "draft" | "draft-badge" | "cancel" | "circle";
+type SerializedFormArray = Record<string, SerializedItem>;
+type OnOpenCallback = (item?: FormArrayItem) => void;
+type OnCloseCallback = () => void;
+type OnSaveCallback = (data: FormProgressComponent<SerializedFormArray>) => void;
 type ModalGroup<T extends string = string> = {
     isValid: boolean;
     element: HTMLElement;
     name: T;
 };
-type OnOpenCallback = (prospect?: FormArrayItem) => void;
-type OnCloseCallback = () => void;
-export default class ProspectArray<Item extends FormArrayItem> {
-    static readonly options: ProspectArrayOptions<FormArrayItem>;
-    options: ProspectArrayOptions<Item>;
-    initialized: boolean;
+interface ArrayAttributes {
+    id: string;
+    element: string;
+    fieldGroup: string;
+    linkFields: string;
+}
+interface FormArrayOptions<Item extends FormArrayItem> {
+    /** Unique identifier of this array */
     id: string | number;
-    prospects: Map<string, FormArrayItem>;
+    /** Used to store progress of this component */
+    formId: string;
+    /**
+     * Parent element of this array component.
+     * Contains all required elements as descendants.
+     */
+    container: HTMLElement;
+    /** Limit the number of items allowed */
+    limit?: number;
+    /** Progress Manager of the parent form */
+    manager: FormProgressManager;
+    /**
+     * AlertDialog instance to confirm destructive actions.
+     * If no AlertDialog is passed, destructive actions will be executed
+     * without confirmation.
+     */
+    alertDialog?: AlertDialog;
+    itemClass: ItemConstructor<Item>;
+    grammar: {
+        item: Pluralized;
+        article: Pluralized;
+    };
+}
+export declare class FormArray<Item extends FormArrayItem> {
+    static readonly attr: ArrayAttributes;
+    static readonly options: FormArrayOptions<FormArrayItem>;
+    readonly attr: ArrayAttributes;
+    alertDialog: AlertDialog;
+    component: HTMLElement;
+    form: HTMLElement;
+    groups: ModalGroup[];
+    initialized: boolean;
+    id: string;
+    items: Map<string, Item>;
     modal: Modal;
     modalElement: HTMLElement;
-    alertDialog: AlertDialog;
-    groups: ModalGroup[];
-    saveOptions: SplitButton<"draft" | "save">;
+    options: FormArrayOptions<Item>;
+    splitButton: SplitButton<"draft" | "save">;
     private Item;
-    private container;
     private list;
     private template;
     private formMessage;
@@ -43,14 +71,28 @@ export default class ProspectArray<Item extends FormArrayItem> {
     private accordionList;
     private onOpenCallbacks;
     private onCloseCallbacks;
+    private onSaveCallbacks;
     private editingKey;
-    private unsavedProspect;
-    constructor(container: HTMLElement, options: PartialDeep<ProspectArrayOptions<Item>>);
+    private unsavedItem;
+    constructor(options: PartialDeep<FormArrayOptions<Item>>);
+    private static attributeSelector;
+    /**
+     * Static selector
+     */
+    static selector(element: ArrayElement, instance?: string): string;
+    /**
+     * Instance selector
+     */
+    selector(element: ArrayElement, global?: boolean): string;
+    static select<T extends Element = HTMLElement>(element: ArrayElement, instance?: string): T;
+    static selectAll<T extends Element = HTMLElement>(element: ArrayElement, instance?: string): NodeListOf<T>;
+    select<T extends Element = HTMLElement>(element: ArrayElement, global?: boolean): T;
+    selectAll<T extends Element = HTMLElement>(element: ArrayElement, global?: boolean): NodeListOf<T>;
     private initialize;
     private initializeLinkedFields;
     private linkFields;
     private unlinkFields;
-    private unlinkAllProspects;
+    private unlinkAllItems;
     /**
      * Updates the values of the linked fields inside `target` with the ones from `source`.
      *
@@ -63,41 +105,44 @@ export default class ProspectArray<Item extends FormArrayItem> {
     private syncLinkedFieldsAll;
     private handleLinkedFieldsVisibility;
     /**
-     * Retrieves a `ResidentProspect` instance from a given key or returns the provided `ResidentProspect` directly.
+     * Retrieves a `Item` instance from a given key or returns the provided `Item` directly.
      *
-     * @param prospectOrKeyOrIndex - Either the key of the prospect or the prospect object itself.
-     * @returns {FormArrayItem} The corresponding `ResidentProspect` object.
-     * @throws Error if the prospect with the given key is not found.
+     * @param itemOrKeyOrIndex - Either the key of the item or the item object itself.
+     * @returns {Item} The corresponding `Item` object.
+     * @throws Error if the item with the given key is not found.
      */
-    getProspect(prospectOrKeyOrIndex: FormArrayItem | string | number): FormArrayItem;
+    getItem(itemOrKeyOrIndex: Item | string | number): Item;
     /**
-     * Gets the ResidentProspect currently being edited via the `editingKey` property.
+     * Gets the `Item` currently being edited via the `editingKey` property.
      */
-    getEditingProspect(): FormArrayItem | undefined;
-    private getOtherProspect;
+    getEditingItem(): Item | undefined;
+    private getOtherItem;
     /**
-     * Opens an alert dialog to confirm canceling the changes made to the current ResidentProspect.
+     * Opens an alert dialog to confirm canceling the changes made to the current `Item`.
      */
     private discardChanges;
     /**
-     * Opens the modal form to start a new `ResidentProspect`. Creates an unsaved prospect.
+     * Opens the modal form to start a new `Item`. Creates an unsaved item.
      */
-    startNewProspect(): void;
-    private saveProspectFromModal;
-    private saveProspect;
+    startNewItem(): void;
+    private saveItemFromModal;
+    private saveItem;
     private setLiveText;
     private renderList;
-    private renderProspect;
-    editProspect(key: string): void;
-    editProspect(prospect: FormArrayItem): void;
-    private onDeleteProspect;
-    private deleteProspect;
+    private renderItem;
+    editItem(key: string): void;
+    editItem(item: Item): void;
+    private onDeleteItem;
+    private deleteItem;
     onOpen(name: string, callback: OnOpenCallback): void;
     clearOnOpen(name: string): void;
     triggerOnOpen(): void;
     onClose(name: string, callback: OnCloseCallback): void;
     clearOnClose(name: string): void;
     triggerOnClose(): void;
+    onSave(name: string, callback: OnSaveCallback): void;
+    clearOnSave(name: string): void;
+    triggerOnSave(): void;
     private populateModal;
     validate(): boolean;
     validateModalGroup(group: ModalGroup): FieldGroupValidation;
@@ -124,13 +169,13 @@ export default class ProspectArray<Item extends FormArrayItem> {
     private getFormInput;
     private extractData;
     /**
-     * Used to save the prospect to local storage.
+     * Used to save the item to local storage.
      */
     private serializeItems;
     /**
      * Save the progress to localStorage
      */
-    saveProgress(): void;
+    getProgress(): FormProgressComponent<SerializedFormArray>;
     /**
      * Load the saved progress from localStorage
      */
