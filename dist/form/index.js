@@ -1,6 +1,7 @@
 // Export general form functionality
 export * from "./utility.js";
 // Export FormField class and FieldData interface
+export * from "./array/index.js";
 export * from "./calendarweekcomponent.js";
 export * from "./cms-select.js";
 export * from "./fieldgroup.js";
