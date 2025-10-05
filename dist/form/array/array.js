@@ -1,4 +1,4 @@
-import { capitalize, deepMerge } from "../../utils";
+import { asSuffix, capitalize, deepMerge } from "../../utils";
 import wf from "../../webflow/index.js";
 import { createAttribute, exclude } from "../../attributeselector";
 import { FormArrayItem } from "./item";
@@ -96,6 +96,33 @@ export class FormArray {
         return global
             ? document.querySelectorAll(FormArray.selector(element, this.id))
             : this.component.querySelectorAll(FormArray.selector(element));
+    }
+    registerSelects(suffix) {
+        // Get all select inputs
+        const selectInputSelector = createAttribute(this.attr.select);
+        const inputs = this.form.querySelectorAll(selectInputSelector(this.id, { matchType: "whitespace" }));
+        this.onSave("update-select-values", () => {
+            const options = Array.from(this.items.values()).map((item) => {
+                return {
+                    label: item.getFullName() + asSuffix(suffix, " "),
+                    value: item.key,
+                };
+            });
+            inputs.forEach((input) => {
+                // Delete existing options coming from this component
+                input.querySelectorAll(`[data-origin="${this.id}"]`).forEach((el) => el.remove());
+                // Insert new options
+                options.forEach((opt) => {
+                    const option = document.createElement("option");
+                    option.innerText = opt.label;
+                    option.value = opt.value;
+                    option.dataset.origin = this.id;
+                    input.appendChild(option);
+                });
+                if (!this.items.has(input.value))
+                    input.value = "";
+            });
+        });
     }
     initialize() {
         this.cancelButtons.forEach((button) => {
@@ -837,7 +864,7 @@ export class FormArray {
         const form = this.options.manager.getForm(this.options.formId);
         const progress = form?.components.find((comp) => comp.id === this.id);
         if (!form || !progress) {
-            console.log("No saved form progress found.");
+            console.log(`FormArray "${this.id}": No saved form progress found.`);
             return;
         }
         try {
@@ -863,16 +890,17 @@ export class FormArray {
             }
             this.renderList();
             this.closeModal();
-            console.log("Array progress loaded.");
+            console.log(`FormArray "${this.id}": Array progress loaded.`);
         }
         catch (e) {
-            console.error(`Error loading array progress:`, e);
+            console.error(`FormArray "${this.id}": Error loading array progress:`, e);
         }
     }
 }
 FormArray.attr = {
     id: "data-form-array-id",
     element: "data-form-array-element",
+    select: "data-form-array-select",
     fieldGroup: "data-field-group",
     linkFields: "data-link-fields",
 };

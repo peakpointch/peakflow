@@ -1,4 +1,4 @@
-import { capitalize, deepMerge } from "../../utils";
+import { asSuffix, capitalize, deepMerge } from "../../utils";
 import wf from "../../webflow/index.js";
 import { createAttribute, exclude } from "../../attributeselector";
 import { FormArrayItem, type ItemConstructor, type SerializedItem } from "./item";
@@ -59,6 +59,7 @@ interface ArrayAttributes {
   element: string;
   fieldGroup: string;
   linkFields: string;
+  select: string;
 }
 
 interface FormArrayOptions<Item extends FormArrayItem> {
@@ -101,6 +102,7 @@ export class FormArray<Item extends FormArrayItem> {
   public static readonly attr: ArrayAttributes = {
     id: "data-form-array-id",
     element: "data-form-array-element",
+    select: "data-form-array-select",
     fieldGroup: "data-field-group",
     linkFields: "data-link-fields",
   };
@@ -258,6 +260,39 @@ export class FormArray<Item extends FormArrayItem> {
     return global
       ? document.querySelectorAll<T>(FormArray.selector(element, this.id))
       : this.component.querySelectorAll<T>(FormArray.selector(element));
+  }
+
+  public registerSelects(suffix?: string): void {
+    // Get all select inputs
+    const selectInputSelector = createAttribute(this.attr.select);
+    const inputs = this.form.querySelectorAll<HTMLSelectElement>(
+      selectInputSelector(this.id, { matchType: "whitespace" }),
+    );
+
+    this.onSave("update-select-values", () => {
+      const options = Array.from(this.items.values()).map((item) => {
+        return {
+          label: item.getFullName() + asSuffix(suffix, " "),
+          value: item.key,
+        };
+      });
+
+      inputs.forEach((input) => {
+        // Delete existing options coming from this component
+        input.querySelectorAll(`[data-origin="${this.id}"]`).forEach((el) => el.remove());
+
+        // Insert new options
+        options.forEach((opt) => {
+          const option = document.createElement("option");
+          option.innerText = opt.label;
+          option.value = opt.value;
+          option.dataset.origin = this.id;
+          input.appendChild(option);
+        });
+
+        if (!this.items.has(input.value)) input.value = "";
+      });
+    });
   }
 
   private initialize(): void {
@@ -1169,7 +1204,7 @@ export class FormArray<Item extends FormArrayItem> {
     ) as FormProgressComponent<SerializedFormArray>;
 
     if (!form || !progress) {
-      console.log("No saved form progress found.");
+      console.log(`FormArray "${this.id}": No saved form progress found.`);
       return;
     }
 
@@ -1201,9 +1236,9 @@ export class FormArray<Item extends FormArrayItem> {
 
       this.renderList();
       this.closeModal();
-      console.log("Array progress loaded.");
+      console.log(`FormArray "${this.id}": Array progress loaded.`);
     } catch (e) {
-      console.error(`Error loading array progress:`, e);
+      console.error(`FormArray "${this.id}": Error loading array progress:`, e);
     }
   }
 }

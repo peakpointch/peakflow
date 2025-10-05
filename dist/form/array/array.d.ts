@@ -19,6 +19,7 @@ interface ArrayAttributes {
     element: string;
     fieldGroup: string;
     linkFields: string;
+    select: string;
 }
 interface FormArrayOptions<Item extends FormArrayItem> {
     /** Unique identifier of this array */
@@ -88,6 +89,7 @@ export declare class FormArray<Item extends FormArrayItem> {
     static selectAll<T extends Element = HTMLElement>(element: ArrayElement, instance?: string): NodeListOf<T>;
     select<T extends Element = HTMLElement>(element: ArrayElement, global?: boolean): T;
     selectAll<T extends Element = HTMLElement>(element: ArrayElement, global?: boolean): NodeListOf<T>;
+    registerSelects(suffix?: string): void;
     private initialize;
     private initializeLinkedFields;
     private linkFields;
