@@ -25,6 +25,13 @@ export class FormProgressManager {
   public initialized: boolean = false;
   public data: StoredForms;
 
+  private errors = {
+    /** Throw when instance was not initialized. */
+    init: new Error(`Manager is not initialized.`),
+    invalidVersion: new Error(`Invalid semver version format`),
+    invalidId: new Error(`ProgressManager: Please specify a valid id.`),
+  };
+
   constructor(read: boolean = true) {
     if (!read) return;
     this.read();
@@ -35,7 +42,7 @@ export class FormProgressManager {
     const cleanSaved = semver.clean(version);
 
     if (!cleanCurrent || !cleanSaved) {
-      throw new Error(`Invalid semver version format`);
+      throw this.errors.invalidVersion;
     }
 
     if (!semver.eq(cleanCurrent, cleanSaved)) {
@@ -79,6 +86,29 @@ export class FormProgressManager {
     return this.save();
   }
 
+  public initForm(id: string, version: string): FormProgressManager {
+    this.throwInitialized();
+    if (!id) throw this.errors.invalidId;
+
+    const form = this.hasForm(id) ? this.getForm(id) : undefined;
+
+    if (semver.valid(version) && semver.valid(form?.version) && semver.eq(version, form.version)) {
+      return this;
+    }
+
+    this.data.store[id] = {
+      version,
+      fields: {},
+      components: [],
+    };
+
+    return this.save();
+  }
+
+  public hasForm(id: string): boolean {
+    return id in this.data.store;
+  }
+
   public save(data: StoredForms = this.data): FormProgressManager {
     this.checkVersion(data.version);
 
@@ -94,7 +124,7 @@ export class FormProgressManager {
   }
 
   private throwInitialized(): void {
-    if (!this.initialized) throw new Error(`Manager is not initialized.`);
+    if (!this.initialized) throw this.errors.init;
   }
 
   public clear(): FormProgressManager {
