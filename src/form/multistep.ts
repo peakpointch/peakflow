@@ -14,6 +14,7 @@ import wf from "../webflow/index.js";
 // import deepMerge from "../utils/deepmerge.js";
 import { mapToObject, deepMerge } from "../utils";
 import type { PartialDeep } from "type-fest";
+import EventEmitter from "eventemitter3";
 
 // Types
 interface FormOptions {
@@ -58,6 +59,14 @@ type StepsComponentElement =
   | "pagination"
   | "custom-component";
 type StepsNavElement = "prev" | "next";
+type MultiStepFormEvents =
+  | "save"
+  | "changeStep"
+  | "submit"
+  | "success"
+  | "error"
+  | "change"
+  | "input";
 
 // Selector functions
 const stepsElementSelector = createAttribute<StepsComponentElement>("data-steps-element", {
@@ -89,6 +98,7 @@ export class MultiStepForm {
   public options: MultiStepFormOptions;
   public initialized: boolean = false;
   public component: HTMLElement;
+  public events: EventEmitter<MultiStepFormEvents> = new EventEmitter<MultiStepFormEvents>();
   public formElement: HTMLFormElement | HTMLElement;
   public formSteps: NodeListOf<HTMLElement>;
   private set currentStep(index: number) {
@@ -177,9 +187,28 @@ export class MultiStepForm {
       this.formElement.addEventListener("submit", (event) => {
         event.preventDefault();
         this.submitToWebflow();
+        this.events.emit("submit");
       });
     }
 
+    const inputs = this.formElement.querySelectorAll<HTMLFormInput>(
+      exclude(
+        wf.select.formInput,
+        `${stepsElementSelector("custom-component", { exclusions: [] })} *`,
+      ),
+    );
+
+    inputs.forEach((input) => {
+      input.addEventListener("input", () => {
+        this.events.emit("input");
+      });
+
+      input.addEventListener("change", () => {
+        this.events.emit("change");
+      });
+    });
+
+    this.events.on("save", () => this.save());
     this.initPagination();
     this.initChangeStepOnKeydown();
   }
@@ -221,9 +250,9 @@ export class MultiStepForm {
     const success = await sendFormData(formData);
 
     if (success) {
-      this.onFormSuccess();
+      this.emitOnSuccess();
     } else {
-      this.onFormError();
+      this.emitOnError();
     }
   }
 
@@ -251,23 +280,25 @@ export class MultiStepForm {
     };
   }
 
-  private onFormSuccess(): void {
+  private emitOnSuccess(): void {
     if (this.errorElement) this.errorElement.style.display = "none";
     if (this.successElement) this.successElement.style.display = "block";
     this.formElement.style.display = "none";
     this.formElement.dataset.state = "success";
     this.formElement.dispatchEvent(new CustomEvent("formSuccess"));
+    this.events.emit("success");
 
     if (this.submitButton) {
       this.submitButton.value = this.submitButton.dataset.defaultText || "Submit";
     }
   }
 
-  private onFormError(): void {
+  private emitOnError(): void {
     if (this.errorElement) this.errorElement.style.display = "block";
     if (this.successElement) this.successElement.style.display = "none";
     this.formElement.dataset.state = "error";
     this.formElement.dispatchEvent(new CustomEvent("formError"));
+    this.events.emit("error");
 
     if (this.submitButton) {
       this.submitButton.value = this.submitButton.dataset.defaultText || "Submit";
@@ -372,6 +403,8 @@ export class MultiStepForm {
       detail: { previousStep: this.currentStep, currentStep: index },
     });
     this.component.dispatchEvent(event);
+    this.events.emit("changeStep");
+    this.events.emit("save");
 
     this.updateStepVisibility(index);
     this.updatePagination(index);
@@ -544,5 +577,19 @@ export class MultiStepForm {
   public getFormInput<T extends HTMLFormInput = HTMLFormInput>(id: string): T {
     const selector = extend(wf.select.formInput, `#${id}`);
     return this.component.querySelector(selector);
+  }
+
+  public loadProgress(): void {}
+
+  public save(): void {
+    console.log("SAVING FORM:", this.getFormData());
+  }
+
+  public onSave(callback: (...args: any[]) => void): void {
+    this.events.on("save", callback);
+  }
+
+  public clearOnSave(): void {
+    this.events.removeListener("save");
   }
 }

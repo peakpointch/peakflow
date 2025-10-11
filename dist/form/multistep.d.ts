@@ -1,5 +1,6 @@
 import type { FormFieldMap, HTMLFormInput, CustomValidator } from "./index.js";
 import type { PartialDeep } from "type-fest";
+import EventEmitter from "eventemitter3";
 interface FormOptions {
     excludeInputSelectors: string[];
     recaptcha: boolean;
@@ -30,11 +31,13 @@ type CustomFormComponent = {
     validator: CustomValidator;
     getData?: () => {};
 };
+type MultiStepFormEvents = "save" | "changeStep" | "submit" | "success" | "error" | "change" | "input";
 export declare class MultiStepForm {
     static readonly defaultOptions: MultiStepFormOptions;
     options: MultiStepFormOptions;
     initialized: boolean;
     component: HTMLElement;
+    events: EventEmitter<MultiStepFormEvents>;
     formElement: HTMLFormElement | HTMLElement;
     formSteps: NodeListOf<HTMLElement>;
     private set currentStep(value);
@@ -56,8 +59,8 @@ export declare class MultiStepForm {
     addCustomComponent(component: CustomFormComponent): void;
     private submitToWebflow;
     private buildJsonForWebflow;
-    private onFormSuccess;
-    private onFormError;
+    private emitOnSuccess;
+    private emitOnError;
     private initChangeStepOnKeydown;
     private initPagination;
     /**
@@ -97,5 +100,9 @@ export declare class MultiStepForm {
     getFieldMap(): FormFieldMap;
     getFormData(): any;
     getFormInput<T extends HTMLFormInput = HTMLFormInput>(id: string): T;
+    loadProgress(): void;
+    save(): void;
+    onSave(callback: (...args: any[]) => void): void;
+    clearOnSave(): void;
 }
 export {};
