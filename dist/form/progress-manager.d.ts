@@ -24,6 +24,8 @@ export declare class FormProgressManager {
     read(): FormProgressManager;
     getForm<F extends FormProgress = FormProgress>(id: string): F | undefined;
     saveForm(id: string, form: FormProgress): FormProgressManager;
+    clearForm(id: string): FormProgressManager;
+    deleteForm(id: string): FormProgressManager;
     initForm(id: string, version: string): FormProgressManager;
     hasForm(id: string): boolean;
     save(data?: StoredForms): FormProgressManager;

@@ -55,6 +55,19 @@ export class FormProgressManager {
         this.data.store[id] = form;
         return this.save();
     }
+    clearForm(id) {
+        this.throwInitialized();
+        this.data.store[id] = {
+            version: this.data.store[id].version,
+            fields: {},
+            components: [],
+        };
+        return this.save();
+    }
+    deleteForm(id) {
+        delete this.data.store[id];
+        return this.save();
+    }
     initForm(id, version) {
         this.throwInitialized();
         if (!id)
