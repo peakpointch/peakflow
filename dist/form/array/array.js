@@ -102,13 +102,13 @@ export class FormArray {
         const selectInputSelector = createAttribute(this.attr.select);
         const inputs = this.form.querySelectorAll(selectInputSelector(this.id, { matchType: "whitespace" }));
         this.onSave("update-select-values", () => {
-            const options = Array.from(this.items.values()).map((item) => {
-                return {
-                    label: item.getFullName() + asSuffix(suffix, " "),
-                    value: item.key,
-                };
-            });
             inputs.forEach((input) => {
+                const options = Array.from(this.items.values()).map((item) => {
+                    return {
+                        label: item.getFullName() + asSuffix(input.dataset.suffix ?? suffix, " "),
+                        value: item.key,
+                    };
+                });
                 const selected = input.value;
                 // Delete existing options coming from this component
                 input.querySelectorAll(`[data-origin="${this.id}"]`).forEach((el) => el.remove());

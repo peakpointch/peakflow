@@ -270,14 +270,14 @@ export class FormArray<Item extends FormArrayItem> {
     );
 
     this.onSave("update-select-values", () => {
-      const options = Array.from(this.items.values()).map((item) => {
-        return {
-          label: item.getFullName() + asSuffix(suffix, " "),
-          value: item.key,
-        };
-      });
-
       inputs.forEach((input) => {
+        const options = Array.from(this.items.values()).map((item) => {
+          return {
+            label: item.getFullName() + asSuffix(input.dataset.suffix ?? suffix, " "),
+            value: item.key,
+          };
+        });
+
         const selected = input.value;
 
         // Delete existing options coming from this component
