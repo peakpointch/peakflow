@@ -1,5 +1,5 @@
 export interface Pluralized {
-    singular: string;
-    plural: string;
+    sg: string;
+    pl: string;
 }
 export declare function pluralize(text: Pluralized, count: number): string;

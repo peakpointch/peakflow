@@ -1,8 +1,8 @@
 import { FormArrayItem, type ItemConstructor, type SerializedItem } from "./item";
+import type { FormMessages, GrammarOptions } from "./messages";
 import { FormProgressManager, type FormProgressComponent, type FieldGroupValidation } from "../index.js";
 import SplitButton from "../../split-button";
 import { Modal, AlertDialog } from "../../modal";
-import { type Pluralized } from "../../pluralize";
 import type { PartialDeep } from "type-fest";
 type ArrayElement = "component" | "list" | "template" | "add" | "edit" | "delete" | "save" | "draft" | "draft-badge" | "cancel" | "circle";
 type SerializedFormArray = SerializedItem[];
@@ -21,7 +21,7 @@ interface ArrayAttributes {
     linkFields: string;
     select: string;
 }
-interface FormArrayOptions<Item extends FormArrayItem> {
+export interface FormArrayOptions<Item extends FormArrayItem> {
     /** Unique identifier of this array */
     id: string | number;
     /** Used to store progress of this component */
@@ -42,10 +42,8 @@ interface FormArrayOptions<Item extends FormArrayItem> {
      */
     alertDialog?: AlertDialog;
     itemClass: ItemConstructor<Item>;
-    grammar: {
-        item: Pluralized;
-        article: Pluralized;
-    };
+    grammar: GrammarOptions;
+    messages?: FormMessages<Item>;
 }
 export declare class FormArray<Item extends FormArrayItem> {
     static readonly attr: ArrayAttributes;
@@ -182,5 +180,6 @@ export declare class FormArray<Item extends FormArrayItem> {
      * Load the saved progress from localStorage
      */
     loadProgress(): void;
+    private getMessage;
 }
 export {};

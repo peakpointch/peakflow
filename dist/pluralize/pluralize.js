@@ -1,8 +1,8 @@
 export function pluralize(text, count) {
     if (count === 1) {
-        return text.singular;
+        return text.sg;
     }
     else {
-        return text.plural;
+        return text.pl;
     }
 }
