@@ -42,7 +42,7 @@ type ArrayElement =
   | "cancel"
   | "circle";
 
-type SerializedFormArray = Record<string, SerializedItem>;
+type SerializedFormArray = SerializedItem[];
 
 type OnOpenCallback = (item?: FormArrayItem) => void;
 type OnCloseCallback = () => void;
@@ -1179,13 +1179,8 @@ export class FormArray<Item extends FormArrayItem> {
   /**
    * Used to save the item to local storage.
    */
-  private serializeItems(): SerializedFormArray {
-    // Convert a Item's structure, which contains FieldGroups with fields as Maps
-    const itemsObj: SerializedFormArray = {};
-    for (const [key, item] of this.items) {
-      itemsObj[key] = item.serialize();
-    }
-    return itemsObj;
+  public serialize(): SerializedFormArray {
+    return Array.from(this.items.values()).map((item) => item.serialize());
   }
 
   /**
@@ -1195,7 +1190,7 @@ export class FormArray<Item extends FormArrayItem> {
     return {
       id: `${this.options.id}`,
       version: ARRAY_STORAGE_VERSION,
-      data: this.serializeItems(),
+      data: this.serialize(),
     };
   }
 
@@ -1231,13 +1226,9 @@ export class FormArray<Item extends FormArrayItem> {
       }
 
       // Loop through the serialized data and create `Item` instances
-      for (const key in progress.data) {
-        if (progress.data.hasOwnProperty(key)) {
-          const itemData = progress.data[key];
-          const item = this.Item.deserialize(itemData); // Deserialize the Item object
-          item.key = key;
-          this.items.set(key, item);
-        }
+      for (const itemData of progress.data) {
+        const item = this.Item.deserialize(itemData); // Deserialize the Item object
+        this.items.set(item.key, item);
       }
 
       this.renderList();
