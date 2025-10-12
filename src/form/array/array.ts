@@ -287,7 +287,9 @@ export class FormArray<Item extends FormArrayItem> {
           };
         });
 
-        const selected = input.value;
+        const prevOption = input.options[input.selectedIndex];
+        const prevOrigin = prevOption?.dataset.origin;
+        const prevValue = prevOption?.value ?? "";
 
         // Delete existing options coming from this component
         input.querySelectorAll(`[data-origin="${this.id}"]`).forEach((el) => el.remove());
@@ -302,8 +304,8 @@ export class FormArray<Item extends FormArrayItem> {
         });
 
         // Restore previous value if possible
-        if (this.items.has(selected)) {
-          input.value = selected;
+        if (prevOrigin !== this.id || this.items.has(prevValue)) {
+          input.value = prevValue;
         } else {
           input.value = "";
         }
