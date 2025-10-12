@@ -548,8 +548,10 @@ export class FormArray {
             callback();
         }
     }
-    onSave(name, callback) {
+    onSave(name, callback, initialize = false) {
         this.onSaveCallbacks.set(name, callback);
+        if (initialize)
+            callback(this.getProgress());
     }
     clearOnSave(name) {
         this.onSaveCallbacks.delete(name);
@@ -575,16 +577,15 @@ export class FormArray {
             if (!item[group.name]) {
                 throw new Error(`The group "${group.name}" doesn't exist.`);
             }
-            const [radioInputs, otherInputs] = groupInputs.reduce(([r, o], input) => {
-                input.type === "radio" ? r.push(input) : o.push(input);
-                return [r, o];
+            const [radioInputs, otherInputs] = groupInputs.reduce(([radios, other], input) => {
+                input.type === "radio" ? radios.push(input) : other.push(input);
+                return [radios, other];
             }, [[], []]);
             otherInputs.forEach((input) => {
                 // Get field
                 const field = item[group.name].getField(input.id);
-                if (!field) {
+                if (!field)
                     return;
-                }
                 if (!isCheckboxInput(input)) {
                     // For text inputs, trim and set the value
                     input.value = field.value.trim();
@@ -844,13 +845,8 @@ export class FormArray {
     /**
      * Used to save the item to local storage.
      */
-    serializeItems() {
-        // Convert a Item's structure, which contains FieldGroups with fields as Maps
-        const itemsObj = {};
-        for (const [key, item] of this.items) {
-            itemsObj[key] = item.serialize();
-        }
-        return itemsObj;
+    serialize() {
+        return Array.from(this.items.values()).map((item) => item.serialize());
     }
     /**
      * Save the progress to localStorage
@@ -859,7 +855,7 @@ export class FormArray {
         return {
             id: `${this.options.id}`,
             version: ARRAY_STORAGE_VERSION,
-            data: this.serializeItems(),
+            data: this.serialize(),
         };
     }
     /**
@@ -886,13 +882,9 @@ export class FormArray {
                 throw new Error(`Saved progress version "${progress.version}" is outdated.`);
             }
             // Loop through the serialized data and create `Item` instances
-            for (const key in progress.data) {
-                if (progress.data.hasOwnProperty(key)) {
-                    const itemData = progress.data[key];
-                    const item = this.Item.deserialize(itemData); // Deserialize the Item object
-                    item.key = key;
-                    this.items.set(key, item);
-                }
+            for (const itemData of progress.data) {
+                const item = this.Item.deserialize(itemData); // Deserialize the Item object
+                this.items.set(item.key, item);
             }
             this.renderList();
             this.closeModal();

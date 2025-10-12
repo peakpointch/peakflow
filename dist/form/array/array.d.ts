@@ -5,7 +5,7 @@ import { Modal, AlertDialog } from "../../modal";
 import { type Pluralized } from "../../pluralize";
 import type { PartialDeep } from "type-fest";
 type ArrayElement = "component" | "list" | "template" | "add" | "edit" | "delete" | "save" | "draft" | "draft-badge" | "cancel" | "circle";
-type SerializedFormArray = Record<string, SerializedItem>;
+type SerializedFormArray = SerializedItem[];
 type OnOpenCallback = (item?: FormArrayItem) => void;
 type OnCloseCallback = () => void;
 type OnSaveCallback = (data: FormProgressComponent<SerializedFormArray>) => void;
@@ -142,7 +142,7 @@ export declare class FormArray<Item extends FormArrayItem> {
     onClose(name: string, callback: OnCloseCallback): void;
     clearOnClose(name: string): void;
     triggerOnClose(): void;
-    onSave(name: string, callback: OnSaveCallback): void;
+    onSave(name: string, callback: OnSaveCallback, initialize?: boolean): void;
     clearOnSave(name: string): void;
     triggerOnSave(): void;
     private populateModal;
@@ -173,7 +173,7 @@ export declare class FormArray<Item extends FormArrayItem> {
     /**
      * Used to save the item to local storage.
      */
-    private serializeItems;
+    serialize(): SerializedFormArray;
     /**
      * Save the progress to localStorage
      */

@@ -1,10 +1,9 @@
 // Imports
 import createAttribute, { exclude, extend } from "../attributeselector/index.js";
-import { initWfInputs, sendFormData, validateFields, formElementSelector, fieldFromInput, enforceButtonTypes, } from "./index.js";
+import { initWfInputs, sendFormData, validateFields, formElementSelector, fieldFromInput, enforceButtonTypes, FieldGroup, isCheckboxInput, setChecked, getRadioGroups, } from "./index.js";
+import { FormProgressManager, } from "./index.js";
 import wf from "../webflow/index.js";
-// import mapToObject from "../utils/maptoobject.js";
-// import deepMerge from "../utils/deepmerge.js";
-import { mapToObject, deepMerge } from "../utils";
+import { deepMerge } from "../utils";
 import EventEmitter from "eventemitter3";
 // Selector functions
 const stepsElementSelector = createAttribute("data-steps-element", {
@@ -27,6 +26,8 @@ export class MultiStepForm {
         this.customComponents = [];
         this.component = component;
         this.options = deepMerge(MultiStepForm.defaultOptions, options);
+        this.id = this.options.id;
+        this.version = this.options.version;
         this.validateComponent();
         this.cacheDomElements();
         this.setupForm();
@@ -86,7 +87,7 @@ export class MultiStepForm {
                 this.events.emit("change");
             });
         });
-        this.events.on("save", () => this.save());
+        this.events.on("save", () => this.saveFields());
         this.initPagination();
         this.initChangeStepOnKeydown();
     }
@@ -357,32 +358,33 @@ export class MultiStepForm {
         }
         return isValid && customValid;
     }
+    getFormInputs(step) {
+        const inputs = [];
+        const steps = step === undefined ? Array.from(this.formSteps) : [this.formSteps[step]];
+        steps.forEach((step) => {
+            const found = step.querySelectorAll(exclude(wf.select.formInput, `${stepsElementSelector("custom-component", { exclusions: [] })} *`));
+            inputs.push(...Array.from(found));
+        });
+        return inputs;
+    }
     /**
-     * Gets data of all form fields in a `FormFieldMap`.
+     * Gets data of all form fields in a `FieldGroup`.
      *
      * @step Step index of the multi step form
-     * @returns `FormFieldMap` - A map of field id (string) to a `FormField` class instance
+     * @returns A `FieldGroup`
      *
      * Fields that are a descendant of '[data-steps-element="custom-component"]' are excluded.
      */
-    getFieldMapForStep(step) {
+    getFieldGroup(step) {
         let fields = new Map();
-        const stepElement = this.formSteps[step];
-        const stepInputs = stepElement.querySelectorAll(exclude(wf.select.formInput, `${stepsElementSelector("custom-component", { exclusions: [] })} *`));
+        const stepInputs = this.getFormInputs(step);
         stepInputs.forEach((input, inputIndex) => {
             const entry = fieldFromInput(input, inputIndex);
             if (entry.id) {
-                fields.set(entry.id, entry.value);
+                fields.set(entry.id, entry);
             }
         });
-        return fields;
-    }
-    getFieldMap() {
-        const fields = Array.from(this.formSteps).reduce((acc, _, stepIndex) => {
-            const stepData = this.getFieldMapForStep(stepIndex);
-            return new Map([...acc, ...stepData]);
-        }, new Map());
-        return fields;
+        return new FieldGroup(fields);
     }
     getFormData() {
         const customFields = this.customComponents.reduce((acc, entry) => {
@@ -392,7 +394,7 @@ export class MultiStepForm {
             };
         }, {});
         const fields = {
-            ...mapToObject(this.getFieldMap(), false),
+            ...this.getFieldGroup().serialize(),
             ...customFields,
         };
         return fields;
@@ -401,9 +403,54 @@ export class MultiStepForm {
         const selector = extend(wf.select.formInput, `#${id}`);
         return this.component.querySelector(selector);
     }
-    loadProgress() { }
-    save() {
-        console.log("SAVING FORM:", this.getFormData());
+    loadProgress() {
+        const form = this.options.manager.getForm(this.id);
+        const data = FieldGroup.deserialize(form.fields);
+        const inputs = this.getFormInputs();
+        const [radioInputs, otherInputs] = inputs.reduce(([radios, other], input) => {
+            input.type === "radio" ? radios.push(input) : other.push(input);
+            return [radios, other];
+        }, [[], []]);
+        otherInputs.forEach((input) => {
+            const field = data.getField(input.id);
+            if (!field)
+                return;
+            if (input.type === "select-one")
+                console.log(`SELECT FIELD "${field.id}": "${field.value}"`);
+            if (!isCheckboxInput(input)) {
+                // For text inputs, trim and set the value
+                input.value = field.value.trim();
+            }
+            else {
+                setChecked(input, field.checked);
+            }
+        });
+        const radioGroups = getRadioGroups(radioInputs);
+        radioGroups.forEach((radioGroup) => {
+            const field = data.getField(radioGroup.name);
+            if (!field)
+                return;
+            radioGroup.inputs.forEach((radio) => {
+                setChecked(radio, radio.value === field.value ? field.checked : false);
+            });
+        });
+    }
+    saveFields() {
+        const data = this.getFieldGroup().serialize();
+        const form = this.options.manager.getForm(this.id);
+        form.fields = data;
+        this.options.manager.saveForm(this.id, form);
+    }
+    saveComponentProgress(component) {
+        const form = this.options.manager.getForm(this.id);
+        const foundIndex = form.components.findIndex((c) => c.id === component.id);
+        if (foundIndex === -1) {
+            form.components.push(component);
+        }
+        else {
+            form.components[foundIndex] = component;
+        }
+        this.options.manager.saveForm(this.id, form);
     }
     onSave(callback) {
         this.events.on("save", callback);
@@ -413,12 +460,15 @@ export class MultiStepForm {
     }
 }
 MultiStepForm.defaultOptions = {
+    id: "multistepform",
+    version: "0.0.0",
     recaptcha: false,
     navigation: {
         hideInStep: -1,
     },
     excludeInputSelectors: [],
     nested: false,
+    manager: undefined,
     pagination: {
         doneClass: "is-done",
         activeClass: "is-active",
