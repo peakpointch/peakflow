@@ -2,7 +2,7 @@ import { asSuffix, capitalize, deepMerge } from "../../utils";
 import wf from "../../webflow/index.js";
 import { createAttribute, exclude } from "../../attributeselector";
 import { FormArrayItem, type ItemConstructor, type SerializedItem } from "./item";
-import type { FormMessages, GrammarOptions } from "./messages";
+import type { FormArrayDialogs, FormMessages, GrammarOptions, MessageFn } from "./messages";
 import {
   FormDecision,
   FormMessage,
@@ -23,7 +23,7 @@ import {
 } from "../index.js";
 import Accordion from "../../accordion";
 import SplitButton from "../../split-button";
-import { Modal, AlertDialog } from "../../modal";
+import { Modal, AlertDialog, type AlertDialogMessage } from "../../modal";
 import type { ScrollPosition } from "../../scroll";
 import { pluralize } from "../../pluralize";
 
@@ -93,6 +93,7 @@ export interface FormArrayOptions<Item extends FormArrayItem> {
 
   grammar: GrammarOptions;
   messages?: FormMessages<Item>;
+  dialogs?: FormArrayDialogs<Item>;
 }
 
 const ARRAY_STORAGE_VERSION = "1.0.0";
@@ -586,12 +587,8 @@ export class FormArray<Item extends FormArrayItem> {
 
     let confirmed: boolean;
     if (this.alertDialog) {
-      confirmed = await this.alertDialog.confirm({
-        title: `Möchten Sie die Änderungen verwerfen?`,
-        paragraph: `Mit dieser Aktion gehen alle Änderungen für "${this.getEditingItem().getFullName()}" verworfen. Diese Aktion kann nicht rückgängig gemacht werden.`,
-        cancel: "abbrechen",
-        confirm: "Änderungen verwerfen",
-      });
+      const dialog = this.getDialog("discard", this.getEditingItem());
+      confirmed = await this.alertDialog.confirm(dialog);
     } else confirmed = true;
 
     if (confirmed) {
@@ -753,12 +750,8 @@ export class FormArray<Item extends FormArrayItem> {
     let confirmed: boolean;
 
     if (this.alertDialog) {
-      confirmed = await this.alertDialog.confirm({
-        title: `Möchten Sie die Person "${item.getFullName()}" wirklich löschen?`,
-        paragraph: `Mit dieser Aktion wird die Person "${item.getFullName()}" gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.`,
-        cancel: "Abbrechen",
-        confirm: "Person löschen",
-      });
+      const dialog = this.getDialog("delete", item);
+      confirmed = await this.alertDialog.confirm(dialog);
     } else confirmed = true;
 
     if (confirmed) this.deleteItem(item);
@@ -1244,5 +1237,24 @@ export class FormArray<Item extends FormArrayItem> {
     }
 
     return msg; // plain string
+  }
+
+  private getDialog<T extends keyof FormArrayDialogs<Item>>(
+    type: T,
+    item?: Item,
+  ): AlertDialogMessage {
+    const dialog = this.options.dialogs[type];
+    const grammar = this.options.grammar;
+    const options = this.options;
+
+    const resolve = (val: string | MessageFn<Item> | undefined) =>
+      typeof val === "function" ? val({ item, grammar, options }) : (val ?? "");
+
+    return {
+      title: resolve(dialog.title),
+      paragraph: resolve(dialog.paragraph),
+      cancel: resolve(dialog.cancel),
+      confirm: resolve(dialog.confirm),
+    };
   }
 }

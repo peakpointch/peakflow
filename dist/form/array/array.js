@@ -364,12 +364,8 @@ export class FormArray {
         }
         let confirmed;
         if (this.alertDialog) {
-            confirmed = await this.alertDialog.confirm({
-                title: `Möchten Sie die Änderungen verwerfen?`,
-                paragraph: `Mit dieser Aktion gehen alle Änderungen für "${this.getEditingItem().getFullName()}" verworfen. Diese Aktion kann nicht rückgängig gemacht werden.`,
-                cancel: "abbrechen",
-                confirm: "Änderungen verwerfen",
-            });
+            const dialog = this.getDialog("discard", this.getEditingItem());
+            confirmed = await this.alertDialog.confirm(dialog);
         }
         else
             confirmed = true;
@@ -502,12 +498,8 @@ export class FormArray {
         const item = this.getItem(itemOrKey);
         let confirmed;
         if (this.alertDialog) {
-            confirmed = await this.alertDialog.confirm({
-                title: `Möchten Sie die Person "${item.getFullName()}" wirklich löschen?`,
-                paragraph: `Mit dieser Aktion wird die Person "${item.getFullName()}" gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.`,
-                cancel: "Abbrechen",
-                confirm: "Person löschen",
-            });
+            const dialog = this.getDialog("delete", item);
+            confirmed = await this.alertDialog.confirm(dialog);
         }
         else
             confirmed = true;
@@ -901,6 +893,18 @@ export class FormArray {
             return msg({ item: ctx?.item, grammar, options });
         }
         return msg; // plain string
+    }
+    getDialog(type, item) {
+        const dialog = this.options.dialogs[type];
+        const grammar = this.options.grammar;
+        const options = this.options;
+        const resolve = (val) => typeof val === "function" ? val({ item, grammar, options }) : (val ?? "");
+        return {
+            title: resolve(dialog.title),
+            paragraph: resolve(dialog.paragraph),
+            cancel: resolve(dialog.cancel),
+            confirm: resolve(dialog.confirm),
+        };
     }
 }
 FormArray.attr = {

@@ -1,5 +1,5 @@
 import { FormArrayItem, type ItemConstructor, type SerializedItem } from "./item";
-import type { FormMessages, GrammarOptions } from "./messages";
+import type { FormArrayDialogs, FormMessages, GrammarOptions } from "./messages";
 import { FormProgressManager, type FormProgressComponent, type FieldGroupValidation } from "../index.js";
 import SplitButton from "../../split-button";
 import { Modal, AlertDialog } from "../../modal";
@@ -44,6 +44,7 @@ export interface FormArrayOptions<Item extends FormArrayItem> {
     itemClass: ItemConstructor<Item>;
     grammar: GrammarOptions;
     messages?: FormMessages<Item>;
+    dialogs?: FormArrayDialogs<Item>;
 }
 export declare class FormArray<Item extends FormArrayItem> {
     static readonly attr: ArrayAttributes;
@@ -181,5 +182,6 @@ export declare class FormArray<Item extends FormArrayItem> {
      */
     loadProgress(): void;
     private getMessage;
+    private getDialog;
 }
 export {};
