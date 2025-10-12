@@ -2,6 +2,7 @@ import { asSuffix, capitalize, deepMerge } from "../../utils";
 import wf from "../../webflow/index.js";
 import { createAttribute, exclude } from "../../attributeselector";
 import { FormArrayItem, type ItemConstructor, type SerializedItem } from "./item";
+import type { FormMessages, GrammarOptions } from "./messages";
 import {
   FormDecision,
   FormMessage,
@@ -24,7 +25,7 @@ import Accordion from "../../accordion";
 import SplitButton from "../../split-button";
 import { Modal, AlertDialog } from "../../modal";
 import type { ScrollPosition } from "../../scroll";
-import { pluralize, type Pluralized } from "../../pluralize";
+import { pluralize } from "../../pluralize";
 
 import semver from "semver";
 import type { PartialDeep } from "type-fest";
@@ -62,7 +63,7 @@ interface ArrayAttributes {
   select: string;
 }
 
-interface FormArrayOptions<Item extends FormArrayItem> {
+export interface FormArrayOptions<Item extends FormArrayItem> {
   /** Unique identifier of this array */
   id: string | number;
 
@@ -90,10 +91,8 @@ interface FormArrayOptions<Item extends FormArrayItem> {
 
   itemClass: ItemConstructor<Item>;
 
-  grammar: {
-    item: Pluralized;
-    article: Pluralized;
-  };
+  grammar: GrammarOptions;
+  messages?: FormMessages<Item>;
 }
 
 const ARRAY_STORAGE_VERSION = "1.0.0";
@@ -116,13 +115,22 @@ export class FormArray<Item extends FormArrayItem> {
     itemClass: undefined,
     grammar: {
       item: {
-        singular: "Eintrag",
-        plural: "Einträge",
+        sg: "Eintrag",
+        pl: "Einträge",
       },
       article: {
-        singular: "der",
-        plural: "die",
+        sg: "der",
+        pl: "die",
       },
+    },
+    messages: {
+      empty: `Bitte fügen Sie mindestens einen Eintrag hinzu.`,
+      draft: ({ item, grammar }) =>
+        `${capitalize(grammar.article.sg)} ${grammar.item.sg} "${item?.getFullName()}" ist als Entwurf gespeichert.`,
+      invalid: ({ item }) =>
+        `Bitte füllen Sie alle Pflichtfelder für "${item?.getFullName()}" aus.`,
+      limit: ({ options, grammar }) =>
+        `Sie können max. ${options.limit} ${options.limit === 1 ? grammar.item.sg : grammar.item.pl} hinzufügen.`,
     },
   };
 
@@ -597,8 +605,8 @@ export class FormArray<Item extends FormArrayItem> {
    */
   public startNewItem() {
     if (this.items.size === this.options.limit) {
-      const itemName = pluralize(this.options.grammar.item, this.options.limit);
-      this.formMessage.error(`Sie können nur max. ${this.options.limit} ${itemName} hinzufügen.`);
+      const msg = this.getMessage("limit");
+      this.formMessage.error(msg);
       this.formMessage.setTimedReset(5000);
       return;
     }
@@ -688,11 +696,8 @@ export class FormArray<Item extends FormArrayItem> {
       this.items.forEach((item) => this.renderItem(item));
       this.formMessage.reset();
     } else {
-      const itemName = pluralize(this.options.grammar.item, this.options.limit);
-      this.formMessage.info(
-        `Bitte fügen Sie die Mieter (max. ${this.options.limit} ${itemName}) hinzu.`,
-        !this.initialized,
-      );
+      const msg = this.getMessage("empty");
+      this.formMessage.info(msg, !this.initialized);
     }
   }
 
@@ -880,44 +885,29 @@ export class FormArray<Item extends FormArrayItem> {
 
     // Validate if there are any items in the array (check if the `items` map has any entries)
     if (this.items.size === 0) {
-      console.warn("Bitte fügen Sie mindestens eine mietende Person hinzu.");
-      this.formMessage.error(
-        `Bitte fügen Sie mindestens eine ${this.options.grammar.item.singular} hinzu.`,
-      );
-      this.formMessage.setTimedReset(5000, () => {
-        const itemName = pluralize(this.options.grammar.item, this.options.limit);
-        this.formMessage.info(
-          `Bitte fügen Sie die Mieter (max. ${this.options.limit} ${itemName}) hinzu.`,
-          true,
-        );
-      });
+      const msg = this.getMessage("empty", {});
+      if (msg) {
+        this.formMessage.error(msg);
+        this.formMessage.setTimedReset(5000);
+        this.formMessage.setTimedReset(5000, () => {
+          this.formMessage.info(msg, true);
+        });
+      }
       valid = false;
     } else {
       // Check if each Item in the items collection is valid
       this.items.forEach((item) => {
         if (item.draft) {
-          console.warn(
-            `${capitalize(this.options.grammar.article.singular)} ${this.options.grammar.item.singular} "${item.getFullName()}" ist als Entwurf gespeichert. Bitte finalisieren oder löschen Sie diese Person.`,
-          );
-          this.formMessage.error(
-            `${capitalize(this.options.grammar.article.singular)} ${this.options.grammar.item.singular} "${item.getFullName()}" ist als Entwurf gespeichert. Bitte finalisieren oder löschen Sie diese Person.`,
-          );
-
+          const msg = this.getMessage("draft", { item });
+          this.formMessage.error(msg);
           this.formMessage.setTimedReset(8000);
+
           valid = false; // If any Item is invalid, set valid to false
         } else if (!item.validate()) {
-          console.warn(`Bitte füllen Sie alle Pflichtfelder für "${item.getFullName()}" aus.`);
-          this.formMessage.error(
-            `Bitte füllen Sie alle Pflichtfelder für "${item.getFullName()}" aus.`,
-          );
-
+          const msg = this.getMessage("invalid", { item });
+          this.formMessage.error(msg);
           this.formMessage.setTimedReset(7000);
 
-          // setTimeout(() => {
-          //   this.populateModal(item);
-          //   this.openModal();
-          //   this.validateModal();
-          // }, 0);
           valid = false; // If any Item is invalid, set valid to false
         }
       });
@@ -1237,5 +1227,22 @@ export class FormArray<Item extends FormArrayItem> {
     } catch (e) {
       console.error(`FormArray "${this.id}": Error loading array progress:`, e);
     }
+  }
+
+  private getMessage<K extends keyof FormMessages<Item>>(
+    key: K,
+    ctx?: { item?: Item },
+  ): string | undefined {
+    const msg = this.options.messages?.[key];
+    const grammar = this.options.grammar;
+    const options = this.options;
+
+    if (!msg) return undefined;
+
+    if (typeof msg === "function") {
+      return msg({ item: ctx?.item, grammar, options });
+    }
+
+    return msg; // plain string
   }
 }

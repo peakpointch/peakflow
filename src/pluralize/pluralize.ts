@@ -1,12 +1,12 @@
 export interface Pluralized {
-  singular: string;
-  plural: string;
+  sg: string;
+  pl: string;
 }
 
 export function pluralize(text: Pluralized, count: number): string {
   if (count === 1) {
-    return text.singular;
+    return text.sg;
   } else {
-    return text.plural;
+    return text.pl;
   }
 }
