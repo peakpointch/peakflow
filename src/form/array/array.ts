@@ -803,8 +803,9 @@ export class FormArray<Item extends FormArrayItem> {
     }
   }
 
-  public onSave(name: string, callback: OnSaveCallback): void {
+  public onSave(name: string, callback: OnSaveCallback, initialize: boolean = false): void {
     this.onSaveCallbacks.set(name, callback);
+    if (initialize) callback(this.getProgress());
   }
 
   public clearOnSave(name: string): void {
