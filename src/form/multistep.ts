@@ -18,6 +18,8 @@ import EventEmitter from "eventemitter3";
 
 // Types
 interface FormOptions {
+  id: string;
+  version: string;
   excludeInputSelectors: string[];
   recaptcha: boolean;
   validation: {
@@ -79,6 +81,8 @@ const STEPS_PAGINATION_ITEM_SELECTOR: string = `button${stepsTargetSelector()}`;
 
 export class MultiStepForm {
   public static readonly defaultOptions: MultiStepFormOptions = {
+    id: "multistepform",
+    version: "0.0.0",
     recaptcha: false,
     navigation: {
       hideInStep: -1,
@@ -95,6 +99,8 @@ export class MultiStepForm {
     },
   };
 
+  public id: string;
+  public version: string;
   public options: MultiStepFormOptions;
   public initialized: boolean = false;
   public component: HTMLElement;
@@ -120,6 +126,8 @@ export class MultiStepForm {
   constructor(component: HTMLElement, options: PartialDeep<MultiStepFormOptions>) {
     this.component = component;
     this.options = deepMerge(MultiStepForm.defaultOptions, options);
+    this.id = this.options.id;
+    this.version = this.options.version;
 
     this.validateComponent();
     this.cacheDomElements();
