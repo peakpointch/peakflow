@@ -1,13 +1,17 @@
-import type { FormFieldMap, HTMLFormInput, CustomValidator } from "./index.js";
+import { type FormProgressComponent, FieldGroup } from "./index.js";
+import { type HTMLFormInput, type CustomValidator, FormProgressManager } from "./index.js";
 import type { PartialDeep } from "type-fest";
 import EventEmitter from "eventemitter3";
 interface FormOptions {
+    id: string;
+    version: string;
     excludeInputSelectors: string[];
     recaptcha: boolean;
     validation: {
         validate: boolean;
         reportValidity: boolean;
     };
+    manager: FormProgressManager;
 }
 interface MultiStepFormOptions extends FormOptions {
     navigation: {
@@ -34,6 +38,8 @@ type CustomFormComponent = {
 type MultiStepFormEvents = "save" | "changeStep" | "submit" | "success" | "error" | "change" | "input";
 export declare class MultiStepForm {
     static readonly defaultOptions: MultiStepFormOptions;
+    id: string;
+    version: string;
     options: MultiStepFormOptions;
     initialized: boolean;
     component: HTMLElement;
@@ -88,20 +94,21 @@ export declare class MultiStepForm {
     private updatePagination;
     validateAllSteps(): boolean;
     validateCurrentStep(stepIndex: number): boolean;
+    getFormInputs(step?: number): HTMLFormInput[];
     /**
-     * Gets data of all form fields in a `FormFieldMap`.
+     * Gets data of all form fields in a `FieldGroup`.
      *
      * @step Step index of the multi step form
-     * @returns `FormFieldMap` - A map of field id (string) to a `FormField` class instance
+     * @returns A `FieldGroup`
      *
      * Fields that are a descendant of '[data-steps-element="custom-component"]' are excluded.
      */
-    getFieldMapForStep(step: number): FormFieldMap;
-    getFieldMap(): FormFieldMap;
+    getFieldGroup(step?: number): FieldGroup;
     getFormData(): any;
     getFormInput<T extends HTMLFormInput = HTMLFormInput>(id: string): T;
     loadProgress(): void;
-    save(): void;
+    saveFields(): void;
+    saveComponentProgress(component: FormProgressComponent): void;
     onSave(callback: (...args: any[]) => void): void;
     clearOnSave(): void;
 }
