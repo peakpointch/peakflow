@@ -839,9 +839,9 @@ export class FormArray<Item extends FormArrayItem> {
       }
 
       const [radioInputs, otherInputs] = groupInputs.reduce(
-        ([r, o], input) => {
-          input.type === "radio" ? r.push(input as HTMLInputElement) : o.push(input);
-          return [r, o];
+        ([radios, other], input) => {
+          input.type === "radio" ? radios.push(input as HTMLInputElement) : other.push(input);
+          return [radios, other];
         },
         [[] as HTMLInputElement[], [] as HTMLFormInput[]],
       );
@@ -850,9 +850,7 @@ export class FormArray<Item extends FormArrayItem> {
         // Get field
         const field = item[group.name].getField(input.id);
 
-        if (!field) {
-          return;
-        }
+        if (!field) return;
 
         if (!isCheckboxInput(input)) {
           // For text inputs, trim and set the value
