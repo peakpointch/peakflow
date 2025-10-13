@@ -63,8 +63,10 @@ export declare class MultiStepForm {
     private successElement;
     private errorElement;
     private submitButton;
+    private lp;
     constructor(component: HTMLElement, options: PartialDeep<MultiStepFormOptions>);
     private validateComponent;
+    private validateOptions;
     private cacheDomElements;
     private setupForm;
     private setupEventListeners;

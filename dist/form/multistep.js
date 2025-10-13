@@ -3,7 +3,7 @@ import createAttribute, { exclude, extend } from "../attributeselector/index.js"
 import { initWfInputs, sendFormData, validateFields, formElementSelector, fieldFromInput, enforceButtonTypes, FieldGroup, isCheckboxInput, setChecked, getRadioGroups, } from "./index.js";
 import { FormProgressManager, } from "./index.js";
 import wf from "../webflow/index.js";
-import { deepMerge } from "../utils";
+import { asSuffix, deepMerge } from "../utils";
 import EventEmitter from "eventemitter3";
 // Selector functions
 const stepsElementSelector = createAttribute("data-steps-element", {
@@ -27,7 +27,9 @@ export class MultiStepForm {
         this.options = deepMerge(MultiStepForm.defaultOptions, options);
         this.id = this.options.id;
         this.version = this.options.version;
+        this.lp = `MultiStepForm${asSuffix(`"${this.id}"`, " ")}: `;
         this.validateComponent();
+        this.validateOptions();
         this.cacheDomElements();
         this.setupForm();
         this.setupEventListeners();
@@ -35,14 +37,19 @@ export class MultiStepForm {
     }
     validateComponent() {
         if (!this.component.getAttribute("data-steps-element")) {
-            console.error(`Form Steps: Component is not a steps component or is missing the attribute ${stepsElementSelector("component")}.\nComponent:`, this.component);
-            throw new Error("Component is not a valid multi-step form component.");
+            console.error(`${this.lp}Component is not a steps component or is missing the attribute ${stepsElementSelector("component")}.\nComponent:`, this.component);
+            throw new Error(`${this.lp}Component is not a valid multi-step form component.`);
+        }
+    }
+    validateOptions() {
+        if (!this.options.manager) {
+            throw new Error(`${this.lp}Please pass a FormProgressManager instance in the options.`);
         }
     }
     cacheDomElements() {
         this.formElement = this.component.querySelector("form");
         if (!this.options.nested && !this.formElement) {
-            throw new Error("Form element not found within the specified component.");
+            throw new Error(`${this.lp}Form element not found within the specified component.`);
         }
         if (this.options.nested) {
             this.formElement = this.component;
@@ -58,7 +65,7 @@ export class MultiStepForm {
     }
     setupForm() {
         if (!this.formSteps.length) {
-            console.warn(`Form Steps: The selected list doesn't contain any steps. Skipping initialization. Provided List:`, this.component.querySelector(stepsElementSelector("list")));
+            console.warn(`${this.lp}The selected list doesn't contain any steps. Skipping initialization. Provided List:`, this.component.querySelector(stepsElementSelector("list")));
             return;
         }
         if (!this.options.nested) {
@@ -97,15 +104,15 @@ export class MultiStepForm {
     }
     async submit() {
         if (this.options.nested) {
-            throw new Error(`Can't submit a nested MultiStepForm.`);
+            throw new Error(`${this.lp}Can't submit a nested MultiStepForm.`);
         }
         if (this.currentStep !== this.formSteps.length - 1) {
-            console.error("SUBMIT ERROR: the current step is not the last step. Can only submit the MultiStepForm in the last step.");
+            console.error(`${this.lp}Submission Failed: Can only submit the MultiStepForm in the last step.`);
             return;
         }
         const allStepsValid = this.validateAllSteps();
         if (!allStepsValid) {
-            console.warn("Form submission blocked: Not all steps are valid.");
+            console.warn(`${this.lp}Submission Failed: Not all steps are valid.`);
             return;
         }
         this.formElement.dataset.state = "sending";
@@ -126,7 +133,7 @@ export class MultiStepForm {
     }
     buildJsonForWebflow() {
         if (this.options.nested) {
-            throw new Error(`Can't get FormData for a nested MultiStepForm.`);
+            throw new Error(`${this.lp}Can't get FormData for a nested MultiStepForm.`);
         }
         const fields = this.getFormData();
         if (this.options.recaptcha) {
@@ -135,7 +142,7 @@ export class MultiStepForm {
             fields["g-recaptcha-response"] = recaptcha;
             if (!recaptcha) {
                 this.emitOnError();
-                throw new Error(`Form "${this.id}": Recaptcha response invalid.`);
+                throw new Error(`${this.lp}Recaptcha response invalid.`);
             }
         }
         return {
@@ -266,7 +273,6 @@ export class MultiStepForm {
         this.updateStepVisibility(index);
         this.updatePagination(index);
         this.currentStep = index;
-        console.log(`Step ${this.currentStep + 1}/${this.formSteps.length}`);
     }
     updateStepVisibility(target) {
         const current = this.formSteps[this.currentStep];
@@ -326,7 +332,7 @@ export class MultiStepForm {
         let allValid = true;
         this.formSteps.forEach((_, index) => {
             if (!this.validateCurrentStep(index)) {
-                console.warn(`Step ${index + 1} is invalid.`);
+                console.warn(`${this.lp}: Step ${index + 1} is invalid.`);
                 allValid = false; // Set the flag to false if any step is invalid
                 this.changeToStep(index);
             }
@@ -349,7 +355,7 @@ export class MultiStepForm {
         });
         let { isValid } = validateFields(filteredInputs, this.options.validation.reportValidity);
         if (!isValid && this.options.validation.reportValidity) {
-            console.warn(`${basicError}: Standard validation is not valid`);
+            console.warn(`${this.lp}${basicError}: Standard validation is not valid`);
         }
         if (!isValid)
             return false;
@@ -359,7 +365,7 @@ export class MultiStepForm {
         // Custom validations
         const customValid = customValidators?.every((validator) => validator()) ?? true;
         if (this.options.validation.reportValidity && !customValid) {
-            console.warn(`${basicError}: Custom validation is not valid`);
+            console.warn(`${this.lp}${basicError}: Custom validation is not valid`);
         }
         return isValid && customValid;
     }
@@ -431,8 +437,6 @@ export class MultiStepForm {
             const field = data.getField(input.id);
             if (!field)
                 return;
-            if (input.type === "select-one")
-                console.log(`SELECT FIELD "${field.id}": "${field.value}"`);
             if (!isCheckboxInput(input)) {
                 // For text inputs, trim and set the value
                 input.value = field.value.trim();
