@@ -29,10 +29,18 @@ export class FieldGroup {
      *
      * @returns `this.fields` as an object
      */
-    serialize() {
+    serialize(options) {
+        const opts = {
+            stringify: options?.stringify ?? false,
+            valueOnly: options?.valueOnly ?? false,
+        };
         let fields = {};
         this.fields.forEach((field, key) => {
-            fields[key] = field.serialize();
+            fields[key] = opts.stringify
+                ? JSON.stringify(field.serialize())
+                : opts.valueOnly
+                    ? field.value
+                    : field.serialize();
         });
         return fields;
     }

@@ -51,11 +51,19 @@ export class FieldGroup<FieldId extends string = string> {
    *
    * @returns `this.fields` as an object
    */
-  public serialize(): SerializedFieldGroup {
+  public serialize(options?: { stringify: boolean; valueOnly: boolean }): SerializedFieldGroup {
+    const opts = {
+      stringify: options?.stringify ?? false,
+      valueOnly: options?.valueOnly ?? false,
+    };
     let fields = {};
 
     this.fields.forEach((field, key) => {
-      fields[key as string] = field.serialize();
+      fields[key as string] = opts.stringify
+        ? JSON.stringify(field.serialize())
+        : opts.valueOnly
+          ? field.value
+          : field.serialize();
     });
 
     return fields;

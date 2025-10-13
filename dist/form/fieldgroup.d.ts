@@ -26,7 +26,10 @@ export declare class FieldGroup<FieldId extends string = string> {
      *
      * @returns `this.fields` as an object
      */
-    serialize(): SerializedFieldGroup;
+    serialize(options?: {
+        stringify: boolean;
+        valueOnly: boolean;
+    }): SerializedFieldGroup;
     /**
      * Deserialize a `FieldGroup`.
      *
