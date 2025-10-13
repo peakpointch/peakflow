@@ -12,6 +12,7 @@ interface FormOptions {
         reportValidity: boolean;
     };
     manager: FormProgressManager;
+    jsonFields: boolean;
 }
 interface MultiStepFormOptions extends FormOptions {
     navigation: {
@@ -36,6 +37,10 @@ type CustomFormComponent = {
     getData?: () => {};
 };
 type MultiStepFormEvents = "save" | "changeStep" | "submit" | "success" | "error" | "change" | "input";
+type VirtualFieldFn<F = any, C = any> = (data: {
+    fields: F;
+    customFields: C;
+}) => string;
 export declare class MultiStepForm {
     static readonly defaultOptions: MultiStepFormOptions;
     id: string;
@@ -46,6 +51,7 @@ export declare class MultiStepForm {
     events: EventEmitter<MultiStepFormEvents>;
     formElement: HTMLFormElement | HTMLElement;
     formSteps: NodeListOf<HTMLElement>;
+    virtualFields: Map<string, string | VirtualFieldFn<any>>;
     private set currentStep(value);
     get currentStep(): number;
     private _currentStep;
@@ -63,7 +69,7 @@ export declare class MultiStepForm {
     private setupForm;
     private setupEventListeners;
     addCustomComponent(component: CustomFormComponent): void;
-    private submitToWebflow;
+    submit(): Promise<void>;
     private buildJsonForWebflow;
     private emitOnSuccess;
     private emitOnError;

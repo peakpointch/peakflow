@@ -35,6 +35,7 @@ interface FormOptions {
     reportValidity: boolean;
   };
   manager: FormProgressManager;
+  jsonFields: boolean;
 }
 
 interface MultiStepFormOptions extends FormOptions {
@@ -78,6 +79,7 @@ type MultiStepFormEvents =
   | "error"
   | "change"
   | "input";
+type VirtualFieldFn<F = any, C = any> = (data: { fields: F; customFields: C }) => string;
 
 // Selector functions
 const stepsElementSelector = createAttribute<StepsComponentElement>("data-steps-element", {
@@ -107,6 +109,7 @@ export class MultiStepForm {
       validate: true,
       reportValidity: true,
     },
+    jsonFields: false,
   };
 
   public id: string;
@@ -114,9 +117,10 @@ export class MultiStepForm {
   public options: MultiStepFormOptions;
   public initialized: boolean = false;
   public component: HTMLElement;
-  public events: EventEmitter<MultiStepFormEvents> = new EventEmitter<MultiStepFormEvents>();
+  public events: EventEmitter<MultiStepFormEvents>;
   public formElement: HTMLFormElement | HTMLElement;
   public formSteps: NodeListOf<HTMLElement>;
+  public virtualFields: Map<string, string | VirtualFieldFn<any>>;
   private set currentStep(index: number) {
     this._currentStep = index;
   }
@@ -193,6 +197,9 @@ export class MultiStepForm {
       this.formElement.setAttribute("novalidate", "");
     }
 
+    this.events = new EventEmitter<MultiStepFormEvents>();
+    this.virtualFields = new Map();
+
     this.formElement.dataset.state = "initialized";
 
     initWfInputs(this.component);
@@ -204,7 +211,7 @@ export class MultiStepForm {
     if (!this.options.nested) {
       this.formElement.addEventListener("submit", (event) => {
         event.preventDefault();
-        this.submitToWebflow();
+        this.submit();
         this.events.emit("submit");
       });
     }
@@ -235,7 +242,7 @@ export class MultiStepForm {
     this.customComponents.push(component);
   }
 
-  private async submitToWebflow(): Promise<void> {
+  public async submit(): Promise<void> {
     if (this.options.nested) {
       throw new Error(`Can't submit a nested MultiStepForm.`);
     }
@@ -285,6 +292,10 @@ export class MultiStepForm {
       const recaptcha = (this.formElement.querySelector("#g-recaptcha-response") as HTMLFormInput)
         .value;
       fields["g-recaptcha-response"] = recaptcha;
+      if (!recaptcha) {
+        this.emitOnError();
+        throw new Error(`Form "${this.id}": Recaptcha response invalid.`);
+      }
     }
 
     return {
@@ -580,6 +591,10 @@ export class MultiStepForm {
   }
 
   public getFormData(): any {
+    const fields = this.getFieldGroup().serialize({
+      stringify: this.options.jsonFields,
+      valueOnly: !this.options.jsonFields,
+    });
     const customFields = this.customComponents.reduce((acc, entry) => {
       return {
         ...acc,
@@ -587,12 +602,19 @@ export class MultiStepForm {
       };
     }, {});
 
-    const fields = {
-      ...this.getFieldGroup().serialize(),
-      ...customFields,
-    };
+    const virtualFields = Array.from(this.virtualFields.entries()).reduce((acc, [key, val]) => {
+      let value = typeof val === "function" ? val({ fields, customFields }) : (val ?? "");
+      return {
+        ...acc,
+        [key]: value,
+      };
+    }, {});
 
-    return fields;
+    return {
+      ...fields,
+      ...customFields,
+      ...virtualFields,
+    };
   }
 
   public getFormInput<T extends HTMLFormInput = HTMLFormInput>(id: string): T {

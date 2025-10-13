@@ -21,7 +21,6 @@ export class MultiStepForm {
     }
     constructor(component, options) {
         this.initialized = false;
-        this.events = new EventEmitter();
         this._currentStep = 0;
         this.customComponents = [];
         this.component = component;
@@ -66,6 +65,8 @@ export class MultiStepForm {
             enforceButtonTypes(this.formElement);
             this.formElement.setAttribute("novalidate", "");
         }
+        this.events = new EventEmitter();
+        this.virtualFields = new Map();
         this.formElement.dataset.state = "initialized";
         initWfInputs(this.component);
         this.changeToStep(this.currentStep);
@@ -74,7 +75,7 @@ export class MultiStepForm {
         if (!this.options.nested) {
             this.formElement.addEventListener("submit", (event) => {
                 event.preventDefault();
-                this.submitToWebflow();
+                this.submit();
                 this.events.emit("submit");
             });
         }
@@ -94,7 +95,7 @@ export class MultiStepForm {
     addCustomComponent(component) {
         this.customComponents.push(component);
     }
-    async submitToWebflow() {
+    async submit() {
         if (this.options.nested) {
             throw new Error(`Can't submit a nested MultiStepForm.`);
         }
@@ -132,6 +133,10 @@ export class MultiStepForm {
             const recaptcha = this.formElement.querySelector("#g-recaptcha-response")
                 .value;
             fields["g-recaptcha-response"] = recaptcha;
+            if (!recaptcha) {
+                this.emitOnError();
+                throw new Error(`Form "${this.id}": Recaptcha response invalid.`);
+            }
         }
         return {
             name: this.formElement.dataset.name,
@@ -387,17 +392,28 @@ export class MultiStepForm {
         return new FieldGroup(fields);
     }
     getFormData() {
+        const fields = this.getFieldGroup().serialize({
+            stringify: this.options.jsonFields,
+            valueOnly: !this.options.jsonFields,
+        });
         const customFields = this.customComponents.reduce((acc, entry) => {
             return {
                 ...acc,
                 ...(entry.getData ? entry.getData() : {}),
             };
         }, {});
-        const fields = {
-            ...this.getFieldGroup().serialize(),
+        const virtualFields = Array.from(this.virtualFields.entries()).reduce((acc, [key, val]) => {
+            let value = typeof val === "function" ? val({ fields, customFields }) : (val ?? "");
+            return {
+                ...acc,
+                [key]: value,
+            };
+        }, {});
+        return {
+            ...fields,
             ...customFields,
+            ...virtualFields,
         };
-        return fields;
     }
     getFormInput(id) {
         const selector = extend(wf.select.formInput, `#${id}`);
@@ -477,4 +493,5 @@ MultiStepForm.defaultOptions = {
         validate: true,
         reportValidity: true,
     },
+    jsonFields: false,
 };
