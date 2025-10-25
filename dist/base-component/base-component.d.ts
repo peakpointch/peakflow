@@ -1,12 +1,18 @@
 import { type BaseAttributes } from "../attributeselector";
+import type { PartialDeep } from "type-fest";
+export interface BaseSettings {
+    id: string;
+}
 /**
  * Base class for components with attribute-based selectors
  */
-export declare abstract class BaseComponent<Elements extends string> {
+export declare abstract class BaseComponent<Elements extends string, Settings extends BaseSettings = BaseSettings> {
+    static readonly defaultSettings: BaseSettings;
     static readonly attr: BaseAttributes;
     component: HTMLElement;
-    instance: string;
-    constructor(component: HTMLElement, instance?: string);
+    id: string;
+    settings: Settings;
+    constructor(component: HTMLElement, settings?: PartialDeep<Settings>);
     /**
      * Instance method: returns a selector string
      */

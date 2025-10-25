@@ -1,21 +1,36 @@
 import { Selector, type BaseAttributes } from "../attributeselector";
+import { deepMerge } from "../utils";
+import type { PartialDeep } from "type-fest";
+
+export interface BaseSettings {
+  id: string;
+}
 
 /**
  * Base class for components with attribute-based selectors
  */
-export abstract class BaseComponent<Elements extends string> {
+export abstract class BaseComponent<
+  Elements extends string,
+  Settings extends BaseSettings = BaseSettings,
+> {
+  static readonly defaultSettings: BaseSettings = {
+    id: undefined,
+  };
   static readonly attr: BaseAttributes = {
     id: "data-id",
     element: "data-element",
   };
 
   public component: HTMLElement;
-  public instance: string;
+  public id: string;
+  public settings: Settings;
 
-  constructor(component: HTMLElement, instance?: string) {
+  constructor(component: HTMLElement, settings?: PartialDeep<Settings>) {
     if (!component) throw new Error(`Component element cannot be null`);
+    const SubClass = this.constructor as typeof BaseComponent;
     this.component = component;
-    this.instance = instance || (this.constructor as typeof BaseComponent & { attr: any }).attr.id;
+    this.settings = deepMerge(SubClass.defaultSettings, settings) as Settings;
+    this.id = this.settings.id || component.getAttribute(SubClass.attr.id);
   }
 
   /**
@@ -23,7 +38,7 @@ export abstract class BaseComponent<Elements extends string> {
    */
   public selector(element: Elements, local = true): string {
     const ctor = this.constructor as typeof BaseComponent & { attr: any; attributeSelector: any };
-    return local ? ctor.selector(element, this.instance) : ctor.selector(element);
+    return local ? ctor.selector(element, this.id) : ctor.selector(element);
   }
 
   public select<T extends Element = HTMLElement>(element: Elements, local = true): T {

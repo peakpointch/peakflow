@@ -1,21 +1,24 @@
 var _a;
 import { Selector } from "../attributeselector";
+import { deepMerge } from "../utils";
 /**
  * Base class for components with attribute-based selectors
  */
 export class BaseComponent {
-    constructor(component, instance) {
+    constructor(component, settings) {
         if (!component)
             throw new Error(`Component element cannot be null`);
+        const SubClass = this.constructor;
         this.component = component;
-        this.instance = instance || this.constructor.attr.id;
+        this.settings = deepMerge(SubClass.defaultSettings, settings);
+        this.id = this.settings.id || component.getAttribute(SubClass.attr.id);
     }
     /**
      * Instance method: returns a selector string
      */
     selector(element, local = true) {
         const ctor = this.constructor;
-        return local ? ctor.selector(element, this.instance) : ctor.selector(element);
+        return local ? ctor.selector(element, this.id) : ctor.selector(element);
     }
     select(element, local = true) {
         const selector = this.selector(element, local);
@@ -27,6 +30,9 @@ export class BaseComponent {
     }
 }
 _a = BaseComponent;
+BaseComponent.defaultSettings = {
+    id: undefined,
+};
 BaseComponent.attr = {
     id: "data-id",
     element: "data-element",
