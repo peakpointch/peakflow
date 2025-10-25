@@ -2,21 +2,6 @@ var _a;
 import Selector from "../attributeselector/index.js";
 import { ScrollHandler, lockBodyScroll, unlockBodyScroll, addScrollbarPadding, removeScrollbarPadding, } from "../scroll/index.js";
 import { BaseComponent } from "../base-component/index.js";
-export const defaultModalAnimation = {
-    type: "none",
-    duration: 0,
-    className: "is-closed",
-};
-export const defaultModalSettings = {
-    id: undefined,
-    animation: defaultModalAnimation,
-    stickyFooter: false,
-    stickyHeader: false,
-    bodyScroll: {
-        lock: true,
-        smooth: false,
-    },
-};
 export class Modal extends BaseComponent {
     constructor(component, settings = {}) {
         super(component, settings);
@@ -179,6 +164,20 @@ export class Modal extends BaseComponent {
     }
 }
 _a = Modal;
+Modal.defaultSettings = {
+    id: undefined,
+    animation: {
+        type: "none",
+        duration: 0,
+        className: "is-closed",
+    },
+    stickyFooter: false,
+    stickyHeader: false,
+    bodyScroll: {
+        lock: true,
+        smooth: false,
+    },
+};
 Modal.attr = {
     id: "data-modal-id",
     element: "data-modal-element",

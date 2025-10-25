@@ -42,24 +42,22 @@ interface ModalAttributes {
   element: string;
 }
 
-export const defaultModalAnimation: ModalAnimation = {
-  type: "none",
-  duration: 0,
-  className: "is-closed",
-};
-
-export const defaultModalSettings: ModalSettings = {
-  id: undefined,
-  animation: defaultModalAnimation,
-  stickyFooter: false,
-  stickyHeader: false,
-  bodyScroll: {
-    lock: true,
-    smooth: false,
-  },
-};
-
 export class Modal extends BaseComponent<ModalElement> {
+  public static readonly defaultSettings: ModalSettings = {
+    id: undefined,
+    animation: {
+      type: "none",
+      duration: 0,
+      className: "is-closed",
+    },
+    stickyFooter: false,
+    stickyHeader: false,
+    bodyScroll: {
+      lock: true,
+      smooth: false,
+    },
+  };
+
   public component: HTMLElement;
   public modal: HTMLElement;
   public opened: boolean;

@@ -21,9 +21,8 @@ interface ModalAttributes {
     id: string;
     element: string;
 }
-export declare const defaultModalAnimation: ModalAnimation;
-export declare const defaultModalSettings: ModalSettings;
 export declare class Modal extends BaseComponent<ModalElement> {
+    static readonly defaultSettings: ModalSettings;
     component: HTMLElement;
     modal: HTMLElement;
     opened: boolean;
