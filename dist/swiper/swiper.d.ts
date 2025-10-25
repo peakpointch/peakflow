@@ -2,9 +2,9 @@ import { Stylesheet } from "../utils";
 import Swiper from "swiper";
 import type { SwiperOptions } from "swiper/types";
 import { BaseComponent } from "../base-component/index.js";
-type SwiperElement = "component" | "wrapper" | "controls" | "navigation" | "pagination" | "prev" | "next" | "counter-current" | "counter-separator" | "counter-total";
+type SliderElement = "component" | "wrapper" | "controls" | "navigation" | "pagination" | "prev" | "next" | "counter-current" | "counter-separator" | "counter-total";
 /**
- * Initializes all Webflow Swiper components on the page.
+ * A Swiper component wrapper for Webflow.
  *
  * @example
  * ```html
@@ -12,13 +12,13 @@ type SwiperElement = "component" | "wrapper" | "controls" | "navigation" | "pagi
  * <div
  *   data-swiper-id="my-swiper"
  *   data-swiper-element="component"
- *   data-swiper-mode="cms"
- *   data-swiper-slides-per-view="auto"
- *   data-swiper-space-between="24"
- *   data-swiper-loop="true"
- *   data-swiper-autoplay="true"
- *   data-swiper-autoplay-delay="5000"
  *   class="swiper-container"
+ *
+ *   data-slides-per-view="auto"
+ *   data-space-between="24"
+ *   data-loop="true"
+ *   data-autoplay="true"
+ *   data-autoplay-delay="5000"
  * >
  *   <div class="swiper-wrapper">
  *     <!-- Swiper slides here -->
@@ -36,18 +36,19 @@ type SwiperElement = "component" | "wrapper" | "controls" | "navigation" | "pagi
  * </div>
  * ```
  */
-export declare class Slider extends BaseComponent<SwiperElement> {
+export declare class Slider extends BaseComponent<SliderElement> {
     swiper: Swiper;
-    styles: Stylesheet;
+    stylesheet: Stylesheet;
     static attr: {
         id: string;
         element: string;
+        hide: string;
     };
     constructor(component: HTMLElement, instance: string);
     protected static readonly attributeSelector: import("../attributeselector/attributeselector.js").AttributeSelector<string>;
-    static selector: import("../attributeselector/attributeselector.js").InstanceSelector<SwiperElement>;
-    static select: <U extends Element = HTMLElement>(element: SwiperElement, instance?: string) => U;
-    static selectAll: <U extends Element = HTMLElement>(element: SwiperElement, instance?: string) => NodeListOf<U>;
+    static selector: import("../attributeselector/attributeselector.js").InstanceSelector<SliderElement>;
+    static select: <U extends Element = HTMLElement>(element: SliderElement, instance?: string) => U;
+    static selectAll: <U extends Element = HTMLElement>(element: SliderElement, instance?: string) => NodeListOf<U>;
     private static create;
     static initAll(container?: HTMLElement): void;
     static readOptions(swiperElement: HTMLElement): SwiperOptions;

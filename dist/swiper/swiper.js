@@ -5,7 +5,7 @@ import Swiper from "swiper";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { BaseComponent } from "../base-component/index.js";
 /**
- * REMINDER: If this changes, `CustomSwiperOptions` has to be updated as well
+ * REMINDER: If this changes, `SwiperDataset` has to be updated as well
  */
 const swiperAttributes = [
     { name: "data-swiper-id", type: "string" },
@@ -23,25 +23,25 @@ const swiperAttributes = [
     { name: "data-autoplay-delay", type: "number", default: 4000 },
     { name: "data-speed", type: "number", default: 400 },
 ];
-function swiperEmpty(swiperElement) {
-    const slides = swiperElement.querySelectorAll(".swiper-slide");
+function sliderEmpty(slider) {
+    const slides = slider.querySelectorAll(".swiper-slide");
     if (slides.length === 0) {
-        console.warn(`Swiper "${swiperElement.getAttribute("data-swiper-id")}": Skip empty component.`);
+        console.warn(`Slider "${slider.getAttribute(Slider.attr.id)}": Skip empty component.`);
         return true;
     }
     return false;
 }
-function hideEmptySwiper(swiperElement) {
-    const swiperId = swiperElement.getAttribute(`data-swiper-id`) || "";
-    const hideOptions = swiperElement.dataset.swiperHideOptions || "hideNone";
+function hideEmptySlider(slider) {
+    const sliderId = slider.getAttribute(Slider.attr.id) || "";
+    const hideOptions = slider.getAttribute(Slider.attr.hide) || "hideNone";
     switch (hideOptions) {
         case "hideNone":
             break;
         case "hideComponent":
-            swiperElement.classList.add("hide");
+            slider.classList.add("hide");
             break;
         case "emptyState":
-            const prevNextButtons = document.querySelectorAll(`[data-swiper-id="${swiperId}"] ${Slider.selector("prev")}, [data-swiper-id="${swiperId}"] ${Slider.selector("next")}`);
+            const prevNextButtons = document.querySelectorAll(`[${Slider.attr.id}="${sliderId}"] ${Slider.selector("prev")}, [${Slider.attr.id}="${sliderId}"] ${Slider.selector("next")}`);
             Array.from(prevNextButtons).forEach((e) => e?.classList.add("hide"));
             break;
         default:
@@ -63,13 +63,13 @@ function initCounter(swiper) {
     swiper.on("slideChange", () => updateCounter(swiper, currentElement, totalElement));
     updateCounter(swiper, currentElement, totalElement);
 }
-function initSwiperSlides(wrapperEl) {
+function initSlides(wrapperEl) {
     Array.from(wrapperEl.children).forEach((el) => {
         el.classList.add("swiper-slide");
     });
 }
 /**
- * Initializes all Webflow Swiper components on the page.
+ * A Swiper component wrapper for Webflow.
  *
  * @example
  * ```html
@@ -77,13 +77,13 @@ function initSwiperSlides(wrapperEl) {
  * <div
  *   data-swiper-id="my-swiper"
  *   data-swiper-element="component"
- *   data-swiper-mode="cms"
- *   data-swiper-slides-per-view="auto"
- *   data-swiper-space-between="24"
- *   data-swiper-loop="true"
- *   data-swiper-autoplay="true"
- *   data-swiper-autoplay-delay="5000"
  *   class="swiper-container"
+ *
+ *   data-slides-per-view="auto"
+ *   data-space-between="24"
+ *   data-loop="true"
+ *   data-autoplay="true"
+ *   data-autoplay-delay="5000"
  * >
  *   <div class="swiper-wrapper">
  *     <!-- Swiper slides here -->
@@ -104,16 +104,16 @@ function initSwiperSlides(wrapperEl) {
 export class Slider extends BaseComponent {
     constructor(component, instance) {
         super(component, instance);
-        this.styles = new Stylesheet({
+        this.stylesheet = new Stylesheet({
             href: "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css",
         });
-        this.styles.load();
+        this.stylesheet.load();
         _a.create(this.component);
     }
     static create(swiperElement) {
-        initSwiperSlides(swiperElement.querySelector(_a.selector("wrapper")));
-        if (swiperEmpty(swiperElement)) {
-            hideEmptySwiper(swiperElement);
+        initSlides(swiperElement.querySelector(_a.selector("wrapper")));
+        if (sliderEmpty(swiperElement)) {
+            hideEmptySlider(swiperElement);
             return new Swiper(swiperElement);
         }
         const swiperOptions = this.readOptions(swiperElement);
@@ -202,6 +202,7 @@ _a = Slider;
 Slider.attr = {
     id: "data-swiper-id",
     element: "data-swiper-element",
+    hide: "data-swiper-hide-options",
 };
 Slider.attributeSelector = Selector.attr(_a.attr.element);
 Slider.selector = Selector.instance(_a.attributeSelector, _a.attr);

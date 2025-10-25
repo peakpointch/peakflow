@@ -7,14 +7,14 @@ import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import type { AutoplayOptions, NavigationOptions, SwiperOptions } from "swiper/types";
 import { BaseComponent } from "../base-component/index.js";
 
-type SwiperAttribute =
+type SliderAttribute =
   | "data-swiper-element"
   | "data-swiper-id"
   | `data-${CamelToDash<keyof SwiperOptions>}`
   | `data-nav-${CamelToDash<keyof NavigationOptions>}`
   | `data-autoplay-${CamelToDash<keyof AutoplayOptions>}`;
 
-interface CustomSwiperOptions extends ParsedDataset {
+interface SwiperDataset extends ParsedDataset {
   allowTouchMove: boolean;
   autoHeight: boolean;
   autoplay: boolean;
@@ -31,8 +31,8 @@ interface CustomSwiperOptions extends ParsedDataset {
   speed: number;
 }
 
-type SwiperHideOptions = "hideNone" | "hideComponent" | "emptyState";
-type SwiperElement =
+type SliderHideOptions = "hideNone" | "hideComponent" | "emptyState";
+type SliderElement =
   | "component"
   | "wrapper"
   | "controls"
@@ -45,9 +45,9 @@ type SwiperElement =
   | "counter-total";
 
 /**
- * REMINDER: If this changes, `CustomSwiperOptions` has to be updated as well
+ * REMINDER: If this changes, `SwiperDataset` has to be updated as well
  */
-const swiperAttributes: DatasetAttribute<SwiperAttribute>[] = [
+const swiperAttributes: DatasetAttribute<SliderAttribute>[] = [
   { name: "data-swiper-id", type: "string" },
   { name: "data-mousewheel", type: "boolean", default: false },
   { name: "data-free-mode", type: "boolean", default: false },
@@ -64,30 +64,30 @@ const swiperAttributes: DatasetAttribute<SwiperAttribute>[] = [
   { name: "data-speed", type: "number", default: 400 },
 ];
 
-function swiperEmpty(swiperElement: HTMLElement): boolean {
-  const slides = swiperElement.querySelectorAll<HTMLElement>(".swiper-slide");
+function sliderEmpty(slider: HTMLElement): boolean {
+  const slides = slider.querySelectorAll<HTMLElement>(".swiper-slide");
   if (slides.length === 0) {
-    console.warn(`Swiper "${swiperElement.getAttribute("data-swiper-id")}": Skip empty component.`);
+    console.warn(`Slider "${slider.getAttribute(Slider.attr.id)}": Skip empty component.`);
     return true;
   }
   return false;
 }
 
-function hideEmptySwiper(swiperElement: HTMLElement): void {
-  const swiperId = swiperElement.getAttribute(`data-swiper-id`) || "";
+function hideEmptySlider(slider: HTMLElement): void {
+  const sliderId = slider.getAttribute(Slider.attr.id) || "";
 
-  const hideOptions: SwiperHideOptions =
-    (swiperElement.dataset.swiperHideOptions as SwiperHideOptions) || "hideNone";
+  const hideOptions: SliderHideOptions =
+    (slider.getAttribute(Slider.attr.hide) as SliderHideOptions) || "hideNone";
 
   switch (hideOptions) {
     case "hideNone":
       break;
     case "hideComponent":
-      swiperElement.classList.add("hide");
+      slider.classList.add("hide");
       break;
     case "emptyState":
       const prevNextButtons = document.querySelectorAll(
-        `[data-swiper-id="${swiperId}"] ${Slider.selector("prev")}, [data-swiper-id="${swiperId}"] ${Slider.selector("next")}`,
+        `[${Slider.attr.id}="${sliderId}"] ${Slider.selector("prev")}, [${Slider.attr.id}="${sliderId}"] ${Slider.selector("next")}`,
       );
       Array.from(prevNextButtons).forEach((e) => e?.classList.add("hide"));
       break;
@@ -119,14 +119,14 @@ function initCounter(swiper: Swiper): void {
   updateCounter(swiper, currentElement, totalElement);
 }
 
-function initSwiperSlides(wrapperEl: HTMLElement): void {
+function initSlides(wrapperEl: HTMLElement): void {
   Array.from(wrapperEl.children).forEach((el) => {
     el.classList.add("swiper-slide");
   });
 }
 
 /**
- * Initializes all Webflow Swiper components on the page.
+ * A Swiper component wrapper for Webflow.
  *
  * @example
  * ```html
@@ -134,13 +134,13 @@ function initSwiperSlides(wrapperEl: HTMLElement): void {
  * <div
  *   data-swiper-id="my-swiper"
  *   data-swiper-element="component"
- *   data-swiper-mode="cms"
- *   data-swiper-slides-per-view="auto"
- *   data-swiper-space-between="24"
- *   data-swiper-loop="true"
- *   data-swiper-autoplay="true"
- *   data-swiper-autoplay-delay="5000"
  *   class="swiper-container"
+ *
+ *   data-slides-per-view="auto"
+ *   data-space-between="24"
+ *   data-loop="true"
+ *   data-autoplay="true"
+ *   data-autoplay-delay="5000"
  * >
  *   <div class="swiper-wrapper">
  *     <!-- Swiper slides here -->
@@ -158,34 +158,35 @@ function initSwiperSlides(wrapperEl: HTMLElement): void {
  * </div>
  * ```
  */
-export class Slider extends BaseComponent<SwiperElement> {
+export class Slider extends BaseComponent<SliderElement> {
   public swiper: Swiper;
-  public styles: Stylesheet;
+  public stylesheet: Stylesheet;
   public static attr = {
     id: "data-swiper-id",
     element: "data-swiper-element",
+    hide: "data-swiper-hide-options",
   };
 
   constructor(component: HTMLElement, instance: string) {
     super(component, instance);
-    this.styles = new Stylesheet({
+    this.stylesheet = new Stylesheet({
       href: "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css",
     });
 
-    this.styles.load();
+    this.stylesheet.load();
     Slider.create(this.component);
   }
 
   protected static readonly attributeSelector = Selector.attr(Slider.attr.element);
-  public static selector = Selector.instance<SwiperElement>(this.attributeSelector, this.attr);
-  public static select = Selector.select<SwiperElement>(this.selector);
-  public static selectAll = Selector.selectAll<SwiperElement>(this.selector);
+  public static selector = Selector.instance<SliderElement>(this.attributeSelector, this.attr);
+  public static select = Selector.select<SliderElement>(this.selector);
+  public static selectAll = Selector.selectAll<SliderElement>(this.selector);
 
   private static create(swiperElement: HTMLElement): Swiper {
-    initSwiperSlides(swiperElement.querySelector(Slider.selector("wrapper")));
+    initSlides(swiperElement.querySelector(Slider.selector("wrapper")));
 
-    if (swiperEmpty(swiperElement)) {
-      hideEmptySwiper(swiperElement);
+    if (sliderEmpty(swiperElement)) {
+      hideEmptySlider(swiperElement);
       return new Swiper(swiperElement);
     }
 
@@ -235,7 +236,7 @@ export class Slider extends BaseComponent<SwiperElement> {
   public static readOptions(swiperElement: HTMLElement): SwiperOptions {
     swiperElement.classList.remove("initial-hide");
 
-    const settings = parseDataset<CustomSwiperOptions>(swiperElement, swiperAttributes);
+    const settings = parseDataset<SwiperDataset>(swiperElement, swiperAttributes);
 
     const swiperOptions: SwiperOptions = {
       autoplay: {
