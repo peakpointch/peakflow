@@ -1,4 +1,6 @@
+import type { PartialDeep } from "type-fest";
 import { ScrollHandler } from "../scroll/index.js";
+import { BaseComponent, type BaseSettings } from "../base-component/index.js";
 type ModalElement = "component" | "modal" | "open" | "close" | "cancel" | "confirm" | "scroll" | "sticky-top" | "sticky-bottom";
 type ModalAnimationType = "fade" | "slideUp" | "growIn" | "custom" | "none";
 interface ModalAnimation {
@@ -6,8 +8,7 @@ interface ModalAnimation {
     duration: number;
     className?: string;
 }
-interface ModalSettings {
-    id?: string;
+interface ModalSettings extends BaseSettings {
     animation: ModalAnimation;
     stickyFooter: boolean;
     stickyHeader: boolean;
@@ -22,31 +23,22 @@ interface ModalAttributes {
 }
 export declare const defaultModalAnimation: ModalAnimation;
 export declare const defaultModalSettings: ModalSettings;
-export declare class Modal {
+export declare class Modal extends BaseComponent<ModalElement> {
     component: HTMLElement;
     modal: HTMLElement;
     opened: boolean;
     initialized: boolean;
     settings: ModalSettings;
-    instance: string;
+    id: string;
     static attr: ModalAttributes;
     scrollHandler: ScrollHandler;
     scrollTo: ScrollHandler["scrollTo"];
     clearScrollTimeout: ScrollHandler["clearScrollTimeout"];
-    constructor(component: HTMLElement | null, settings?: Partial<ModalSettings>);
-    private static attributeSelector;
-    /**
-     * Static selector
-     */
-    static selector(element: ModalElement, instance?: string): string;
-    /**
-     * Instance selector
-     */
-    selector(element: ModalElement, local?: boolean): string;
-    static select<T extends Element = HTMLElement>(element: ModalElement, instance?: string): T;
-    static selectAll<T extends Element = HTMLElement>(element: ModalElement, instance?: string): NodeListOf<T>;
-    select<T extends Element = HTMLElement>(element: ModalElement, local?: boolean): T;
-    selectAll<T extends Element = HTMLElement>(element: ModalElement, local?: boolean): NodeListOf<T>;
+    constructor(component: HTMLElement | null, settings?: PartialDeep<ModalSettings>);
+    protected static attributeSelector: import("../attributeselector/attributeselector.js").AttributeSelector<ModalElement>;
+    static selector: import("../attributeselector/attributeselector.js").InstanceSelector<ModalElement>;
+    static select: <U extends Element = HTMLElement>(element: ModalElement, instance?: string) => U;
+    static selectAll: <U extends Element = HTMLElement>(element: ModalElement, instance?: string) => NodeListOf<U>;
     private getModalElement;
     setupScrollTo(): void;
     private setupStickyFooter;

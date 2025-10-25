@@ -1,5 +1,5 @@
+import type { PartialDeep } from "type-fest";
 import Selector from "../attributeselector/index.js";
-import deepMerge from "../utils/deepmerge.js";
 import {
   ScrollHandler,
   lockBodyScroll,
@@ -7,6 +7,7 @@ import {
   addScrollbarPadding,
   removeScrollbarPadding,
 } from "../scroll/index.js";
+import { BaseComponent, type BaseSettings } from "../base-component/index.js";
 
 type ModalElement =
   | "component"
@@ -26,8 +27,7 @@ interface ModalAnimation {
   className?: string;
 }
 
-interface ModalSettings {
-  id?: string;
+interface ModalSettings extends BaseSettings {
   animation: ModalAnimation;
   stickyFooter: boolean;
   stickyHeader: boolean;
@@ -59,13 +59,13 @@ export const defaultModalSettings: ModalSettings = {
   },
 };
 
-export class Modal {
+export class Modal extends BaseComponent<ModalElement> {
   public component: HTMLElement;
   public modal: HTMLElement;
   public opened: boolean;
   public initialized: boolean = false;
   public settings: ModalSettings;
-  public instance: string;
+  public id: string;
   public static attr: ModalAttributes = {
     id: "data-modal-id",
     element: "data-modal-element",
@@ -74,15 +74,10 @@ export class Modal {
   public scrollTo: ScrollHandler["scrollTo"];
   public clearScrollTimeout: ScrollHandler["clearScrollTimeout"];
 
-  constructor(component: HTMLElement | null, settings: Partial<ModalSettings> = {}) {
-    if (!component) {
-      throw new Error(`The component HTMLElement cannot be undefined.`);
-    }
-    this.component = component;
-    this.settings = deepMerge(defaultModalSettings, settings);
+  constructor(component: HTMLElement | null, settings: PartialDeep<ModalSettings> = {}) {
+    super(component, settings);
     this.modal = this.getModalElement();
-    this.instance = this.settings.id || component.getAttribute(Modal.attr.id);
-    component.setAttribute(Modal.attr.id, this.instance);
+    component.setAttribute(Modal.attr.id, this.id);
 
     // accessibility
     this.component.setAttribute("role", "dialog");
@@ -101,55 +96,10 @@ export class Modal {
     this.initialized = true;
   }
 
-  private static attributeSelector = Selector.attr<ModalElement>(Modal.attr.element);
-
-  /**
-   * Static selector
-   */
-  public static selector(element: ModalElement, instance?: string): string {
-    const base = Modal.attributeSelector(element);
-    const instanceSelector = instance ? `[${Modal.attr.id}="${instance}"]` : "";
-
-    return element === "component"
-      ? `${base}${instanceSelector}`
-      : `${base}${instanceSelector}, ${instanceSelector} ${base}`;
-  }
-
-  /**
-   * Instance selector
-   */
-  public selector(element: ModalElement, local = true): string {
-    return local ? Modal.selector(element, this.instance) : Modal.selector(element);
-  }
-
-  public static select<T extends Element = HTMLElement>(
-    element: ModalElement,
-    instance?: string,
-  ): T {
-    return document.querySelector<T>(Modal.selector(element, instance));
-  }
-
-  public static selectAll<T extends Element = HTMLElement>(
-    element: ModalElement,
-    instance?: string,
-  ): NodeListOf<T> {
-    return document.querySelectorAll<T>(Modal.selector(element, instance));
-  }
-
-  public select<T extends Element = HTMLElement>(element: ModalElement, local: boolean = true): T {
-    return local
-      ? this.component.querySelector<T>(Modal.selector(element))
-      : document.querySelector<T>(Modal.selector(element, this.instance));
-  }
-
-  public selectAll<T extends Element = HTMLElement>(
-    element: ModalElement,
-    local: boolean = true,
-  ): NodeListOf<T> {
-    return local
-      ? this.component.querySelectorAll<T>(Modal.selector(element))
-      : document.querySelectorAll<T>(Modal.selector(element, this.instance));
-  }
+  protected static attributeSelector = Selector.attr<ModalElement>(Modal.attr.element);
+  public static selector = Selector.instance<ModalElement>(this.attributeSelector, this.attr);
+  public static select = Selector.select<ModalElement>(this.selector);
+  public static selectAll = Selector.selectAll<ModalElement>(this.selector);
 
   private getModalElement(): HTMLElement {
     if (this.component.matches(Modal.selector("modal"))) {

@@ -1,6 +1,7 @@
+var _a;
 import Selector from "../attributeselector/index.js";
-import deepMerge from "../utils/deepmerge.js";
 import { ScrollHandler, lockBodyScroll, unlockBodyScroll, addScrollbarPadding, removeScrollbarPadding, } from "../scroll/index.js";
+import { BaseComponent } from "../base-component/index.js";
 export const defaultModalAnimation = {
     type: "none",
     duration: 0,
@@ -16,17 +17,12 @@ export const defaultModalSettings = {
         smooth: false,
     },
 };
-export class Modal {
+export class Modal extends BaseComponent {
     constructor(component, settings = {}) {
+        super(component, settings);
         this.initialized = false;
-        if (!component) {
-            throw new Error(`The component HTMLElement cannot be undefined.`);
-        }
-        this.component = component;
-        this.settings = deepMerge(defaultModalSettings, settings);
         this.modal = this.getModalElement();
-        this.instance = this.settings.id || component.getAttribute(Modal.attr.id);
-        component.setAttribute(Modal.attr.id, this.instance);
+        component.setAttribute(_a.attr.id, this.id);
         // accessibility
         this.component.setAttribute("role", "dialog");
         this.component.setAttribute("aria-modal", "true");
@@ -34,44 +30,12 @@ export class Modal {
         this.setInitialState();
         this.setupStickyFooter();
         if (this.modal === this.component) {
-            console.warn(`Modal: The modal instance was successfully initialized, but the "modal" element is equal to the "component" element, which will affect the modal animations. To fix this, add the "${Modal.selector("modal")}" attribute to a descendant of the component element. Find out more about the difference between the "component" and the "modal" element in the documentation.`);
+            console.warn(`Modal: The modal instance was successfully initialized, but the "modal" element is equal to the "component" element, which will affect the modal animations. To fix this, add the "${_a.selector("modal")}" attribute to a descendant of the component element. Find out more about the difference between the "component" and the "modal" element in the documentation.`);
         }
         this.initialized = true;
     }
-    /**
-     * Static selector
-     */
-    static selector(element, instance) {
-        const base = Modal.attributeSelector(element);
-        const instanceSelector = instance ? `[${Modal.attr.id}="${instance}"]` : "";
-        return element === "component"
-            ? `${base}${instanceSelector}`
-            : `${base}${instanceSelector}, ${instanceSelector} ${base}`;
-    }
-    /**
-     * Instance selector
-     */
-    selector(element, local = true) {
-        return local ? Modal.selector(element, this.instance) : Modal.selector(element);
-    }
-    static select(element, instance) {
-        return document.querySelector(Modal.selector(element, instance));
-    }
-    static selectAll(element, instance) {
-        return document.querySelectorAll(Modal.selector(element, instance));
-    }
-    select(element, local = true) {
-        return local
-            ? this.component.querySelector(Modal.selector(element))
-            : document.querySelector(Modal.selector(element, this.instance));
-    }
-    selectAll(element, local = true) {
-        return local
-            ? this.component.querySelectorAll(Modal.selector(element))
-            : document.querySelectorAll(Modal.selector(element, this.instance));
-    }
     getModalElement() {
-        if (this.component.matches(Modal.selector("modal"))) {
+        if (this.component.matches(_a.selector("modal"))) {
             this.modal = this.component;
         }
         else {
@@ -91,8 +55,8 @@ export class Modal {
         this.clearScrollTimeout = this.scrollHandler.clearScrollTimeout.bind(this.scrollHandler);
     }
     setupStickyFooter() {
-        const modalContent = this.component.querySelector(Modal.selector("scroll"));
-        const stickyFooter = this.component.querySelector(Modal.selector("sticky-bottom"));
+        const modalContent = this.component.querySelector(_a.selector("scroll"));
+        const stickyFooter = this.component.querySelector(_a.selector("sticky-bottom"));
         if (!modalContent || !stickyFooter) {
             console.warn("Initialize modal: skip sticky footer");
         }
@@ -214,11 +178,15 @@ export class Modal {
         this.component.dataset.state = "closed";
     }
 }
+_a = Modal;
 Modal.attr = {
     id: "data-modal-id",
     element: "data-modal-element",
 };
-Modal.attributeSelector = Selector.attr(Modal.attr.element);
+Modal.attributeSelector = Selector.attr(_a.attr.element);
+Modal.selector = Selector.instance(_a.attributeSelector, _a.attr);
+Modal.select = Selector.select(_a.selector);
+Modal.selectAll = Selector.selectAll(_a.selector);
 function animationFrame() {
     return new Promise((resolve) => requestAnimationFrame(() => resolve()));
 }
