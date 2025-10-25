@@ -21,8 +21,8 @@ export abstract class BaseComponent<
     element: "data-element",
   };
 
-  public component: HTMLElement;
-  public id: string;
+  public readonly component: HTMLElement;
+  public readonly id: string;
   public settings: Settings;
 
   constructor(component: HTMLElement, settings?: PartialDeep<Settings>) {
@@ -33,31 +33,38 @@ export abstract class BaseComponent<
     this.id = this.settings.id || component.getAttribute(SubClass.attr.id);
   }
 
-  /**
-   * Instance method: returns a selector string
-   */
-  public selector(element: Elements, local = true): string {
-    const ctor = this.constructor as typeof BaseComponent & { attr: any; attributeSelector: any };
-    return local ? ctor.selector(element, this.id) : ctor.selector(element);
+  public selector(element: Elements, global: boolean = false): string {
+    const SubClass = this.constructor as typeof BaseComponent;
+    return global ? SubClass.selector(element, this.id) : SubClass.selector(element);
   }
 
-  public select<T extends Element = HTMLElement>(element: Elements, local = true): T {
-    const selector = this.selector(element, local);
-    return (local ? this.component.querySelector(selector) : document.querySelector(selector)) as T;
+  public select<T extends Element = HTMLElement>(element: Elements, global: boolean = false): T {
+    const selector = this.selector(element, global);
+    return (
+      global ? document.querySelector(selector) : this.component.querySelector(selector)
+    ) as T;
   }
 
   public selectAll<T extends Element = HTMLElement>(
     element: Elements,
-    local = true,
+    global: boolean = false,
   ): NodeListOf<T> {
-    const selector = this.selector(element, local);
+    const selector = this.selector(element, global);
     return (
-      local ? this.component.querySelectorAll(selector) : document.querySelectorAll(selector)
+      global ? document.querySelectorAll(selector) : this.component.querySelectorAll(selector)
     ) as NodeListOf<T>;
   }
 
-  protected static attributeSelector = Selector.attr(this.attr.element);
-  public static selector = Selector.instance(this.attributeSelector, this.attr);
-  public static select = Selector.select(this.selector);
-  public static selectAll = Selector.selectAll(this.selector);
+  protected static get attributeSelector() {
+    return Selector.attr(this.attr.element);
+  }
+  public static get selector() {
+    return Selector.instance(this.attributeSelector, this.attr);
+  }
+  public static get select() {
+    return Selector.select(this.selector);
+  }
+  public static get selectAll() {
+    return Selector.selectAll(this.selector);
+  }
 }

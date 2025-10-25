@@ -1,4 +1,3 @@
-var _a;
 import { Selector } from "../attributeselector";
 import { deepMerge } from "../utils";
 /**
@@ -13,23 +12,31 @@ export class BaseComponent {
         this.settings = deepMerge(SubClass.defaultSettings, settings);
         this.id = this.settings.id || component.getAttribute(SubClass.attr.id);
     }
-    /**
-     * Instance method: returns a selector string
-     */
-    selector(element, local = true) {
-        const ctor = this.constructor;
-        return local ? ctor.selector(element, this.id) : ctor.selector(element);
+    selector(element, global = false) {
+        const SubClass = this.constructor;
+        return global ? SubClass.selector(element, this.id) : SubClass.selector(element);
     }
-    select(element, local = true) {
-        const selector = this.selector(element, local);
-        return (local ? this.component.querySelector(selector) : document.querySelector(selector));
+    select(element, global = false) {
+        const selector = this.selector(element, global);
+        return (global ? document.querySelector(selector) : this.component.querySelector(selector));
     }
-    selectAll(element, local = true) {
-        const selector = this.selector(element, local);
-        return (local ? this.component.querySelectorAll(selector) : document.querySelectorAll(selector));
+    selectAll(element, global = false) {
+        const selector = this.selector(element, global);
+        return (global ? document.querySelectorAll(selector) : this.component.querySelectorAll(selector));
+    }
+    static get attributeSelector() {
+        return Selector.attr(this.attr.element);
+    }
+    static get selector() {
+        return Selector.instance(this.attributeSelector, this.attr);
+    }
+    static get select() {
+        return Selector.select(this.selector);
+    }
+    static get selectAll() {
+        return Selector.selectAll(this.selector);
     }
 }
-_a = BaseComponent;
 BaseComponent.defaultSettings = {
     id: undefined,
 };
@@ -37,7 +44,3 @@ BaseComponent.attr = {
     id: "data-id",
     element: "data-element",
 };
-BaseComponent.attributeSelector = Selector.attr(_a.attr.element);
-BaseComponent.selector = Selector.instance(_a.attributeSelector, _a.attr);
-BaseComponent.select = Selector.select(_a.selector);
-BaseComponent.selectAll = Selector.selectAll(_a.selector);
