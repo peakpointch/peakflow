@@ -3,7 +3,7 @@ import dateflowDefault from "../dateflow/default.js";
 import { initVimePlayerDefault } from "../video/default.js";
 import { initCopyComponents } from "../copy/index.js";
 import { initUploadcareDefault } from "../form/uploadcare.js";
-import { initWebflowSwipers } from "../swiper/swiper.js";
+import { Slider } from "../swiper/swiper.js";
 import { CMSSelect } from "../form/cms-select.js";
 
 export type AnyFn = (...args: any[]) => any;
@@ -17,6 +17,6 @@ export const defaultRegistry = {
   vimePlayer: initVimePlayerDefault,
   copyComponent: initCopyComponents,
   uploadcare: initUploadcareDefault,
-  swiper: initWebflowSwipers,
+  swiper: Slider.initAll,
 };
 export type DefaultRegistry = typeof defaultRegistry;

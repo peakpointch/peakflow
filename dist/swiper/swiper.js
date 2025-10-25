@@ -1,7 +1,9 @@
-import { createAttribute } from "../attributeselector/index.js";
+var _a;
+import { Selector } from "../attributeselector/index.js";
 import { Stylesheet, parseDataset } from "../utils";
 import Swiper from "swiper";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import { BaseComponent } from "../base-component/index.js";
 /**
  * REMINDER: If this changes, `CustomSwiperOptions` has to be updated as well
  */
@@ -21,7 +23,6 @@ const swiperAttributes = [
     { name: "data-autoplay-delay", type: "number", default: 4000 },
     { name: "data-speed", type: "number", default: 400 },
 ];
-const swiperSelector = createAttribute("data-swiper-element");
 function swiperEmpty(swiperElement) {
     const slides = swiperElement.querySelectorAll(".swiper-slide");
     if (slides.length === 0) {
@@ -40,61 +41,12 @@ function hideEmptySwiper(swiperElement) {
             swiperElement.classList.add("hide");
             break;
         case "emptyState":
-            const prevNextButtons = document.querySelectorAll(`[data-swiper-id="${swiperId}"] ${swiperSelector("prev")}, [data-swiper-id="${swiperId}"] ${swiperSelector("next")}`);
+            const prevNextButtons = document.querySelectorAll(`[data-swiper-id="${swiperId}"] ${Slider.selector("prev")}, [data-swiper-id="${swiperId}"] ${Slider.selector("next")}`);
             Array.from(prevNextButtons).forEach((e) => e?.classList.add("hide"));
             break;
         default:
             break;
     }
-}
-export function readSwiperOptions(swiperElement) {
-    swiperElement.classList.remove("initial-hide");
-    const settings = parseDataset(swiperElement, swiperAttributes);
-    const swiperOptions = {
-        autoplay: {
-            delay: settings.autoplay ? settings.autoplayDelay : undefined,
-            pauseOnMouseEnter: true,
-            disableOnInteraction: true,
-        },
-        navigation: {
-            prevEl: `[data-swiper-id="${settings.id}"] ${swiperSelector("prev")}`,
-            nextEl: `[data-swiper-id="${settings.id}"] ${swiperSelector("next")}`,
-        },
-        pagination: {
-            el: swiperSelector("pagination"),
-            bulletElement: "button",
-            bulletClass: "swiper-bullet",
-            bulletActiveClass: "is-active",
-            clickable: true,
-        },
-        breakpoints: {
-            991: {
-                slidesPerView: settings.slidesPerView,
-            },
-        },
-        keyboard: {
-            enabled: true,
-            onlyInViewport: true,
-        },
-        mousewheel: {
-            enabled: settings.mousewheel,
-            forceToAxis: true,
-        },
-        allowTouchMove: settings.allowTouchMove,
-        autoHeight: settings.autoHeight,
-        centeredSlides: settings.centeredSlides,
-        effect: "slide",
-        followFinger: settings.followFinger,
-        freeMode: settings.freeMode,
-        loop: settings.loop,
-        slideActiveClass: "is-active",
-        slidesPerView: "auto",
-        slideToClickedSlide: settings.slideToClickedSlide,
-        spaceBetween: settings.spaceBetween,
-        speed: settings.speed,
-        modules: [Autoplay, Navigation, Pagination],
-    };
-    return swiperOptions;
 }
 function updateCounter(swiper, currentElement, totalElement) {
     const current = swiper.realIndex + 1;
@@ -103,8 +55,8 @@ function updateCounter(swiper, currentElement, totalElement) {
     totalElement.textContent = total.toString();
 }
 function initCounter(swiper) {
-    const currentElement = swiper.el.querySelector(swiperSelector("counter-current"));
-    const totalElement = swiper.el.querySelector(swiperSelector("counter-total"));
+    const currentElement = swiper.el.querySelector(Slider.selector("counter-current"));
+    const totalElement = swiper.el.querySelector(Slider.selector("counter-total"));
     if (!currentElement || !totalElement)
         return;
     swiper.on("init", () => updateCounter(swiper, currentElement, totalElement));
@@ -115,33 +67,6 @@ function initSwiperSlides(wrapperEl) {
     Array.from(wrapperEl.children).forEach((el) => {
         el.classList.add("swiper-slide");
     });
-}
-export function initWebflowSwiper(swiperElement) {
-    initSwiperSlides(swiperElement.querySelector(swiperSelector("wrapper")));
-    if (swiperEmpty(swiperElement)) {
-        hideEmptySwiper(swiperElement);
-        return new Swiper(swiperElement);
-    }
-    const swiperOptions = readSwiperOptions(swiperElement);
-    const swiper = new Swiper(swiperElement, swiperOptions);
-    initCounter(swiper);
-    if (swiperOptions.autoplay !== false) {
-        swiper.autoplay.stop();
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    swiper.autoplay.start();
-                }
-                else {
-                    swiper.autoplay.stop();
-                }
-            });
-        }, {
-            threshold: 0.2,
-        });
-        observer.observe(swiperElement);
-    }
-    return swiper;
 }
 /**
  * Initializes all Webflow Swiper components on the page.
@@ -176,14 +101,110 @@ export function initWebflowSwiper(swiperElement) {
  * </div>
  * ```
  */
-export function initWebflowSwipers() {
-    new Stylesheet({
-        href: "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css",
-    }).load();
-    // Remove all empty slides
-    document.querySelectorAll(".w-slide:empty").forEach((e) => e.remove());
-    const webflowSwipers = document.querySelectorAll(swiperSelector("component"));
-    webflowSwipers.forEach((swiperElement) => {
-        initWebflowSwiper(swiperElement);
-    });
+export class Slider extends BaseComponent {
+    constructor(component, instance) {
+        super(component, instance);
+        this.styles = new Stylesheet({
+            href: "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css",
+        });
+        this.styles.load();
+        _a.create(this.component);
+    }
+    static create(swiperElement) {
+        initSwiperSlides(swiperElement.querySelector(_a.selector("wrapper")));
+        if (swiperEmpty(swiperElement)) {
+            hideEmptySwiper(swiperElement);
+            return new Swiper(swiperElement);
+        }
+        const swiperOptions = this.readOptions(swiperElement);
+        const swiper = new Swiper(swiperElement, swiperOptions);
+        initCounter(swiper);
+        if (swiperOptions.autoplay !== false) {
+            swiper.autoplay.stop();
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        swiper.autoplay.start();
+                    }
+                    else {
+                        swiper.autoplay.stop();
+                    }
+                });
+            }, {
+                threshold: 0.2,
+            });
+            observer.observe(swiperElement);
+        }
+        return swiper;
+    }
+    static initAll(container = document.body) {
+        new Stylesheet({
+            href: "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css",
+        }).load();
+        // Remove all empty slides
+        container.querySelectorAll(".w-slide:empty").forEach((e) => e.remove());
+        const webflowSwipers = container.querySelectorAll(_a.selector("component"));
+        webflowSwipers.forEach((swiperElement) => {
+            this.create(swiperElement);
+        });
+    }
+    static readOptions(swiperElement) {
+        swiperElement.classList.remove("initial-hide");
+        const settings = parseDataset(swiperElement, swiperAttributes);
+        debugger;
+        const swiperOptions = {
+            autoplay: {
+                delay: settings.autoplay ? settings.autoplayDelay : undefined,
+                pauseOnMouseEnter: true,
+                disableOnInteraction: true,
+            },
+            navigation: {
+                prevEl: `[${_a.attr.id}="${settings.id}"] ${_a.selector("prev")}`,
+                nextEl: `[${_a.attr.id}="${settings.id}"] ${_a.selector("next")}`,
+            },
+            pagination: {
+                el: _a.selector("pagination"),
+                bulletElement: "button",
+                bulletClass: "swiper-bullet",
+                bulletActiveClass: "is-active",
+                clickable: true,
+            },
+            breakpoints: {
+                991: {
+                    slidesPerView: settings.slidesPerView,
+                },
+            },
+            keyboard: {
+                enabled: true,
+                onlyInViewport: true,
+            },
+            mousewheel: {
+                enabled: settings.mousewheel,
+                forceToAxis: true,
+            },
+            allowTouchMove: settings.allowTouchMove,
+            autoHeight: settings.autoHeight,
+            centeredSlides: settings.centeredSlides,
+            effect: "slide",
+            followFinger: settings.followFinger,
+            freeMode: settings.freeMode,
+            loop: settings.loop,
+            slideActiveClass: "is-active",
+            slidesPerView: "auto",
+            slideToClickedSlide: settings.slideToClickedSlide,
+            spaceBetween: settings.spaceBetween,
+            speed: settings.speed,
+            modules: [Autoplay, Navigation, Pagination],
+        };
+        return swiperOptions;
+    }
 }
+_a = Slider;
+Slider.attr = {
+    id: "data-swiper-id",
+    element: "data-swiper-element",
+};
+Slider.attributeSelector = Selector.attr(_a.attr.element);
+Slider.selector = Selector.instance(_a.attributeSelector, _a.attr);
+Slider.select = Selector.select(_a.selector);
+Slider.selectAll = Selector.selectAll(_a.selector);

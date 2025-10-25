@@ -1,7 +1,8 @@
+import { Stylesheet } from "../utils";
 import Swiper from "swiper";
 import type { SwiperOptions } from "swiper/types";
-export declare function readSwiperOptions(swiperElement: HTMLElement): SwiperOptions;
-export declare function initWebflowSwiper(swiperElement: HTMLElement): Swiper;
+import { BaseComponent } from "../base-component/index.js";
+type SwiperElement = "component" | "wrapper" | "controls" | "navigation" | "pagination" | "prev" | "next" | "counter-current" | "counter-separator" | "counter-total";
 /**
  * Initializes all Webflow Swiper components on the page.
  *
@@ -35,4 +36,20 @@ export declare function initWebflowSwiper(swiperElement: HTMLElement): Swiper;
  * </div>
  * ```
  */
-export declare function initWebflowSwipers(): void;
+export declare class Slider extends BaseComponent<SwiperElement> {
+    swiper: Swiper;
+    styles: Stylesheet;
+    static attr: {
+        id: string;
+        element: string;
+    };
+    constructor(component: HTMLElement, instance: string);
+    protected static readonly attributeSelector: import("../attributeselector/attributeselector.js").AttributeSelector<string>;
+    static selector: import("../attributeselector/attributeselector.js").InstanceSelector<SwiperElement>;
+    static select: <U extends Element = HTMLElement>(element: SwiperElement, instance?: string) => U;
+    static selectAll: <U extends Element = HTMLElement>(element: SwiperElement, instance?: string) => NodeListOf<U>;
+    private static create;
+    static initAll(container?: HTMLElement): void;
+    static readOptions(swiperElement: HTMLElement): SwiperOptions;
+}
+export {};
