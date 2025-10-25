@@ -1,19 +1,27 @@
 import { createAttribute } from "../attributeselector/index.js";
-import { Stylesheet, toCamelCase } from "../utils";
+import { Stylesheet, parseDataset } from "../utils";
 import Swiper from "swiper";
-import { Autoplay, Navigation, Pagination, Manipulation } from "swiper/modules";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
+/**
+ * REMINDER: If this changes, `CustomSwiperOptions` has to be updated as well
+ */
+const swiperAttributes = [
+    { name: "data-swiper-id", type: "string" },
+    { name: "data-mousewheel", type: "boolean", default: false },
+    { name: "data-free-mode", type: "boolean", default: false },
+    { name: "data-follow-finger", type: "boolean", default: false },
+    { name: "data-auto-height", type: "boolean", default: false },
+    { name: "data-slides-per-view", type: "numberOrAuto" },
+    { name: "data-slide-to-clicked-slide", type: "boolean", default: false },
+    { name: "data-space-between", type: "number", default: 8 },
+    { name: "data-centered-slides", type: "boolean", default: false },
+    { name: "data-loop", type: "boolean", default: true },
+    { name: "data-allow-touch-move", type: "boolean", default: true },
+    { name: "data-autoplay", type: "boolean", default: true },
+    { name: "data-autoplay-delay", type: "number", default: 4000 },
+    { name: "data-speed", type: "number", default: 400 },
+];
 const swiperSelector = createAttribute("data-swiper-element");
-function getKeyFromAttributeName(name) {
-    if (name.startsWith("data-swiper-")) {
-        return toCamelCase(name.replace("data-swiper-", ""));
-    }
-    else if (name.startsWith("data-")) {
-        return toCamelCase(name.replace("data-", ""));
-    }
-    else {
-        return toCamelCase(name);
-    }
-}
 function swiperEmpty(swiperElement) {
     const slides = swiperElement.querySelectorAll(".swiper-slide");
     if (slides.length === 0) {
@@ -24,7 +32,6 @@ function swiperEmpty(swiperElement) {
 }
 function hideEmptySwiper(swiperElement) {
     const swiperId = swiperElement.getAttribute(`data-swiper-id`) || "";
-    const swiperMode = swiperElement.dataset.swiperMode || "";
     const hideOptions = swiperElement.dataset.swiperHideOptions || "hideNone";
     switch (hideOptions) {
         case "hideNone":
@@ -40,63 +47,9 @@ function hideEmptySwiper(swiperElement) {
             break;
     }
 }
-function parseSwiperOptions(container, attributes) {
-    const settings = {};
-    attributes.forEach((attribute) => {
-        const key = getKeyFromAttributeName(attribute.name);
-        const value = container.getAttribute(attribute.name);
-        switch (attribute.type) {
-            case "string":
-                settings[key] = value || attribute.default || "";
-                break;
-            case "boolean":
-                if (value !== "false" && value !== "true" && attribute.default === undefined) {
-                    throw new Error(`Attribute "${attribute.name}" is not a boolean.`);
-                }
-                settings[key] = JSON.parse(value || attribute.default?.toString() || "{}") ?? undefined;
-                break;
-            case "float":
-                const float = parseFloat(value || attribute.default?.toString() || "");
-                if (isNaN(float)) {
-                    console.warn("TypeError: Failed to parse attribute value as float.");
-                    settings[key] = undefined;
-                }
-                else {
-                    settings[key] = float;
-                }
-                break;
-            case "floatOrAuto":
-                settings[key] = value === "auto" ? "auto" : parseFloat(value || "") || "auto";
-                break;
-            default:
-                settings[key] = value || attribute.default || "";
-                break;
-        }
-    });
-    return settings;
-}
 export function readSwiperOptions(swiperElement) {
     swiperElement.classList.remove("initial-hide");
-    /**
-     * REMINDER: If this changes, `CustomSwiperOptions` has to be updated as well
-     */
-    const swiperAttributes = [
-        { name: "data-swiper-id", type: "string" },
-        { name: "data-mousewheel", type: "boolean", default: false },
-        { name: "data-free-mode", type: "boolean", default: false },
-        { name: "data-follow-finger", type: "boolean", default: false },
-        { name: "data-auto-height", type: "boolean", default: false },
-        { name: "data-slides-per-view", type: "floatOrAuto" },
-        { name: "data-slide-to-clicked-slide", type: "boolean", default: false },
-        { name: "data-space-between", type: "float", default: 8 },
-        { name: "data-centered-slides", type: "boolean", default: false },
-        { name: "data-loop", type: "boolean", default: true },
-        { name: "data-allow-touch-move", type: "boolean", default: true },
-        { name: "data-autoplay", type: "boolean", default: true },
-        { name: "data-autoplay-delay", type: "float", default: 4000 },
-        { name: "data-speed", type: "float", default: 400 },
-    ];
-    const settings = parseSwiperOptions(swiperElement, swiperAttributes);
+    const settings = parseDataset(swiperElement, swiperAttributes);
     const swiperOptions = {
         autoplay: {
             delay: settings.autoplay ? settings.autoplayDelay : undefined,
