@@ -5,7 +5,7 @@ import type { CamelToDash } from "../typeutils";
 import Swiper from "swiper";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import type { AutoplayOptions, NavigationOptions, SwiperOptions } from "swiper/types";
-import { BaseComponent } from "../base-component/index.js";
+import { BaseComponent, type BaseSettings } from "../base-component/index.js";
 
 type SliderAttribute =
   | "data-swiper-element"
@@ -167,8 +167,8 @@ export class Slider extends BaseComponent<SliderElement> {
     hide: "data-swiper-hide-options",
   };
 
-  constructor(component: HTMLElement, instance: string) {
-    super(component, instance);
+  constructor(component: HTMLElement, settings: BaseSettings) {
+    super(component, settings);
     this.stylesheet = new Stylesheet({
       href: "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css",
     });

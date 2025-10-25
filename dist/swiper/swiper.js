@@ -102,8 +102,8 @@ function initSlides(wrapperEl) {
  * ```
  */
 export class Slider extends BaseComponent {
-    constructor(component, instance) {
-        super(component, instance);
+    constructor(component, settings) {
+        super(component, settings);
         this.stylesheet = new Stylesheet({
             href: "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css",
         });

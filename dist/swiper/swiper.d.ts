@@ -1,7 +1,7 @@
 import { Stylesheet } from "../utils";
 import Swiper from "swiper";
 import type { SwiperOptions } from "swiper/types";
-import { BaseComponent } from "../base-component/index.js";
+import { BaseComponent, type BaseSettings } from "../base-component/index.js";
 type SliderElement = "component" | "wrapper" | "controls" | "navigation" | "pagination" | "prev" | "next" | "counter-current" | "counter-separator" | "counter-total";
 /**
  * A Swiper component wrapper for Webflow.
@@ -44,7 +44,7 @@ export declare class Slider extends BaseComponent<SliderElement> {
         element: string;
         hide: string;
     };
-    constructor(component: HTMLElement, instance: string);
+    constructor(component: HTMLElement, settings: BaseSettings);
     protected static readonly attributeSelector: import("../attributeselector/attributeselector.js").AttributeSelector<string>;
     static selector: import("../attributeselector/attributeselector.js").InstanceSelector<SliderElement>;
     static select: <U extends Element = HTMLElement>(element: SliderElement, instance?: string) => U;
