@@ -68,32 +68,61 @@ export function split(selector) {
     }
     return result;
 }
-/**
- * Creates a selector function based on the provided attribute name.
- * The returned selector function can be used to generate a string selector for the given name.
- * If no name is provided, it will return a selector with just the attribute name.
- *
- * @template T - The type of the name that will be passed to the generated selector function (e.g., string).
- * @param attrName - The name of the attribute that will be used in the selector.
- * @param defaultOptions - Options to configure selector generation.
- * @returns A function that generates the selector string based on the provided name and match type.
- */
-export const createAttribute = (attrName, defaultOptions) => {
-    const mergedDefaultOptions = {
-        defaultMatchType: defaultOptions?.defaultMatchType ?? "exact",
-        defaultValue: defaultOptions?.defaultValue ?? undefined,
-        defaultExclusions: defaultOptions?.defaultExclusions ?? [],
-    };
-    return (name = mergedDefaultOptions.defaultValue, options) => {
-        const mergedOptions = {
-            matchType: options?.matchType ?? mergedDefaultOptions.defaultMatchType,
-            exclusions: options?.exclusions ?? mergedDefaultOptions.defaultExclusions,
+export class Selector {
+    /**
+     * Creates a selector function based on the provided attribute name.
+     * The returned selector function can be used to generate a string selector for the given name.
+     * If no name is provided, it will return a selector with just the attribute name.
+     *
+     * @template T - The type of the name that will be passed to the generated selector function (e.g., string).
+     * @param attrName - The name of the attribute that will be used in the selector.
+     * @param defaultOptions - Options to configure selector generation.
+     * @returns A function that generates the selector string based on the provided name and match type.
+     */
+    static attr(attrName, defaultOptions) {
+        const mergedDefaultOptions = {
+            defaultMatchType: defaultOptions?.defaultMatchType ?? "exact",
+            defaultValue: defaultOptions?.defaultValue ?? undefined,
+            defaultExclusions: defaultOptions?.defaultExclusions ?? [],
         };
-        if (!name) {
-            return exclude(`[${attrName}]`, ...mergedOptions.exclusions);
-        }
-        const value = String(name); // Ensure it's a string for selector use
-        const selector = `[${attrName}${getOperator(mergedOptions.matchType)}="${value}"]`;
-        return exclude(selector, ...(mergedOptions.exclusions ?? []));
-    };
-};
+        return (name = mergedDefaultOptions.defaultValue, options) => {
+            const mergedOptions = {
+                matchType: options?.matchType ?? mergedDefaultOptions.defaultMatchType,
+                exclusions: options?.exclusions ?? mergedDefaultOptions.defaultExclusions,
+            };
+            if (!name) {
+                return exclude(`[${attrName}]`, ...mergedOptions.exclusions);
+            }
+            const value = String(name); // Ensure it's a string for selector use
+            const selector = `[${attrName}${getOperator(mergedOptions.matchType)}="${value}"]`;
+            return exclude(selector, ...(mergedOptions.exclusions ?? []));
+        };
+    }
+    /**
+     * Creates an instance specific selector function for a `BaseComponent` class.
+     *
+     * @template T - The union of all allowed element names for a component.
+     * @param attributeSelector - The attributeSelector member of the component class.
+     * @param attr - The attr member of component class.
+     * @returns A typed static member that generates an instance specific selector string.
+     */
+    static instance(attributeSelector, attr) {
+        return (element, instance) => {
+            const base = attributeSelector(element);
+            const instanceSelector = instance ? `[${attr.id}="${instance}"]` : "";
+            return element === "component" // runtime check: component is special
+                ? `${base}${instanceSelector}`
+                : `${base}${instanceSelector}, ${instanceSelector} ${base}`;
+        };
+    }
+    static select(instanceSelector) {
+        return (element, instance) => {
+            return document.querySelector(instanceSelector(element, instance));
+        };
+    }
+    static selectAll(instanceSelector) {
+        return (element, instance) => {
+            return document.querySelectorAll(instanceSelector(element, instance));
+        };
+    }
+}
