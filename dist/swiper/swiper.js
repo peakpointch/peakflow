@@ -15,7 +15,7 @@ const swiperAttributes = [
     { name: "data-auto-height", type: "boolean", default: false },
     { name: "data-slides-per-view", type: "numberOrAuto" },
     { name: "data-slide-to-clicked-slide", type: "boolean", default: false },
-    { name: "data-space-between", type: "number", default: 8 },
+    { name: "data-space-between", type: "number", default: 0 },
     { name: "data-centered-slides", type: "boolean", default: false },
     { name: "data-loop", type: "boolean", default: true },
     { name: "data-allow-touch-move", type: "boolean", default: true },
@@ -151,7 +151,6 @@ export class Slider extends BaseComponent {
     static readOptions(swiperElement) {
         swiperElement.classList.remove("initial-hide");
         const settings = parseDataset(swiperElement, swiperAttributes);
-        debugger;
         const swiperOptions = {
             autoplay: {
                 delay: settings.autoplay ? settings.autoplayDelay : undefined,
