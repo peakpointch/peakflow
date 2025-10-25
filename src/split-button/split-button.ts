@@ -1,4 +1,4 @@
-import createAttribute from "../attributeselector";
+import Selector from "../attributeselector";
 import { deepMerge } from "../utils";
 
 type SplitButtonElement = "component" | "button" | "trigger" | "list" | "option";
@@ -81,7 +81,7 @@ export class SplitButton<ActionKey extends string = string> {
     });
   }
 
-  private static attributeSelector = createAttribute<SplitButtonElement>(SplitButton.attr.element);
+  private static attributeSelector = Selector.attr<SplitButtonElement>(SplitButton.attr.element);
 
   /**
    * Static selector

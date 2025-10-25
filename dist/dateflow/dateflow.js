@@ -1,4 +1,4 @@
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 import { format } from "date-fns";
 function getDomElements(...elements) {
     const containers = [];
@@ -65,7 +65,7 @@ export function parseDateflow(element) {
  */
 export function dateflow(locale, ...containers) {
     const containerList = getDomElements(...containers);
-    const dateSelector = createAttribute(attr.date);
+    const dateSelector = Selector.attr(attr.date);
     const dateQuery = `${dateSelector()}:not(.w-condition-invisible, .w-condition-invisible [${attr.date}])`;
     let i = 0;
     containerList.forEach((c) => {

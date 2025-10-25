@@ -3,7 +3,7 @@ import type { RenderData } from "../renderer/index.js";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import type { Html2CanvasOptions } from "jspdf";
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 import { softHyphenizer, solidHyphens } from "../hyphenizer/index.js";
 import german from "hyphenation.de";
 import { freezeElement, unFreezeElement } from "./freeze.js";
@@ -45,7 +45,7 @@ export class Pdf {
    * Use this method to select the elements for a new `Pdf` instance.
    * @returns CSS selector string
    */
-  static select = createAttribute<PdfElement>("data-pdf-element");
+  static select = Selector.attr<PdfElement>("data-pdf-element");
 
   private getScaleElement(): HTMLElement {
     const scale = this.canvas.querySelector<HTMLElement>(Pdf.select("scale"));

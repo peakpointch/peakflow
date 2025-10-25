@@ -7,7 +7,7 @@ import {
   startOfISOWeek,
   format,
 } from "date-fns";
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 
 type UXMode = "continuous" | "loop" | "fixed";
 type CalendarweekElements = "component" | "week" | "year";
@@ -75,7 +75,7 @@ export class CalendarweekComponent {
     this.yearInput.addEventListener("change", () => this.onYearChange());
   }
 
-  public static select = createAttribute<CalendarweekElements>("data-cweek-element");
+  public static select = Selector.attr<CalendarweekElements>("data-cweek-element");
 
   public setDate(date: Date, silent: boolean = false): void {
     const year = getISOWeekYear(date);

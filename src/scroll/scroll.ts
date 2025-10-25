@@ -1,4 +1,4 @@
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 
 export interface DefaultScrollOptions {
   defaultOffset: number;
@@ -96,7 +96,7 @@ export function overrideDefaultScroll(options: Partial<DefaultScrollOptions> = {
   initCMSScrollLinks();
   initGlobalScrollLinks();
 
-  const href = createAttribute("href");
+  const href = Selector.attr("href");
   const allScrollLinks = document.querySelectorAll<HTMLAnchorElement>(
     `${href("#", { matchType: "startsWith" })}, [scroll-to]`,
   );

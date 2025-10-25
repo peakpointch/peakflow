@@ -1,4 +1,4 @@
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 import wf from "../webflow/index.js";
 import type { WfFormData } from "../../types/webflow.js";
 import type { FieldGroupValidation } from "./fieldgroup.js";
@@ -18,8 +18,8 @@ export interface RadioGroup {
 }
 
 // Form selector functions
-const formElementSelector = createAttribute<FormComponentElement>("data-form-element");
-const filterFormSelector = createAttribute<FilterFormElement>("data-filter-form");
+const formElementSelector = Selector.attr<FormComponentElement>("data-form-element");
+const filterFormSelector = Selector.attr<FilterFormElement>("data-filter-form");
 
 /**
  * Check if a FormElement is a radio input.

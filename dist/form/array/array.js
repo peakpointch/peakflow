@@ -1,6 +1,6 @@
 import { asSuffix, capitalize, deepMerge } from "../../utils";
 import wf from "../../webflow/index.js";
-import { createAttribute, exclude } from "../../attributeselector";
+import { Selector, exclude } from "../../attributeselector";
 import { FormArrayItem } from "./item";
 import { FormDecision, FormMessage, FormProgressManager, isCheckboxInput, isRadioInput, validateFields, removeErrorClasses, isFormInput, findFormInput, reportValidity, getRadioGroups, setChecked, fieldFromInput, } from "../index.js";
 import Accordion from "../../accordion";
@@ -99,7 +99,7 @@ export class FormArray {
     }
     registerSelects(suffix) {
         // Get all select inputs
-        const selectInputSelector = createAttribute(this.attr.select);
+        const selectInputSelector = Selector.attr(this.attr.select);
         const inputs = this.form.querySelectorAll(selectInputSelector(this.id, { matchType: "whitespace" }));
         this.onSave("update-select-values", () => {
             inputs.forEach((input) => {
@@ -940,4 +940,4 @@ FormArray.options = {
         limit: ({ options, grammar }) => `Sie können max. ${options.limit} ${options.limit === 1 ? grammar.item.sg : grammar.item.pl} hinzufügen.`,
     },
 };
-FormArray.attributeSelector = createAttribute(FormArray.attr.element);
+FormArray.attributeSelector = Selector.attr(FormArray.attr.element);

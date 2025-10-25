@@ -3,7 +3,7 @@ import { fromZonedTime } from "date-fns-tz";
 import { de } from "date-fns/locale";
 import Path from "../path/index.js";
 import wf from "../webflow/index.js";
-import { createAttribute, exclude } from "../attributeselector/index.js";
+import { Selector, exclude } from "../attributeselector/index.js";
 import { deepMerge, toCamelCase, asPrefix, asSuffix, logPrefix } from "../utils/index.js";
 import { ImageField } from "./fields/index.js";
 import { HTMLRenderNode, HTMLRenderField, HTMLRenderBlock } from "./dom/index.js";
@@ -664,7 +664,7 @@ export class Renderer {
      * to find the ancestor, if no ancestor was found.
      */
     findClosestAncestor(nodeName, htmlNode) {
-        const selectAncestor = createAttribute(this.attr.inheritVisibility);
+        const selectAncestor = Selector.attr(this.attr.inheritVisibility);
         const selector = [
             selectAncestor(nodeName, { matchType: "whitespace" }),
             htmlNode.getAttribute(this.attr.hideAncestor) ?? "",
@@ -695,7 +695,7 @@ export class Renderer {
         });
     }
     blockSelector(block) {
-        const blockAttrSelector = createAttribute(this.attr.block);
+        const blockAttrSelector = Selector.attr(this.attr.block);
         if (!block) {
             return blockAttrSelector();
         }
@@ -709,7 +709,7 @@ export class Renderer {
         return selectorString;
     }
     fieldSelector(field) {
-        const fieldAttrSelector = createAttribute(this.attr.field);
+        const fieldAttrSelector = Selector.attr(this.attr.field);
         if (!field) {
             return fieldAttrSelector();
         }

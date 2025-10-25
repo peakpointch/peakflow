@@ -1,7 +1,7 @@
 import Renderer from "../renderer/index.js";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 import { softHyphenizer, solidHyphens } from "../hyphenizer/index.js";
 import german from "hyphenation.de";
 import { freezeElement, unFreezeElement } from "./freeze.js";
@@ -254,4 +254,4 @@ export class Pdf {
  * Use this method to select the elements for a new `Pdf` instance.
  * @returns CSS selector string
  */
-Pdf.select = createAttribute("data-pdf-element");
+Pdf.select = Selector.attr("data-pdf-element");

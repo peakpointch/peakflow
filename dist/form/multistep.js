@@ -1,16 +1,16 @@
 // Imports
-import createAttribute, { exclude, extend } from "../attributeselector/index.js";
+import Selector, { exclude, extend } from "../attributeselector/index.js";
 import { initWfInputs, sendFormData, validateFields, formElementSelector, fieldFromInput, enforceButtonTypes, FieldGroup, isCheckboxInput, setChecked, getRadioGroups, } from "./index.js";
 import { FormProgressManager, } from "./index.js";
 import wf from "../webflow/index.js";
 import { asSuffix, deepMerge } from "../utils";
 import EventEmitter from "eventemitter3";
 // Selector functions
-const stepsElementSelector = createAttribute("data-steps-element", {
+const stepsElementSelector = Selector.attr("data-steps-element", {
     defaultExclusions: ['[data-steps-element="component"] [data-steps-element="component"] *'],
 });
-const stepsTargetSelector = createAttribute("data-step-target");
-const stepsNavSelector = createAttribute("data-steps-nav");
+const stepsTargetSelector = Selector.attr("data-step-target");
+const stepsNavSelector = Selector.attr("data-steps-nav");
 const STEPS_PAGINATION_ITEM_SELECTOR = `button${stepsTargetSelector()}`;
 export class MultiStepForm {
     set currentStep(index) {

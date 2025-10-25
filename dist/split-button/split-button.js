@@ -1,4 +1,4 @@
-import createAttribute from "../attributeselector";
+import Selector from "../attributeselector";
 import { deepMerge } from "../utils";
 export class SplitButton {
     static get attr() {
@@ -116,4 +116,4 @@ export class SplitButton {
         }
     }
 }
-SplitButton.attributeSelector = createAttribute(SplitButton.attr.element);
+SplitButton.attributeSelector = Selector.attr(SplitButton.attr.element);

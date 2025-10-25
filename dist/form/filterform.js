@@ -1,6 +1,6 @@
 import { fieldFromInput } from "./formfield.js";
 import { FieldGroup } from "./fieldgroup.js";
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 import wf from "../webflow/index.js";
 export class FilterForm {
     constructor(container, fieldIds) {
@@ -283,4 +283,4 @@ export class FilterForm {
         }
     }
 }
-FilterForm.select = createAttribute("data-action");
+FilterForm.select = Selector.attr("data-action");

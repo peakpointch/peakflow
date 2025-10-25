@@ -5,7 +5,7 @@ import type { PartialDeep } from "type-fest";
 
 import Path from "../path/index.js";
 import wf from "../webflow/index.js";
-import { createAttribute, exclude } from "../attributeselector/index.js";
+import { Selector, exclude } from "../attributeselector/index.js";
 import { deepMerge, toCamelCase, asPrefix, asSuffix, logPrefix } from "../utils/index.js";
 
 import { ImageField } from "./fields/index.js";
@@ -787,7 +787,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
    * to find the ancestor, if no ancestor was found.
    */
   private findClosestAncestor(nodeName: string, htmlNode: HTMLRenderNode): HTMLElement | string {
-    const selectAncestor = createAttribute(this.attr.inheritVisibility);
+    const selectAncestor = Selector.attr(this.attr.inheritVisibility);
     const selector = [
       selectAncestor(nodeName, { matchType: "whitespace" }),
       htmlNode.getAttribute(this.attr.hideAncestor) ?? "",
@@ -822,7 +822,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   }
 
   private blockSelector(block?: RenderBlock<F> | string): string {
-    const blockAttrSelector = createAttribute(this.attr.block);
+    const blockAttrSelector = Selector.attr(this.attr.block);
     if (!block) {
       return blockAttrSelector();
     } else if (typeof block === "string") {
@@ -837,7 +837,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   }
 
   private fieldSelector(field?: RenderField<F> | string): string {
-    const fieldAttrSelector = createAttribute(this.attr.field);
+    const fieldAttrSelector = Selector.attr(this.attr.field);
     if (!field) {
       return fieldAttrSelector();
     } else if (typeof field === "string") {

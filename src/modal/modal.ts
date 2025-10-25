@@ -1,4 +1,4 @@
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 import deepMerge from "../utils/deepmerge.js";
 import {
   ScrollHandler,
@@ -101,7 +101,7 @@ export class Modal {
     this.initialized = true;
   }
 
-  private static attributeSelector = createAttribute<ModalElement>(Modal.attr.element);
+  private static attributeSelector = Selector.attr<ModalElement>(Modal.attr.element);
 
   /**
    * Static selector

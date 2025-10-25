@@ -1,9 +1,9 @@
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 import wf from "../webflow/index.js";
 import { getAllElements } from "../utils/getelements.js";
 // Form selector functions
-const formElementSelector = createAttribute("data-form-element");
-const filterFormSelector = createAttribute("data-filter-form");
+const formElementSelector = Selector.attr("data-form-element");
+const filterFormSelector = Selector.attr("data-filter-form");
 /**
  * Check if a FormElement is a radio input.
  * @param {HTMLFormInput} input - The input that is to be checked.

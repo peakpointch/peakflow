@@ -1,7 +1,7 @@
 import wf from "../webflow/index.js";
 import { setChecked, validateFields } from "./utility.js";
 import { FormMessage } from "./formmessage.js";
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 /**
  * Represents a decision component within a form, managing conditional paths based on user input.
  *
@@ -52,7 +52,7 @@ export class FormDecision {
         this.defaultErrorMessage = "Please complete the required fields.";
         this.onChangeCallback = () => { };
         this.attr = FormDecision.attr;
-        this.selector = createAttribute(FormDecision.attr.element);
+        this.selector = Selector.attr(FormDecision.attr.element);
         if (!component) {
             console.error(`FormDecision: Component not found.`);
             return;
@@ -287,4 +287,4 @@ export class FormDecision {
         this.onChangeCallback = () => { };
     }
 }
-FormDecision.selector = createAttribute(FormDecision.attr.element);
+FormDecision.selector = Selector.attr(FormDecision.attr.element);

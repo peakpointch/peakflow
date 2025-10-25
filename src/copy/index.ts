@@ -1,4 +1,4 @@
-import createAttribute from "../attributeselector";
+import Selector from "../attributeselector";
 
 type CopyComponentElement = "component" | "button";
 
@@ -27,7 +27,7 @@ export class CopyComponent {
     this.initEventListener();
   }
 
-  public static selector = createAttribute<CopyComponentElement>(this.attr.element);
+  public static selector = Selector.attr<CopyComponentElement>(this.attr.element);
 
   public static create(component: HTMLElement): CopyComponent {
     const button = component.querySelector<HTMLButtonElement>(CopyComponent.selector("button"));

@@ -2,7 +2,7 @@ import wf from "../webflow/index.js";
 import { setChecked, validateFields } from "./utility.js";
 import type { HTMLFormInput } from "./utility.js";
 import { FormMessage } from "./formmessage.js";
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 
 interface FormDecisionAttributes {
   component: string;
@@ -95,8 +95,8 @@ export class FormDecision<PathId extends string = string> {
     this.initialize();
   }
 
-  public static selector = createAttribute<FormDecisionElement>(FormDecision.attr.element);
-  public selector = createAttribute<FormDecisionElement>(FormDecision.attr.element);
+  public static selector = Selector.attr<FormDecisionElement>(FormDecision.attr.element);
+  public selector = Selector.attr<FormDecisionElement>(FormDecision.attr.element);
 
   /**
    * Initializes the FormDecision instance by setting up decision inputs & paths as well as their event listeners.

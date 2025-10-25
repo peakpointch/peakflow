@@ -1,5 +1,5 @@
 var _a;
-import createAttribute from "../attributeselector";
+import Selector from "../attributeselector";
 export class CopyComponent {
     constructor(trigger, data) {
         this.config = {
@@ -32,7 +32,7 @@ CopyComponent.attr = {
     element: "data-copy-element",
     data: "data-copy-data",
 };
-CopyComponent.selector = createAttribute(_a.attr.element);
+CopyComponent.selector = Selector.attr(_a.attr.element);
 export function initCopyComponents() {
     const selector = [CopyComponent.selector("component"), `[${CopyComponent.attr.component}]`].join(", ");
     const allComponents = document.querySelectorAll(selector);

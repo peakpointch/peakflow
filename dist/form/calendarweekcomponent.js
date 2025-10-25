@@ -1,5 +1,5 @@
 import { getISOWeek, getISOWeeksInYear, getISOWeekYear, setISOWeekYear, setISOWeek, startOfISOWeek, format, } from "date-fns";
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 function getISOWeeksOfYear(year) {
     return getISOWeeksInYear(new Date(year, 5, 1));
 }
@@ -234,4 +234,4 @@ export class CalendarweekComponent {
         }
     }
 }
-CalendarweekComponent.select = createAttribute("data-cweek-element");
+CalendarweekComponent.select = Selector.attr("data-cweek-element");

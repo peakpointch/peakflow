@@ -1,8 +1,8 @@
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 /**
  * Returns the *"input-sync"* attribute as a CSSSelector.
  */
-export const syncSelector = createAttribute("input-sync");
+export const syncSelector = Selector.attr("input-sync");
 /**
  * Groups the inputs to be synced by their sync names
  * into a `Map`.

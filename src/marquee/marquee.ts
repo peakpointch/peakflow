@@ -1,8 +1,8 @@
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 
 export type MarqueeElement = "component" | "track" | "button";
 
-export const marqueeSelector = createAttribute<MarqueeElement>("data-marquee-element");
+export const marqueeSelector = Selector.attr<MarqueeElement>("data-marquee-element");
 
 export function setMarqueeSpeed(speed: number | "auto", trackOrComponent: HTMLElement): number {
   if (!trackOrComponent || !(trackOrComponent instanceof HTMLElement)) {

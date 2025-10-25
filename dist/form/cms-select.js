@@ -1,4 +1,4 @@
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 import { getAllElements, getElement } from "../utils/getelements.js";
 export class CMSSelect {
     constructor(component, options = {}) {
@@ -146,4 +146,4 @@ CMSSelect.attr = {
     wait: "data-cms-select-wait",
     status: "data-cms-select-status",
 };
-CMSSelect.attributeSelector = createAttribute("data-cms-select-element");
+CMSSelect.attributeSelector = Selector.attr("data-cms-select-element");

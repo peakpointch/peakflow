@@ -1,5 +1,5 @@
 // Imports
-import createAttribute, { exclude, extend } from "../attributeselector/index.js";
+import Selector, { exclude, extend } from "../attributeselector/index.js";
 import {
   initWfInputs,
   sendFormData,
@@ -82,11 +82,11 @@ type MultiStepFormEvents =
 type VirtualFieldFn<F = any, C = any> = (data: { fields: F; customFields: C }) => string;
 
 // Selector functions
-const stepsElementSelector = createAttribute<StepsComponentElement>("data-steps-element", {
+const stepsElementSelector = Selector.attr<StepsComponentElement>("data-steps-element", {
   defaultExclusions: ['[data-steps-element="component"] [data-steps-element="component"] *'],
 });
-const stepsTargetSelector = createAttribute<string>("data-step-target");
-const stepsNavSelector = createAttribute<StepsNavElement>("data-steps-nav");
+const stepsTargetSelector = Selector.attr<string>("data-step-target");
+const stepsNavSelector = Selector.attr<StepsNavElement>("data-steps-nav");
 
 const STEPS_PAGINATION_ITEM_SELECTOR: string = `button${stepsTargetSelector()}`;
 

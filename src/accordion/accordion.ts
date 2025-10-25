@@ -1,5 +1,3 @@
-import createAttribute from "../attributeselector/index.js";
-
 export class Accordion {
   public component: HTMLElement;
   public uiTrigger: HTMLElement;

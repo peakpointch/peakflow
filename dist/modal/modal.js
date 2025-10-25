@@ -1,4 +1,4 @@
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 import deepMerge from "../utils/deepmerge.js";
 import { ScrollHandler, lockBodyScroll, unlockBodyScroll, addScrollbarPadding, removeScrollbarPadding, } from "../scroll/index.js";
 export const defaultModalAnimation = {
@@ -218,7 +218,7 @@ Modal.attr = {
     id: "data-modal-id",
     element: "data-modal-element",
 };
-Modal.attributeSelector = createAttribute(Modal.attr.element);
+Modal.attributeSelector = Selector.attr(Modal.attr.element);
 function animationFrame() {
     return new Promise((resolve) => requestAnimationFrame(() => resolve()));
 }

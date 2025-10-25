@@ -1,4 +1,4 @@
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 import { format } from "date-fns";
 import type { Locale } from "date-fns";
 
@@ -71,7 +71,7 @@ export function parseDateflow(element: HTMLElement): Date {
  */
 export function dateflow(locale: Locale, ...containers: ElementsArg): void {
   const containerList: HTMLElement[] = getDomElements(...containers);
-  const dateSelector = createAttribute(attr.date);
+  const dateSelector = Selector.attr(attr.date);
   const dateQuery: string = `${dateSelector()}:not(.w-condition-invisible, .w-condition-invisible [${attr.date}])`;
   let i: number = 0;
 

@@ -1,4 +1,4 @@
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 export const defaultScrollOptions = {
     defaultOffset: 0,
     defaultBehaviour: "smooth",
@@ -65,7 +65,7 @@ export function disableWebflowScroll() {
 export function overrideDefaultScroll(options = {}) {
     initCMSScrollLinks();
     initGlobalScrollLinks();
-    const href = createAttribute("href");
+    const href = Selector.attr("href");
     const allScrollLinks = document.querySelectorAll(`${href("#", { matchType: "startsWith" })}, [scroll-to]`);
     allScrollLinks.forEach((link) => {
         link.addEventListener("click", (event) => onScroll(link, event, options));

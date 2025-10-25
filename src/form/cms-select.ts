@@ -1,4 +1,4 @@
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 import { getAllElements, getElement } from "../utils/getelements.js";
 
 type CMSSelectElement = "source" | "target" | "option";
@@ -60,7 +60,7 @@ export class CMSSelect {
     }
   }
 
-  private static attributeSelector = createAttribute<CMSSelectElement>("data-cms-select-element");
+  private static attributeSelector = Selector.attr<CMSSelectElement>("data-cms-select-element");
 
   /**
    * Static selector

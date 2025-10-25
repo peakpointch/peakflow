@@ -1,6 +1,6 @@
 import { asSuffix, capitalize, deepMerge } from "../../utils";
 import wf from "../../webflow/index.js";
-import { createAttribute, exclude } from "../../attributeselector";
+import { Selector, exclude } from "../../attributeselector";
 import { FormArrayItem, type ItemConstructor, type SerializedItem } from "./item";
 import type { FormArrayDialogs, FormMessages, GrammarOptions, MessageFn } from "./messages";
 import {
@@ -218,7 +218,7 @@ export class FormArray<Item extends FormArrayItem> {
     this.initialize();
   }
 
-  private static attributeSelector = createAttribute<ArrayElement>(FormArray.attr.element);
+  private static attributeSelector = Selector.attr<ArrayElement>(FormArray.attr.element);
 
   /**
    * Static selector
@@ -273,7 +273,7 @@ export class FormArray<Item extends FormArrayItem> {
 
   public registerSelects(suffix?: string): void {
     // Get all select inputs
-    const selectInputSelector = createAttribute(this.attr.select);
+    const selectInputSelector = Selector.attr(this.attr.select);
     const inputs = this.form.querySelectorAll<HTMLSelectElement>(
       selectInputSelector(this.id, { matchType: "whitespace" }),
     );

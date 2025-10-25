@@ -1,7 +1,7 @@
 import { fieldFromInput } from "./formfield.js";
 import { FieldGroup } from "./fieldgroup.js";
 import type { HTMLFormInput } from "./utility.js";
-import createAttribute from "../attributeselector/index.js";
+import Selector from "../attributeselector/index.js";
 import wf from "../webflow/index.js";
 
 type FilterAction<T extends string = string, Q extends string = string> = (
@@ -22,7 +22,7 @@ export class FilterForm<FieldId extends string = string> {
   private defaultDayRange: number = 7;
   private resizeResetFields: Map<FieldId, () => string | number | Date> = new Map();
 
-  public static select = createAttribute<ActionElement>("data-action");
+  public static select = Selector.attr<ActionElement>("data-action");
 
   constructor(
     container: HTMLElement | null,
