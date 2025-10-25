@@ -12,3 +12,9 @@ export type BooleanString = "true" | "false";
  * Replace `true` and `false` values with their string versions.
  */
 export type StringifyBoolean<T> = Exclude<T, boolean> | BooleanString;
+export type StringTypeMap = {
+    string: string;
+    boolean: boolean;
+    number: number;
+    numberOrAuto: number | "auto";
+};
