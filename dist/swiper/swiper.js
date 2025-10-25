@@ -105,7 +105,7 @@ export class Slider extends BaseComponent {
     constructor(component, settings) {
         super(component, settings);
         this.stylesheet = new Stylesheet({
-            href: "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css",
+            href: "https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css",
         });
         this.stylesheet.load();
         _a.create(this.component);
@@ -139,7 +139,7 @@ export class Slider extends BaseComponent {
     }
     static initAll(container = document.body) {
         new Stylesheet({
-            href: "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css",
+            href: "https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css",
         }).load();
         // Remove all empty slides
         container.querySelectorAll(".w-slide:empty").forEach((e) => e.remove());

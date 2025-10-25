@@ -170,7 +170,7 @@ export class Slider extends BaseComponent<SliderElement> {
   constructor(component: HTMLElement, settings: BaseSettings) {
     super(component, settings);
     this.stylesheet = new Stylesheet({
-      href: "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css",
+      href: "https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css",
     });
 
     this.stylesheet.load();
@@ -220,7 +220,7 @@ export class Slider extends BaseComponent<SliderElement> {
 
   public static initAll(container: HTMLElement = document.body): void {
     new Stylesheet({
-      href: "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css",
+      href: "https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css",
     }).load();
 
     // Remove all empty slides
