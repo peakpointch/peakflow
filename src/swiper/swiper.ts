@@ -229,7 +229,7 @@ export class Slider extends BaseComponent<SliderElement> {
     const webflowSwipers = container.querySelectorAll<HTMLElement>(Slider.selector("component"));
 
     webflowSwipers.forEach((swiperElement: HTMLElement) => {
-      this.create(swiperElement);
+      Slider.create(swiperElement);
     });
   }
 

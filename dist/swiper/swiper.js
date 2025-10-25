@@ -145,7 +145,7 @@ export class Slider extends BaseComponent {
         container.querySelectorAll(".w-slide:empty").forEach((e) => e.remove());
         const webflowSwipers = container.querySelectorAll(_a.selector("component"));
         webflowSwipers.forEach((swiperElement) => {
-            this.create(swiperElement);
+            _a.create(swiperElement);
         });
     }
     static readOptions(swiperElement) {
