@@ -1,3 +1,4 @@
+import { BaseComponent, type BaseSettings } from "../../base-component/index.js";
 import { FormArrayItem, type ItemConstructor, type SerializedItem } from "./item";
 import type { FormArrayDialogs, FormMessages, GrammarOptions } from "./messages";
 import { FormProgressManager, type FormProgressComponent, type FieldGroupValidation } from "../index.js";
@@ -21,9 +22,9 @@ interface ArrayAttributes {
     linkFields: string;
     select: string;
 }
-export interface FormArrayOptions<Item extends FormArrayItem> {
+export interface FormArraySettings<Item extends FormArrayItem> extends BaseSettings {
     /** Unique identifier of this array */
-    id: string | number;
+    id: string;
     /** Used to store progress of this component */
     formId: string;
     /**
@@ -46,9 +47,9 @@ export interface FormArrayOptions<Item extends FormArrayItem> {
     messages?: FormMessages<Item>;
     dialogs?: FormArrayDialogs<Item>;
 }
-export declare class FormArray<Item extends FormArrayItem> {
+export declare class FormArray<Item extends FormArrayItem> extends BaseComponent<ArrayElement> {
     static readonly attr: ArrayAttributes;
-    static readonly options: FormArrayOptions<FormArrayItem>;
+    static readonly defaultSettings: FormArraySettings<FormArrayItem>;
     readonly attr: ArrayAttributes;
     alertDialog: AlertDialog;
     component: HTMLElement;
@@ -59,7 +60,7 @@ export declare class FormArray<Item extends FormArrayItem> {
     items: Map<string, Item>;
     modal: Modal;
     modalElement: HTMLElement;
-    options: FormArrayOptions<Item>;
+    settings: FormArraySettings<Item>;
     splitButton: SplitButton<"draft" | "save">;
     private Item;
     private list;
@@ -74,8 +75,8 @@ export declare class FormArray<Item extends FormArrayItem> {
     private onSaveCallbacks;
     private editingKey;
     private unsavedItem;
-    constructor(options: PartialDeep<FormArrayOptions<Item>>);
-    private static attributeSelector;
+    constructor(settings: PartialDeep<FormArraySettings<Item>>);
+    protected static attributeSelector: import("../../attributeselector").AttributeSelector<ArrayElement>;
     /**
      * Static selector
      */

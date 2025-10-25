@@ -1,11 +1,11 @@
 import { FormArrayItem } from "./item";
-import { type FormArrayOptions } from "./array";
+import { type FormArraySettings } from "./array";
 import { type Pluralized } from "../../pluralize";
 
 export type MessageFn<Item extends FormArrayItem> = (ctx: {
   item?: Item;
   grammar: GrammarOptions;
-  options: FormArrayOptions<Item>;
+  options: FormArraySettings<Item>;
 }) => string;
 
 export type FormArrayMessageName = "empty" | "draft" | "invalid" | "limit";

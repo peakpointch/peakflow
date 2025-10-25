@@ -1,6 +1,7 @@
-import { asSuffix, capitalize, deepMerge } from "../../utils";
+import { asSuffix, capitalize } from "../../utils";
 import wf from "../../webflow/index.js";
 import { Selector, exclude } from "../../attributeselector";
+import { BaseComponent } from "../../base-component/index.js";
 import { FormArrayItem } from "./item";
 import { FormDecision, FormMessage, FormProgressManager, isCheckboxInput, isRadioInput, validateFields, removeErrorClasses, isFormInput, findFormInput, reportValidity, getRadioGroups, setChecked, fieldFromInput, } from "../index.js";
 import Accordion from "../../accordion";
@@ -9,8 +10,9 @@ import { Modal, AlertDialog } from "../../modal";
 import { pluralize } from "../../pluralize";
 import semver from "semver";
 const ARRAY_STORAGE_VERSION = "1.0.0";
-export class FormArray {
-    constructor(options) {
+export class FormArray extends BaseComponent {
+    constructor(settings) {
+        super(FormArray.select("component", settings.id), settings);
         this.attr = FormArray.attr;
         this.groups = [];
         this.initialized = false;
@@ -20,15 +22,12 @@ export class FormArray {
         this.onSaveCallbacks = new Map();
         this.editingKey = null;
         this.unsavedItem = null;
-        //@ts-ignore
-        this.options = deepMerge(FormArray.options, options);
-        this.id = this.options.id.toString();
-        if (this.options.itemClass === undefined) {
+        if (this.settings.itemClass === undefined) {
             throw new Error(`Please pass an implementation of the FormArrayItem class.`);
         }
-        this.Item = this.options.itemClass;
+        this.Item = this.settings.itemClass;
         this.items = new Map();
-        this.form = this.options.container;
+        this.form = this.settings.container;
         this.component = FormArray.select("component", this.id);
         this.list = this.select("list");
         this.template = this.list.querySelector(this.selector("template"));
@@ -46,7 +45,7 @@ export class FormArray {
                 smooth: true,
             },
         });
-        this.alertDialog = this.options.alertDialog;
+        this.alertDialog = this.settings.alertDialog;
         this.splitButton = new SplitButton(SplitButton.select("component", this.id));
         this.cancelButtons = this.selectAll("cancel", true);
         // this.cancelButtons = this.modalElement.querySelectorAll<HTMLButtonElement>(
@@ -290,7 +289,7 @@ export class FormArray {
     handleLinkedFieldsVisibility() {
         const length = this.unsavedItem === null ? this.items.size : this.items.size + 1;
         const links = this.modalElement.querySelectorAll(`[${this.attr.linkFields}]`);
-        if (this.options.limit !== undefined && length !== 2) {
+        if (this.settings.limit !== undefined && length !== 2) {
             links.forEach((link) => {
                 link.style.display = "none";
             });
@@ -380,7 +379,7 @@ export class FormArray {
      * Opens the modal form to start a new `Item`. Creates an unsaved item.
      */
     startNewItem() {
-        if (this.items.size === this.options.limit) {
+        if (this.items.size === this.settings.limit) {
             const msg = this.getMessage("limit");
             this.formMessage.error(msg);
             this.formMessage.setTimedReset(5000);
@@ -418,10 +417,10 @@ export class FormArray {
         this.triggerOnSave();
     }
     saveItem(item) {
-        const itemName = pluralize(this.options.grammar.item, this.options.limit);
-        const itemLimitError = new RangeError(`Sie können nur max. ${this.options.limit} ${itemName} hinzufügen.`);
+        const itemName = pluralize(this.settings.grammar.item, this.settings.limit);
+        const itemLimitError = new RangeError(`Sie können nur max. ${this.settings.limit} ${itemName} hinzufügen.`);
         if (!this.editingKey.startsWith("unsaved") && this.editingKey !== null) {
-            if (this.items.size > this.options.limit) {
+            if (this.items.size > this.settings.limit) {
                 throw itemLimitError;
             }
             // Update existing item
@@ -429,7 +428,7 @@ export class FormArray {
             this.items.set(this.editingKey, item);
         }
         else {
-            if (this.items.size >= this.options.limit) {
+            if (this.items.size >= this.settings.limit) {
                 throw itemLimitError;
             }
             // Add the new item
@@ -844,7 +843,7 @@ export class FormArray {
      */
     getProgress() {
         return {
-            id: `${this.options.id}`,
+            id: `${this.settings.id}`,
             version: ARRAY_STORAGE_VERSION,
             data: this.serialize(),
         };
@@ -854,7 +853,7 @@ export class FormArray {
      */
     loadProgress() {
         // Check if there's any saved data in localStorage
-        const form = this.options.manager.getForm(this.options.formId);
+        const form = this.settings.manager.getForm(this.settings.formId);
         const progress = form?.components.find((comp) => comp.id === this.id);
         if (!form || !progress) {
             console.log(`FormArray "${this.id}": No saved form progress found.`);
@@ -886,9 +885,9 @@ export class FormArray {
         }
     }
     getMessage(key, ctx) {
-        const msg = this.options.messages?.[key];
-        const grammar = this.options.grammar;
-        const options = this.options;
+        const msg = this.settings.messages?.[key];
+        const grammar = this.settings.grammar;
+        const options = this.settings;
         if (!msg)
             return undefined;
         if (typeof msg === "function") {
@@ -897,9 +896,9 @@ export class FormArray {
         return msg; // plain string
     }
     getDialog(type, item) {
-        const dialog = this.options.dialogs[type];
-        const grammar = this.options.grammar;
-        const options = this.options;
+        const dialog = this.settings.dialogs[type];
+        const grammar = this.settings.grammar;
+        const options = this.settings;
         const resolve = (val) => typeof val === "function" ? val({ item, grammar, options }) : (val ?? "");
         return {
             title: resolve(dialog.title),
@@ -916,7 +915,7 @@ FormArray.attr = {
     fieldGroup: "data-field-group",
     linkFields: "data-link-fields",
 };
-FormArray.options = {
+FormArray.defaultSettings = {
     id: "form-array",
     formId: "form",
     container: undefined,

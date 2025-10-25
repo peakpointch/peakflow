@@ -1,6 +1,7 @@
-import { asSuffix, capitalize, deepMerge } from "../../utils";
+import { asSuffix, capitalize } from "../../utils";
 import wf from "../../webflow/index.js";
 import { Selector, exclude } from "../../attributeselector";
+import { BaseComponent, type BaseSettings } from "../../base-component/index.js";
 import { FormArrayItem, type ItemConstructor, type SerializedItem } from "./item";
 import type { FormArrayDialogs, FormMessages, GrammarOptions, MessageFn } from "./messages";
 import {
@@ -63,9 +64,9 @@ interface ArrayAttributes {
   select: string;
 }
 
-export interface FormArrayOptions<Item extends FormArrayItem> {
+export interface FormArraySettings<Item extends FormArrayItem> extends BaseSettings {
   /** Unique identifier of this array */
-  id: string | number;
+  id: string;
 
   /** Used to store progress of this component */
   formId: string;
@@ -98,7 +99,7 @@ export interface FormArrayOptions<Item extends FormArrayItem> {
 
 const ARRAY_STORAGE_VERSION = "1.0.0";
 
-export class FormArray<Item extends FormArrayItem> {
+export class FormArray<Item extends FormArrayItem> extends BaseComponent<ArrayElement> {
   public static readonly attr: ArrayAttributes = {
     id: "data-form-array-id",
     element: "data-form-array-element",
@@ -107,7 +108,7 @@ export class FormArray<Item extends FormArrayItem> {
     linkFields: "data-link-fields",
   };
 
-  public static readonly options: FormArrayOptions<FormArrayItem> = {
+  public static readonly defaultSettings: FormArraySettings<FormArrayItem> = {
     id: "form-array",
     formId: "form",
     container: undefined,
@@ -145,7 +146,7 @@ export class FormArray<Item extends FormArrayItem> {
   public items: Map<string, Item>;
   public modal: Modal;
   public modalElement: HTMLElement;
-  public options: FormArrayOptions<Item>;
+  public settings: FormArraySettings<Item>;
   public splitButton: SplitButton<"draft" | "save">;
 
   private Item: ItemConstructor<Item>;
@@ -163,19 +164,17 @@ export class FormArray<Item extends FormArrayItem> {
   private editingKey: string | null = null;
   private unsavedItem: Item | null = null;
 
-  constructor(options: PartialDeep<FormArrayOptions<Item>>) {
-    //@ts-ignore
-    this.options = deepMerge(FormArray.options, options);
-    this.id = this.options.id.toString();
+  constructor(settings: PartialDeep<FormArraySettings<Item>>) {
+    super(FormArray.select("component", settings.id), settings);
 
-    if (this.options.itemClass === undefined) {
+    if (this.settings.itemClass === undefined) {
       throw new Error(`Please pass an implementation of the FormArrayItem class.`);
     }
 
-    this.Item = this.options.itemClass;
+    this.Item = this.settings.itemClass;
     this.items = new Map();
 
-    this.form = this.options.container;
+    this.form = this.settings.container;
     this.component = FormArray.select("component", this.id);
     this.list = this.select("list");
     this.template = this.list.querySelector(this.selector("template"))!;
@@ -194,7 +193,7 @@ export class FormArray<Item extends FormArrayItem> {
         smooth: true,
       },
     });
-    this.alertDialog = this.options.alertDialog;
+    this.alertDialog = this.settings.alertDialog;
     this.splitButton = new SplitButton(SplitButton.select("component", this.id));
     this.cancelButtons = this.selectAll<HTMLButtonElement>("cancel", true);
     // this.cancelButtons = this.modalElement.querySelectorAll<HTMLButtonElement>(
@@ -218,7 +217,7 @@ export class FormArray<Item extends FormArrayItem> {
     this.initialize();
   }
 
-  private static attributeSelector = Selector.attr<ArrayElement>(FormArray.attr.element);
+  protected static attributeSelector = Selector.attr<ArrayElement>(FormArray.attr.element);
 
   /**
    * Static selector
@@ -508,7 +507,7 @@ export class FormArray<Item extends FormArrayItem> {
 
     const links = this.modalElement.querySelectorAll<HTMLElement>(`[${this.attr.linkFields}]`);
 
-    if (this.options.limit !== undefined && length !== 2) {
+    if (this.settings.limit !== undefined && length !== 2) {
       links.forEach((link) => {
         link.style.display = "none";
       });
@@ -603,7 +602,7 @@ export class FormArray<Item extends FormArrayItem> {
    * Opens the modal form to start a new `Item`. Creates an unsaved item.
    */
   public startNewItem() {
-    if (this.items.size === this.options.limit) {
+    if (this.items.size === this.settings.limit) {
       const msg = this.getMessage("limit");
       this.formMessage.error(msg);
       this.formMessage.setTimedReset(5000);
@@ -646,20 +645,20 @@ export class FormArray<Item extends FormArrayItem> {
   }
 
   private saveItem(item: Item): boolean {
-    const itemName = pluralize(this.options.grammar.item, this.options.limit);
+    const itemName = pluralize(this.settings.grammar.item, this.settings.limit);
     const itemLimitError = new RangeError(
-      `Sie können nur max. ${this.options.limit} ${itemName} hinzufügen.`,
+      `Sie können nur max. ${this.settings.limit} ${itemName} hinzufügen.`,
     );
 
     if (!this.editingKey.startsWith("unsaved") && this.editingKey !== null) {
-      if (this.items.size > this.options.limit) {
+      if (this.items.size > this.settings.limit) {
         throw itemLimitError;
       }
       // Update existing item
       item.key = this.editingKey;
       this.items.set(this.editingKey, item);
     } else {
-      if (this.items.size >= this.options.limit) {
+      if (this.items.size >= this.settings.limit) {
         throw itemLimitError;
       }
       // Add the new item
@@ -1173,7 +1172,7 @@ export class FormArray<Item extends FormArrayItem> {
    */
   public getProgress(): FormProgressComponent<SerializedFormArray> {
     return {
-      id: `${this.options.id}`,
+      id: `${this.settings.id}`,
       version: ARRAY_STORAGE_VERSION,
       data: this.serialize(),
     };
@@ -1184,7 +1183,7 @@ export class FormArray<Item extends FormArrayItem> {
    */
   public loadProgress(): void {
     // Check if there's any saved data in localStorage
-    const form = this.options.manager.getForm(this.options.formId);
+    const form = this.settings.manager.getForm(this.settings.formId);
     const progress = form?.components.find(
       (comp) => comp.id === this.id,
     ) as FormProgressComponent<SerializedFormArray>;
@@ -1228,9 +1227,9 @@ export class FormArray<Item extends FormArrayItem> {
     key: K,
     ctx?: { item?: Item },
   ): string | undefined {
-    const msg = this.options.messages?.[key];
-    const grammar = this.options.grammar;
-    const options = this.options;
+    const msg = this.settings.messages?.[key];
+    const grammar = this.settings.grammar;
+    const options = this.settings;
 
     if (!msg) return undefined;
 
@@ -1245,9 +1244,9 @@ export class FormArray<Item extends FormArrayItem> {
     type: T,
     item?: Item,
   ): AlertDialogMessage {
-    const dialog = this.options.dialogs[type];
-    const grammar = this.options.grammar;
-    const options = this.options;
+    const dialog = this.settings.dialogs[type];
+    const grammar = this.settings.grammar;
+    const options = this.settings;
 
     const resolve = (val: string | MessageFn<Item> | undefined) =>
       typeof val === "function" ? val({ item, grammar, options }) : (val ?? "");
