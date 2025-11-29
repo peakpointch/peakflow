@@ -41,31 +41,32 @@ export async function loadCal(namespace) {
     Cal("init", namespace, { origin: "https://cal.com" });
     return Cal;
 }
-export async function initCal(namespace) {
+export async function initCal(opts) {
+    const namespace = opts.namespace;
     const Cal = await loadCal(namespace);
-    const element = document.querySelector(`[cal-id="${namespace}"]`);
-    if (!element)
+    const el = opts.element || document.querySelector(`[cal-id="${namespace}"]`);
+    if (!el)
         throw new Error("Embed container not found");
-    const calLink = element.getAttribute("cal-link");
+    const calLink = el.getAttribute("cal-link");
     if (!calLink)
         throw new Error(`Please specify a cal link`);
     const calDOMOptions = {
         link: calLink,
-        hideEventTypeDetails: element.getAttribute("cal-hide-event-details") === "true",
+        hideEventTypeDetails: el.getAttribute("cal-hide-event-details") === "true",
     };
     Cal.ns[namespace]("inline", {
-        elementOrSelector: element,
-        config: { layout: "month_view" },
+        elementOrSelector: el,
+        config: { layout: opts.layout || "month_view" },
         calLink: calDOMOptions.link,
     });
     Cal.ns[namespace]("ui", {
         hideEventTypeDetails: calDOMOptions.hideEventTypeDetails,
-        layout: "month_view",
+        layout: opts.layout || "month_view",
         cssVarsPerTheme: {
-            light: { "cal-brand": "#333" },
-            dark: { "cal-brand": "#eee" },
+            light: opts.colors?.light,
+            dark: opts.colors?.dark,
         },
-        theme: "light",
+        theme: opts.theme || "light",
     });
     return Cal;
 }
