@@ -389,7 +389,17 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
         break;
       case "text":
       default:
-        htmlNode.innerText = renderField.value;
+        function decodeHTMLEntities(str: string): string {
+          const entities = {
+            "&nbsp;": "\u00A0",
+            "&amp;": "&",
+            "&lt;": "<",
+            "&gt;": ">",
+          };
+          return str.replace(/&[a-z]+;/g, (match) => entities[match] || match);
+        }
+
+        htmlNode.textContent = decodeHTMLEntities(renderField.value);
     }
   }
 
