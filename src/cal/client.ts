@@ -7,20 +7,36 @@ import type {
   EventDataMap as CalEventDataMap,
 } from "@calcom/embed-core/dist/src/sdk-action-manager";
 
+/** The string literal of all available Cal.com embed event names. */
 type CalEventName = keyof CalEventDataMap;
+
+/**
+ * Type for a callback function registered to a Cal.com embed event.
+ * @template K The name of the Cal.com event.
+ */
 type CalEventCallback<K extends CalEventName> = (data: CustomEvent<CalEventData<K>>) => void;
 
+/**
+ * Options required to initialize a specific Cal.com namespace and embed container.
+ * @template Namespace The specific string literal for the namespace identifier.
+ */
 interface InitCalOptions<Namespace extends string = string> {
+  /** The unique namespace identifier for the Cal.com instance (e.g., 'main-embed'). */
   namespace: Namespace;
+  /** Optional: The HTMLElement to embed the calendar into. If not provided, it looks for an element using the `cal-id` attribute. */
   element?: HTMLElement;
+  /** Optional: The display layout for the embed (e.g., 'month_view', 'date_view'). */
   layout?: BookerLayouts;
+  /** Optional: The theme of the embed ('light' or 'dark'). */
   theme?: EmbedThemeConfig;
+  /** Optional: Custom CSS variables to override default Cal.com colors for light and dark themes. */
   colors?: {
     light?: Partial<CalCSSVars>;
     dark?: Partial<CalCSSVars>;
   };
 }
 
+/** Standard CSS variables used by the Cal.com embed for theming. */
 interface CalCSSVars {
   "cal-brand": string;
   "cal-brand-accent": string;
@@ -97,39 +113,71 @@ interface CalCSSVars {
   "cal-text-visualization-7": string;
 }
 
+/** Internal options derived from the host DOM element for configuring the Cal.com embed. */
 interface CalDOMOptions {
   link: string;
   hideEventTypeDetails: boolean;
 }
 
-interface CalClientAttributes {
+/** Maps user-facing property names to the actual HTML data attributes used by the Cal.com embed. */
+export interface CalClientAttributes {
   id: "cal-id";
   link: "cal-link";
   hideEventTypeDetails: "cal-hide-event-details";
 }
 
+/** General options for configuring the behavior of the CalClient instance itself. */
 interface CalClientOptions {
+  /** If true, the Cal.com SDK script will be automatically loaded upon client creation. */
   load: boolean;
 }
 
+/**
+ * Client class responsible for loading the Cal.com embed script and managing
+ * calendar instances (namespaces) with specific configurations. This class acts
+ * as the main interface for embedding and interacting with Cal.com.
+ *
+ * @template Namespace The union of all namespace strings managed by this client instance.
+ */
 export class CalClient<Namespace extends string = string> {
   public static defaultOptions: CalClientOptions = {
     load: true,
   };
 
+  /** Attribute names used by the client for DOM element discovery. */
   public attr: CalClientAttributes = {
     id: "cal-id",
     link: "cal-link",
     hideEventTypeDetails: "cal-hide-event-details",
   };
+  /** The global Cal.com instance loaded onto the window object. */
   public cal: GlobalCal;
+
+  /** Flag indicating whether the Cal.com SDK has been successfully loaded. */
   public initialized: boolean = false;
+
+  /** The final resolved options for the current client instance. */
   public options: CalClientOptions;
 
+  /**
+   * This class must be instantiated via the static async create() factory method.
+   *
+   * @param options Optional partial configuration for the client instance itself.
+   * @private
+   */
   private constructor(options?: PartialDeep<CalClientOptions>) {
     this.options = deepMerge(CalClient.defaultOptions, options);
   }
 
+  /**
+   * Creates a CalClient instance.
+   * This method loads the SDK and initializes the first namespace if provided.
+   *
+   * @template T The specific string literal for the initial namespace identifier.
+   * @param clientOptions Optional configuration for the CalClient itself (e.g., `{ load: false }`).
+   * @param initialNamespaceOptions Optional configuration to immediately initialize the first namespace/embed.
+   * @returns A promise that resolves with a fully initialized CalClient instance.
+   */
   public static async create<T extends string = string>(
     options?: PartialDeep<CalClientOptions>,
   ): Promise<CalClient<T>> {
@@ -138,6 +186,12 @@ export class CalClient<Namespace extends string = string> {
     return client;
   }
 
+  /**
+   * Loads Cal into the window scope using the Cal.com snippet logic.
+   *
+   * @returns A promise that resolves with the GlobalCal instance when loaded.
+   * @private
+   */
   public static async _loadCal(): Promise<GlobalCal> {
     if (typeof window.Cal !== "undefined") return window.Cal;
 
@@ -185,11 +239,24 @@ export class CalClient<Namespace extends string = string> {
     return window.Cal as GlobalCal;
   }
 
+  /**
+   * Loads the global Cal instance, initializing the SDK.
+   * Use this method to load Cal into your client, if not instantiated via await CalClient.create()
+   *
+   * @returns A promise that resolves when the Cal.com SDK is loaded.
+   */
   public async loadCal(): Promise<void> {
     this.cal = await CalClient._loadCal();
     this.initialized = true;
   }
 
+  /**
+   * Initializes a new Cal.com namespace, configures the inline embed,
+   * and applies UI options like theme and custom CSS variables.
+   *
+   * @param opts Configuration options for the namespace and embed container.
+   * @throws {Error} If the client has not been initialized (i.e., `loadCal` has not completed).
+   */
   public namespace(opts: InitCalOptions<Namespace>): void {
     if (!this.initialized)
       throw new Error(
@@ -226,6 +293,15 @@ export class CalClient<Namespace extends string = string> {
     });
   }
 
+  /**
+   * Registers an event listener on a specific Cal.com namespace.
+   *
+   * @template E The specific Cal.com event name being listened for.
+   * @param namespace The namespace ID to attach the listener to.
+   * @param event The Cal.com event name (e.g., 'loaded', 'dateSelected').
+   * @param callback The function to execute when the event fires.
+   * @throws {Error} If the client has not been initialized.
+   */
   public on<E extends CalEventName>(
     namespace: Namespace,
     event: E,
@@ -237,6 +313,15 @@ export class CalClient<Namespace extends string = string> {
     } as any);
   }
 
+  /**
+   * Removes an event listener from a specific Cal.com namespace.
+   *
+   * @template E The specific Cal.com event name being removed.
+   * @param namespace The namespace ID to remove the listener from.
+   * @param event The Cal.com event name.
+   * @param callback The original function reference passed to the `on` method.
+   * @throws {Error} If the client has not been initialized.
+   */
   public off<E extends CalEventName>(
     namespace: Namespace,
     event: E,
