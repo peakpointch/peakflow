@@ -126,7 +126,7 @@ export class CalClient<Namespace extends string = string> {
   public initialized: boolean = false;
   public options: CalClientOptions;
 
-  constructor(options?: PartialDeep<CalClientOptions>) {
+  private constructor(options?: PartialDeep<CalClientOptions>) {
     this.options = deepMerge(CalClient.defaultOptions, options);
   }
 
