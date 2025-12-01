@@ -322,7 +322,16 @@ export class Renderer {
                 break;
             case "text":
             default:
-                htmlNode.innerText = renderField.value;
+                function decodeHTMLEntities(str) {
+                    const entities = {
+                        "&nbsp;": "\u00A0",
+                        "&amp;": "&",
+                        "&lt;": "<",
+                        "&gt;": ">",
+                    };
+                    return str.replace(/&[a-z]+;/g, (match) => entities[match] || match);
+                }
+                htmlNode.textContent = decodeHTMLEntities(renderField.value);
         }
     }
     renderImage(renderImage, htmlImage) {
