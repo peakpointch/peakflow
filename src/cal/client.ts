@@ -16,26 +16,6 @@ type CalEventName = keyof CalEventDataMap;
  */
 type CalEventCallback<K extends CalEventName> = (data: CustomEvent<CalEventData<K>>) => void;
 
-/**
- * Options required to initialize a specific Cal.com namespace and embed container.
- * @template Namespace The specific string literal for the namespace identifier.
- */
-interface InitCalOptions<Namespace extends string = string> {
-  /** The unique namespace identifier for the Cal.com instance (e.g., 'main-embed'). */
-  namespace: Namespace;
-  /** Optional: The HTMLElement to embed the calendar into. If not provided, it looks for an element using the `cal-id` attribute. */
-  element?: HTMLElement;
-  /** Optional: The display layout for the embed (e.g., 'month_view', 'date_view'). */
-  layout?: BookerLayouts;
-  /** Optional: The theme of the embed ('light' or 'dark'). */
-  theme?: EmbedThemeConfig;
-  /** Optional: Custom CSS variables to override default Cal.com colors for light and dark themes. */
-  colors?: {
-    light?: Partial<CalCSSVars>;
-    dark?: Partial<CalCSSVars>;
-  };
-}
-
 /** Standard CSS variables used by the Cal.com embed for theming. */
 interface CalCSSVars {
   "cal-brand": string;
@@ -124,6 +104,26 @@ export interface CalClientAttributes {
   id: "cal-id";
   link: "cal-link";
   hideEventTypeDetails: "cal-hide-event-details";
+}
+
+/**
+ * Options required to initialize a specific Cal.com namespace and embed container.
+ * @template Namespace The specific string literal for the namespace identifier.
+ */
+interface InitCalOptions<Namespace extends string = string> {
+  /** The unique namespace identifier for the Cal.com instance (e.g., 'main-embed'). */
+  namespace: Namespace;
+  /** Optional: The HTMLElement to embed the calendar into. If not provided, it looks for an element using the `cal-id` attribute. */
+  element?: HTMLElement;
+  /** Optional: The display layout for the embed (e.g., 'month_view', 'date_view'). */
+  layout?: BookerLayouts;
+  /** Optional: The theme of the embed ('light' or 'dark'). */
+  theme?: EmbedThemeConfig;
+  /** Optional: Custom CSS variables to override default Cal.com colors for light and dark themes. */
+  colors?: {
+    light?: Partial<CalCSSVars>;
+    dark?: Partial<CalCSSVars>;
+  };
 }
 
 /** General options for configuring the behavior of the CalClient instance itself. */
