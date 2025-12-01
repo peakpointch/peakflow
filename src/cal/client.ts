@@ -113,6 +113,10 @@ export interface CalClientAttributes {
 interface InitCalOptions<Namespace extends string = string> {
   /** The unique namespace identifier for the Cal.com instance (e.g., 'main-embed'). */
   namespace: Namespace;
+  /** Optional: The path to the meeting `{slug}/{meeting-id}`, e.g. "your-company/30-minute-meeting". If provided, overrides the `cal-link` DOM attribute. */
+  link?: string;
+  /** Optional: Hide event type details at the top of the iframe. Default: false. If provided, overrides the `cal-hide-event-details` DOM attribute. */
+  hideEventTypeDetails?: boolean;
   /** Optional: The HTMLElement to embed the calendar into. If not provided, it looks for an element using the `cal-id` attribute. */
   element?: HTMLElement;
   /** Optional: The display layout for the embed (e.g., 'month_view', 'date_view'). */
@@ -279,11 +283,11 @@ export class CalClient<Namespace extends string = string> {
     this.cal.ns[opts.namespace]("inline", {
       elementOrSelector: el,
       config: { layout: opts.layout || "month_view" },
-      calLink: calDOMOptions.link,
+      calLink: opts.link || calDOMOptions.link,
     });
 
     this.cal.ns[opts.namespace]("ui", {
-      hideEventTypeDetails: calDOMOptions.hideEventTypeDetails,
+      hideEventTypeDetails: opts.hideEventTypeDetails || calDOMOptions.hideEventTypeDetails,
       layout: opts.layout || "month_view",
       cssVarsPerTheme: {
         light: opts.colors?.light,
