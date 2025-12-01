@@ -112,24 +112,33 @@ interface CalClientOptions {
   load: boolean;
 }
 
-export class CalClient<Namespace extends string> {
+export class CalClient<Namespace extends string = string> {
   public static defaultOptions: CalClientOptions = {
     load: true,
   };
 
-  public options: CalClientOptions;
-  public cal: GlobalCal;
   public attr: CalClientAttributes = {
     id: "cal-id",
     link: "cal-link",
     hideEventTypeDetails: "cal-hide-event-details",
   };
+  public cal: GlobalCal;
+  public initialized: boolean = false;
+  public options: CalClientOptions;
 
   constructor(options?: PartialDeep<CalClientOptions>) {
     this.options = deepMerge(CalClient.defaultOptions, options);
   }
 
-  public static async loadCal(): Promise<GlobalCal> {
+  public static async create<T extends string = string>(
+    options?: PartialDeep<CalClientOptions>,
+  ): Promise<CalClient<T>> {
+    const client = new CalClient(options);
+    if (client.options.load) await client.loadCal();
+    return client;
+  }
+
+  public static async _loadCal(): Promise<GlobalCal> {
     if (typeof window.Cal !== "undefined") return window.Cal;
 
     (function (windw: any, embedJS: string, action: string) {
@@ -177,10 +186,16 @@ export class CalClient<Namespace extends string> {
   }
 
   public async loadCal(): Promise<void> {
-    this.cal = await CalClient.loadCal();
+    this.cal = await CalClient._loadCal();
+    this.initialized = true;
   }
 
   public namespace(opts: InitCalOptions<Namespace>): void {
+    if (!this.initialized)
+      throw new Error(
+        `Cal has not been initialized. Ensure the client is instantiated via the async factory method: await CalClient.create(...).`,
+      );
+
     this.cal("init", opts.namespace, { origin: "https://cal.com" });
 
     const el = opts.element || document.querySelector<HTMLElement>(`[cal-id="${opts.namespace}"]`);

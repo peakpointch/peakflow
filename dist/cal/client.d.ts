@@ -97,13 +97,15 @@ interface CalClientAttributes {
 interface CalClientOptions {
     load: boolean;
 }
-export declare class CalClient<Namespace extends string> {
+export declare class CalClient<Namespace extends string = string> {
     static defaultOptions: CalClientOptions;
-    options: CalClientOptions;
-    cal: GlobalCal;
     attr: CalClientAttributes;
+    cal: GlobalCal;
+    initialized: boolean;
+    options: CalClientOptions;
     constructor(options?: PartialDeep<CalClientOptions>);
-    static loadCal(): Promise<GlobalCal>;
+    static create<T extends string = string>(options?: PartialDeep<CalClientOptions>): Promise<CalClient<T>>;
+    static _loadCal(): Promise<GlobalCal>;
     loadCal(): Promise<void>;
     namespace(opts: InitCalOptions<Namespace>): void;
     on<E extends CalEventName>(namespace: Namespace, event: E, callback: CalEventCallback<E>): void;

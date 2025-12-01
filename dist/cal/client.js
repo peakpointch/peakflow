@@ -6,9 +6,16 @@ export class CalClient {
             link: "cal-link",
             hideEventTypeDetails: "cal-hide-event-details",
         };
+        this.initialized = false;
         this.options = deepMerge(CalClient.defaultOptions, options);
     }
-    static async loadCal() {
+    static async create(options) {
+        const client = new CalClient(options);
+        if (client.options.load)
+            await client.loadCal();
+        return client;
+    }
+    static async _loadCal() {
         if (typeof window.Cal !== "undefined")
             return window.Cal;
         (function (windw, embedJS, action) {
@@ -50,9 +57,12 @@ export class CalClient {
         return window.Cal;
     }
     async loadCal() {
-        this.cal = await CalClient.loadCal();
+        this.cal = await CalClient._loadCal();
+        this.initialized = true;
     }
     namespace(opts) {
+        if (!this.initialized)
+            throw new Error(`Cal has not been initialized. Ensure the client is instantiated via the async factory method: await CalClient.create(...).`);
         this.cal("init", opts.namespace, { origin: "https://cal.com" });
         const el = opts.element || document.querySelector(`[cal-id="${opts.namespace}"]`);
         if (!el)
