@@ -117,7 +117,7 @@ interface InitCalOptions<Namespace extends string = string> {
   link?: string;
   /** Optional: Hide event type details at the top of the iframe. Default: false. If provided, overrides the `cal-hide-event-details` DOM attribute. */
   hideEventTypeDetails?: boolean;
-  /** Optional: The HTMLElement to embed the calendar into. If not provided, it looks for an element using the `cal-id` attribute. */
+  /** Optional: The HTMLElement to embed the calendar into. If not provided, it looks for an element using the `cal-id={namespace}` attribute. */
   element?: HTMLElement;
   /** Optional: The display layout for the embed (e.g., 'month_view', 'date_view'). */
   layout?: BookerLayouts;
