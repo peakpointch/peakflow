@@ -163,6 +163,13 @@ export class CalClient<Namespace extends string = string> {
   /** The final resolved options for the current client instance. */
   public options: CalClientOptions;
 
+  /** Common errors */
+  private errors = {
+    notInitialized: new Error(
+      `This CalClient instance is not ready. Ensure you are instantiating it with the required factory pattern: await CalClient.create()`,
+    ),
+  };
+
   /**
    * This class must be instantiated via the static async create() factory method.
    *
@@ -262,10 +269,7 @@ export class CalClient<Namespace extends string = string> {
    * @throws {Error} If the client has not been initialized (i.e., `loadCal` has not completed).
    */
   public namespace(opts: InitCalOptions<Namespace>): void {
-    if (!this.initialized)
-      throw new Error(
-        `Cal has not been initialized. Ensure the client is instantiated via the async factory method: await CalClient.create(...).`,
-      );
+    if (!this.initialized) throw this.errors.notInitialized;
 
     this.cal("init", opts.namespace, { origin: "https://cal.com" });
 
