@@ -1,8 +1,17 @@
 import type { GlobalCal } from "@calcom/embed-core";
 import type { BookerLayouts, EmbedThemeConfig } from "@calcom/embed-core/dist/src/types";
+import type { PartialDeep } from "type-fest";
+import { deepMerge } from "../utils";
+import type {
+  EventData as CalEventData,
+  EventDataMap as CalEventDataMap,
+} from "@calcom/embed-core/dist/src/sdk-action-manager";
 
-interface InitCalOptions {
-  namespace: string;
+type CalEventName = keyof CalEventDataMap;
+type CalEventCallback<K extends CalEventName> = (data: CustomEvent<CalEventData<K>>) => void;
+
+interface InitCalOptions<Namespace extends string = string> {
+  namespace: Namespace;
   element?: HTMLElement;
   layout?: BookerLayouts;
   theme?: EmbedThemeConfig;
@@ -93,80 +102,134 @@ interface CalDOMOptions {
   hideEventTypeDetails: boolean;
 }
 
-export async function loadCal(): Promise<GlobalCal> {
-  if (typeof window.Cal !== "undefined") return window.Cal;
-
-  (function (windw: any, embedJS: string, action: string) {
-    const p = (api: any, args: any) => {
-      api.q.push(args);
-    };
-    const doc = windw.document;
-
-    windw.Cal = function () {
-      const cal = windw.Cal as GlobalCal;
-      const ar = arguments;
-
-      if (!cal.loaded) {
-        cal.ns = {};
-        cal.q = cal.q || [];
-        const script = doc.createElement("script");
-        script.src = embedJS;
-        doc.head.appendChild(script);
-        cal.loaded = true;
-      }
-
-      if (ar[0] === action) {
-        const api = function () {
-          p(api, arguments);
-        };
-        const namespace = ar[1];
-        //@ts-ignore
-        api.q = api.q || [];
-
-        if (typeof namespace === "string") {
-          cal.ns[namespace] = cal.ns[namespace] || api;
-          p(cal.ns[namespace], ar);
-          p(cal, ["initNamespace", namespace]);
-        } else {
-          p(cal, ar);
-        }
-        return;
-      }
-
-      p(cal, ar);
-    };
-  })(window, "https://app.cal.com/embed/embed.js", "init");
-
-  return window.Cal as GlobalCal;
+interface CalClientAttributes {
+  id: "cal-id";
+  link: "cal-link";
+  hideEventTypeDetails: "cal-hide-event-details";
 }
 
-export function initCalNamespace(Cal: GlobalCal, opts: InitCalOptions): void {
-  Cal("init", opts.namespace, { origin: "https://cal.com" });
+interface CalClientOptions {
+  load: boolean;
+}
 
-  const el = opts.element || document.querySelector<HTMLElement>(`[cal-id="${opts.namespace}"]`);
-  if (!el) throw new Error("Embed container not found");
-
-  const calLink = el.getAttribute("cal-link");
-  if (!calLink) throw new Error(`Please specify a cal link`);
-
-  const calDOMOptions: CalDOMOptions = {
-    link: calLink,
-    hideEventTypeDetails: el.getAttribute("cal-hide-event-details") === "true",
+export class CalClient<Namespace extends string> {
+  public static defaultOptions: CalClientOptions = {
+    load: true,
   };
 
-  Cal.ns[opts.namespace]("inline", {
-    elementOrSelector: el,
-    config: { layout: opts.layout || "month_view" },
-    calLink: calDOMOptions.link,
-  });
+  public options: CalClientOptions;
+  public cal: GlobalCal;
+  public attr: CalClientAttributes = {
+    id: "cal-id",
+    link: "cal-link",
+    hideEventTypeDetails: "cal-hide-event-details",
+  };
 
-  Cal.ns[opts.namespace]("ui", {
-    hideEventTypeDetails: calDOMOptions.hideEventTypeDetails,
-    layout: opts.layout || "month_view",
-    cssVarsPerTheme: {
-      light: opts.colors?.light,
-      dark: opts.colors?.dark,
-    },
-    theme: opts.theme || "light",
-  });
+  constructor(options?: PartialDeep<CalClientOptions>) {
+    this.options = deepMerge(CalClient.defaultOptions, options);
+  }
+
+  public static async loadCal(): Promise<GlobalCal> {
+    if (typeof window.Cal !== "undefined") return window.Cal;
+
+    (function (windw: any, embedJS: string, action: string) {
+      const p = (api: any, args: any) => {
+        api.q.push(args);
+      };
+      const doc = windw.document;
+
+      windw.Cal = function () {
+        const cal = windw.Cal as GlobalCal;
+        const ar = arguments;
+
+        if (!cal.loaded) {
+          cal.ns = {};
+          cal.q = cal.q || [];
+          const script = doc.createElement("script");
+          script.src = embedJS;
+          doc.head.appendChild(script);
+          cal.loaded = true;
+        }
+
+        if (ar[0] === action) {
+          const api = function () {
+            p(api, arguments);
+          };
+          const namespace = ar[1];
+          //@ts-ignore
+          api.q = api.q || [];
+
+          if (typeof namespace === "string") {
+            cal.ns[namespace] = cal.ns[namespace] || api;
+            p(cal.ns[namespace], ar);
+            p(cal, ["initNamespace", namespace]);
+          } else {
+            p(cal, ar);
+          }
+          return;
+        }
+
+        p(cal, ar);
+      };
+    })(window, "https://app.cal.com/embed/embed.js", "init");
+
+    return window.Cal as GlobalCal;
+  }
+
+  public async loadCal(): Promise<void> {
+    this.cal = await CalClient.loadCal();
+  }
+
+  public namespace(opts: InitCalOptions<Namespace>): void {
+    this.cal("init", opts.namespace, { origin: "https://cal.com" });
+
+    const el = opts.element || document.querySelector<HTMLElement>(`[cal-id="${opts.namespace}"]`);
+    if (!el) throw new Error("Embed container not found");
+
+    const calLink = el.getAttribute("cal-link");
+    if (!calLink) throw new Error(`Please specify a cal link`);
+
+    const calDOMOptions: CalDOMOptions = {
+      link: calLink,
+      hideEventTypeDetails: el.getAttribute("cal-hide-event-details") === "true",
+    };
+
+    this.cal.ns[opts.namespace]("inline", {
+      elementOrSelector: el,
+      config: { layout: opts.layout || "month_view" },
+      calLink: calDOMOptions.link,
+    });
+
+    this.cal.ns[opts.namespace]("ui", {
+      hideEventTypeDetails: calDOMOptions.hideEventTypeDetails,
+      layout: opts.layout || "month_view",
+      cssVarsPerTheme: {
+        light: opts.colors?.light,
+        dark: opts.colors?.dark,
+      },
+      theme: opts.theme || "light",
+    });
+  }
+
+  public on<E extends CalEventName>(
+    namespace: Namespace,
+    event: E,
+    callback: CalEventCallback<E>,
+  ): void {
+    this.cal.ns[namespace]("on", {
+      action: event,
+      callback: callback,
+    } as any);
+  }
+
+  public off<E extends CalEventName>(
+    namespace: Namespace,
+    event: E,
+    callback: CalEventCallback<E>,
+  ): void {
+    this.cal.ns[namespace]("off", {
+      action: event,
+      callback: callback,
+    } as any);
+  }
 }

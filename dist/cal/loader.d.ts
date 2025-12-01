@@ -1,7 +1,11 @@
 import type { GlobalCal } from "@calcom/embed-core";
 import type { BookerLayouts, EmbedThemeConfig } from "@calcom/embed-core/dist/src/types";
-interface InitCalOptions {
-    namespace: string;
+import type { PartialDeep } from "type-fest";
+import type { EventData as CalEventData, EventDataMap as CalEventDataMap } from "@calcom/embed-core/dist/src/sdk-action-manager";
+type CalEventName = keyof CalEventDataMap;
+type CalEventCallback<K extends CalEventName> = (data: CustomEvent<CalEventData<K>>) => void;
+interface InitCalOptions<Namespace extends string = string> {
+    namespace: Namespace;
     element?: HTMLElement;
     layout?: BookerLayouts;
     theme?: EmbedThemeConfig;
@@ -85,6 +89,24 @@ interface CalCSSVars {
     "cal-text-visualization-6": string;
     "cal-text-visualization-7": string;
 }
-export declare function loadCal(): Promise<GlobalCal>;
-export declare function initCalNamespace(Cal: GlobalCal, opts: InitCalOptions): void;
+interface CalClientAttributes {
+    id: "cal-id";
+    link: "cal-link";
+    hideEventTypeDetails: "cal-hide-event-details";
+}
+interface CalClientOptions {
+    load: boolean;
+}
+export declare class CalClient<Namespace extends string> {
+    static defaultOptions: CalClientOptions;
+    options: CalClientOptions;
+    cal: GlobalCal;
+    attr: CalClientAttributes;
+    constructor(options?: PartialDeep<CalClientOptions>);
+    static loadCal(): Promise<GlobalCal>;
+    loadCal(): Promise<void>;
+    namespace(opts: InitCalOptions<Namespace>): void;
+    on<E extends CalEventName>(namespace: Namespace, event: E, callback: CalEventCallback<E>): void;
+    off<E extends CalEventName>(namespace: Namespace, event: E, callback: CalEventCallback<E>): void;
+}
 export {};
