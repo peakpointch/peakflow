@@ -85,6 +85,6 @@ interface CalCSSVars {
     "cal-text-visualization-6": string;
     "cal-text-visualization-7": string;
 }
-export declare function loadCal(namespace: string): Promise<GlobalCal>;
-export declare function initCal(opts: InitCalOptions): Promise<GlobalCal>;
+export declare function loadCal(): Promise<GlobalCal>;
+export declare function initCalNamespace(Cal: GlobalCal, opts: InitCalOptions): void;
 export {};

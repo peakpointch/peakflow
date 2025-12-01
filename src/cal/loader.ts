@@ -93,7 +93,7 @@ interface CalDOMOptions {
   hideEventTypeDetails: boolean;
 }
 
-export async function loadCal(namespace: string): Promise<GlobalCal> {
+export async function loadCal(): Promise<GlobalCal> {
   if (typeof window.Cal !== "undefined") return window.Cal;
 
   (function (windw: any, embedJS: string, action: string) {
@@ -137,18 +137,13 @@ export async function loadCal(namespace: string): Promise<GlobalCal> {
     };
   })(window, "https://app.cal.com/embed/embed.js", "init");
 
-  const Cal = window.Cal as GlobalCal;
-
-  Cal("init", namespace, { origin: "https://cal.com" });
-
-  return Cal;
+  return window.Cal as GlobalCal;
 }
 
-export async function initCal(opts: InitCalOptions): Promise<GlobalCal> {
-  const namespace = opts.namespace;
-  const Cal = await loadCal(namespace);
+export function initCalNamespace(Cal: GlobalCal, opts: InitCalOptions): void {
+  Cal("init", opts.namespace, { origin: "https://cal.com" });
 
-  const el = opts.element || document.querySelector<HTMLElement>(`[cal-id="${namespace}"]`);
+  const el = opts.element || document.querySelector<HTMLElement>(`[cal-id="${opts.namespace}"]`);
   if (!el) throw new Error("Embed container not found");
 
   const calLink = el.getAttribute("cal-link");
@@ -159,13 +154,13 @@ export async function initCal(opts: InitCalOptions): Promise<GlobalCal> {
     hideEventTypeDetails: el.getAttribute("cal-hide-event-details") === "true",
   };
 
-  Cal.ns[namespace]("inline", {
+  Cal.ns[opts.namespace]("inline", {
     elementOrSelector: el,
     config: { layout: opts.layout || "month_view" },
     calLink: calDOMOptions.link,
   });
 
-  Cal.ns[namespace]("ui", {
+  Cal.ns[opts.namespace]("ui", {
     hideEventTypeDetails: calDOMOptions.hideEventTypeDetails,
     layout: opts.layout || "month_view",
     cssVarsPerTheme: {
@@ -174,6 +169,4 @@ export async function initCal(opts: InitCalOptions): Promise<GlobalCal> {
     },
     theme: opts.theme || "light",
   });
-
-  return Cal;
 }
