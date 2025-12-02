@@ -1,7 +1,7 @@
 import type { GlobalCal } from "@calcom/embed-core";
 import type { BookerLayouts, EmbedThemeConfig } from "@calcom/embed-core/dist/src/types";
 import type { PartialDeep } from "type-fest";
-import { deepMerge } from "../utils";
+import { deepMerge, Script } from "../utils";
 import type {
   EventData as CalEventData,
   EventDataMap as CalEventDataMap,
@@ -209,26 +209,20 @@ export class CalClient<Namespace extends string = string> {
   public static async _loadCal(): Promise<GlobalCal> {
     if (typeof window.Cal !== "undefined") return window.Cal;
 
-    (function (windw: any, embedJS: string, action: string) {
+    (function (windw: any) {
       const p = (api: any, args: any) => {
         api.q.push(args);
       };
-      const doc = windw.document;
 
       windw.Cal = function () {
         const cal = windw.Cal as GlobalCal;
         const ar = arguments;
 
         if (!cal.loaded) {
-          cal.ns = {};
-          cal.q = cal.q || [];
-          const script = doc.createElement("script");
-          script.src = embedJS;
-          doc.head.appendChild(script);
-          cal.loaded = true;
+          throw CalClient.errors.notInitialized;
         }
 
-        if (ar[0] === action) {
+        if (ar[0] === "init") {
           const api = function () {
             p(api, arguments);
           };
@@ -248,7 +242,17 @@ export class CalClient<Namespace extends string = string> {
 
         p(cal, ar);
       };
-    })(window, "https://app.cal.com/embed/embed.js", "init");
+    })(window);
+
+    const cal = (window as any).Cal as GlobalCal;
+
+    if (!cal.loaded) {
+      cal.ns = {};
+      cal.q = cal.q || [];
+      const script = new Script({ src: "https://app.cal.com/embed/embed.js", async: true });
+      await script.load();
+      cal.loaded = true;
+    }
 
     return window.Cal as GlobalCal;
   }
