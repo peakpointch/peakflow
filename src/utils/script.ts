@@ -32,11 +32,11 @@ export default class Script {
    */
   constructor(config: ScriptOptions) {
     // Check if script already exists in the DOM
-    const existing = Array.from(document.querySelectorAll("script")).find(
+    const existing = Array.from(document.querySelectorAll<HTMLScriptElement>("script")).find(
       (el) => el.src === config.src,
     );
     if (existing) {
-      this.element = existing as HTMLScriptElement;
+      this.element = existing;
       this.loaded = (this.element as any)._scriptLoaded || false;
     } else {
       // Create new script element
@@ -107,7 +107,7 @@ export default class Script {
    * @returns A Promise that resolves when the script is loaded.
    * @throws If the script fails to load.
    */
-  public load(): Promise<void> {
+  public async load(): Promise<void> {
     if (this.loaded || Script.exists(this.src)) {
       this.loaded = true;
       return Promise.resolve();
