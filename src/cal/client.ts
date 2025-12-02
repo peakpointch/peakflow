@@ -130,6 +130,9 @@ interface InitCalOptions<Namespace extends string = string> {
   };
 }
 
+/** Configuration options for initializing multiple Cal.com namespaces with common settings. */
+type CommonInitCalOptions = Omit<InitCalOptions<string>, "namespace" | "element">;
+
 /** General options for configuring the behavior of the CalClient instance itself. */
 interface CalClientOptions {
   /** If true, the Cal.com SDK script will be automatically loaded upon client creation. */
@@ -164,7 +167,7 @@ export class CalClient<Namespace extends string = string> {
   public options: CalClientOptions;
 
   /** Common errors */
-  private errors = {
+  private static errors = {
     notInitialized: new Error(
       `This CalClient instance is not ready. Ensure you are instantiating it with the required factory pattern: await CalClient.create()`,
     ),
@@ -269,7 +272,7 @@ export class CalClient<Namespace extends string = string> {
    * @throws {Error} If the client has not been initialized (i.e., `loadCal` has not completed).
    */
   public namespace(opts: InitCalOptions<Namespace>): void {
-    if (!this.initialized) throw this.errors.notInitialized;
+    if (!this.initialized) throw CalClient.errors.notInitialized;
 
     this.cal("init", opts.namespace, { origin: "https://cal.com" });
 
@@ -299,6 +302,27 @@ export class CalClient<Namespace extends string = string> {
       },
       theme: opts.theme || "light",
     });
+  }
+
+  /**
+   * Initializes multiple Cal.com namespaces with the same configuration.
+   * It iterates through the provided array of namespaces and calls `this.namespace()`
+   * for each one using the common options.
+   *
+   * @param namespaces An array of unique namespace identifiers (strings) to initialize.
+   * @param opts Configuration options common to all namespaces (excluding the namespace identifier).
+   * @throws {Error} If the client has not been initialized.
+   */
+  public namespaceAll(namespaces: Namespace[], opts: CommonInitCalOptions): void {
+    if (!this.initialized) throw CalClient.errors.notInitialized;
+
+    for (const namespace of namespaces) {
+      const fullOpts: InitCalOptions<Namespace> = {
+        ...opts,
+        namespace: namespace,
+      };
+      this.namespace(fullOpts);
+    }
   }
 
   /**
