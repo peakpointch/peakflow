@@ -111,7 +111,7 @@ export class CalClient {
         this.cal("init", opts.namespace, { origin: "https://cal.com" });
         const el = opts.element || document.querySelector(`[cal-id="${opts.namespace}"]`);
         if (!el)
-            throw new Error("Embed container not found");
+            throw new Error(`Embed container with cal-id="${opts.namespace}"not found`);
         const calLink = el.getAttribute("cal-link");
         if (!calLink)
             throw new Error(`Please specify a cal link`);
@@ -151,7 +151,12 @@ export class CalClient {
                 ...opts,
                 namespace: namespace,
             };
-            this.namespace(fullOpts);
+            try {
+                this.namespace(fullOpts);
+            }
+            catch (e) {
+                console.warn(e.message);
+            }
         }
     }
     /**

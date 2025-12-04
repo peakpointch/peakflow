@@ -281,7 +281,7 @@ export class CalClient<Namespace extends string = string> {
     this.cal("init", opts.namespace, { origin: "https://cal.com" });
 
     const el = opts.element || document.querySelector<HTMLElement>(`[cal-id="${opts.namespace}"]`);
-    if (!el) throw new Error("Embed container not found");
+    if (!el) throw new Error(`Embed container with cal-id="${opts.namespace}"not found`);
 
     const calLink = el.getAttribute("cal-link");
     if (!calLink) throw new Error(`Please specify a cal link`);
@@ -325,7 +325,11 @@ export class CalClient<Namespace extends string = string> {
         ...opts,
         namespace: namespace,
       };
-      this.namespace(fullOpts);
+      try {
+        this.namespace(fullOpts);
+      } catch (e) {
+        console.warn(e.message);
+      }
     }
   }
 
