@@ -1,9 +1,9 @@
 import type { PartialDeep } from "type-fest";
 export interface ObjectToCSSOptions {
-    brackets: boolean;
     convertCasing: boolean;
     pretty: boolean;
     shiftWidth: number;
+    depth: number;
 }
 export type CSSRule = Record<string, gsap.CSSVars>;
 export type CSSBreakpoint = Record<number, CSSRule>;

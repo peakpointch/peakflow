@@ -3,17 +3,17 @@ import deepMerge from "./deepmerge.js";
 import { toDashCase } from "./parameterize.js";
 
 export interface ObjectToCSSOptions {
-  brackets: boolean;
   convertCasing: boolean;
   pretty: boolean;
   shiftWidth: number;
+  depth: number;
 }
 
 const defaultObjectToCSSOptions: ObjectToCSSOptions = {
-  brackets: true,
   convertCasing: true,
   pretty: false,
   shiftWidth: 2,
+  depth: 0,
 };
 
 export type CSSRule = Record<string, gsap.CSSVars>;
@@ -27,29 +27,29 @@ export function objectToCSS(
   const opts = { ...defaultObjectToCSSOptions, ...options };
   const c = {
     indent: " ".repeat(opts.shiftWidth),
+    currentIndent: " ".repeat(opts.shiftWidth * opts.depth),
     newline: "\n",
     space: " ",
   };
 
   if (!opts.pretty) {
     c.indent = "";
+    c.currentIndent = "";
     c.newline = "";
     c.space = "";
   }
 
   return Object.entries(obj)
     .map(([key, value]) => {
-      // 1. Handle Nested Objects (Selectors or Media Queries)
       if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-        const inner = objectToCSS(value, { ...opts, brackets: true });
-        return `${key}${c.space}{${c.newline}${inner}}${c.newline.repeat(2)}`;
+        const inner = objectToCSS(value, { ...opts, depth: opts.depth + 1 });
+        return `${c.currentIndent}${key}${c.space}{${c.newline}${inner}${c.newline}${c.currentIndent}}${c.newline}`;
       }
 
-      // 2. Handle Properties
       const prop = opts.convertCasing ? toDashCase(key) : key;
-      return `${c.indent}${prop}:${c.space}${value};${c.newline}`;
+      return `${c.currentIndent}${prop}:${c.space}${value};`;
     })
-    .join("");
+    .join(c.newline);
 }
 
 export type CSSUnit = "px" | "em" | "rem" | "%" | "vw" | "svw" | "vh" | "svh";
