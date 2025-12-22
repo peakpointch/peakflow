@@ -126,9 +126,7 @@ export class Cursor extends BaseComponent {
                 };
             }, { mobileFirst: this.settings.mobileFirst, unit: "px" }),
         };
-        // Add media queries declaratively
-        const css = objectToCSS(styleSheet, { pretty: true });
-        console.log("CSS", css);
+        const css = objectToCSS(styleSheet);
         // Injection Logic
         const styleId = `cursor-styles-${this.settings.id || "global"}`;
         if (document.getElementById(styleId))
