@@ -6,15 +6,11 @@ export class Cursor extends BaseComponent {
     constructor(cursor, settings) {
         super(cursor, settings);
         this.attr = _a.attr;
-        this.el = cursor;
-        this.el.setAttribute(this.attr.id, this.settings.id);
-        this.el.setAttribute(this.attr.element, "pointer");
-        this.addPointer(this.el);
+        this.cursors = [];
+        this.currentTheme = this.settings.defaultTheme;
+        this.addPointer(cursor);
         this.initTheme();
-        this.initHover(this.el);
-    }
-    static get attributeSelector() {
-        return Selector.attr(this.attr.element);
+        this.initHover();
     }
     static create(settings) {
         const el = document.createElement("div");
@@ -24,6 +20,9 @@ export class Cursor extends BaseComponent {
         return cursor;
     }
     addPointer(pointer) {
+        pointer.setAttribute(this.attr.id, this.settings.id);
+        pointer.setAttribute(this.attr.element, "pointer");
+        this.cursors.push(pointer);
         const xTo = gsap.quickSetter(pointer, "x", "px");
         const yTo = gsap.quickSetter(pointer, "y", "px");
         window.addEventListener("mousemove", (e) => {
@@ -32,6 +31,9 @@ export class Cursor extends BaseComponent {
         });
     }
     addTail(pointer, vars) {
+        pointer.setAttribute(this.attr.id, this.settings.id);
+        pointer.setAttribute(this.attr.element, "pointer");
+        this.cursors.push(pointer);
         const xTo = gsap.quickTo(pointer, "x", vars);
         const yTo = gsap.quickTo(pointer, "y", vars);
         window.addEventListener("mousemove", (e) => {
@@ -42,43 +44,41 @@ export class Cursor extends BaseComponent {
     applyState(state, override = {}) {
         const defaultConfig = this.settings.themes[this.settings.defaultTheme];
         const themeConfig = this.settings.themes[this.currentTheme];
-        // Merge base styles with the specific state (hover/base) to ensure properties reset
         const vars = {
             ...defaultConfig[state],
             ...themeConfig[state],
             ...override,
-            overwrite: "auto", // Prevents animation jitter
+            overwrite: "auto",
         };
-        gsap.to(this.el, vars);
+        // Apply to all registered pointers/tails
+        gsap.to(this.cursors, vars);
     }
     initTheme() {
         document.addEventListener("mouseover", (e) => {
             const target = e.target;
             if (!target)
                 return;
-            // Find the closest theme provider
             const themeKeys = Object.keys(this.settings.themes);
             const themeProvider = target.closest(`section, ${themeKeys.map((t) => `[data-cursor~="${t}"]`).join(", ")}`);
             const bgConfig = themeProvider?.getAttribute("data-cursor")?.split(" ") ?? [];
             const themeMatch = bgConfig.find((s) => themeKeys.includes(s));
             const nextTheme = themeMatch || this.settings.defaultTheme;
             if (nextTheme !== this.currentTheme) {
-                //@ts-ignore
                 this.currentTheme = nextTheme;
                 this.applyState("base");
             }
         });
     }
-    initHover(cursor) {
+    initHover() {
         const hoverTargets = document.querySelectorAll(`:is(${this.settings.selectors.hover}[data-cursor~="hover"]):not([data-cursor~="no-hover"])`);
         hoverTargets.forEach((target) => {
             const clickAnimation = () => {
                 const tl = gsap.timeline();
-                tl.to(cursor, {
+                tl.to(this.cursors, {
                     scale: 1.25,
                     duration: 0.1,
                     ease: "power3.in",
-                }).to(cursor, {
+                }).to(this.cursors, {
                     scale: 2,
                     duration: 0.2,
                     ease: "back.out(2.5)",
@@ -97,7 +97,7 @@ export class Cursor extends BaseComponent {
 }
 _a = Cursor;
 Cursor.defaultSettings = {
-    id: "",
+    id: undefined,
     defaultTheme: "dark",
     themes: {
         light: {
@@ -114,7 +114,7 @@ Cursor.attr = {
     id: "data-cursor-id",
     element: "data-cursor-element",
 };
-// protected static readonly attributeSelector = Selector.attr<CursorElement>(Cursor.attr.element);
+Cursor.attributeSelector = Selector.attr(_a.attr.element);
 Cursor.selector = Selector.instance(_a.attributeSelector, _a.attr);
 Cursor.select = Selector.select(_a.selector);
 Cursor.selectAll = Selector.selectAll(_a.selector);

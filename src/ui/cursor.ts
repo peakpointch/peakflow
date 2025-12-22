@@ -18,7 +18,7 @@ export interface CursorSettings<Theme extends string = string> extends BaseSetti
 
 export class Cursor<T extends string> extends BaseComponent<CursorElement, CursorSettings> {
   public static readonly defaultSettings: CursorSettings = {
-    id: "",
+    id: undefined,
     defaultTheme: "dark",
     themes: {
       light: {
@@ -38,23 +38,20 @@ export class Cursor<T extends string> extends BaseComponent<CursorElement, Curso
   };
   public readonly attr = Cursor.attr;
   public currentTheme: T;
-  public el: HTMLElement;
+  public cursors: HTMLElement[] = [];
   public settings: CursorSettings<T>;
 
   constructor(cursor: HTMLElement, settings?: PartialDeep<CursorSettings<T>>) {
     super(cursor, settings as PartialDeep<CursorSettings>);
-    this.el = cursor;
-    this.el.setAttribute(this.attr.id, this.settings.id);
-    this.el.setAttribute(this.attr.element, "pointer");
-    this.addPointer(this.el);
+
+    this.currentTheme = this.settings.defaultTheme;
+
+    this.addPointer(cursor);
     this.initTheme();
-    this.initHover(this.el);
+    this.initHover();
   }
 
-  protected static override get attributeSelector() {
-    return Selector.attr<CursorElement>(this.attr.element);
-  }
-  // protected static readonly attributeSelector = Selector.attr<CursorElement>(Cursor.attr.element);
+  protected static attributeSelector = Selector.attr<CursorElement>(this.attr.element);
   public static selector = Selector.instance<CursorElement>(this.attributeSelector, this.attr);
   public static select = Selector.select<CursorElement>(this.selector);
   public static selectAll = Selector.selectAll<CursorElement>(this.selector);
@@ -69,6 +66,10 @@ export class Cursor<T extends string> extends BaseComponent<CursorElement, Curso
   }
 
   public addPointer(pointer: HTMLElement): void {
+    pointer.setAttribute(this.attr.id, this.settings.id);
+    pointer.setAttribute(this.attr.element, "pointer");
+    this.cursors.push(pointer);
+
     const xTo = gsap.quickSetter(pointer, "x", "px");
     const yTo = gsap.quickSetter(pointer, "y", "px");
 
@@ -79,6 +80,10 @@ export class Cursor<T extends string> extends BaseComponent<CursorElement, Curso
   }
 
   public addTail(pointer: HTMLElement, vars: gsap.TweenVars): void {
+    pointer.setAttribute(this.attr.id, this.settings.id);
+    pointer.setAttribute(this.attr.element, "pointer");
+    this.cursors.push(pointer);
+
     const xTo = gsap.quickTo(pointer, "x", vars);
     const yTo = gsap.quickTo(pointer, "y", vars);
 
@@ -91,15 +96,16 @@ export class Cursor<T extends string> extends BaseComponent<CursorElement, Curso
   public applyState(state: CursorState, override: gsap.TweenVars = {}): void {
     const defaultConfig = this.settings.themes[this.settings.defaultTheme];
     const themeConfig = this.settings.themes[this.currentTheme];
-    // Merge base styles with the specific state (hover/base) to ensure properties reset
+
     const vars: gsap.TweenVars = {
       ...defaultConfig[state],
       ...themeConfig[state],
       ...override,
-      overwrite: "auto", // Prevents animation jitter
+      overwrite: "auto",
     };
 
-    gsap.to(this.el, vars);
+    // Apply to all registered pointers/tails
+    gsap.to(this.cursors, vars);
   }
 
   private initTheme(): void {
@@ -107,7 +113,6 @@ export class Cursor<T extends string> extends BaseComponent<CursorElement, Curso
       const target = e.target as HTMLElement;
       if (!target) return;
 
-      // Find the closest theme provider
       const themeKeys = Object.keys(this.settings.themes);
       const themeProvider = target.closest<HTMLElement>(
         `section, ${themeKeys.map((t) => `[data-cursor~="${t}"]`).join(", ")}`,
@@ -116,17 +121,16 @@ export class Cursor<T extends string> extends BaseComponent<CursorElement, Curso
       const bgConfig = themeProvider?.getAttribute("data-cursor")?.split(" ") ?? [];
       const themeMatch = bgConfig.find((s) => themeKeys.includes(s)) as T;
 
-      const nextTheme = themeMatch || this.settings.defaultTheme;
+      const nextTheme = themeMatch || (this.settings.defaultTheme as T);
 
       if (nextTheme !== this.currentTheme) {
-        //@ts-ignore
         this.currentTheme = nextTheme;
         this.applyState("base");
       }
     });
   }
 
-  private initHover(cursor: HTMLElement): void {
+  private initHover(): void {
     const hoverTargets = document.querySelectorAll(
       `:is(${this.settings.selectors.hover}[data-cursor~="hover"]):not([data-cursor~="no-hover"])`,
     );
@@ -134,11 +138,11 @@ export class Cursor<T extends string> extends BaseComponent<CursorElement, Curso
     hoverTargets.forEach((target) => {
       const clickAnimation = () => {
         const tl = gsap.timeline();
-        tl.to(cursor, {
+        tl.to(this.cursors, {
           scale: 1.25,
           duration: 0.1,
           ease: "power3.in",
-        }).to(cursor, {
+        }).to(this.cursors, {
           scale: 2,
           duration: 0.2,
           ease: "back.out(2.5)",

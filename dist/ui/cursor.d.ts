@@ -22,10 +22,10 @@ export declare class Cursor<T extends string> extends BaseComponent<CursorElemen
         element: string;
     };
     currentTheme: T;
-    el: HTMLElement;
+    cursors: HTMLElement[];
     settings: CursorSettings<T>;
     constructor(cursor: HTMLElement, settings?: PartialDeep<CursorSettings<T>>);
-    protected static get attributeSelector(): import("../attributeselector").AttributeSelector<"pointer">;
+    protected static attributeSelector: import("../attributeselector").AttributeSelector<"pointer">;
     static selector: import("../attributeselector").InstanceSelector<"pointer">;
     static select: <U extends Element = HTMLElement>(element: "pointer", instance?: string) => U;
     static selectAll: <U extends Element = HTMLElement>(element: "pointer", instance?: string) => NodeListOf<U>;
