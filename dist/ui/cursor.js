@@ -2,6 +2,7 @@ var _a;
 import gsap from "gsap";
 import Selector from "../attributeselector";
 import { BaseComponent } from "../base-component";
+import { objectToCSS, breakpointsToMediaQueries } from "../utils/css";
 export class Cursor extends BaseComponent {
     constructor(cursor, settings) {
         super(cursor, settings);
@@ -11,10 +12,10 @@ export class Cursor extends BaseComponent {
         this.addPointer(cursor);
         this.initTheme();
         this.initHover();
+        this.injectStyles();
     }
     static create(settings) {
         const el = document.createElement("div");
-        el.classList.add("cursor");
         document.body.appendChild(el);
         const cursor = new _a(el, settings);
         return cursor;
@@ -94,6 +95,56 @@ export class Cursor extends BaseComponent {
             });
         });
     }
+    injectStyles() {
+        const pointerSelector = this.selector("pointer");
+        const interactionSelector = `body, body *, button, a, a.button, .button, a.w-tab-link, .w-tab-link`;
+        // Build the global stylesheet as one declarative object
+        const styleSheet = {
+            [pointerSelector]: {
+                display: "none",
+                pointerEvents: "none",
+                position: "fixed",
+                top: 0,
+                left: 0,
+                zIndex: 9999,
+                ...this.settings.style,
+            },
+            // Initial native cursor state
+            [interactionSelector]: {
+                cursor: this.settings.mobileFirst ? "auto" : "none",
+            },
+            // Add media queries
+            ...breakpointsToMediaQueries(this.settings.breakpoints, (styles) => {
+                return {
+                    [pointerSelector]: {
+                        display: "block",
+                        ...styles,
+                    },
+                    [interactionSelector]: {
+                        cursor: this.settings.mobileFirst ? "none !important" : "auto",
+                    },
+                };
+            }, { mobileFirst: this.settings.mobileFirst, unit: "px" }),
+        };
+        // Add media queries declaratively
+        const css = objectToCSS(styleSheet, { pretty: true });
+        console.log("CSS", css);
+        // Injection Logic
+        const styleId = `cursor-styles-${this.settings.id || "global"}`;
+        if (document.getElementById(styleId))
+            return;
+        if (window.CSSStyleSheet && document.adoptedStyleSheets) {
+            const sheet = new CSSStyleSheet();
+            sheet.replaceSync(css);
+            document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+        }
+        else {
+            const style = document.createElement("style");
+            style.id = styleId;
+            style.textContent = css;
+            document.head.appendChild(style);
+        }
+    }
 }
 _a = Cursor;
 Cursor.defaultSettings = {
@@ -109,6 +160,15 @@ Cursor.defaultSettings = {
         hover: "a, button, input, select, textarea",
         click: "a, button, input, select, textarea",
     },
+    style: {
+        display: "none",
+    },
+    breakpoints: {
+        992: {
+            display: "block",
+        },
+    },
+    mobileFirst: true,
 };
 Cursor.attr = {
     id: "data-cursor-id",

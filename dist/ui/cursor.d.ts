@@ -10,6 +10,9 @@ export interface CursorSettings<Theme extends string = string> extends BaseSetti
         hover: string;
         click: string;
     };
+    style: gsap.CSSVars;
+    breakpoints: Record<number, gsap.CSSVars>;
+    mobileFirst: boolean;
 }
 export declare class Cursor<T extends string> extends BaseComponent<CursorElement, CursorSettings> {
     static readonly defaultSettings: CursorSettings;
@@ -35,4 +38,5 @@ export declare class Cursor<T extends string> extends BaseComponent<CursorElemen
     applyState(state: CursorState, override?: gsap.TweenVars): void;
     private initTheme;
     private initHover;
+    private injectStyles;
 }

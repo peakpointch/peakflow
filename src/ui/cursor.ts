@@ -2,6 +2,7 @@ import gsap from "gsap";
 import Selector from "../attributeselector";
 import { BaseComponent, type BaseSettings } from "../base-component";
 import type { PartialDeep } from "type-fest";
+import { objectToCSS, breakpointsToMediaQueries } from "../utils/css";
 
 export type CursorElement = "pointer";
 export type CursorState = "base" | "hover";
@@ -14,6 +15,9 @@ export interface CursorSettings<Theme extends string = string> extends BaseSetti
     hover: string;
     click: string;
   };
+  style: gsap.CSSVars;
+  breakpoints: Record<number, gsap.CSSVars>;
+  mobileFirst: boolean;
 }
 
 export class Cursor<T extends string> extends BaseComponent<CursorElement, CursorSettings> {
@@ -30,6 +34,15 @@ export class Cursor<T extends string> extends BaseComponent<CursorElement, Curso
       hover: "a, button, input, select, textarea",
       click: "a, button, input, select, textarea",
     },
+    style: {
+      display: "none",
+    },
+    breakpoints: {
+      992: {
+        display: "block",
+      },
+    },
+    mobileFirst: true,
   };
 
   public static readonly attr = {
@@ -49,6 +62,7 @@ export class Cursor<T extends string> extends BaseComponent<CursorElement, Curso
     this.addPointer(cursor);
     this.initTheme();
     this.initHover();
+    this.injectStyles();
   }
 
   protected static attributeSelector = Selector.attr<CursorElement>(this.attr.element);
@@ -58,7 +72,6 @@ export class Cursor<T extends string> extends BaseComponent<CursorElement, Curso
 
   public static create<T extends string>(settings: PartialDeep<CursorSettings<T>>): Cursor<T> {
     const el = document.createElement("div");
-    el.classList.add("cursor");
     document.body.appendChild(el);
 
     const cursor = new Cursor(el, settings);
@@ -159,5 +172,63 @@ export class Cursor<T extends string> extends BaseComponent<CursorElement, Curso
         target.removeEventListener("click", clickAnimation);
       });
     });
+  }
+
+  private injectStyles(): void {
+    const pointerSelector = this.selector("pointer");
+    const interactionSelector = `body, body *, button, a, a.button, .button, a.w-tab-link, .w-tab-link`;
+
+    // Build the global stylesheet as one declarative object
+    const styleSheet: Record<string, any> = {
+      [pointerSelector]: {
+        display: "none",
+        pointerEvents: "none",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        zIndex: 9999,
+        ...this.settings.style,
+      },
+      // Initial native cursor state
+      [interactionSelector]: {
+        cursor: this.settings.mobileFirst ? "auto" : "none",
+      },
+      // Add media queries
+      ...breakpointsToMediaQueries(
+        this.settings.breakpoints,
+        (styles) => {
+          return {
+            [pointerSelector]: {
+              display: "block",
+              ...styles,
+            },
+            [interactionSelector]: {
+              cursor: this.settings.mobileFirst ? "none !important" : "auto",
+            },
+          };
+        },
+        { mobileFirst: this.settings.mobileFirst, unit: "px" },
+      ),
+    };
+
+    // Add media queries declaratively
+
+    const css = objectToCSS(styleSheet, { pretty: true });
+    console.log("CSS", css);
+
+    // Injection Logic
+    const styleId = `cursor-styles-${this.settings.id || "global"}`;
+    if (document.getElementById(styleId)) return;
+
+    if (window.CSSStyleSheet && (document as any).adoptedStyleSheets) {
+      const sheet = new CSSStyleSheet();
+      sheet.replaceSync(css);
+      (document as any).adoptedStyleSheets = [...(document as any).adoptedStyleSheets, sheet];
+    } else {
+      const style = document.createElement("style");
+      style.id = styleId;
+      style.textContent = css;
+      document.head.appendChild(style);
+    }
   }
 }
