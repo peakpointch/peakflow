@@ -35,6 +35,10 @@
       "types": "./dist/dateflow/index.d.ts",
       "default": "./dist/dateflow/index.js"
     },
+    "./elfsight": {
+      "types": "./dist/elfsight/index.d.ts",
+      "default": "./dist/elfsight/index.js"
+    },
     "./form": {
       "types": "./dist/form/index.d.ts",
       "default": "./dist/form/index.js"
@@ -135,6 +139,9 @@
       ],
       "dateflow": [
         "dist/dateflow/index.d.ts"
+      ],
+      "elfsight": [
+        "dist/elfsight/index.d.ts"
       ],
       "form": [
         "dist/form/index.d.ts"
