@@ -77,7 +77,6 @@ function initSlides(wrapperEl) {
  * <div
  *   data-swiper-id="my-swiper"
  *   data-swiper-element="component"
- *   class="swiper-container"
  *
  *   data-slides-per-view="auto"
  *   data-space-between="24"
@@ -85,7 +84,7 @@ function initSlides(wrapperEl) {
  *   data-autoplay="true"
  *   data-autoplay-delay="5000"
  * >
- *   <div class="swiper-wrapper">
+ *   <div data-swiper-element="wrapper" class="swiper-wrapper">
  *     <!-- Swiper slides here -->
  *   </div>
  *
@@ -152,11 +151,13 @@ export class Slider extends BaseComponent {
         swiperElement.classList.remove("initial-hide");
         const settings = parseDataset(swiperElement, swiperAttributes);
         const swiperOptions = {
-            autoplay: {
-                delay: settings.autoplay ? settings.autoplayDelay : undefined,
-                pauseOnMouseEnter: true,
-                disableOnInteraction: true,
-            },
+            autoplay: settings.autoplay
+                ? {
+                    delay: settings.autoplayDelay,
+                    pauseOnMouseEnter: true,
+                    disableOnInteraction: true,
+                }
+                : false,
             navigation: {
                 prevEl: `[${_a.attr.id}="${settings.id}"] ${_a.selector("prev")}`,
                 nextEl: `[${_a.attr.id}="${settings.id}"] ${_a.selector("next")}`,
