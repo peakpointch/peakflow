@@ -240,7 +240,7 @@
     "html2canvas": "^1.4.1",
     "hyphenation.de": "^0.2.1",
     "hypher": "^0.2.5",
-    "jspdf": "^3.0.1",
+    "jspdf": "^4.0.0",
     "semver": "^7.7.3",
     "swiper": "^12.0.3",
     "ts-deepmerge": "^7.0.3",
