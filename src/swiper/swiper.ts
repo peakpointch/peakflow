@@ -22,7 +22,7 @@ interface SwiperDataset extends ParsedDataset {
   centeredSlides: boolean;
   freeMode: boolean;
   followFinger: boolean;
-  id: string;
+  swiperId: string;
   loop: boolean;
   mousewheel: boolean;
   slidesPerView: "auto" | number;
@@ -246,8 +246,8 @@ export class Slider extends BaseComponent<SliderElement> {
           }
         : false,
       navigation: {
-        prevEl: `[${Slider.attr.id}="${settings.id}"] ${Slider.selector("prev")}`,
-        nextEl: `[${Slider.attr.id}="${settings.id}"] ${Slider.selector("next")}`,
+        prevEl: Slider.selector("prev", settings.swiperId),
+        nextEl: Slider.selector("next", settings.swiperId),
       },
       pagination: {
         el: Slider.selector("pagination"),

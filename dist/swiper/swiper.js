@@ -159,8 +159,8 @@ export class Slider extends BaseComponent {
                 }
                 : false,
             navigation: {
-                prevEl: `[${_a.attr.id}="${settings.id}"] ${_a.selector("prev")}`,
-                nextEl: `[${_a.attr.id}="${settings.id}"] ${_a.selector("next")}`,
+                prevEl: _a.selector("prev", settings.swiperId),
+                nextEl: _a.selector("next", settings.swiperId),
             },
             pagination: {
                 el: _a.selector("pagination"),
