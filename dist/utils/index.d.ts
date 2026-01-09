@@ -1,6 +1,7 @@
 export { default as capitalize } from "./capitalize.js";
 export * from "./css.js";
 export { default as deepMerge } from "./deepmerge.js";
+export * from "./dom-freeze.js";
 export * from "./getelements.js";
 export * from "./logger.js";
 export { default as mapToObject } from "./maptoobject.js";

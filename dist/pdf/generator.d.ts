@@ -3,7 +3,7 @@ import type { RenderData } from "../renderer/index.js";
 export type PdfElement = "container" | "scale" | "page" | "page-wrapper" | "weekday" | "dish";
 export type PdfFieldName = string | "dishName" | "dishDescription" | "price" | "priceSmall";
 export type PdfFormat = "a3" | "a4" | "a5";
-export declare class Pdf {
+export declare class PdfGenerator {
     canvas: HTMLElement;
     renderer: Renderer;
     defaultScale: number;

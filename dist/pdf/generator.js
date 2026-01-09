@@ -4,10 +4,10 @@ import jsPDF from "jspdf";
 import Selector from "../attributeselector/index.js";
 import { softHyphenizer, solidHyphens } from "../hyphenizer/index.js";
 import german from "hyphenation.de";
-import { freezeElement, unFreezeElement } from "./freeze.js";
+import { freezeElement, unFreezeElement } from "../utils/dom-freeze.js";
 import { asPrefix, asSuffix } from "../utils/logger.js";
 // Variables
-export class Pdf {
+export class PdfGenerator {
     constructor(container) {
         if (!container)
             throw new Error("PDF Element not found.");
@@ -25,9 +25,9 @@ export class Pdf {
         this.getScaleElement();
     }
     getScaleElement() {
-        const scale = this.canvas.querySelector(Pdf.select("scale"));
+        const scale = this.canvas.querySelector(PdfGenerator.select("scale"));
         if (!scale) {
-            console.warn(`Scale element ${Pdf.select("scale")} is undefined.`);
+            console.warn(`Scale element ${PdfGenerator.select("scale")} is undefined.`);
             return;
         }
         this.scaleElement = scale;
@@ -51,7 +51,7 @@ export class Pdf {
     getPages(container = this.canvas) {
         if (!container)
             throw new Error(`Pdf: Invalid container`);
-        const pages = container.querySelectorAll(Pdf.select("page"));
+        const pages = container.querySelectorAll(PdfGenerator.select("page"));
         if (container === this.canvas) {
             this.pages = Array.from(pages);
             return this.pages;
@@ -61,7 +61,7 @@ export class Pdf {
     getPageWrappers(container = this.canvas) {
         if (!container)
             throw new Error(`Pdf: Invalid container`);
-        const pageWrappers = container.querySelectorAll(Pdf.select("page-wrapper"));
+        const pageWrappers = container.querySelectorAll(PdfGenerator.select("page-wrapper"));
         return Array.from(pageWrappers);
     }
     /**
@@ -240,18 +240,19 @@ export class Pdf {
         filename = filename.endsWith(".pdf") ? filename : `${filename}.pdf`;
         // Scale the pdf on client
         this.scale(clientScale, false);
-        setTimeout(async () => {
+        return new Promise((resolve) => setTimeout(async () => {
             this.freeze();
             // Create the jsPDF instance
             const pdf = await this.create(format);
             pdf.save(filename);
             this.unFreeze();
             this.resetScale();
-        }, 0);
+            resolve();
+        }, 0));
     }
 }
 /**
  * Use this method to select the elements for a new `Pdf` instance.
  * @returns CSS selector string
  */
-Pdf.select = Selector.attr("data-pdf-element");
+PdfGenerator.select = Selector.attr("data-pdf-element");
