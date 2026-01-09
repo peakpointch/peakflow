@@ -3,6 +3,8 @@ type GetElementOptions = {
   node: Element | Document;
 };
 
+export type ElementGetter<T extends Element = HTMLElement> = string | T | T[] | NodeListOf<T>;
+
 /**
  * Finds one or multiple elements based on input type.
  * @param input - CSS selector or HTMLElement(s).
@@ -10,7 +12,7 @@ type GetElementOptions = {
  * @returns An array of HTMLElements (or throws an error if not found).
  */
 export function getAllElements<T extends HTMLElement = HTMLElement>(
-  input: string | T | T[] | NodeListOf<T>,
+  input: ElementGetter<T>,
   options: Partial<GetElementOptions> = {},
 ): T[] {
   const opts: GetElementOptions = {

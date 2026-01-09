@@ -12,7 +12,6 @@ type SliderElement = "component" | "wrapper" | "controls" | "navigation" | "pagi
  * <div
  *   data-swiper-id="my-swiper"
  *   data-swiper-element="component"
- *   class="swiper-container"
  *
  *   data-slides-per-view="auto"
  *   data-space-between="24"
@@ -20,7 +19,7 @@ type SliderElement = "component" | "wrapper" | "controls" | "navigation" | "pagi
  *   data-autoplay="true"
  *   data-autoplay-delay="5000"
  * >
- *   <div class="swiper-wrapper">
+ *   <div data-swiper-element="wrapper" class="swiper-wrapper">
  *     <!-- Swiper slides here -->
  *   </div>
  *

@@ -1,6 +1,6 @@
 {
   "name": "peakflow",
-  "version": "0.2.0-alpha.7",
+  "version": "0.2.0-alpha.9",
   "description": "A TypeScript based Webflow library",
   "type": "module",
   "typings": "dist/index.d.ts",
@@ -34,6 +34,10 @@
     "./dateflow": {
       "types": "./dist/dateflow/index.d.ts",
       "default": "./dist/dateflow/index.js"
+    },
+    "./elfsight": {
+      "types": "./dist/elfsight/index.d.ts",
+      "default": "./dist/elfsight/index.js"
     },
     "./form": {
       "types": "./dist/form/index.d.ts",
@@ -135,6 +139,9 @@
       ],
       "dateflow": [
         "dist/dateflow/index.d.ts"
+      ],
+      "elfsight": [
+        "dist/elfsight/index.d.ts"
       ],
       "form": [
         "dist/form/index.d.ts"

@@ -5,6 +5,7 @@ export * from "./attributeselector/index.js";
 export * from "./cal/index.js";
 export * from "./canvas/index.js";
 export * from "./dateflow/index.js";
+export * from "./elfsight/index.js";
 export * from "./form/index.js";
 export * from "./hyphenizer/index.js";
 export * from "./inlinecms/index.js";
