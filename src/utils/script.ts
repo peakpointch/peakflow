@@ -18,7 +18,13 @@ export default class Script {
   public readonly async: boolean;
   public readonly defer: boolean;
   /** Tracks whether the script has finished loading */
-  private loaded = false;
+  private _loaded: boolean = false;
+  public get loaded(): boolean {
+    return this._loaded;
+  }
+  private set loaded(value: boolean) {
+    this._loaded = value;
+  }
 
   /**
    * Creates a new Script instance.

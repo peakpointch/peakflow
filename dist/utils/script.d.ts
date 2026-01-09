@@ -17,7 +17,9 @@ export default class Script {
     readonly async: boolean;
     readonly defer: boolean;
     /** Tracks whether the script has finished loading */
-    private loaded;
+    private _loaded;
+    get loaded(): boolean;
+    private set loaded(value);
     /**
      * Creates a new Script instance.
      * If a script with the same `src` already exists in the document, it reuses it.

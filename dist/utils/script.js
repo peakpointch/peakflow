@@ -3,6 +3,12 @@
  * Provides an easy way to append a script to the document and await its loading.
  */
 export default class Script {
+    get loaded() {
+        return this._loaded;
+    }
+    set loaded(value) {
+        this._loaded = value;
+    }
     /**
      * Creates a new Script instance.
      * If a script with the same `src` already exists in the document, it reuses it.
@@ -15,7 +21,7 @@ export default class Script {
      */
     constructor(config) {
         /** Tracks whether the script has finished loading */
-        this.loaded = false;
+        this._loaded = false;
         // Check if script already exists in the DOM
         const existing = Array.from(document.querySelectorAll("script")).find((el) => el.src === config.src);
         if (existing) {
