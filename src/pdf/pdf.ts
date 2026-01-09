@@ -318,16 +318,19 @@ export class Pdf {
     // Scale the pdf on client
     this.scale(clientScale, false);
 
-    setTimeout(async () => {
-      this.freeze();
+    return new Promise((resolve) =>
+      setTimeout(async () => {
+        this.freeze();
 
-      // Create the jsPDF instance
-      const pdf = await this.create(format);
-      pdf.save(filename);
+        // Create the jsPDF instance
+        const pdf = await this.create(format);
+        pdf.save(filename);
 
-      this.unFreeze();
+        this.unFreeze();
 
-      this.resetScale();
-    }, 0);
+        this.resetScale();
+        resolve();
+      }, 0),
+    );
   }
 }
