@@ -6,7 +6,7 @@ import type { Html2CanvasOptions } from "jspdf";
 import Selector from "../attributeselector/index.js";
 import { softHyphenizer, solidHyphens } from "../hyphenizer/index.js";
 import german from "hyphenation.de";
-import { freezeElement, unFreezeElement } from "./freeze.js";
+import { freezeElement, unFreezeElement } from "../utils/dom-freeze.js";
 import { asPrefix, asSuffix } from "../utils/logger.js";
 
 // Types
@@ -16,7 +16,7 @@ export type PdfFormat = "a3" | "a4" | "a5";
 
 // Variables
 
-export class Pdf {
+export class PdfGenerator {
   public canvas: HTMLElement;
   public renderer: Renderer;
   public defaultScale: number;
@@ -48,9 +48,9 @@ export class Pdf {
   static select = Selector.attr<PdfElement>("data-pdf-element");
 
   private getScaleElement(): HTMLElement {
-    const scale = this.canvas.querySelector<HTMLElement>(Pdf.select("scale"));
+    const scale = this.canvas.querySelector<HTMLElement>(PdfGenerator.select("scale"));
     if (!scale) {
-      console.warn(`Scale element ${Pdf.select("scale")} is undefined.`);
+      console.warn(`Scale element ${PdfGenerator.select("scale")} is undefined.`);
       return;
     }
     this.scaleElement = scale;
@@ -78,7 +78,7 @@ export class Pdf {
 
   public getPages(container: HTMLElement = this.canvas): HTMLElement[] {
     if (!container) throw new Error(`Pdf: Invalid container`);
-    const pages = container.querySelectorAll<HTMLElement>(Pdf.select("page"));
+    const pages = container.querySelectorAll<HTMLElement>(PdfGenerator.select("page"));
     if (container === this.canvas) {
       this.pages = Array.from(pages);
       return this.pages;
@@ -88,7 +88,9 @@ export class Pdf {
 
   public getPageWrappers(container: HTMLElement = this.canvas): HTMLElement[] {
     if (!container) throw new Error(`Pdf: Invalid container`);
-    const pageWrappers = container.querySelectorAll<HTMLElement>(Pdf.select("page-wrapper"));
+    const pageWrappers = container.querySelectorAll<HTMLElement>(
+      PdfGenerator.select("page-wrapper"),
+    );
     return Array.from(pageWrappers);
   }
 
