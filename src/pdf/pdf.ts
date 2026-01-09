@@ -8,6 +8,7 @@ import { softHyphenizer, solidHyphens } from "../hyphenizer/index.js";
 import german from "hyphenation.de";
 import { freezeElement, unFreezeElement } from "./freeze.js";
 import { asPrefix, asSuffix } from "../utils/logger.js";
+import type EventEmitter from "eventemitter3";
 
 // Types
 export type PdfElement = "container" | "scale" | "page" | "page-wrapper" | "weekday" | "dish";
@@ -21,6 +22,7 @@ export class Pdf {
   public renderer: Renderer;
   public defaultScale: number;
   public customScale: number;
+  public events: EventEmitter;
   private freezeSelector: string;
   private scaleElement: HTMLElement;
   private pages: HTMLElement[];
