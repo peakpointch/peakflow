@@ -1,10 +1,10 @@
 export function logInstance(instance?: string): string {
-  return instance ? `"${instance}"` : "";
+  return instance ? ` "${instance}"` : "";
 }
 
 export function logPrefix(name: string, instance?: string): string {
   const instanceStr = logInstance(instance);
-  return `${name} ${instanceStr}: `;
+  return `${name}${instanceStr}: `;
 }
 
 export function asPrefix(str: string | null | undefined, suffix: string = ""): string {
