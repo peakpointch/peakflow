@@ -1,6 +1,5 @@
 export * from "./utility.js";
 export * from "./array/index.js";
-export * from "./calendarweekcomponent.js";
 export * from "./cms-select.js";
 export * from "./fieldgroup.js";
 export * from "./filterform.js";

@@ -18,6 +18,7 @@ export * from "./scroll/index.js";
 export * from "./split-button/index.js";
 export * from "./swiper/index.js";
 export * from "./timezones/index.js";
+export * from "./ui/index.js";
 export * from "./webflow/index.js";
 export * from "./wfcollection/index.js";
 export * from "./utils/index.js";

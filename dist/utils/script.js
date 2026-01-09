@@ -84,7 +84,7 @@ export default class Script {
      * @returns A Promise that resolves when the script is loaded.
      * @throws If the script fails to load.
      */
-    load() {
+    async load() {
         if (this.loaded || Script.exists(this.src)) {
             this.loaded = true;
             return Promise.resolve();

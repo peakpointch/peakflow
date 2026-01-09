@@ -1,6 +1,6 @@
 {
   "name": "peakflow",
-  "version": "v0.2.0-alpha.0",
+  "version": "0.2.0-alpha.7",
   "description": "A TypeScript based Webflow library",
   "type": "module",
   "typings": "dist/index.d.ts",
@@ -95,6 +95,10 @@
       "types": "./dist/typeutils/index.d.ts",
       "default": "./dist/typeutils/index.js"
     },
+    "./ui": {
+      "types": "./dist/ui/index.d.ts",
+      "default": "./dist/ui/index.js"
+    },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
       "default": "./dist/utils/index.js"
@@ -180,6 +184,9 @@
       "typeutils": [
         "dist/typeutils/index.d.ts"
       ],
+      "ui": [
+        "dist/ui/index.d.ts"
+      ],
       "utils": [
         "dist/utils/index.d.ts"
       ],
@@ -222,10 +229,12 @@
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "eventemitter3": "^5.0.1",
+    "gsap": "^3.14.2",
     "html2canvas": "^1.4.1",
     "hyphenation.de": "^0.2.1",
     "hypher": "^0.2.5",
     "jspdf": "^4.0.0",
+    "semver": "^7.7.3",
     "swiper": "^12.0.3",
     "ts-deepmerge": "^7.0.3",
     "type-fest": "^4.41.0"
