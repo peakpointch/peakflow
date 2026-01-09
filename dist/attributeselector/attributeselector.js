@@ -110,7 +110,12 @@ export class Selector {
         return (element, instance) => {
             const base = attributeSelector(element);
             const instanceSelector = instance ? `[${attr.id}="${instance}"]` : "";
-            return element === "component" // runtime check: component is special
+            // Avoid duplicate selectors when no instance selector was given
+            if (!instanceSelector)
+                return base;
+            // Id attribute must be defined on component element directly
+            // Allow scoping for normal elements
+            return element === "component"
                 ? `${base}${instanceSelector}`
                 : `${base}${instanceSelector}, ${instanceSelector} ${base}`;
         };
