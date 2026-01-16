@@ -10,7 +10,7 @@ export interface ScriptOptions {
  * Represents a dynamically loadable <script> element.
  * Provides an easy way to append a script to the document and await its loading.
  */
-export default class Script {
+export class Script {
   /** The underlying HTMLScriptElement instance */
   public element: HTMLScriptElement;
   public readonly src: string;
@@ -141,3 +141,5 @@ export default class Script {
     );
   }
 }
+
+export default Script;

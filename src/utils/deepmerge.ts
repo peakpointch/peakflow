@@ -12,6 +12,8 @@ import { merge } from "ts-deepmerge";
  * @returns A new object containing the deeply merged result of
  * defaults and options.
  */
-export default function mergeOptions<T, U extends PartialDeep<T>>(defaults: T, options: U): T {
+export function mergeOptions<T, U extends PartialDeep<T>>(defaults: T, options: U): T {
   return merge(defaults, options) as T;
 }
+
+export default mergeOptions;

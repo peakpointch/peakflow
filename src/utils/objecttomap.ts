@@ -9,7 +9,7 @@
  * @returns {Map<any, any>} A `Map` object representing the input `obj`, where keys are the same as the object's
  * properties and values are the corresponding values of those properties.
  */
-export default function objectToMap(obj: any, deep: boolean = false): Map<any, any> {
+export function objectToMap(obj: any, deep: boolean = false): Map<any, any> {
   const map = new Map();
   for (const [key, value] of Object.entries(obj)) {
     // Check if deep conversion is requested
@@ -21,3 +21,5 @@ export default function objectToMap(obj: any, deep: boolean = false): Map<any, a
   }
   return map;
 }
+
+export default objectToMap;
