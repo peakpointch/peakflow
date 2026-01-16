@@ -1,5 +1,5 @@
 import { Selector, type BaseAttributes } from "../attributeselector";
-import { deepMerge } from "../utils";
+import { mergeOptions } from "../utils";
 import type { PartialDeep } from "type-fest";
 
 export interface BaseSettings {
@@ -29,7 +29,7 @@ export abstract class BaseComponent<
     if (!component) throw new Error(`Component element cannot be null`);
     const SubClass = this.constructor as typeof BaseComponent;
     this.component = component;
-    this.settings = deepMerge(SubClass.defaultSettings, settings) as Settings;
+    this.settings = mergeOptions(SubClass.defaultSettings, settings) as Settings;
     this.id = this.settings.id || component.getAttribute(SubClass.attr.id);
   }
 

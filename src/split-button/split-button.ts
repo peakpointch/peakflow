@@ -1,5 +1,5 @@
 import Selector from "../attributeselector";
-import { deepMerge } from "../utils";
+import { mergeOptions } from "../utils";
 
 type SplitButtonElement = "component" | "button" | "trigger" | "list" | "option";
 
@@ -48,7 +48,7 @@ export class SplitButton<ActionKey extends string = string> {
 
   constructor(component: HTMLElement, settings: Partial<SplitButtonSettings> = {}) {
     this.component = component;
-    this.settings = deepMerge(SplitButton.defaultSettings, settings);
+    this.settings = mergeOptions(SplitButton.defaultSettings, settings);
     this.instance = this.settings.id || component.getAttribute(SplitButton.attr.id) || "";
     component.setAttribute(SplitButton.attr.id, this.instance);
 

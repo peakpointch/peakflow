@@ -6,7 +6,7 @@ import type { PartialDeep } from "type-fest";
 import Path from "../path/index.js";
 import wf from "../webflow/index.js";
 import { Selector, exclude } from "../attributeselector/index.js";
-import { deepMerge, toCamelCase, asPrefix, asSuffix, logPrefix } from "../utils/index.js";
+import { mergeOptions, toCamelCase, asPrefix, asSuffix, logPrefix } from "../utils/index.js";
 
 import { ImageField } from "./fields/index.js";
 import { HTMLRenderNode, HTMLRenderField, HTMLRenderBlock } from "./dom/index.js";
@@ -64,7 +64,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
   constructor(canvas: HTMLElement | null, options?: PartialDeep<RendererOptions<F>>) {
     if (!canvas) throw new Error(`${this.lp}Canvas can't be undefined.`);
     this.canvas = canvas;
-    this.options = deepMerge(Renderer.defaultOptions as RendererOptions<F>, options);
+    this.options = mergeOptions(Renderer.defaultOptions as RendererOptions<F>, options);
 
     this.attributeName = this.options.attributeName;
     this.attr = Renderer.getAttributes(this.attributeName);

@@ -4,7 +4,7 @@ import { de } from "date-fns/locale";
 import Path from "../path/index.js";
 import wf from "../webflow/index.js";
 import { Selector, exclude } from "../attributeselector/index.js";
-import { deepMerge, toCamelCase, asPrefix, asSuffix, logPrefix } from "../utils/index.js";
+import { mergeOptions, toCamelCase, asPrefix, asSuffix, logPrefix } from "../utils/index.js";
 import { ImageField } from "./fields/index.js";
 import { HTMLRenderNode, HTMLRenderField, HTMLRenderBlock } from "./dom/index.js";
 export class Renderer {
@@ -24,7 +24,7 @@ export class Renderer {
         if (!canvas)
             throw new Error(`${this.lp}Canvas can't be undefined.`);
         this.canvas = canvas;
-        this.options = deepMerge(Renderer.defaultOptions, options);
+        this.options = mergeOptions(Renderer.defaultOptions, options);
         this.attributeName = this.options.attributeName;
         this.attr = Renderer.getAttributes(this.attributeName);
         this.lp = logPrefix("Renderer", this.attributeName);

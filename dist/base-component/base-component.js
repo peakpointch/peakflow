@@ -1,5 +1,5 @@
 import { Selector } from "../attributeselector";
-import { deepMerge } from "../utils";
+import { mergeOptions } from "../utils";
 /**
  * Base class for components with attribute-based selectors
  */
@@ -9,7 +9,7 @@ export class BaseComponent {
             throw new Error(`Component element cannot be null`);
         const SubClass = this.constructor;
         this.component = component;
-        this.settings = deepMerge(SubClass.defaultSettings, settings);
+        this.settings = mergeOptions(SubClass.defaultSettings, settings);
         this.id = this.settings.id || component.getAttribute(SubClass.attr.id);
     }
     selector(element, global = false) {

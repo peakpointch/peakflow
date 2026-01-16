@@ -1,4 +1,4 @@
-import { merge } from "ts-deepmerge";
+import type { PartialDeep } from "type-fest";
 /**
  * Deeply merges user-provided options into a set of default options.
  *
@@ -10,6 +10,5 @@ import { merge } from "ts-deepmerge";
  * @returns A new object containing the deeply merged result of
  * defaults and options.
  */
-export default function mergeOptions(defaults, options) {
-    return merge(defaults, options);
-}
+export declare function mergeOptions<T, U extends PartialDeep<T>>(defaults: T, options: U): T;
+export default mergeOptions;

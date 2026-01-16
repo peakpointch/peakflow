@@ -1,7 +1,7 @@
 import type { GlobalCal } from "@calcom/embed-core";
 import type { BookerLayouts, EmbedThemeConfig } from "@calcom/embed-core/dist/src/types";
 import type { PartialDeep } from "type-fest";
-import { deepMerge, Script } from "../utils";
+import { mergeOptions, Script } from "../utils";
 import type {
   EventData as CalEventData,
   EventDataMap as CalEventDataMap,
@@ -180,7 +180,7 @@ export class CalClient<Namespace extends string = string> {
    * @private
    */
   private constructor(options?: PartialDeep<CalClientOptions>) {
-    this.options = deepMerge(CalClient.defaultOptions, options);
+    this.options = mergeOptions(CalClient.defaultOptions, options);
   }
 
   /**

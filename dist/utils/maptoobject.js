@@ -1,4 +1,4 @@
-export default function mapToObject(map, stringify = false) {
+export function mapToObject(map, stringify = false) {
     // Convert a Map to a plain object
     const obj = {};
     for (const [key, value] of map) {
@@ -11,3 +11,4 @@ export default function mapToObject(map, stringify = false) {
     }
     return obj;
 }
+export default mapToObject;

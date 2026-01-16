@@ -6,7 +6,7 @@ export interface StylesheetOptions {
  * Represents a dynamically loadable <link rel="stylesheet"> element.
  * Provides an easy way to append a stylesheet to the document and await its loading.
  */
-export default class Stylesheet {
+export declare class Stylesheet {
     /** The underlying HTMLLinkElement */
     element: HTMLLinkElement;
     readonly href: string;
@@ -31,3 +31,4 @@ export default class Stylesheet {
      */
     static exists(href: string): boolean;
 }
+export default Stylesheet;

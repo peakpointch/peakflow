@@ -1,6 +1,6 @@
 export * from "./capitalize.js";
 export * from "./css.js";
-export * from "./deepmerge.js";
+export * from "./merge-options.js";
 export * from "./dom-freeze.js";
 export * from "./fetch-document.js";
 export * from "./getelements.js";

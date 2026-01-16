@@ -2,7 +2,7 @@
  * Represents a dynamically loadable <script> element.
  * Provides an easy way to append a script to the document and await its loading.
  */
-export default class Script {
+export class Script {
     get loaded() {
         return this._loaded;
     }
@@ -113,3 +113,4 @@ export default class Script {
         return Array.from(document.querySelectorAll("script")).some((el) => el.src.includes(url));
     }
 }
+export default Script;

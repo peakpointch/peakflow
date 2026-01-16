@@ -1,5 +1,5 @@
-import deepMerge from "./deepmerge.js";
-import { toDashCase } from "./parameterize.js";
+import { mergeOptions } from "../utils";
+import { toDashCase } from "../utils";
 const defaultObjectToCSSOptions = {
     convertCasing: true,
     pretty: false,
@@ -36,7 +36,7 @@ const defaultCSSBreakpointOptions = {
     mobileFirst: true,
 };
 export function breakpointsToMediaQueries(breakpoints, callback = (styles) => styles, options = {}) {
-    const opts = deepMerge(defaultCSSBreakpointOptions, options);
+    const opts = mergeOptions(defaultCSSBreakpointOptions, options);
     const mediaType = opts.mobileFirst ? "min-width" : "max-width";
     return Object.entries(breakpoints).reduce((acc, [width, styles]) => {
         const query = `@media screen and (${mediaType}: ${width}${opts.unit})`;

@@ -2,7 +2,7 @@
  * Represents a dynamically loadable <link rel="stylesheet"> element.
  * Provides an easy way to append a stylesheet to the document and await its loading.
  */
-export default class Stylesheet {
+export class Stylesheet {
     constructor(config) {
         /** Tracks whether the stylesheet has finished loading */
         this.loaded = false;
@@ -58,3 +58,4 @@ export default class Stylesheet {
         return Array.from(document.querySelectorAll("link[rel=stylesheet]")).some((el) => el.href.includes(href));
     }
 }
+export default Stylesheet;

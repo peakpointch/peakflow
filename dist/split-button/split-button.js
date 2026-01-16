@@ -1,5 +1,5 @@
 import Selector from "../attributeselector";
-import { deepMerge } from "../utils";
+import { mergeOptions } from "../utils";
 export class SplitButton {
     static get attr() {
         return {
@@ -22,7 +22,7 @@ export class SplitButton {
             this.button.textContent = action.label;
         };
         this.component = component;
-        this.settings = deepMerge(SplitButton.defaultSettings, settings);
+        this.settings = mergeOptions(SplitButton.defaultSettings, settings);
         this.instance = this.settings.id || component.getAttribute(SplitButton.attr.id) || "";
         component.setAttribute(SplitButton.attr.id, this.instance);
         // Find main button

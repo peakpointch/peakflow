@@ -9,4 +9,5 @@
  * @returns {Map<any, any>} A `Map` object representing the input `obj`, where keys are the same as the object's
  * properties and values are the corresponding values of those properties.
  */
-export default function objectToMap(obj: any, deep?: boolean): Map<any, any>;
+export declare function objectToMap(obj: any, deep?: boolean): Map<any, any>;
+export default objectToMap;

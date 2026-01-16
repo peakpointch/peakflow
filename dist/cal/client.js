@@ -1,4 +1,4 @@
-import { deepMerge, Script } from "../utils";
+import { mergeOptions, Script } from "../utils";
 /**
  * Client class responsible for loading the Cal.com embed script and managing
  * calendar instances (namespaces) with specific configurations. This class acts
@@ -22,7 +22,7 @@ export class CalClient {
         };
         /** Flag indicating whether the Cal.com SDK has been successfully loaded. */
         this.initialized = false;
-        this.options = deepMerge(CalClient.defaultOptions, options);
+        this.options = mergeOptions(CalClient.defaultOptions, options);
     }
     /**
      * Creates a CalClient instance.

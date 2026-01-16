@@ -3,7 +3,7 @@ import Selector, { exclude, extend } from "../attributeselector/index.js";
 import { initWfInputs, sendFormData, validateFields, formElementSelector, fieldFromInput, enforceButtonTypes, FieldGroup, isCheckboxInput, setChecked, getRadioGroups, } from "./index.js";
 import { FormProgressManager, } from "./index.js";
 import wf from "../webflow/index.js";
-import { asSuffix, deepMerge } from "../utils";
+import { asSuffix, mergeOptions } from "../utils";
 import EventEmitter from "eventemitter3";
 // Selector functions
 const stepsElementSelector = Selector.attr("data-steps-element", {
@@ -24,7 +24,7 @@ export class MultiStepForm {
         this._currentStep = 0;
         this.customComponents = [];
         this.component = component;
-        this.options = deepMerge(MultiStepForm.defaultOptions, options);
+        this.options = mergeOptions(MultiStepForm.defaultOptions, options);
         this.id = this.options.id;
         this.version = this.options.version;
         this.lp = `MultiStepForm${asSuffix(`"${this.id}"`, " ")}: `;

@@ -1,6 +1,6 @@
 import type { PartialDeep } from "type-fest";
-import deepMerge from "./deepmerge.js";
-import { toDashCase } from "./parameterize.js";
+import { mergeOptions } from "../utils";
+import { toDashCase } from "../utils";
 
 export interface ObjectToCSSOptions {
   convertCasing: boolean;
@@ -68,7 +68,7 @@ export function breakpointsToMediaQueries(
   callback: (styles: any) => CSSRule = (styles) => styles,
   options: PartialDeep<CSSBreakpointOptions> = {},
 ): CSSMediaQuery {
-  const opts = deepMerge(defaultCSSBreakpointOptions, options);
+  const opts = mergeOptions(defaultCSSBreakpointOptions, options);
   const mediaType = opts.mobileFirst ? "min-width" : "max-width";
   return Object.entries(breakpoints).reduce((acc, [width, styles]) => {
     const query = `@media screen and (${mediaType}: ${width}${opts.unit})`;

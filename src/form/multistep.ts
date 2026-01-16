@@ -20,7 +20,7 @@ import {
   FormProgressManager,
 } from "./index.js";
 import wf from "../webflow/index.js";
-import { asSuffix, deepMerge } from "../utils";
+import { asSuffix, mergeOptions } from "../utils";
 import type { PartialDeep } from "type-fest";
 import EventEmitter from "eventemitter3";
 
@@ -140,7 +140,7 @@ export class MultiStepForm {
 
   constructor(component: HTMLElement, options: PartialDeep<MultiStepFormOptions>) {
     this.component = component;
-    this.options = deepMerge(MultiStepForm.defaultOptions, options);
+    this.options = mergeOptions(MultiStepForm.defaultOptions, options);
     this.id = this.options.id;
     this.version = this.options.version;
     this.lp = `MultiStepForm${asSuffix(`"${this.id}"`, " ")}: `;
