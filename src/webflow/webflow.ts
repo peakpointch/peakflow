@@ -65,13 +65,13 @@ export const wf: Webflow = {
   pageId,
   class: wfclass,
   select: wfselect,
-  isVisible: (el: HTMLElement): boolean => {
+  isVisible: (el: Element): boolean => {
     return !(el.classList.contains(wfclass.invisible) || el.closest(wfselect.invisible));
   },
-  hasAttr: (element: HTMLElement, attribute: string): boolean => {
+  hasAttr: (element: Element, attribute: string): boolean => {
     return element.hasAttribute(attribute) && element.getAttribute(attribute) !== "false";
   },
-  hasTrueAttr: (element: HTMLElement, attribute: string): boolean => {
+  hasTrueAttr: (element: Element, attribute: string): boolean => {
     return element.hasAttribute(attribute) && element.getAttribute(attribute) === "true";
   },
 };
