@@ -1,6 +1,6 @@
 {
   "name": "peakflow",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A TypeScript based Webflow library",
   "type": "module",
   "typings": "dist/index.d.ts",
