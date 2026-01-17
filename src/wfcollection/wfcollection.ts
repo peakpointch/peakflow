@@ -19,7 +19,7 @@ class CollectionList<F extends FilterAttributes = {}> {
   public renderer: Renderer<F>;
   public collectionData: RenderData<F> = [];
   public debug: boolean = false;
-  private listElement: HTMLElement;
+  public listElement: HTMLElement;
   private items: HTMLElement[];
 
   constructor(

@@ -16,7 +16,7 @@ declare class CollectionList<F extends FilterAttributes = {}> {
     renderer: Renderer<F>;
     collectionData: RenderData<F>;
     debug: boolean;
-    private listElement;
+    listElement: HTMLElement;
     private items;
     constructor(container: HTMLElement | null, options?: CollectionListOptions<F>);
     log(...args: any[]): void;
