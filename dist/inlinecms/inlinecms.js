@@ -2,25 +2,25 @@ import { getAllElements } from "../utils/getelements.js";
 const INLINECMS_TARGET_ATTR = `data-inlinecms-target`;
 const INLINECMS_COMPONENT_ATTR = `data-inlinecms-component`;
 /**
- * Ensures the given container is a valid CMS container.
- * @param container - The container to validate.
+ * Ensures the given origin is a valid CMS collection.
+ * @param origin - The wrapper to validate.
  */
-function validateContainer(container) {
-    if (!container.classList.contains("w-dyn-list")) {
-        throw new Error("The element given is not a CMS list: " + container);
+function validateOrigin(origin) {
+    if (!origin.classList.contains("w-dyn-list")) {
+        throw new Error("The element given is not a CMS list: " + origin);
     }
 }
 /**
- * Extracts and appends items from a CMS container to a target element.
- * @param container - The container element to extract items from.
+ * Extracts and appends items from a CMS wrapper to a target element.
+ * @param origin - The wrapper element to extract items from.
  * @param target - The target element to append items to.
  */
-function processItems(container, target) {
-    const items = container.querySelectorAll(".w-dyn-item");
+function processItems(origin, target) {
+    const items = origin.querySelectorAll(".w-dyn-item");
     if (items.length === 0) {
-        throw new Error(`The container doesn't contain any cms-items.`);
+        throw new Error(`The origin doesn't contain any cms-items.`);
     }
-    container.remove();
+    origin.remove();
     items.forEach((item) => {
         item.classList.remove("w-dyn-item");
         target.appendChild(item);
@@ -28,19 +28,19 @@ function processItems(container, target) {
 }
 /**
  * Extracts the target element from the `data-inlinecms-target` attribute.
- * @param container - The container with the attribute.
+ * @param origin - The CMS wrapper with the attribute.
  * @returns The target HTMLElement (or throws an error if not found).
  */
-function extractTargetFromAttribute(container) {
-    const targetSelector = container.getAttribute(INLINECMS_TARGET_ATTR);
+function extractTargetFromAttribute(origin) {
+    const targetSelector = origin.getAttribute(INLINECMS_TARGET_ATTR);
     if (!targetSelector) {
-        throw new Error(`Container is missing ${INLINECMS_TARGET_ATTR} attribute.`);
+        throw new Error(`Origin is missing ${INLINECMS_TARGET_ATTR} attribute.`);
     }
     let target;
     if (targetSelector === "parentNode" ||
         targetSelector === "parent" ||
         targetSelector === "parentElement") {
-        target = container.parentElement;
+        target = origin.parentElement;
     }
     else {
         target = document.querySelector(targetSelector);
@@ -51,24 +51,25 @@ function extractTargetFromAttribute(container) {
     return target;
 }
 /**
- * General-purpose function to inline CMS items into a target element.
- * @param container - CSS selector or HTMLElement(s) for the container(s).
- * @param target - CSS selector or HTMLElement for the target. If omitted, parent of the container is used.
+ * Single origin version of inlineCms. For advanced users only.
+ * @param options - Specify the origin, target and the doc to perform the operation on.
  */
-export function inlineCmsDev(container, target) {
-    // Find all container elements
-    const containers = getAllElements(container);
-    containers.forEach((container, index) => {
-        const componentName = container.getAttribute(INLINECMS_COMPONENT_ATTR) || `index ${index}`;
-        validateContainer(container);
+export function inlineCmsSingle(options) {
+    const { origin, target, doc = document } = options;
+    const origins = getAllElements(origin, { node: doc });
+    origins.forEach((origin, index) => {
+        const componentName = origin.getAttribute(INLINECMS_COMPONENT_ATTR) || `index ${index}`;
+        validateOrigin(origin);
         // Determine the target element
-        const targetElement = target ? getAllElements(target)[0] : container.parentElement;
+        const targetElement = target && target !== "parent"
+            ? getAllElements(target, { node: doc })[0]
+            : origin.parentElement;
         if (!targetElement) {
             throw new Error("Target element not found or specified.");
         }
         try {
-            // Process the container and append items to the target
-            processItems(container, targetElement);
+            // Process the origin and append items to the target
+            processItems(origin, targetElement);
         }
         catch (e) {
             console.warn(`Inlinecms "${componentName}":`, e.message);
@@ -76,37 +77,30 @@ export function inlineCmsDev(container, target) {
     });
 }
 /**
- * Processes a NodeList of CMS containers or a CSS selector that matches multiple CMS containers,
- * extracting items into their respective targets.
- * Each container must have a `data-inlinecms-target` attribute.
- * @param containers - A NodeListOf<HTMLElement> or a CSS selector string for CMS container elements.
+ * Processes CMS wrappers (origins), extracting their items into their respective target.
+ * @param options - Specify the  and the doc to perform the operation on.
  */
-export function inlineCms(containers) {
-    let containerElements;
-    if (typeof containers === "string") {
-        containerElements = getAllElements(containers);
+export function inlineCms(options) {
+    const { origins = "[data-inlinecms-origin]", doc = document } = options;
+    const originElements = getAllElements(origins, { node: doc });
+    if (originElements.length === 0) {
+        throw new Error(`Inlinecms: No wrappers found. ${typeof origins === "string" ? `Selector ${origins}` : ""}`);
     }
-    else {
-        containerElements = Array.from(containers);
-    }
-    if (containerElements.length === 0) {
-        throw new Error(`No containers found matching: ${typeof containers === "string" ? containers : ""} `);
-    }
-    containerElements.forEach((container, index) => {
-        const componentName = container.getAttribute(INLINECMS_COMPONENT_ATTR) || `index ${index}`;
-        validateContainer(container);
+    originElements.forEach((origin, index) => {
+        const componentName = origin.getAttribute(INLINECMS_COMPONENT_ATTR) || `index ${index}`;
+        validateOrigin(origin);
         let targetElement;
         try {
-            // Extract the target from the container's attribute
-            targetElement = extractTargetFromAttribute(container);
+            // Extract the target from the origin's attribute
+            targetElement = extractTargetFromAttribute(origin);
         }
         catch (e) {
-            console.warn(`Inlinecms "${componentName}":`, e.message, `Setting target to the containers parent.`);
-            targetElement = container.parentElement;
+            console.warn(`Inlinecms "${componentName}":`, e.message, `Setting target to the origin's parent.`);
+            targetElement = origin.parentElement;
         }
         try {
-            // Process the container and append items to the target
-            processItems(container, targetElement);
+            // Process the origin and append items to the target
+            processItems(origin, targetElement);
         }
         catch (e) {
             console.warn(`Inlinecms "${componentName}":`, e.message);

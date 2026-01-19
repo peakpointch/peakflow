@@ -1,13 +1,33 @@
+import { type ElementGetter } from "../utils/getelements.js";
+interface InlineCmsSingleOptions {
+    /**
+     * CSS selector or HTMLElement(s) for the origin(s).
+     */
+    origin: ElementGetter<HTMLElement>;
+    /**
+     * CSS selector or HTMLElement for the target. If omitted, parent of the origin is used.
+     */
+    target?: ElementGetter<HTMLElement>;
+    /** The document to perform the operations on. For advanced users only. */
+    doc?: Document | Element;
+}
 /**
- * General-purpose function to inline CMS items into a target element.
- * @param container - CSS selector or HTMLElement(s) for the container(s).
- * @param target - CSS selector or HTMLElement for the target. If omitted, parent of the container is used.
+ * Single origin version of inlineCms. For advanced users only.
+ * @param options - Specify the origin, target and the doc to perform the operation on.
  */
-export declare function inlineCmsDev(container: string | HTMLElement, target?: string | HTMLElement): void;
+export declare function inlineCmsSingle(options: InlineCmsSingleOptions): void;
+interface InlineCmsOptions {
+    /**
+     * CSS selector or HTMLElement(s) for the origin(s). Default: "[data-inlinecms-origin]"
+     * Each origin must have a `data-inlinecms-target` attribute.
+     */
+    origins?: ElementGetter<HTMLElement>;
+    /** The document to perform the operations on. For advanced users only. */
+    doc?: Document | Element;
+}
 /**
- * Processes a NodeList of CMS containers or a CSS selector that matches multiple CMS containers,
- * extracting items into their respective targets.
- * Each container must have a `data-inlinecms-target` attribute.
- * @param containers - A NodeListOf<HTMLElement> or a CSS selector string for CMS container elements.
+ * Processes CMS wrappers (origins), extracting their items into their respective target.
+ * @param options - Specify the  and the doc to perform the operation on.
  */
-export declare function inlineCms(containers: string | NodeListOf<HTMLElement>): void;
+export declare function inlineCms(options: InlineCmsOptions): void;
+export {};
