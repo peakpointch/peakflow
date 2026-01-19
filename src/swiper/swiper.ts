@@ -125,6 +125,10 @@ function initSlides(wrapperEl: HTMLElement): void {
   });
 }
 
+export interface SliderSettings extends BaseSettings {
+  options: SwiperOptions;
+}
+
 /**
  * A Swiper component wrapper for Webflow.
  *
@@ -181,7 +185,7 @@ export class Slider extends BaseComponent<SliderElement> {
   public static select = Selector.select<SliderElement>(this.selector);
   public static selectAll = Selector.selectAll<SliderElement>(this.selector);
 
-  private static create(swiperElement: HTMLElement): Swiper {
+  private static create(swiperElement: HTMLElement, options?: SwiperOptions): Swiper {
     initSlides(swiperElement.querySelector(Slider.selector("wrapper")));
 
     if (sliderEmpty(swiperElement)) {
@@ -189,7 +193,7 @@ export class Slider extends BaseComponent<SliderElement> {
       return new Swiper(swiperElement);
     }
 
-    const swiperOptions = this.readOptions(swiperElement);
+    const swiperOptions = this.readOptions(swiperElement, options);
     const swiper = new Swiper(swiperElement, swiperOptions);
 
     initCounter(swiper);
@@ -217,7 +221,7 @@ export class Slider extends BaseComponent<SliderElement> {
     return swiper;
   }
 
-  public static initAll(container: HTMLElement = document.body): void {
+  public static initAll(container: HTMLElement = document.body, options?: SwiperOptions): void {
     new Stylesheet({
       href: "https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css",
     }).load();
@@ -228,11 +232,11 @@ export class Slider extends BaseComponent<SliderElement> {
     const webflowSwipers = container.querySelectorAll<HTMLElement>(Slider.selector("component"));
 
     webflowSwipers.forEach((swiperElement: HTMLElement) => {
-      Slider.create(swiperElement);
+      Slider.create(swiperElement, options);
     });
   }
 
-  public static readOptions(swiperElement: HTMLElement): SwiperOptions {
+  public static readOptions(swiperElement: HTMLElement, override?: SwiperOptions): SwiperOptions {
     swiperElement.classList.remove("initial-hide");
 
     const settings = parseDataset<SwiperDataset>(swiperElement, swiperAttributes);
@@ -284,6 +288,13 @@ export class Slider extends BaseComponent<SliderElement> {
       modules: [Autoplay, Navigation, Pagination],
     };
 
-    return swiperOptions;
+    const safeOverride = override || {};
+
+    const merged = {
+      ...swiperOptions,
+      ...safeOverride,
+    };
+
+    return merged;
   }
 }

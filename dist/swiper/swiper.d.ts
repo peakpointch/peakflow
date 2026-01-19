@@ -3,6 +3,9 @@ import Swiper from "swiper";
 import type { SwiperOptions } from "swiper/types";
 import { BaseComponent, type BaseSettings } from "../base-component/index.js";
 type SliderElement = "component" | "wrapper" | "controls" | "navigation" | "pagination" | "prev" | "next" | "counter-current" | "counter-separator" | "counter-total";
+export interface SliderSettings extends BaseSettings {
+    options: SwiperOptions;
+}
 /**
  * A Swiper component wrapper for Webflow.
  *
@@ -49,7 +52,7 @@ export declare class Slider extends BaseComponent<SliderElement> {
     static select: <U extends Element = HTMLElement>(element: SliderElement, instance?: string) => U;
     static selectAll: <U extends Element = HTMLElement>(element: SliderElement, instance?: string) => NodeListOf<U>;
     private static create;
-    static initAll(container?: HTMLElement): void;
-    static readOptions(swiperElement: HTMLElement): SwiperOptions;
+    static initAll(container?: HTMLElement, options?: SwiperOptions): void;
+    static readOptions(swiperElement: HTMLElement, override?: SwiperOptions): SwiperOptions;
 }
 export {};

@@ -109,13 +109,13 @@ export class Slider extends BaseComponent {
         this.stylesheet.load();
         _a.create(this.component);
     }
-    static create(swiperElement) {
+    static create(swiperElement, options) {
         initSlides(swiperElement.querySelector(_a.selector("wrapper")));
         if (sliderEmpty(swiperElement)) {
             hideEmptySlider(swiperElement);
             return new Swiper(swiperElement);
         }
-        const swiperOptions = this.readOptions(swiperElement);
+        const swiperOptions = this.readOptions(swiperElement, options);
         const swiper = new Swiper(swiperElement, swiperOptions);
         initCounter(swiper);
         if (swiperOptions.autoplay !== false) {
@@ -136,7 +136,7 @@ export class Slider extends BaseComponent {
         }
         return swiper;
     }
-    static initAll(container = document.body) {
+    static initAll(container = document.body, options) {
         new Stylesheet({
             href: "https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css",
         }).load();
@@ -144,10 +144,10 @@ export class Slider extends BaseComponent {
         container.querySelectorAll(".w-slide:empty").forEach((e) => e.remove());
         const webflowSwipers = container.querySelectorAll(_a.selector("component"));
         webflowSwipers.forEach((swiperElement) => {
-            _a.create(swiperElement);
+            _a.create(swiperElement, options);
         });
     }
-    static readOptions(swiperElement) {
+    static readOptions(swiperElement, override) {
         swiperElement.classList.remove("initial-hide");
         const settings = parseDataset(swiperElement, swiperAttributes);
         const swiperOptions = {
@@ -196,7 +196,12 @@ export class Slider extends BaseComponent {
             speed: settings.speed,
             modules: [Autoplay, Navigation, Pagination],
         };
-        return swiperOptions;
+        const safeOverride = override || {};
+        const merged = {
+            ...swiperOptions,
+            ...safeOverride,
+        };
+        return merged;
     }
 }
 _a = Slider;
