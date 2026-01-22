@@ -4,13 +4,12 @@ import type { FilterAttributes, RenderData, RenderBlock, RenderField } from "../
 type MenuDataCondition = (menuData: RenderBlock | RenderField) => boolean;
 type Merged<F extends FilterAttributes<keyof F & string>> = F & typeof FilterCollection.defaultAttributes;
 export declare class FilterCollection<F extends FilterAttributes<keyof F & string> = {}> extends CollectionList<Merged<F>> {
-    options: CollectionListOptions<Merged<F>>;
     static defaultAttributes: {
         date: "date";
         "start-date": "date";
         "end-date": "date";
     };
-    constructor(container: HTMLElement | null, options?: CollectionListOptions<Merged<F>>);
+    constructor(container: HTMLElement | null, options?: Partial<CollectionListOptions<Merged<F>>>);
     filterByDate(startDate: Date, endDate: Date, ...additionalConditions: MenuDataCondition[]): RenderData<Merged<F>>;
     filterByDateRange(startDate: Date, endDate: Date, ...additionalConditions: MenuDataCondition[]): RenderData<Merged<F>>;
 }

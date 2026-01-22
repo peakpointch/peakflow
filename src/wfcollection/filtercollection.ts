@@ -17,13 +17,7 @@ export class FilterCollection<
     "end-date": "date",
   });
 
-  constructor(
-    container: HTMLElement | null,
-    public options: CollectionListOptions<Merged<F>> = {
-      name: "",
-      rendererOptions: {},
-    },
-  ) {
+  constructor(container: HTMLElement | null, options?: Partial<CollectionListOptions<Merged<F>>>) {
     const filterAttributes = options.rendererOptions?.filterAttributes ?? {};
     const mergedFilterAttributes = Renderer.defineAttributes({
       ...FilterCollection.defaultAttributes,

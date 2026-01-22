@@ -1,10 +1,7 @@
 import { CollectionList } from "./wfcollection.js";
 import Renderer from "../renderer/index.js";
 export class FilterCollection extends CollectionList {
-    constructor(container, options = {
-        name: "",
-        rendererOptions: {},
-    }) {
+    constructor(container, options) {
         const filterAttributes = options.rendererOptions?.filterAttributes ?? {};
         const mergedFilterAttributes = Renderer.defineAttributes({
             ...FilterCollection.defaultAttributes,
@@ -18,7 +15,6 @@ export class FilterCollection extends CollectionList {
             },
         };
         super(container, newOptions);
-        this.options = options;
     }
     filterByDate(startDate, endDate, ...additionalConditions) {
         const filtered = [...this.collectionData].filter((entry) => {
