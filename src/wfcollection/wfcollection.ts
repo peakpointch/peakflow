@@ -1,6 +1,9 @@
 import type { PartialDeep } from "type-fest";
 import Renderer from "../renderer/index.js";
 import type { FilterAttributes, RenderData, RendererOptions } from "../renderer/index.js";
+import mergeOptions from "../utils/merge-options.js";
+import { wf } from "../webflow/webflow.js";
+import { exclude } from "../attributeselector/attributeselector.js";
 
 type GlobalWfCollections = {
   initialized: boolean;
@@ -11,33 +14,52 @@ type GlobalCollection = Array<object>;
 
 interface CollectionListOptions<F extends FilterAttributes> {
   name: string;
+  hasNestedList: boolean;
   readonly rendererOptions: PartialDeep<RendererOptions<F>>;
 }
 
 class CollectionList<F extends FilterAttributes = {}> {
+  public static defaultOptions: CollectionListOptions<{}> = {
+    name: "",
+    hasNestedList: false,
+    rendererOptions: {},
+  };
+
+  public get empty(): boolean {
+    return !this.listElement && this.container.querySelector(".w-dyn-empty") !== null;
+  }
+
   public container: HTMLElement;
+  public options: CollectionListOptions<F>;
   public renderer: Renderer<F>;
   public collectionData: RenderData<F> = [];
   public debug: boolean = false;
-  public listElement: HTMLElement;
+  public listElement?: HTMLElement | null;
+  public emptyState?: HTMLElement | null;
   private items: HTMLElement[];
 
-  constructor(
-    container: HTMLElement | null,
-    public options: CollectionListOptions<F> = {
-      name: "",
-      rendererOptions: {},
-    },
-  ) {
+  constructor(container: HTMLElement | null, options?: Partial<CollectionListOptions<F>>) {
     if (!container || !container.classList.contains("w-dyn-list"))
       throw new Error(`Container can't be undefined.`);
 
+    //@ts-expect-error static default options can never match generic instance options
+    this.options = mergeOptions(CollectionList.defaultOptions, options);
+
     this.container = container;
-    this.listElement = container.querySelector(".w-dyn-items");
+    this.listElement = container.querySelector(wf.select.cmsList);
     this.items = Array.from(
-      this.listElement?.querySelectorAll(".w-dyn-item:not(.w-dyn-list .w-dyn-list *)") ?? [],
+      this.listElement?.querySelectorAll(
+        this.options.hasNestedList
+          ? exclude(wf.select.cmsItem, `${wf.select.cmsList} ${wf.select.cmsList} *`)
+          : wf.select.cmsItem,
+      ) ?? [],
     );
     this.renderer = new Renderer(container, this.options.rendererOptions);
+
+    if (this.empty) {
+      console.warn(`Collection "${this.options.name}" is empty.`);
+      this.emptyState = this.container.querySelector(wf.select.cmsEmpty);
+    }
   }
 
   public log(...args: any[]) {
@@ -45,18 +67,13 @@ class CollectionList<F extends FilterAttributes = {}> {
     console.log(`"${this.options.name}" CollectionList:`, ...args);
   }
 
+  /** Deprecated. Use getter `CollectionList.empty` */
   public isEmpty(): boolean {
-    const isEmpty = !this.listElement && this.container.querySelector(".w-dyn-empty") !== null;
-
-    if (isEmpty) {
-      console.warn(`Collection "${this.options.name}" is empty.`);
-    }
-
-    return isEmpty;
+    return this.empty;
   }
 
   public readData(): void {
-    if (this.isEmpty()) {
+    if (this.empty) {
       this.collectionData = [];
       return;
     }
@@ -76,7 +93,7 @@ class CollectionList<F extends FilterAttributes = {}> {
    * This method removes every element that was hidden by Webflow's conditional visibility.
    */
   public removeInvisibleElements(): void {
-    if (this.isEmpty()) return;
+    if (this.empty) return;
 
     this.listElement
       .querySelectorAll(`.w-condition-invisible:not([data-render-condition="true"])`)

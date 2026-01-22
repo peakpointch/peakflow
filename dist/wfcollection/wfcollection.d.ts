@@ -8,18 +8,23 @@ type GlobalWfCollections = {
 type GlobalCollection = Array<object>;
 interface CollectionListOptions<F extends FilterAttributes> {
     name: string;
+    hasNestedList: boolean;
     readonly rendererOptions: PartialDeep<RendererOptions<F>>;
 }
 declare class CollectionList<F extends FilterAttributes = {}> {
-    options: CollectionListOptions<F>;
+    static defaultOptions: CollectionListOptions<{}>;
+    get empty(): boolean;
     container: HTMLElement;
+    options: CollectionListOptions<F>;
     renderer: Renderer<F>;
     collectionData: RenderData<F>;
     debug: boolean;
-    listElement: HTMLElement;
+    listElement?: HTMLElement | null;
+    emptyState?: HTMLElement | null;
     private items;
-    constructor(container: HTMLElement | null, options?: CollectionListOptions<F>);
+    constructor(container: HTMLElement | null, options?: Partial<CollectionListOptions<F>>);
     log(...args: any[]): void;
+    /** Deprecated. Use getter `CollectionList.empty` */
     isEmpty(): boolean;
     readData(): void;
     getData(): RenderData<F>;
