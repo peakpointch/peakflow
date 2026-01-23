@@ -36,7 +36,10 @@ export async function getCodeIslandManifest(
   return json;
 }
 
-export function awaitCodeIslandUpgrade(el: HTMLCodeIslandElement, timeout: number = 3000): Promise<void> {
+export function awaitCodeIslandUpgrade(
+  el: HTMLCodeIslandElement,
+  timeout: number = 3000,
+): Promise<void> {
   return new Promise((resolve, reject) => {
     const interval = 20;
     let elapsed = 0;
@@ -106,7 +109,10 @@ export async function codeIslandRefresh(
 
   await initCodeIsland(newIsland);
 
-  island.render();
+  if (!isCodeIsland(newIsland))
+    throw new Error(`Something went wrong initializing the new code-island.`);
 
-  return island;
+  newIsland.render(newIsland.props);
+
+  return newIsland;
 }

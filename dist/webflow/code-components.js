@@ -66,6 +66,8 @@ export async function codeIslandRefresh(island, newIsland) {
     }
     island.replaceWith(newIsland);
     await initCodeIsland(newIsland);
-    island.render();
-    return island;
+    if (!isCodeIsland(newIsland))
+        throw new Error(`Something went wrong initializing the new code-island.`);
+    newIsland.render(newIsland.props);
+    return newIsland;
 }
