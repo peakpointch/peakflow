@@ -36,7 +36,7 @@ export async function getCodeIslandManifest(
   return json;
 }
 
-export function awaitCodeIslandUpgrade(el: HTMLCodeIslandElement, timeout = 3000): Promise<void> {
+export function awaitCodeIslandUpgrade(el: HTMLCodeIslandElement, timeout: number = 3000): Promise<void> {
   return new Promise((resolve, reject) => {
     const interval = 20;
     let elapsed = 0;
