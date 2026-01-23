@@ -8,10 +8,11 @@ export function getAllElements(input, options = {}) {
     const opts = {
         single: options.single ?? false,
         node: options.node ?? document,
+        throw: options.throw ?? false,
     };
     if (typeof input === "string") {
         const elements = Array.from(opts.node.querySelectorAll(input)).filter(Boolean);
-        if (elements.length === 0) {
+        if (elements.length === 0 && opts.throw) {
             throw new Error(`No elements found matching selector: ${input}`);
         }
         else if (opts.single) {
@@ -38,11 +39,14 @@ export function getElement(input, options = {}) {
     const opts = {
         single: options.single ?? true,
         node: options.node ?? document,
+        throw: options.throw ?? false,
     };
     if (typeof input === "string") {
         const elements = Array.from(opts.node.querySelectorAll(input));
         if (elements.length === 0) {
-            throw new Error(`No elements found matching selector: "${input}".`);
+            if (opts.throw)
+                throw new Error(`No elements found matching selector: "${input}".`);
+            return null;
         }
         else if (opts.single && elements.length > 1) {
             throw new Error(`More than 1 element found matching selector "${input}". Make your selector more specific.`);

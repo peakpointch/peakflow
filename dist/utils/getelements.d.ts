@@ -1,6 +1,7 @@
 type GetElementOptions = {
     single: boolean;
     node: Element | Document;
+    throw: boolean;
 };
 export type ElementGetter<T extends Element = HTMLElement> = string | T | T[] | NodeListOf<T>;
 /**

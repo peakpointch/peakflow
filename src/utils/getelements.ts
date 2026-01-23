@@ -1,6 +1,7 @@
 type GetElementOptions = {
   single: boolean;
   node: Element | Document;
+  throw: boolean;
 };
 
 export type ElementGetter<T extends Element = HTMLElement> = string | T | T[] | NodeListOf<T>;
@@ -18,11 +19,12 @@ export function getAllElements<T extends HTMLElement = HTMLElement>(
   const opts: GetElementOptions = {
     single: options.single ?? false,
     node: options.node ?? document,
+    throw: options.throw ?? false,
   };
 
   if (typeof input === "string") {
     const elements = Array.from(opts.node.querySelectorAll<T>(input)).filter(Boolean);
-    if (elements.length === 0) {
+    if (elements.length === 0 && opts.throw) {
       throw new Error(`No elements found matching selector: ${input}`);
     } else if (opts.single) {
       return [elements[0]];
@@ -47,12 +49,14 @@ export function getElement<T extends HTMLElement = HTMLElement>(
   const opts: GetElementOptions = {
     single: options.single ?? true,
     node: options.node ?? document,
+    throw: options.throw ?? false,
   };
   if (typeof input === "string") {
     const elements = Array.from(opts.node.querySelectorAll<T>(input));
 
     if (elements.length === 0) {
-      throw new Error(`No elements found matching selector: "${input}".`);
+      if (opts.throw) throw new Error(`No elements found matching selector: "${input}".`);
+      return null;
     } else if (opts.single && elements.length > 1) {
       throw new Error(
         `More than 1 element found matching selector "${input}". Make your selector more specific.`,
