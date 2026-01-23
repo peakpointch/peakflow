@@ -85,6 +85,11 @@ export async function initCodeIsland(island: HTMLElement): Promise<HTMLCodeIslan
   let newInternalRoot = island.renderer.mount(newRootElement);
   island.root = newInternalRoot;
 
+  const dataset = island.parseDataset();
+  island.props = dataset.props;
+  island.slots = dataset.slots;
+  island.webflowContext = dataset.webflowContext;
+
   return island;
 }
 
