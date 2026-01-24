@@ -8,11 +8,11 @@ class CollectionList {
     }
     constructor(container, options) {
         this.collectionData = [];
-        this.debug = false;
         if (!container || !container.classList.contains("w-dyn-list"))
             throw new Error(`Container can't be undefined.`);
         //@ts-expect-error static default options can never match generic instance options
         this.options = mergeOptions(CollectionList.defaultOptions, options);
+        this.debug = this.options.debug;
         this.container = container;
         this.listElement = container.querySelector(wf.select.cmsList);
         this.items = Array.from(this.listElement?.querySelectorAll(this.options.hasNestedList
@@ -78,6 +78,7 @@ class CollectionList {
 }
 CollectionList.defaultOptions = {
     name: "",
+    debug: false,
     hasNestedList: false,
     rendererOptions: {},
 };

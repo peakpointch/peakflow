@@ -14,6 +14,7 @@ type GlobalCollection = Array<object>;
 
 interface CollectionListOptions<F extends FilterAttributes> {
   name: string;
+  debug: boolean;
   hasNestedList: boolean;
   readonly rendererOptions: PartialDeep<RendererOptions<F>>;
 }
@@ -21,6 +22,7 @@ interface CollectionListOptions<F extends FilterAttributes> {
 class CollectionList<F extends FilterAttributes = {}> {
   public static defaultOptions: CollectionListOptions<{}> = {
     name: "",
+    debug: false,
     hasNestedList: false,
     rendererOptions: {},
   };
@@ -33,7 +35,7 @@ class CollectionList<F extends FilterAttributes = {}> {
   public options: CollectionListOptions<F>;
   public renderer: Renderer<F>;
   public collectionData: RenderData<F> = [];
-  public debug: boolean = false;
+  public debug: boolean;
   public listElement?: HTMLElement | null;
   public emptyState?: HTMLElement | null;
   private items: HTMLElement[];
@@ -45,6 +47,7 @@ class CollectionList<F extends FilterAttributes = {}> {
     //@ts-expect-error static default options can never match generic instance options
     this.options = mergeOptions(CollectionList.defaultOptions, options);
 
+    this.debug = this.options.debug;
     this.container = container;
     this.listElement = container.querySelector(wf.select.cmsList);
     this.items = Array.from(

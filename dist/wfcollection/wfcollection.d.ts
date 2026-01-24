@@ -8,6 +8,7 @@ type GlobalWfCollections = {
 type GlobalCollection = Array<object>;
 interface CollectionListOptions<F extends FilterAttributes> {
     name: string;
+    debug: boolean;
     hasNestedList: boolean;
     readonly rendererOptions: PartialDeep<RendererOptions<F>>;
 }
