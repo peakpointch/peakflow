@@ -24,7 +24,8 @@ declare class CollectionList<F extends FilterAttributes = {}> {
     private items;
     constructor(container: HTMLElement | null, options?: Partial<CollectionListOptions<F>>);
     log(...args: any[]): void;
-    /** Deprecated. Use getter `CollectionList.empty` */
+    warn(...args: any[]): void;
+    /** @deprecated Use getter `CollectionList.empty` instead */
     isEmpty(): boolean;
     readData(): void;
     getData(): RenderData<F>;

@@ -20,16 +20,21 @@ class CollectionList {
             : wf.select.cmsItem) ?? []);
         this.renderer = new Renderer(container, this.options.rendererOptions);
         if (this.empty) {
-            console.warn(`Collection "${this.options.name}" is empty.`);
+            this.warn("Collection is empty.");
             this.emptyState = this.container.querySelector(wf.select.cmsEmpty);
         }
     }
     log(...args) {
         if (!this.debug)
             return;
-        console.log(`"${this.options.name}" CollectionList:`, ...args);
+        console.log(`CollectionList "${this.options.name}":`, ...args);
     }
-    /** Deprecated. Use getter `CollectionList.empty` */
+    warn(...args) {
+        if (!this.debug)
+            return;
+        console.warn(`CollectionList "${this.options.name}":`, ...args);
+    }
+    /** @deprecated Use getter `CollectionList.empty` instead */
     isEmpty() {
         return this.empty;
     }

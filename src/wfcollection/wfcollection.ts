@@ -57,17 +57,22 @@ class CollectionList<F extends FilterAttributes = {}> {
     this.renderer = new Renderer(container, this.options.rendererOptions);
 
     if (this.empty) {
-      console.warn(`Collection "${this.options.name}" is empty.`);
+      this.warn("Collection is empty.");
       this.emptyState = this.container.querySelector(wf.select.cmsEmpty);
     }
   }
 
   public log(...args: any[]) {
     if (!this.debug) return;
-    console.log(`"${this.options.name}" CollectionList:`, ...args);
+    console.log(`CollectionList "${this.options.name}":`, ...args);
   }
 
-  /** Deprecated. Use getter `CollectionList.empty` */
+  public warn(...args: any[]) {
+    if (!this.debug) return;
+    console.warn(`CollectionList "${this.options.name}":`, ...args);
+  }
+
+  /** @deprecated Use getter `CollectionList.empty` instead */
   public isEmpty(): boolean {
     return this.empty;
   }
