@@ -27,6 +27,14 @@ class CollectionList<F extends FilterAttributes = {}> {
     rendererOptions: {},
   };
 
+  public set debug(val: boolean) {
+    this.options.debug = val;
+  }
+
+  public get debug(): boolean {
+    return this.options.debug;
+  }
+
   public get empty(): boolean {
     return !this.listElement && this.container.querySelector(".w-dyn-empty") !== null;
   }
@@ -35,7 +43,6 @@ class CollectionList<F extends FilterAttributes = {}> {
   public options: CollectionListOptions<F>;
   public renderer: Renderer<F>;
   public collectionData: RenderData<F> = [];
-  public debug: boolean;
   public listElement?: HTMLElement | null;
   public emptyState?: HTMLElement | null;
   private items: HTMLElement[];

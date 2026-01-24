@@ -14,12 +14,13 @@ interface CollectionListOptions<F extends FilterAttributes> {
 }
 declare class CollectionList<F extends FilterAttributes = {}> {
     static defaultOptions: CollectionListOptions<{}>;
+    set debug(val: boolean);
+    get debug(): boolean;
     get empty(): boolean;
     container: HTMLElement;
     options: CollectionListOptions<F>;
     renderer: Renderer<F>;
     collectionData: RenderData<F>;
-    debug: boolean;
     listElement?: HTMLElement | null;
     emptyState?: HTMLElement | null;
     private items;

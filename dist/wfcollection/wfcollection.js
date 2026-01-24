@@ -3,6 +3,12 @@ import mergeOptions from "../utils/merge-options.js";
 import { wf } from "../webflow/webflow.js";
 import { exclude } from "../attributeselector/attributeselector.js";
 class CollectionList {
+    set debug(val) {
+        this.options.debug = val;
+    }
+    get debug() {
+        return this.options.debug;
+    }
     get empty() {
         return !this.listElement && this.container.querySelector(".w-dyn-empty") !== null;
     }
