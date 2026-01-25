@@ -1,4 +1,4 @@
-import { type BaseAttributes } from "../selector";
+import { type AttributeAccessorMap, type BaseAttributes } from "../selector";
 import type { PartialDeep } from "type-fest";
 export interface BaseSettings {
     id: string;
@@ -8,7 +8,7 @@ export interface BaseSettings {
  */
 export declare abstract class BaseComponent<Elements extends string, Settings extends BaseSettings = BaseSettings> {
     static readonly defaultSettings: BaseSettings;
-    static readonly attr: BaseAttributes;
+    static readonly attr: AttributeAccessorMap<BaseAttributes>;
     readonly component: HTMLElement;
     readonly id: string;
     settings: Settings;

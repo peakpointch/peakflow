@@ -1,4 +1,5 @@
 import type { PartialDeep } from "type-fest";
+import { type AttributeAccessorMap, type BaseAttributes } from "../selector/index.js";
 import { ScrollHandler } from "../scroll/index.js";
 import { BaseComponent, type BaseSettings } from "../base-component/index.js";
 type ModalElement = "component" | "modal" | "open" | "close" | "cancel" | "confirm" | "scroll" | "sticky-top" | "sticky-bottom";
@@ -17,11 +18,12 @@ interface ModalSettings extends BaseSettings {
         smooth?: boolean;
     };
 }
-interface ModalAttributes {
+interface ModalAttributes extends BaseAttributes {
     id: string;
     element: string;
 }
 export declare class Modal extends BaseComponent<ModalElement> {
+    static attr: AttributeAccessorMap<ModalAttributes>;
     static readonly defaultSettings: ModalSettings;
     component: HTMLElement;
     modal: HTMLElement;
@@ -29,7 +31,6 @@ export declare class Modal extends BaseComponent<ModalElement> {
     initialized: boolean;
     settings: ModalSettings;
     id: string;
-    static attr: ModalAttributes;
     scrollHandler: ScrollHandler;
     scrollTo: ScrollHandler["scrollTo"];
     clearScrollTimeout: ScrollHandler["clearScrollTimeout"];

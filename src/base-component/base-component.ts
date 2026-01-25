@@ -1,4 +1,4 @@
-import { Selector, type BaseAttributes } from "../selector";
+import { Selector, type AttributeAccessorMap, type BaseAttributes } from "../selector";
 import { mergeOptions } from "../utils";
 import type { PartialDeep } from "type-fest";
 
@@ -16,7 +16,7 @@ export abstract class BaseComponent<
   static readonly defaultSettings: BaseSettings = {
     id: undefined,
   };
-  static readonly attr: BaseAttributes = {
+  static readonly attr: AttributeAccessorMap<BaseAttributes> = {
     id: "data-id",
     element: "data-element",
   };

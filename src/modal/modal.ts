@@ -1,5 +1,5 @@
 import type { PartialDeep } from "type-fest";
-import Selector from "../selector/index.js";
+import Selector, { type AttributeAccessorMap, type BaseAttributes } from "../selector/index.js";
 import {
   ScrollHandler,
   lockBodyScroll,
@@ -37,12 +37,17 @@ interface ModalSettings extends BaseSettings {
   };
 }
 
-interface ModalAttributes {
+interface ModalAttributes extends BaseAttributes {
   id: string;
   element: string;
 }
 
 export class Modal extends BaseComponent<ModalElement> {
+  public static attr: AttributeAccessorMap<ModalAttributes> = {
+    id: "data-modal-id",
+    element: "data-modal-element",
+  };
+
   public static readonly defaultSettings: ModalSettings = {
     id: undefined,
     animation: {
@@ -64,10 +69,6 @@ export class Modal extends BaseComponent<ModalElement> {
   public initialized: boolean = false;
   public settings: ModalSettings;
   public id: string;
-  public static attr: ModalAttributes = {
-    id: "data-modal-id",
-    element: "data-modal-element",
-  };
   public scrollHandler: ScrollHandler;
   public scrollTo: ScrollHandler["scrollTo"];
   public clearScrollTimeout: ScrollHandler["clearScrollTimeout"];

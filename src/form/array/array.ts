@@ -1,6 +1,11 @@
 import { asSuffix, capitalize } from "../../utils";
 import wf from "../../webflow/index.js";
-import { Selector, exclude } from "../../selector";
+import {
+  Selector,
+  exclude,
+  type AttributeAccessorMap,
+  type BaseAttributes,
+} from "../../selector";
 import { BaseComponent, type BaseSettings } from "../../base-component/index.js";
 import { FormArrayItem, type ItemConstructor, type SerializedItem } from "./item";
 import type { FormArrayDialogs, FormMessages, GrammarOptions, MessageFn } from "./messages";
@@ -56,7 +61,7 @@ type ModalGroup<T extends string = string> = {
   name: T;
 };
 
-interface ArrayAttributes {
+interface ArrayAttributes extends BaseAttributes {
   id: string;
   element: string;
   fieldGroup: string;
@@ -100,7 +105,7 @@ export interface FormArraySettings<Item extends FormArrayItem> extends BaseSetti
 const ARRAY_STORAGE_VERSION = "1.0.0";
 
 export class FormArray<Item extends FormArrayItem> extends BaseComponent<ArrayElement> {
-  public static readonly attr: ArrayAttributes = {
+  public static readonly attr: AttributeAccessorMap<ArrayAttributes> = {
     id: "data-form-array-id",
     element: "data-form-array-element",
     select: "data-form-array-select",
