@@ -8,6 +8,18 @@ export type DashToCamelCase<T extends string> = T extends `${infer Head}-${infer
   ? `${Head}${Capitalize<DashToCamelCase<Tail>>}` // Capitalize the first character of Tail
   : T;
 
+export type CamelToPascal<T extends string> = T extends `${infer Head}${infer Tail}`
+  ? `${Uppercase<Head>}${Tail}`
+  : T;
+
+export type PascalToCamel<T extends string> = T extends `${infer Head}${infer Tail}`
+  ? `${Lowercase<Head>}${Tail}`
+  : T;
+
+export type DashToPascal<T extends string> = Capitalize<DashToCamelCase<T>>;
+
+export type PascalToDash<T extends string> = CamelToDash<PascalToCamel<T>>;
+
 /**
  * Make all properties in T optional, except those of type K
  */
