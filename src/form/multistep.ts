@@ -1,5 +1,5 @@
 // Imports
-import Selector, { exclude, extend } from "../attributeselector/index.js";
+import Selector, { exclude, extend } from "../selector/index.js";
 import {
   initWfInputs,
   sendFormData,

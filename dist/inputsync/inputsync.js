@@ -1,4 +1,4 @@
-import Selector from "../attributeselector/index.js";
+import Selector from "../selector/index.js";
 /**
  * Returns the *"input-sync"* attribute as a CSSSelector.
  */

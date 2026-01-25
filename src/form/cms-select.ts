@@ -1,4 +1,4 @@
-import Selector from "../attributeselector/index.js";
+import Selector from "../selector/index.js";
 import { getAllElements, getElement } from "../utils/getelements.js";
 
 type CMSSelectElement = "source" | "target" | "option";

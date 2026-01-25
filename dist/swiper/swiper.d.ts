@@ -47,8 +47,8 @@ export declare class Slider extends BaseComponent<SliderElement> {
         hide: string;
     };
     constructor(component: HTMLElement, settings: BaseSettings);
-    protected static readonly attributeSelector: import("../attributeselector/attributeselector.js").AttributeSelector<string>;
-    static selector: import("../attributeselector/attributeselector.js").InstanceSelector<SliderElement>;
+    protected static readonly attributeSelector: import("../selector/selector.js").AttributeSelector<string>;
+    static selector: import("../selector/selector.js").InstanceSelector<SliderElement>;
     static select: <U extends Element = HTMLElement>(element: SliderElement, instance?: string) => U;
     static selectAll: <U extends Element = HTMLElement>(element: SliderElement, instance?: string) => NodeListOf<U>;
     private static create;

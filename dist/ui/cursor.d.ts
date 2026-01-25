@@ -28,8 +28,8 @@ export declare class Cursor<T extends string> extends BaseComponent<CursorElemen
     cursors: HTMLElement[];
     settings: CursorSettings<T>;
     constructor(cursor: HTMLElement, settings?: PartialDeep<CursorSettings<T>>);
-    protected static attributeSelector: import("../attributeselector").AttributeSelector<"pointer">;
-    static selector: import("../attributeselector").InstanceSelector<"pointer">;
+    protected static attributeSelector: import("../selector").AttributeSelector<"pointer">;
+    static selector: import("../selector").InstanceSelector<"pointer">;
     static select: <U extends Element = HTMLElement>(element: "pointer", instance?: string) => U;
     static selectAll: <U extends Element = HTMLElement>(element: "pointer", instance?: string) => NodeListOf<U>;
     static create<T extends string>(settings: PartialDeep<CursorSettings<T>>): Cursor<T>;

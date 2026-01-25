@@ -34,8 +34,8 @@ export declare class Modal extends BaseComponent<ModalElement> {
     scrollTo: ScrollHandler["scrollTo"];
     clearScrollTimeout: ScrollHandler["clearScrollTimeout"];
     constructor(component: HTMLElement | null, settings?: PartialDeep<ModalSettings>);
-    protected static attributeSelector: import("../attributeselector/attributeselector.js").AttributeSelector<ModalElement>;
-    static selector: import("../attributeselector/attributeselector.js").InstanceSelector<ModalElement>;
+    protected static attributeSelector: import("../selector/selector.js").AttributeSelector<ModalElement>;
+    static selector: import("../selector/selector.js").InstanceSelector<ModalElement>;
     static select: <U extends Element = HTMLElement>(element: ModalElement, instance?: string) => U;
     static selectAll: <U extends Element = HTMLElement>(element: ModalElement, instance?: string) => NodeListOf<U>;
     private getModalElement;

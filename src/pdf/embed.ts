@@ -1,5 +1,5 @@
 import type { PartialDeep } from "type-fest";
-import { Selector, type BaseAttributes } from "../attributeselector/index.js";
+import { Selector, type BaseAttributes } from "../selector/index.js";
 import { BaseComponent, type BaseSettings } from "../base-component/index.js";
 import { logPrefix } from "../utils/logger.js";
 import { wf } from "../webflow/index.js";

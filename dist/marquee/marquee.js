@@ -1,4 +1,4 @@
-import Selector from "../attributeselector/index.js";
+import Selector from "../selector/index.js";
 export const marqueeSelector = Selector.attr("data-marquee-element");
 export function setMarqueeSpeed(speed, trackOrComponent) {
     if (!trackOrComponent || !(trackOrComponent instanceof HTMLElement)) {

@@ -1,4 +1,4 @@
-import { Selector } from "../attributeselector";
+import { Selector } from "../selector";
 import { mergeOptions } from "../utils";
 /**
  * Base class for components with attribute-based selectors

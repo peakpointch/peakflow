@@ -1,5 +1,5 @@
 import type { PartialDeep } from "type-fest";
-import Selector from "../attributeselector/index.js";
+import Selector from "../selector/index.js";
 import {
   ScrollHandler,
   lockBodyScroll,

@@ -1,6 +1,6 @@
 var _a;
 import gsap from "gsap";
-import Selector from "../attributeselector";
+import Selector from "../selector";
 import { BaseComponent } from "../base-component";
 import { objectToCSS, breakpointsToMediaQueries } from "../utils/css";
 export class Cursor extends BaseComponent {

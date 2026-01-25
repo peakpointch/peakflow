@@ -2,7 +2,7 @@ import wf from "../webflow/index.js";
 import { setChecked, validateFields } from "./utility.js";
 import type { HTMLFormInput } from "./utility.js";
 import { FormMessage } from "./formmessage.js";
-import Selector from "../attributeselector/index.js";
+import Selector from "../selector/index.js";
 
 interface FormDecisionAttributes {
   component: string;

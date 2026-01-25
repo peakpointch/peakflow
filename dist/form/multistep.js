@@ -1,5 +1,5 @@
 // Imports
-import Selector, { exclude, extend } from "../attributeselector/index.js";
+import Selector, { exclude, extend } from "../selector/index.js";
 import { initWfInputs, sendFormData, validateFields, formElementSelector, fieldFromInput, enforceButtonTypes, FieldGroup, isCheckboxInput, setChecked, getRadioGroups, } from "./index.js";
 import { FormProgressManager, } from "./index.js";
 import wf from "../webflow/index.js";

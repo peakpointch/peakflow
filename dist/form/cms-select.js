@@ -1,4 +1,4 @@
-import Selector from "../attributeselector/index.js";
+import Selector from "../selector/index.js";
 import { getAllElements, getElement } from "../utils/getelements.js";
 export class CMSSelect {
     constructor(component, options = {}) {

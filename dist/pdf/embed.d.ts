@@ -1,5 +1,5 @@
 import type { PartialDeep } from "type-fest";
-import { type BaseAttributes } from "../attributeselector/index.js";
+import { type BaseAttributes } from "../selector/index.js";
 import { BaseComponent, type BaseSettings } from "../base-component/index.js";
 import { type DashToCamelCase } from "../typeutils/index.js";
 type FileType = "(PDF)" | "(DOCX)" | "(JPEG)" | "(PNG)";
@@ -32,8 +32,8 @@ export declare class PdfEmbed extends BaseComponent<PdfEmbedElement, PdfEmbedSet
     private static lp;
     private lp;
     constructor(component: HTMLElement, settings?: PartialDeep<PdfEmbedSettings | ClientIds>);
-    protected static attributeSelector: import("../attributeselector/attributeselector.js").AttributeSelector<PdfEmbedElement>;
-    static selector: import("../attributeselector/attributeselector.js").InstanceSelector<PdfEmbedElement>;
+    protected static attributeSelector: import("../selector/selector.js").AttributeSelector<PdfEmbedElement>;
+    static selector: import("../selector/selector.js").InstanceSelector<PdfEmbedElement>;
     static select: <U extends Element = HTMLElement>(element: PdfEmbedElement, instance?: string) => U;
     static selectAll: <U extends Element = HTMLElement>(element: PdfEmbedElement, instance?: string) => NodeListOf<U>;
     static getFileConfig(configElement: HTMLElement): PdfEmbedFile;
