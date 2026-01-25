@@ -1,5 +1,5 @@
 var _a;
-import { Selector } from "../attributeselector/index.js";
+import { Selector } from "../selector/index.js";
 import { BaseComponent } from "../base-component/index.js";
 import { logPrefix } from "../utils/logger.js";
 import { wf } from "../webflow/index.js";

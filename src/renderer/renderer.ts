@@ -5,7 +5,7 @@ import type { PartialDeep } from "type-fest";
 
 import Path from "../path/index.js";
 import wf from "../webflow/index.js";
-import { Selector, exclude } from "../attributeselector/index.js";
+import { Selector, exclude } from "../selector/index.js";
 import { mergeOptions, toCamelCase, asPrefix, asSuffix, logPrefix } from "../utils/index.js";
 
 import { ImageField } from "./fields/index.js";

@@ -1,4 +1,4 @@
-import { Selector } from "../attributeselector/index.js";
+import { Selector } from "../selector/index.js";
 import { Stylesheet, parseDataset, type ParsedDataset, type DatasetAttribute } from "../utils";
 import type { CamelToDash } from "../typeutils";
 

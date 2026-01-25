@@ -3,7 +3,7 @@ import { fromZonedTime } from "date-fns-tz";
 import { de } from "date-fns/locale";
 import Path from "../path/index.js";
 import wf from "../webflow/index.js";
-import { Selector, exclude } from "../attributeselector/index.js";
+import { Selector, exclude } from "../selector/index.js";
 import { mergeOptions, toCamelCase, asPrefix, asSuffix, logPrefix } from "../utils/index.js";
 import { ImageField } from "./fields/index.js";
 import { HTMLRenderNode, HTMLRenderField, HTMLRenderBlock } from "./dom/index.js";

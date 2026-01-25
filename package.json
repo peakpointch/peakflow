@@ -15,10 +15,6 @@
       "types": "./dist/accordion/index.d.ts",
       "default": "./dist/accordion/index.js"
     },
-    "./attributeselector": {
-      "types": "./dist/attributeselector/index.d.ts",
-      "default": "./dist/attributeselector/index.js"
-    },
     "./cal": {
       "types": "./dist/cal/index.d.ts",
       "default": "./dist/cal/index.js"
@@ -87,6 +83,10 @@
       "types": "./dist/scroll/index.d.ts",
       "default": "./dist/scroll/index.js"
     },
+    "./selector": {
+      "types": "./dist/selector/index.d.ts",
+      "default": "./dist/selector/index.js"
+    },
     "./swiper": {
       "types": "./dist/swiper/index.d.ts",
       "default": "./dist/swiper/index.js"
@@ -124,9 +124,6 @@
     "*": {
       "accordion": [
         "dist/accordion/index.d.ts"
-      ],
-      "attributeselector": [
-        "dist/attributeselector/index.d.ts"
       ],
       "cal": [
         "dist/cal/index.d.ts"
@@ -178,6 +175,9 @@
       ],
       "scroll": [
         "dist/scroll/index.d.ts"
+      ],
+      "selector": [
+        "dist/selector/index.d.ts"
       ],
       "split-button": [
         "dist/split-button/index.d.ts"

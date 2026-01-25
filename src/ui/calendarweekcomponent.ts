@@ -7,7 +7,7 @@ import {
   startOfISOWeek,
   format,
 } from "date-fns";
-import Selector from "../attributeselector/index.js";
+import Selector from "../selector/index.js";
 
 type UXMode = "continuous" | "loop" | "fixed";
 type CalendarweekElements = "component" | "week" | "year";

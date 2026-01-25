@@ -1,5 +1,5 @@
 var _a;
-import Selector from "../attributeselector/index.js";
+import Selector from "../selector/index.js";
 import { ScrollHandler, lockBodyScroll, unlockBodyScroll, addScrollbarPadding, removeScrollbarPadding, } from "../scroll/index.js";
 import { BaseComponent } from "../base-component/index.js";
 export class Modal extends BaseComponent {

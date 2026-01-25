@@ -3,7 +3,7 @@ import type { RenderData } from "../renderer/index.js";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import type { Html2CanvasOptions } from "jspdf";
-import Selector from "../attributeselector/index.js";
+import Selector from "../selector/index.js";
 import { softHyphenizer, solidHyphens } from "../hyphenizer/index.js";
 import german from "hyphenation.de";
 import { freezeElement, unFreezeElement } from "../utils/dom-freeze.js";

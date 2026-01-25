@@ -1,6 +1,6 @@
 import { asSuffix, capitalize } from "../../utils";
 import wf from "../../webflow/index.js";
-import { Selector, exclude } from "../../attributeselector";
+import { Selector, exclude } from "../../selector";
 import { BaseComponent, type BaseSettings } from "../../base-component/index.js";
 import { FormArrayItem, type ItemConstructor, type SerializedItem } from "./item";
 import type { FormArrayDialogs, FormMessages, GrammarOptions, MessageFn } from "./messages";

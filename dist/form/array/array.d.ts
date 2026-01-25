@@ -76,7 +76,7 @@ export declare class FormArray<Item extends FormArrayItem> extends BaseComponent
     private editingKey;
     private unsavedItem;
     constructor(settings: PartialDeep<FormArraySettings<Item>>);
-    protected static attributeSelector: import("../../attributeselector").AttributeSelector<ArrayElement>;
+    protected static attributeSelector: import("../../selector").AttributeSelector<ArrayElement>;
     /**
      * Static selector
      */

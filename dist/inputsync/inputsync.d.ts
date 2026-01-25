@@ -1,7 +1,7 @@
 /**
  * Returns the *"input-sync"* attribute as a CSSSelector.
  */
-export declare const syncSelector: import("../attributeselector/attributeselector.js").AttributeSelector<string>;
+export declare const syncSelector: import("../selector/selector.js").AttributeSelector<string>;
 /**
  * Sync all the inputs that belong to the same group.
  *

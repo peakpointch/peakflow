@@ -1,4 +1,4 @@
-import Selector from "../attributeselector/index.js";
+import Selector from "../selector/index.js";
 import wf from "../webflow/index.js";
 import { getAllElements } from "../utils/getelements.js";
 // Form selector functions

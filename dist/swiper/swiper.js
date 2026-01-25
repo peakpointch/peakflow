@@ -1,5 +1,5 @@
 var _a;
-import { Selector } from "../attributeselector/index.js";
+import { Selector } from "../selector/index.js";
 import { Stylesheet, parseDataset } from "../utils";
 import Swiper from "swiper";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";

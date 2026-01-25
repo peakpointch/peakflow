@@ -1,4 +1,4 @@
-import { Selector, type BaseAttributes } from "../attributeselector";
+import { Selector, type BaseAttributes } from "../selector";
 import { mergeOptions } from "../utils";
 import type { PartialDeep } from "type-fest";
 
