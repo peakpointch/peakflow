@@ -1,9 +1,13 @@
 import type { PartialDeep } from "type-fest";
-import { Selector, type BaseAttributes } from "../selector/index.js";
+import {
+  Selector,
+  type AttributeAccessorMap,
+  type BaseAttributes,
+} from "../selector/index.js";
 import { BaseComponent, type BaseSettings } from "../base-component/index.js";
 import { logPrefix } from "../utils/logger.js";
 import { wf } from "../webflow/index.js";
-import { type DashToCamelCase } from "../typeutils/index.js";
+import type { DashToCamelCase, CamelToPascal } from "../typeutils/index.js";
 import Script from "../utils/script.js";
 
 type FileType = "(PDF)" | "(DOCX)" | "(JPEG)" | "(PNG)";
@@ -21,9 +25,9 @@ interface PdfEmbedFile {
   isExternal: boolean;
 }
 
-interface PdfEmbedAttributes extends BaseAttributes {
-  file: Record<keyof PdfEmbedFile, string>;
-}
+type PdfEmbedAttributes = BaseAttributes & {
+  [K in keyof PdfEmbedFile as `file${CamelToPascal<K>}`]: string;
+};
 
 interface PdfEmbedSettings extends BaseSettings {
   clientId: string;
@@ -34,19 +38,17 @@ interface ClientIds extends BaseSettings {
 }
 
 export class PdfEmbed extends BaseComponent<PdfEmbedElement, PdfEmbedSettings> {
-  public static attr: PdfEmbedAttributes = {
+  public static attr: AttributeAccessorMap<PdfEmbedAttributes> = {
     id: "data-pdf-id",
     element: "data-pdf-element",
-    file: {
-      type: "data-type",
-      name: "data-name",
-      url: "data-url",
-      externalUrl: "data-external-url",
-      isExternal: "data-is-external",
-    },
+    fileType: "data-type",
+    fileName: "data-name",
+    fileUrl: "data-url",
+    fileExternalUrl: "data-external-url",
+    fileIsExternal: "data-is-external",
   };
 
-  public attr: PdfEmbedAttributes = PdfEmbed.attr;
+  public attr: AttributeAccessorMap<PdfEmbedAttributes> = PdfEmbed.attr;
   public elements: Record<DashToCamelCase<PdfEmbedElement>, HTMLElement | null>;
   public file: PdfEmbedFile;
   public pdfEmbedId: string = "pdf-embed";
@@ -91,11 +93,11 @@ export class PdfEmbed extends BaseComponent<PdfEmbedElement, PdfEmbedSettings> {
   public static getFileConfig(configElement: HTMLElement): PdfEmbedFile {
     if (!configElement) throw new Error(`${this.lp}Config element not found`);
     return {
-      type: configElement.getAttribute(this.attr.file.type) ?? "",
-      name: configElement.getAttribute(this.attr.file.name) ?? "",
-      url: configElement.getAttribute(this.attr.file.url) ?? "",
-      externalUrl: configElement.getAttribute(this.attr.file.externalUrl) ?? "",
-      isExternal: wf.hasAttr(configElement, this.attr.file.isExternal),
+      type: configElement.getAttribute(this.attr.fileType) ?? "",
+      name: configElement.getAttribute(this.attr.fileName) ?? "",
+      url: configElement.getAttribute(this.attr.fileUrl) ?? "",
+      externalUrl: configElement.getAttribute(this.attr.fileExternalUrl) ?? "",
+      isExternal: wf.hasAttr(configElement, this.attr.fileIsExternal),
     };
   }
 
