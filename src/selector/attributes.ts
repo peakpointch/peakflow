@@ -33,15 +33,17 @@ export type AttributeType<T = string> = (
 // ====== Parsed ======
 // ====================
 
-export type ParsedAttributes<T extends DatasetAttributes> = {
+export type ParsedAttributes<T extends Attributes> = {
   [K in keyof T]: ParsedAttribute<T[K]>;
 };
 
-export type ParsedAttribute<T extends DatasetAttribute> = undefined extends T["default"]
-  ? IsUnknown<T> extends false
-    ? ParsedAttributeValue<T>
-    : string
-  : NonNullable<ParsedAttributeValue<T>>;
+export type ParsedAttribute<T extends Attribute> = T extends DatasetAttribute
+  ? undefined extends T["default"]
+    ? IsUnknown<T> extends false
+      ? ParsedAttributeValue<T>
+      : string
+    : NonNullable<ParsedAttributeValue<T>>
+  : never;
 
 export type ParsedAttributeValue<T extends DatasetAttribute> =
   T["type"] extends AttributeType<infer U> ? U : never;
@@ -108,9 +110,9 @@ export class Dataset<T extends Attributes> {
   // ====== Parsing Logic ======
   // ===========================
 
-  public static parse<T extends DatasetAttributes<any>>(
+  public static parse<T extends Attributes>(
     element: Element,
-    attributes: T,
+    attributes: DatasetAttributes<T>,
   ): ParsedAttributes<T> {
     const attrArray = Object.entries(attributes);
     return attrArray.reduce((acc, [key, attr]) => {
@@ -121,7 +123,7 @@ export class Dataset<T extends Attributes> {
     }, {} as ParsedAttributes<T>);
   }
 
-  public parse(element: Element): ParsedAttributes<DatasetAttributes<T>> {
+  public parse(element: Element): ParsedAttributes<T> {
     return Dataset.parse(element, this.definition);
   }
 
