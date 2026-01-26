@@ -10,7 +10,7 @@ import { merge } from "ts-deepmerge";
  * @returns A new object containing the deeply merged result of
  * defaults and options.
  */
-export function mergeOptions(defaults, options) {
-    return merge(defaults, options);
+export function mergeOptions(defaults, ...options) {
+    return merge(defaults, ...options);
 }
 export default mergeOptions;
