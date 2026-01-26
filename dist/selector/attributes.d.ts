@@ -6,7 +6,7 @@ export type DatasetAttribute<N extends string = string, T = unknown> = {
     default?: T;
 };
 export type Attributes<T extends string = string, K extends string = string> = {
-    [U in T]: Attribute<K, unknown>;
+    [U in T]: Attribute<K, any>;
 };
 export type DatasetAttributes<T extends Attributes = Attributes> = {
     [K in keyof T]: T[K] extends Attribute<infer N, infer U> ? IsUnknown<U> extends false ? DatasetAttribute<N, U> : DatasetAttribute<N, string> : never;

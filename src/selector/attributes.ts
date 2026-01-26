@@ -13,7 +13,7 @@ export type DatasetAttribute<N extends string = string, T = unknown> = {
 };
 
 export type Attributes<T extends string = string, K extends string = string> = {
-  [U in T]: Attribute<K, unknown>;
+  [U in T]: Attribute<K, any>;
 };
 
 export type DatasetAttributes<T extends Attributes = Attributes> = {
