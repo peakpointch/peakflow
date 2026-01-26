@@ -84,7 +84,7 @@ export class Dataset {
             name,
             default: defaultValue,
             type: (val, attr) => {
-                const n = Number(val);
+                const n = parseFloat(val);
                 return !isNaN(n) ? n : attr.default;
             },
         };
@@ -94,7 +94,8 @@ export class Dataset {
             name,
             default: defaultValue,
             type: (val, attr) => {
-                return val === "auto" ? "auto" : val !== null ? parseFloat(val) : attr.default;
+                const n = parseFloat(val);
+                return val === "auto" ? "auto" : !isNaN(n) ? n : attr.default;
             },
         };
     }
