@@ -13,6 +13,7 @@ export interface WebflowClassNames {
   cmsList: "w-dyn-items";
   cmsItem: "w-dyn-item";
   cmsEmpty: "w-dyn-empty";
+  cmsBindEmpty: "w-dyn-bind-empty";
   paginationPrev: "w-pagination-previous";
   paginationNext: "w-pagination-next";
   paginationCount: "w-page-count";
@@ -41,6 +42,7 @@ export interface WebflowSelectors {
   cmsList: `.${WebflowClassNames["cmsList"]}`;
   cmsItem: `.${WebflowClassNames["cmsItem"]}`;
   cmsEmpty: `.${WebflowClassNames["cmsEmpty"]}`;
+  cmsBindEmpty: `.${WebflowClassNames["cmsBindEmpty"]}`;
   paginationPrev: `.${WebflowClassNames["paginationPrev"]}`;
   paginationNext: `.${WebflowClassNames["paginationNext"]}`;
   paginationCount: `.${WebflowClassNames["paginationCount"]}`;
