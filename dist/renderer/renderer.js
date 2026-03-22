@@ -521,7 +521,9 @@ export class Renderer {
                         if (!targetElement) {
                             throw new Error(`${this.lp}Can't parse boolean filter: No element found with attribute "[${attr}]". Perhaps you misspelled the attribute?`);
                         }
-                        value = Boolean(!targetElement.classList.contains(wf.class.invisible));
+                        value =
+                            Boolean(!targetElement.classList.contains(wf.class.invisible)) ||
+                                Boolean(!targetElement.classList.contains(wf.class.cmsBindEmpty));
                     }
                     else {
                         // Handles attribute values directly

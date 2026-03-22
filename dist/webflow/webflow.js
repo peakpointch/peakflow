@@ -59,7 +59,10 @@ export const wf = {
     class: wfclass,
     select: wfselect,
     isVisible: (el) => {
-        return !(el.classList.contains(wfclass.invisible) || el.closest(wfselect.invisible));
+        return !(el.classList.contains(wfclass.invisible) ||
+            el.classList.contains(wfclass.cmsBindEmpty) ||
+            el.closest(wfselect.invisible) ||
+            el.closest(wfselect.cmsBindEmpty));
     },
     hasAttr: (element, attribute) => {
         return element.hasAttribute(attribute) && element.getAttribute(attribute) !== "false";

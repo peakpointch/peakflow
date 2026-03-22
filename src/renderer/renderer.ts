@@ -633,7 +633,9 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
               );
             }
 
-            value = Boolean(!targetElement.classList.contains(wf.class.invisible));
+            value =
+              Boolean(!targetElement.classList.contains(wf.class.invisible)) ||
+              Boolean(!targetElement.classList.contains(wf.class.cmsBindEmpty));
           } else {
             // Handles attribute values directly
             value = JSON.parse(value);
