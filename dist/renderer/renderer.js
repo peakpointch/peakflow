@@ -613,9 +613,9 @@ export class Renderer {
         if (element.style.display === "none") {
             element.style.removeProperty("display");
         }
-        if (element.classList.contains("hide")) {
-            element.classList.remove("hide");
-        }
+        element.classList.remove("hide");
+        element.classList.remove(wf.class.invisible);
+        element.classList.remove(wf.class.cmsBindEmpty);
     }
     hideHTMLElement(element) {
         element.style.display = "none";

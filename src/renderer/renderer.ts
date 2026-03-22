@@ -735,9 +735,9 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     if (element.style.display === "none") {
       element.style.removeProperty("display");
     }
-    if (element.classList.contains("hide")) {
-      element.classList.remove("hide");
-    }
+    element.classList.remove("hide");
+    element.classList.remove(wf.class.invisible);
+    element.classList.remove(wf.class.cmsBindEmpty);
   }
 
   private hideHTMLElement(element: HTMLElement): void {
