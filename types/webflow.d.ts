@@ -58,29 +58,7 @@ export type WfSiteId = string;
 export type WfPageId = string;
 export type WfElementId = string;
 
-export interface Webflow {
-  siteId: WfSiteId;
-  pageId: WfPageId;
-  class: WebflowClassNames;
-  select: WebflowSelectors;
-
-  /**
-   * Determines whether a given element is visible accordion to Webflow's
-   * conditional visibility rules.
-   */
-  isVisible: (element: Element) => boolean;
-
-  /**
-   * Returns true if an attribute is present and not explicitly "false".
-   * Works like a boolean HTML attribute.
-   */
-  hasAttr: (element: Element, attribute: string) => boolean;
-
-  /**
-   * Returns true if an attribute is present and explicitly "true".
-   */
-  hasTrueAttr: (element: Element, attribute: string) => boolean;
-}
+export type WebflowEnv = "development" | "designer" | "staging" | "production";
 
 export interface WfFormData {
   /** Name of the form. Inferred from `HTMLFormElement.dataset.name` */

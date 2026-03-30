@@ -53,21 +53,65 @@ export const wfselect = {
     checkboxInput: `.${wfclass.wcheckbox} input[type="checkbox"]:not(.${wfclass.checkbox})`,
     inputSelectorList: inputSelectorList,
 };
-export const wf = {
-    siteId,
-    pageId,
-    class: wfclass,
-    select: wfselect,
-    isVisible: (el) => {
+export class Webflow {
+    constructor() {
+        this.siteId = siteId;
+        this.pageId = pageId;
+        this.class = wfclass;
+        this.select = wfselect;
+    }
+    /**
+     * Determines whether a given element is visible accordion to Webflow's
+     * conditional visibility rules.
+     */
+    isVisible(el) {
         return !(el.classList.contains(wfclass.invisible) ||
             el.classList.contains(wfclass.cmsBindEmpty) ||
             el.closest(wfselect.invisible) ||
             el.closest(wfselect.cmsBindEmpty));
-    },
-    hasAttr: (element, attribute) => {
+    }
+    /**
+     * Returns true if an attribute is present and not explicitly "false".
+     * Works like a boolean HTML attribute.
+     */
+    hasAttr(element, attribute) {
         return element.hasAttribute(attribute) && element.getAttribute(attribute) !== "false";
-    },
-    hasTrueAttr: (element, attribute) => {
+    }
+    /**
+     * Returns true if an attribute is present and explicitly "true".
+     */
+    hasTrueAttr(element, attribute) {
         return element.hasAttribute(attribute) && element.getAttribute(attribute) === "true";
-    },
-};
+    }
+    /**
+     * Current Webflow environment
+     */
+    get env() {
+        const host = window.location.hostname;
+        if (host === "localhost") {
+            return "development";
+        }
+        else if (host.includes(".design.webflow.com")) {
+            return "designer";
+        }
+        else if (host.includes(".webflow.io")) {
+            return "staging";
+        }
+        else {
+            return "production";
+        }
+    }
+    /**
+     * The designer iframe document if env is "designer", standard `document` otherwise
+     */
+    get doc() {
+        if (this.env === "designer") {
+            const iframe = document.querySelector("#site-iframe-next");
+            return iframe ? iframe.contentDocument || iframe.contentWindow.document : null;
+        }
+        else {
+            return document;
+        }
+    }
+}
+export const wf = new Webflow();
