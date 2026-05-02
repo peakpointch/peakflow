@@ -1,7 +1,7 @@
 import type { PartialDeep } from "type-fest";
-import { type BaseAttributes } from "../attributeselector/index.js";
+import { type AttributeAccessorMap, type BaseAttributes } from "../selector/index.js";
 import { BaseComponent, type BaseSettings } from "../base-component/index.js";
-import { type DashToCamelCase } from "../typeutils/index.js";
+import type { DashToCamelCase, CamelToPascal } from "../typeutils/index.js";
 type FileType = "(PDF)" | "(DOCX)" | "(JPEG)" | "(PNG)";
 type PdfEmbedElement = "component" | "preview" | "download" | "error" | "file-config" | "loading";
 export interface PdfEmbedGlobal {
@@ -14,9 +14,9 @@ interface PdfEmbedFile {
     externalUrl: string;
     isExternal: boolean;
 }
-interface PdfEmbedAttributes extends BaseAttributes {
-    file: Record<keyof PdfEmbedFile, string>;
-}
+type PdfEmbedAttributes = BaseAttributes & {
+    [K in keyof PdfEmbedFile as `file${CamelToPascal<K>}`]: string;
+};
 interface PdfEmbedSettings extends BaseSettings {
     clientId: string;
 }
@@ -24,16 +24,16 @@ interface ClientIds extends BaseSettings {
     clientIds: Record<string, string>;
 }
 export declare class PdfEmbed extends BaseComponent<PdfEmbedElement, PdfEmbedSettings> {
-    static attr: PdfEmbedAttributes;
-    attr: PdfEmbedAttributes;
+    static attr: AttributeAccessorMap<PdfEmbedAttributes>;
+    attr: AttributeAccessorMap<PdfEmbedAttributes>;
     elements: Record<DashToCamelCase<PdfEmbedElement>, HTMLElement | null>;
     file: PdfEmbedFile;
     pdfEmbedId: string;
     private static lp;
     private lp;
     constructor(component: HTMLElement, settings?: PartialDeep<PdfEmbedSettings | ClientIds>);
-    protected static attributeSelector: import("../attributeselector/attributeselector.js").AttributeSelector<PdfEmbedElement>;
-    static selector: import("../attributeselector/attributeselector.js").InstanceSelector<PdfEmbedElement>;
+    protected static attributeSelector: import("../selector/selector.js").AttributeSelector<PdfEmbedElement>;
+    static selector: import("../selector/selector.js").InstanceSelector<PdfEmbedElement>;
     static select: <U extends Element = HTMLElement>(element: PdfEmbedElement, instance?: string) => U;
     static selectAll: <U extends Element = HTMLElement>(element: PdfEmbedElement, instance?: string) => NodeListOf<U>;
     static getFileConfig(configElement: HTMLElement): PdfEmbedFile;

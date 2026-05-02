@@ -1,4 +1,4 @@
-import Selector from "../attributeselector";
+import Selector from "../selector";
 
 type CopyComponentElement = "component" | "button";
 

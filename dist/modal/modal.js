@@ -1,5 +1,5 @@
 var _a;
-import Selector from "../attributeselector/index.js";
+import Selector, {} from "../selector/index.js";
 import { ScrollHandler, lockBodyScroll, unlockBodyScroll, addScrollbarPadding, removeScrollbarPadding, } from "../scroll/index.js";
 import { BaseComponent } from "../base-component/index.js";
 export class Modal extends BaseComponent {
@@ -164,6 +164,10 @@ export class Modal extends BaseComponent {
     }
 }
 _a = Modal;
+Modal.attr = {
+    id: "data-modal-id",
+    element: "data-modal-element",
+};
 Modal.defaultSettings = {
     id: undefined,
     animation: {
@@ -177,10 +181,6 @@ Modal.defaultSettings = {
         lock: true,
         smooth: false,
     },
-};
-Modal.attr = {
-    id: "data-modal-id",
-    element: "data-modal-element",
 };
 Modal.attributeSelector = Selector.attr(_a.attr.element);
 Modal.selector = Selector.instance(_a.attributeSelector, _a.attr);

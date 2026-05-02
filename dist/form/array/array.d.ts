@@ -1,3 +1,4 @@
+import { type AttributeAccessorMap, type BaseAttributes } from "../../selector";
 import { BaseComponent, type BaseSettings } from "../../base-component/index.js";
 import { FormArrayItem, type ItemConstructor, type SerializedItem } from "./item";
 import type { FormArrayDialogs, FormMessages, GrammarOptions } from "./messages";
@@ -15,7 +16,7 @@ type ModalGroup<T extends string = string> = {
     element: HTMLElement;
     name: T;
 };
-interface ArrayAttributes {
+interface ArrayAttributes extends BaseAttributes {
     id: string;
     element: string;
     fieldGroup: string;
@@ -48,7 +49,7 @@ export interface FormArraySettings<Item extends FormArrayItem> extends BaseSetti
     dialogs?: FormArrayDialogs<Item>;
 }
 export declare class FormArray<Item extends FormArrayItem> extends BaseComponent<ArrayElement> {
-    static readonly attr: ArrayAttributes;
+    static readonly attr: AttributeAccessorMap<ArrayAttributes>;
     static readonly defaultSettings: FormArraySettings<FormArrayItem>;
     readonly attr: ArrayAttributes;
     alertDialog: AlertDialog;
@@ -76,7 +77,7 @@ export declare class FormArray<Item extends FormArrayItem> extends BaseComponent
     private editingKey;
     private unsavedItem;
     constructor(settings: PartialDeep<FormArraySettings<Item>>);
-    protected static attributeSelector: import("../../attributeselector").AttributeSelector<ArrayElement>;
+    protected static attributeSelector: import("../../selector").AttributeSelector<ArrayElement>;
     /**
      * Static selector
      */

@@ -1,6 +1,6 @@
 import { asSuffix, capitalize } from "../../utils";
 import wf from "../../webflow/index.js";
-import { Selector, exclude } from "../../attributeselector";
+import { Selector, exclude, } from "../../selector";
 import { BaseComponent } from "../../base-component/index.js";
 import { FormArrayItem } from "./item";
 import { FormDecision, FormMessage, FormProgressManager, isCheckboxInput, isRadioInput, validateFields, removeErrorClasses, isFormInput, findFormInput, reportValidity, getRadioGroups, setChecked, fieldFromInput, } from "../index.js";

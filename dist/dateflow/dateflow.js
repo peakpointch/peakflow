@@ -1,4 +1,4 @@
-import Selector from "../attributeselector/index.js";
+import Selector from "../selector/index.js";
 import { format } from "date-fns";
 function getDomElements(...elements) {
     const containers = [];

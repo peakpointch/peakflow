@@ -1,9 +1,8 @@
 var _a;
-import { Selector } from "../attributeselector/index.js";
+import { Selector, } from "../selector/index.js";
 import { BaseComponent } from "../base-component/index.js";
 import { logPrefix } from "../utils/logger.js";
 import { wf } from "../webflow/index.js";
-import {} from "../typeutils/index.js";
 import Script from "../utils/script.js";
 export class PdfEmbed extends BaseComponent {
     constructor(component, settings) {
@@ -36,11 +35,11 @@ export class PdfEmbed extends BaseComponent {
         if (!configElement)
             throw new Error(`${this.lp}Config element not found`);
         return {
-            type: configElement.getAttribute(this.attr.file.type) ?? "",
-            name: configElement.getAttribute(this.attr.file.name) ?? "",
-            url: configElement.getAttribute(this.attr.file.url) ?? "",
-            externalUrl: configElement.getAttribute(this.attr.file.externalUrl) ?? "",
-            isExternal: wf.hasAttr(configElement, this.attr.file.isExternal),
+            type: configElement.getAttribute(this.attr.fileType) ?? "",
+            name: configElement.getAttribute(this.attr.fileName) ?? "",
+            url: configElement.getAttribute(this.attr.fileUrl) ?? "",
+            externalUrl: configElement.getAttribute(this.attr.fileExternalUrl) ?? "",
+            isExternal: wf.hasAttr(configElement, this.attr.fileIsExternal),
         };
     }
     static getClientIdByUrl(config, fallback) {
@@ -130,13 +129,11 @@ _a = PdfEmbed;
 PdfEmbed.attr = {
     id: "data-pdf-id",
     element: "data-pdf-element",
-    file: {
-        type: "data-type",
-        name: "data-name",
-        url: "data-url",
-        externalUrl: "data-external-url",
-        isExternal: "data-is-external",
-    },
+    fileType: "data-type",
+    fileName: "data-name",
+    fileUrl: "data-url",
+    fileExternalUrl: "data-external-url",
+    fileIsExternal: "data-is-external",
 };
 PdfEmbed.lp = logPrefix("PdfEmbed");
 PdfEmbed.attributeSelector = Selector.attr(_a.attr.element);

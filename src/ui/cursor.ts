@@ -1,5 +1,5 @@
 import gsap from "gsap";
-import Selector from "../attributeselector";
+import Selector from "../selector";
 import { BaseComponent, type BaseSettings } from "../base-component";
 import type { PartialDeep } from "type-fest";
 import { objectToCSS, breakpointsToMediaQueries } from "../utils/css";

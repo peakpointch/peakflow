@@ -8,7 +8,6 @@ export * from "./logger.js";
 export * from "./maptoobject.js";
 export * from "./objecttomap.js";
 export * from "./parameterize.js";
-export * from "./parse-dataset.js";
 export * from "./selectorstring.js";
 export * from "./script.js";
 export * from "./stylesheet.js";

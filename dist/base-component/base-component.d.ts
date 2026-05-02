@@ -1,4 +1,4 @@
-import { type BaseAttributes } from "../attributeselector";
+import { type AttributeAccessorMap, type BaseAttributes } from "../selector";
 import type { PartialDeep } from "type-fest";
 export interface BaseSettings {
     id: string;
@@ -8,7 +8,7 @@ export interface BaseSettings {
  */
 export declare abstract class BaseComponent<Elements extends string, Settings extends BaseSettings = BaseSettings> {
     static readonly defaultSettings: BaseSettings;
-    static readonly attr: BaseAttributes;
+    static readonly attr: AttributeAccessorMap<BaseAttributes>;
     readonly component: HTMLElement;
     readonly id: string;
     settings: Settings;
@@ -16,8 +16,8 @@ export declare abstract class BaseComponent<Elements extends string, Settings ex
     selector(element: Elements, global?: boolean): string;
     select<T extends Element = HTMLElement>(element: Elements, global?: boolean): T;
     selectAll<T extends Element = HTMLElement>(element: Elements, global?: boolean): NodeListOf<T>;
-    protected static get attributeSelector(): import("../attributeselector").AttributeSelector<string>;
-    static get selector(): import("../attributeselector").InstanceSelector<string>;
+    protected static get attributeSelector(): import("../selector").AttributeSelector<string>;
+    static get selector(): import("../selector").InstanceSelector<string>;
     static get select(): <U extends Element = HTMLElement>(element: string, instance?: string) => U;
     static get selectAll(): <U extends Element = HTMLElement>(element: string, instance?: string) => NodeListOf<U>;
 }

@@ -3,7 +3,7 @@ import Renderer from "../renderer/index.js";
 import type { FilterAttributes, RenderData, RendererOptions } from "../renderer/index.js";
 import mergeOptions from "../utils/merge-options.js";
 import { wf } from "../webflow/webflow.js";
-import { exclude } from "../attributeselector/attributeselector.js";
+import { exclude } from "../selector/selector.js";
 
 type GlobalWfCollections = {
   initialized: boolean;

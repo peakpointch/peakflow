@@ -2,7 +2,7 @@ export { peakflow as default } from "./peakflow";
 export * from "./peakflow";
 
 export * from "./accordion/index.js";
-export * from "./attributeselector/index.js";
+export * from "./selector/index.js";
 export * from "./cal/index.js";
 export * from "./canvas/index.js";
 export * from "./dateflow/index.js";

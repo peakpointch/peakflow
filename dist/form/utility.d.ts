@@ -11,8 +11,8 @@ export interface RadioGroup {
     name: string;
     inputs: HTMLInputElement[];
 }
-declare const formElementSelector: import("../attributeselector/attributeselector.js").AttributeSelector<FormComponentElement>;
-declare const filterFormSelector: import("../attributeselector/attributeselector.js").AttributeSelector<FilterFormElement>;
+declare const formElementSelector: import("../selector/selector.js").AttributeSelector<FormComponentElement>;
+declare const filterFormSelector: import("../selector/selector.js").AttributeSelector<FilterFormElement>;
 /**
  * Check if a FormElement is a radio input.
  * @param {HTMLFormInput} input - The input that is to be checked.

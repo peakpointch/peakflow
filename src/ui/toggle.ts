@@ -1,6 +1,6 @@
 import gsap from "gsap";
 import { BaseComponent, type BaseSettings } from "../base-component";
-import Selector from "../attributeselector";
+import Selector from "../selector";
 import type { PartialDeep } from "type-fest";
 
 export type ToggleElement = "component" | "checkbox" | "toggle";

@@ -1,6 +1,6 @@
 import { fieldFromInput } from "./formfield.js";
 import { FieldGroup } from "./fieldgroup.js";
-import Selector from "../attributeselector/index.js";
+import Selector from "../selector/index.js";
 import wf from "../webflow/index.js";
 export class FilterForm {
     constructor(container, fieldIds) {

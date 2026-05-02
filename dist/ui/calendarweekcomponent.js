@@ -1,5 +1,5 @@
 import { getISOWeek, getISOWeeksInYear, getISOWeekYear, setISOWeekYear, setISOWeek, startOfISOWeek, format, } from "date-fns";
-import Selector from "../attributeselector/index.js";
+import Selector from "../selector/index.js";
 function getISOWeeksOfYear(year) {
     return getISOWeeksInYear(new Date(year, 5, 1));
 }

@@ -1,73 +1,29 @@
 var _a;
-import { Selector } from "../attributeselector/index.js";
-import { Stylesheet, parseDataset } from "../utils";
+import { Selector, Dataset } from "../selector/index.js";
+import { Stylesheet } from "../utils";
 import Swiper from "swiper";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { BaseComponent } from "../base-component/index.js";
-/**
- * REMINDER: If this changes, `SwiperDataset` has to be updated as well
- */
-const swiperAttributes = [
-    { name: "data-swiper-id", type: "string" },
-    { name: "data-mousewheel", type: "boolean", default: false },
-    { name: "data-free-mode", type: "boolean", default: false },
-    { name: "data-follow-finger", type: "boolean", default: false },
-    { name: "data-auto-height", type: "boolean", default: false },
-    { name: "data-slides-per-view", type: "numberOrAuto" },
-    { name: "data-slide-to-clicked-slide", type: "boolean", default: false },
-    { name: "data-space-between", type: "number", default: 0 },
-    { name: "data-centered-slides", type: "boolean", default: false },
-    { name: "data-loop", type: "boolean", default: true },
-    { name: "data-allow-touch-move", type: "boolean", default: true },
-    { name: "data-autoplay", type: "boolean", default: true },
-    { name: "data-autoplay-delay", type: "number", default: 4000 },
-    { name: "data-speed", type: "number", default: 400 },
-];
-function sliderEmpty(slider) {
-    const slides = slider.querySelectorAll(".swiper-slide");
-    if (slides.length === 0) {
-        console.warn(`Slider "${slider.getAttribute(Slider.attr.id)}": Skip empty component.`);
-        return true;
-    }
-    return false;
-}
-function hideEmptySlider(slider) {
-    const sliderId = slider.getAttribute(Slider.attr.id) || "";
-    const hideOptions = slider.getAttribute(Slider.attr.hide) || "hideNone";
-    switch (hideOptions) {
-        case "hideNone":
-            break;
-        case "hideComponent":
-            slider.classList.add("hide");
-            break;
-        case "emptyState":
-            const prevNextButtons = document.querySelectorAll(`[${Slider.attr.id}="${sliderId}"] ${Slider.selector("prev")}, [${Slider.attr.id}="${sliderId}"] ${Slider.selector("next")}`);
-            Array.from(prevNextButtons).forEach((e) => e?.classList.add("hide"));
-            break;
-        default:
-            break;
-    }
-}
-function updateCounter(swiper, currentElement, totalElement) {
-    const current = swiper.realIndex + 1;
-    const total = swiper.slides.length;
-    currentElement.textContent = current.toString();
-    totalElement.textContent = total.toString();
-}
-function initCounter(swiper) {
-    const currentElement = swiper.el.querySelector(Slider.selector("counter-current"));
-    const totalElement = swiper.el.querySelector(Slider.selector("counter-total"));
-    if (!currentElement || !totalElement)
-        return;
-    swiper.on("init", () => updateCounter(swiper, currentElement, totalElement));
-    swiper.on("slideChange", () => updateCounter(swiper, currentElement, totalElement));
-    updateCounter(swiper, currentElement, totalElement);
-}
-function initSlides(wrapperEl) {
-    Array.from(wrapperEl.children).forEach((el) => {
-        el.classList.add("swiper-slide");
-    });
-}
+const swiperDataset = Dataset.define({
+    // Custom
+    id: Dataset.String("data-swiper-id"),
+    element: Dataset.String("data-swiper-element"),
+    hide: Dataset.String("data-swiper-hide-options"),
+    // Swiper
+    allowTouchMove: Dataset.Boolean("data-allow-touch-move", true),
+    autoHeight: Dataset.Boolean("data-auto-height"),
+    autoplay: Dataset.Boolean("data-autoplay", true),
+    autoplayDelay: Dataset.Number("data-autoplay-delay", 4000),
+    centeredSlides: Dataset.Boolean("data-centered-slides", false),
+    freeMode: Dataset.Boolean("data-free-mode", false),
+    followFinger: Dataset.Boolean("data-follow-finger", false),
+    loop: Dataset.Boolean("data-loop", true),
+    mousewheel: Dataset.Boolean("data-mousewheel", false),
+    slidesPerView: Dataset.NumberOrAuto("data-slides-per-view"),
+    slideToClickedSlide: Dataset.Boolean("data-slide-to-clicked-slide", false),
+    spaceBetween: Dataset.Number("data-space-between", 0),
+    speed: Dataset.Number("data-speed", 400),
+});
 /**
  * A Swiper component wrapper for Webflow.
  *
@@ -110,14 +66,14 @@ export class Slider extends BaseComponent {
         _a.create(this.component);
     }
     static create(swiperElement, options) {
-        initSlides(swiperElement.querySelector(_a.selector("wrapper")));
-        if (sliderEmpty(swiperElement)) {
-            hideEmptySlider(swiperElement);
+        _a.initSlides(swiperElement.querySelector(_a.selector("wrapper")));
+        if (_a.isEmpty(swiperElement)) {
+            _a.hideEmptySlider(swiperElement);
             return new Swiper(swiperElement);
         }
         const swiperOptions = this.readOptions(swiperElement, options);
         const swiper = new Swiper(swiperElement, swiperOptions);
-        initCounter(swiper);
+        _a.initCounter(swiper);
         if (swiperOptions.autoplay !== false) {
             swiper.autoplay.stop();
             const observer = new IntersectionObserver((entries) => {
@@ -149,7 +105,7 @@ export class Slider extends BaseComponent {
     }
     static readOptions(swiperElement, override) {
         swiperElement.classList.remove("initial-hide");
-        const settings = parseDataset(swiperElement, swiperAttributes);
+        const settings = swiperDataset.parse(swiperElement);
         const swiperOptions = {
             autoplay: settings.autoplay
                 ? {
@@ -159,8 +115,8 @@ export class Slider extends BaseComponent {
                 }
                 : false,
             navigation: {
-                prevEl: _a.selector("prev", settings.swiperId),
-                nextEl: _a.selector("next", settings.swiperId),
+                prevEl: _a.selector("prev", settings.id),
+                nextEl: _a.selector("next", settings.id),
             },
             pagination: {
                 el: _a.selector("pagination"),
@@ -203,13 +159,54 @@ export class Slider extends BaseComponent {
         };
         return merged;
     }
+    static isEmpty(slider) {
+        const slides = slider.querySelectorAll(".swiper-slide");
+        if (slides.length === 0) {
+            console.warn(`Slider "${slider.getAttribute(_a.attr.id)}": Skip empty component.`);
+            return true;
+        }
+        return false;
+    }
+    static hideEmptySlider(slider) {
+        const sliderId = slider.getAttribute(_a.attr.id) || "";
+        const hideOptions = slider.getAttribute(_a.attr.hide) || "hideNone";
+        switch (hideOptions) {
+            case "hideNone":
+                break;
+            case "hideComponent":
+                slider.classList.add("hide");
+                break;
+            case "emptyState":
+                const prevNextButtons = document.querySelectorAll(`[${_a.attr.id}="${sliderId}"] ${_a.selector("prev")}, [${_a.attr.id}="${sliderId}"] ${_a.selector("next")}`);
+                Array.from(prevNextButtons).forEach((e) => e?.classList.add("hide"));
+                break;
+            default:
+                break;
+        }
+    }
+    static updateCounter(swiper, currentElement, totalElement) {
+        const current = swiper.realIndex + 1;
+        const total = swiper.slides.length;
+        currentElement.textContent = current.toString();
+        totalElement.textContent = total.toString();
+    }
+    static initCounter(swiper) {
+        const currentElement = swiper.el.querySelector(_a.selector("counter-current"));
+        const totalElement = swiper.el.querySelector(_a.selector("counter-total"));
+        if (!currentElement || !totalElement)
+            return;
+        swiper.on("init", () => _a.updateCounter(swiper, currentElement, totalElement));
+        swiper.on("slideChange", () => _a.updateCounter(swiper, currentElement, totalElement));
+        _a.updateCounter(swiper, currentElement, totalElement);
+    }
+    static initSlides(wrapperEl) {
+        Array.from(wrapperEl.children).forEach((el) => {
+            el.classList.add("swiper-slide");
+        });
+    }
 }
 _a = Slider;
-Slider.attr = {
-    id: "data-swiper-id",
-    element: "data-swiper-element",
-    hide: "data-swiper-hide-options",
-};
+Slider.attr = swiperDataset.attr;
 Slider.attributeSelector = Selector.attr(_a.attr.element);
 Slider.selector = Selector.instance(_a.attributeSelector, _a.attr);
 Slider.select = Selector.select(_a.selector);

@@ -1,7 +1,7 @@
 var _a;
 import gsap from "gsap";
 import { BaseComponent } from "../base-component";
-import Selector from "../attributeselector";
+import Selector from "../selector";
 export class Toggle extends BaseComponent {
     constructor(checkbox, options) {
         super(checkbox, options);

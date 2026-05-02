@@ -1,7 +1,7 @@
 import wf from "../webflow/index.js";
 import { setChecked, validateFields } from "./utility.js";
 import { FormMessage } from "./formmessage.js";
-import Selector from "../attributeselector/index.js";
+import Selector from "../selector/index.js";
 /**
  * Represents a decision component within a form, managing conditional paths based on user input.
  *

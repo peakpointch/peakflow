@@ -1,9 +1,10 @@
+import type { Attributes, Attribute } from "./attributes";
 type AttributeMatchType = "startsWith" | "endsWith" | "includes" | "whitespace" | "hyphen" | "exact";
 export type AttributeSelector<T = string> = (name?: T, options?: Partial<AttributeOptions>) => string;
 export type InstanceSelector<T = string> = (element: T, instance?: string) => string;
-export interface BaseAttributes {
-    id: string;
-    element: string;
+export interface BaseAttributes extends Attributes {
+    id: Attribute;
+    element: Attribute;
 }
 export interface AttributeDefaultOptions<T extends string> {
     defaultMatchType: AttributeMatchType;
