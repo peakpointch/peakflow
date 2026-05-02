@@ -1,11 +1,6 @@
 import { asSuffix, capitalize } from "../../utils";
 import wf from "../../webflow/index.js";
-import {
-  Selector,
-  exclude,
-  type AttributeAccessorMap,
-  type BaseAttributes,
-} from "../../selector";
+import { Selector, exclude, type AttributeAccessorMap, type BaseAttributes } from "../../selector";
 import { BaseComponent, type BaseSettings } from "../../base-component/index.js";
 import { FormArrayItem, type ItemConstructor, type SerializedItem } from "./item";
 import type { FormArrayDialogs, FormMessages, GrammarOptions, MessageFn } from "./messages";
@@ -99,6 +94,10 @@ export interface FormArraySettings<Item extends FormArrayItem> extends BaseSetti
 
   grammar: GrammarOptions;
   messages?: FormMessages<Item>;
+
+  /**
+   * Custom messages shown for each AlertDialog type ("delete", "discard")
+   */
   dialogs?: FormArrayDialogs<Item>;
 }
 
@@ -138,6 +137,27 @@ export class FormArray<Item extends FormArrayItem> extends BaseComponent<ArrayEl
         `Bitte füllen Sie alle Pflichtfelder für "${item?.getFullName()}" aus.`,
       limit: ({ options, grammar }) =>
         `Sie können max. ${options.limit} ${options.limit === 1 ? grammar.item.sg : grammar.item.pl} hinzufügen.`,
+    },
+    dialogs: {
+      delete: {
+        title: ({ item, grammar }) =>
+          `Möchten Sie ${grammar.article.sg} ${
+            grammar.item.sg
+          } "${item?.getFullName()}" wirklich löschen?`,
+        paragraph: ({ item, grammar }) =>
+          `Mit dieser Aktion wird ${grammar.article.sg} ${
+            grammar.item.sg
+          } "${item?.getFullName()}" gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.`,
+        cancel: "Abbrechen",
+        confirm: "Löschen",
+      },
+      discard: {
+        title: "Möchten Sie die Änderungen verwerfen?",
+        paragraph: ({ item }) =>
+          `Mit dieser Aktion gehen alle Änderungen für "${item?.getFullName()}" verloren. Diese Aktion kann nicht rückgängig gemacht werden.`,
+        cancel: "Abbrechen",
+        confirm: "Änderungen verwerfen",
+      },
     },
   };
 
@@ -1249,7 +1269,7 @@ export class FormArray<Item extends FormArrayItem> extends BaseComponent<ArrayEl
     type: T,
     item?: Item,
   ): AlertDialogMessage {
-    const dialog = this.settings.dialogs[type];
+    const dialog = this.settings.dialogs?.[type];
     const grammar = this.settings.grammar;
     const options = this.settings;
 
@@ -1257,10 +1277,10 @@ export class FormArray<Item extends FormArrayItem> extends BaseComponent<ArrayEl
       typeof val === "function" ? val({ item, grammar, options }) : (val ?? "");
 
     return {
-      title: resolve(dialog.title),
-      paragraph: resolve(dialog.paragraph),
-      cancel: resolve(dialog.cancel),
-      confirm: resolve(dialog.confirm),
+      title: resolve(dialog?.title),
+      paragraph: resolve(dialog?.paragraph),
+      cancel: resolve(dialog?.cancel),
+      confirm: resolve(dialog?.confirm),
     };
   }
 }

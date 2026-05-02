@@ -633,7 +633,9 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
               );
             }
 
-            value = Boolean(!targetElement.classList.contains(wf.class.invisible));
+            value =
+              Boolean(!targetElement.classList.contains(wf.class.invisible)) ||
+              Boolean(!targetElement.classList.contains(wf.class.cmsBindEmpty));
           } else {
             // Handles attribute values directly
             value = JSON.parse(value);
@@ -735,9 +737,9 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     if (element.style.display === "none") {
       element.style.removeProperty("display");
     }
-    if (element.classList.contains("hide")) {
-      element.classList.remove("hide");
-    }
+    element.classList.remove("hide");
+    element.classList.remove(wf.class.invisible);
+    element.classList.remove(wf.class.cmsBindEmpty);
   }
 
   private hideHTMLElement(element: HTMLElement): void {

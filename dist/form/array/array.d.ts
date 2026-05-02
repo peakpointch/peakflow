@@ -46,6 +46,9 @@ export interface FormArraySettings<Item extends FormArrayItem> extends BaseSetti
     itemClass: ItemConstructor<Item>;
     grammar: GrammarOptions;
     messages?: FormMessages<Item>;
+    /**
+     * Custom messages shown for each AlertDialog type ("delete", "discard")
+     */
     dialogs?: FormArrayDialogs<Item>;
 }
 export declare class FormArray<Item extends FormArrayItem> extends BaseComponent<ArrayElement> {

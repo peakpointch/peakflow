@@ -1,6 +1,6 @@
 import { asSuffix, capitalize } from "../../utils";
 import wf from "../../webflow/index.js";
-import { Selector, exclude, } from "../../selector";
+import { Selector, exclude } from "../../selector";
 import { BaseComponent } from "../../base-component/index.js";
 import { FormArrayItem } from "./item";
 import { FormDecision, FormMessage, FormProgressManager, isCheckboxInput, isRadioInput, validateFields, removeErrorClasses, isFormInput, findFormInput, reportValidity, getRadioGroups, setChecked, fieldFromInput, } from "../index.js";
@@ -896,15 +896,15 @@ export class FormArray extends BaseComponent {
         return msg; // plain string
     }
     getDialog(type, item) {
-        const dialog = this.settings.dialogs[type];
+        const dialog = this.settings.dialogs?.[type];
         const grammar = this.settings.grammar;
         const options = this.settings;
         const resolve = (val) => typeof val === "function" ? val({ item, grammar, options }) : (val ?? "");
         return {
-            title: resolve(dialog.title),
-            paragraph: resolve(dialog.paragraph),
-            cancel: resolve(dialog.cancel),
-            confirm: resolve(dialog.confirm),
+            title: resolve(dialog?.title),
+            paragraph: resolve(dialog?.paragraph),
+            cancel: resolve(dialog?.cancel),
+            confirm: resolve(dialog?.confirm),
         };
     }
 }
@@ -937,6 +937,20 @@ FormArray.defaultSettings = {
         draft: ({ item, grammar }) => `${capitalize(grammar.article.sg)} ${grammar.item.sg} "${item?.getFullName()}" ist als Entwurf gespeichert.`,
         invalid: ({ item }) => `Bitte füllen Sie alle Pflichtfelder für "${item?.getFullName()}" aus.`,
         limit: ({ options, grammar }) => `Sie können max. ${options.limit} ${options.limit === 1 ? grammar.item.sg : grammar.item.pl} hinzufügen.`,
+    },
+    dialogs: {
+        delete: {
+            title: ({ item, grammar }) => `Möchten Sie ${grammar.article.sg} ${grammar.item.sg} "${item?.getFullName()}" wirklich löschen?`,
+            paragraph: ({ item, grammar }) => `Mit dieser Aktion wird ${grammar.article.sg} ${grammar.item.sg} "${item?.getFullName()}" gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.`,
+            cancel: "Abbrechen",
+            confirm: "Löschen",
+        },
+        discard: {
+            title: "Möchten Sie die Änderungen verwerfen?",
+            paragraph: ({ item }) => `Mit dieser Aktion gehen alle Änderungen für "${item?.getFullName()}" verloren. Diese Aktion kann nicht rückgängig gemacht werden.`,
+            cancel: "Abbrechen",
+            confirm: "Änderungen verwerfen",
+        },
     },
 };
 FormArray.attributeSelector = Selector.attr(FormArray.attr.element);

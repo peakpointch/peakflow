@@ -13,6 +13,7 @@ export interface WebflowClassNames {
   cmsList: "w-dyn-items";
   cmsItem: "w-dyn-item";
   cmsEmpty: "w-dyn-empty";
+  cmsBindEmpty: "w-dyn-bind-empty";
   paginationPrev: "w-pagination-previous";
   paginationNext: "w-pagination-next";
   paginationCount: "w-page-count";
@@ -41,6 +42,7 @@ export interface WebflowSelectors {
   cmsList: `.${WebflowClassNames["cmsList"]}`;
   cmsItem: `.${WebflowClassNames["cmsItem"]}`;
   cmsEmpty: `.${WebflowClassNames["cmsEmpty"]}`;
+  cmsBindEmpty: `.${WebflowClassNames["cmsBindEmpty"]}`;
   paginationPrev: `.${WebflowClassNames["paginationPrev"]}`;
   paginationNext: `.${WebflowClassNames["paginationNext"]}`;
   paginationCount: `.${WebflowClassNames["paginationCount"]}`;
@@ -56,29 +58,7 @@ export type WfSiteId = string;
 export type WfPageId = string;
 export type WfElementId = string;
 
-export interface Webflow {
-  siteId: WfSiteId;
-  pageId: WfPageId;
-  class: WebflowClassNames;
-  select: WebflowSelectors;
-
-  /**
-   * Determines whether a given element is visible accordion to Webflow's
-   * conditional visibility rules.
-   */
-  isVisible: (element: Element) => boolean;
-
-  /**
-   * Returns true if an attribute is present and not explicitly "false".
-   * Works like a boolean HTML attribute.
-   */
-  hasAttr: (element: Element, attribute: string) => boolean;
-
-  /**
-   * Returns true if an attribute is present and explicitly "true".
-   */
-  hasTrueAttr: (element: Element, attribute: string) => boolean;
-}
+export type WebflowEnv = "development" | "designer" | "staging" | "production";
 
 export interface WfFormData {
   /** Name of the form. Inferred from `HTMLFormElement.dataset.name` */

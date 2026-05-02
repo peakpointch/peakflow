@@ -1,8 +1,10 @@
 import type {
   InputSelectorList,
-  Webflow,
   WebflowClassNames,
+  WebflowEnv,
   WebflowSelectors,
+  WfPageId,
+  WfSiteId,
 } from "../../types/webflow.js";
 
 // Webflow environment
@@ -25,6 +27,7 @@ export const wfclass: WebflowClassNames = {
   cmsList: "w-dyn-items",
   cmsItem: "w-dyn-item",
   cmsEmpty: "w-dyn-empty",
+  cmsBindEmpty: "w-dyn-bind-empty",
   paginationPrev: "w-pagination-previous",
   paginationNext: "w-pagination-next",
   paginationCount: "w-page-count",
@@ -53,6 +56,7 @@ export const wfselect: WebflowSelectors = {
   cmsList: `.${wfclass.cmsList}`,
   cmsItem: `.${wfclass.cmsItem}`,
   cmsEmpty: `.${wfclass.cmsEmpty}`,
+  cmsBindEmpty: `.${wfclass.cmsBindEmpty}`,
   paginationPrev: `.${wfclass.paginationPrev}`,
   paginationNext: `.${wfclass.paginationNext}`,
   paginationCount: `.${wfclass.paginationCount}`,
@@ -62,18 +66,69 @@ export const wfselect: WebflowSelectors = {
   inputSelectorList: inputSelectorList,
 };
 
-export const wf: Webflow = {
-  siteId,
-  pageId,
-  class: wfclass,
-  select: wfselect,
-  isVisible: (el: Element): boolean => {
-    return !(el.classList.contains(wfclass.invisible) || el.closest(wfselect.invisible));
-  },
-  hasAttr: (element: Element, attribute: string): boolean => {
+export class Webflow {
+  siteId: WfSiteId = siteId;
+  pageId: WfPageId = pageId;
+  class: WebflowClassNames = wfclass;
+  select: WebflowSelectors = wfselect;
+
+  constructor() {}
+
+  /**
+   * Determines whether a given element is visible accordion to Webflow's
+   * conditional visibility rules.
+   */
+  public isVisible(el: Element): boolean {
+    return !(
+      el.classList.contains(wfclass.invisible) ||
+      el.classList.contains(wfclass.cmsBindEmpty) ||
+      el.closest(wfselect.invisible) ||
+      el.closest(wfselect.cmsBindEmpty)
+    );
+  }
+
+  /**
+   * Returns true if an attribute is present and not explicitly "false".
+   * Works like a boolean HTML attribute.
+   */
+  public hasAttr(element: Element, attribute: string): boolean {
     return element.hasAttribute(attribute) && element.getAttribute(attribute) !== "false";
-  },
-  hasTrueAttr: (element: Element, attribute: string): boolean => {
+  }
+
+  /**
+   * Returns true if an attribute is present and explicitly "true".
+   */
+  public hasTrueAttr(element: Element, attribute: string): boolean {
     return element.hasAttribute(attribute) && element.getAttribute(attribute) === "true";
-  },
-};
+  }
+
+  /**
+   * Current Webflow environment
+   */
+  public get env(): WebflowEnv {
+    const host = window.location.hostname;
+    if (host === "localhost") {
+      return "development";
+    } else if (host.includes(".design.webflow.com")) {
+      return "designer";
+    } else if (host.includes(".webflow.io")) {
+      return "staging";
+    } else {
+      return "production";
+    }
+  }
+
+  /**
+   * The designer iframe document if env is "designer", standard `document` otherwise
+   */
+  public get doc(): Document {
+    if (this.env === "designer") {
+      const iframe = document.querySelector<HTMLIFrameElement>("#site-iframe-next");
+      return iframe ? iframe.contentDocument || iframe.contentWindow.document : null;
+    } else {
+      return document;
+    }
+  }
+}
+
+export const wf = new Webflow();

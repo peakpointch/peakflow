@@ -521,7 +521,9 @@ export class Renderer {
                         if (!targetElement) {
                             throw new Error(`${this.lp}Can't parse boolean filter: No element found with attribute "[${attr}]". Perhaps you misspelled the attribute?`);
                         }
-                        value = Boolean(!targetElement.classList.contains(wf.class.invisible));
+                        value =
+                            Boolean(!targetElement.classList.contains(wf.class.invisible)) ||
+                                Boolean(!targetElement.classList.contains(wf.class.cmsBindEmpty));
                     }
                     else {
                         // Handles attribute values directly
@@ -613,9 +615,9 @@ export class Renderer {
         if (element.style.display === "none") {
             element.style.removeProperty("display");
         }
-        if (element.classList.contains("hide")) {
-            element.classList.remove("hide");
-        }
+        element.classList.remove("hide");
+        element.classList.remove(wf.class.invisible);
+        element.classList.remove(wf.class.cmsBindEmpty);
     }
     hideHTMLElement(element) {
         element.style.display = "none";
