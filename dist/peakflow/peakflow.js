@@ -24,6 +24,14 @@ export class Peakflow {
     getConfig() {
         return this._config;
     }
+    share(key, val) {
+        this.shared[key] = val;
+        window.peakflow.shared = this.shared;
+    }
+    unshare(key) {
+        delete this.shared[key];
+        window.peakflow.shared = this.shared;
+    }
     execute(...name) {
         name.forEach((fn) => {
             this.registry[fn]();
