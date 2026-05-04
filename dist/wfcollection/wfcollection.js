@@ -42,6 +42,7 @@ class CollectionList {
     }
     /** @deprecated Use getter `CollectionList.empty` instead */
     isEmpty() {
+        console.warn(`WfCollection.isEmpty() has been deprecated and will be removed in the next major version. Use WfCollection.empty instead.`);
         return this.empty;
     }
     readData() {
@@ -68,11 +69,13 @@ class CollectionList {
             .querySelectorAll(`.w-condition-invisible:not([data-render-condition="true"])`)
             .forEach((element) => element.remove());
     }
+    /** @deprecated Use Renderer class instead. */
     getAttributeData() {
+        console.warn(`WfCollection.getAttributeData() has been deprecated and will be removed in the next major version. Use Renderer class instead.`);
         let data = [];
         this.items.forEach((item) => {
             const itemData = new Map(Object.entries(item.dataset));
-            itemData.forEach((value, key) => {
+            itemData.forEach((_, key) => {
                 if (!key.startsWith("wf")) {
                     itemData.delete(key);
                 }

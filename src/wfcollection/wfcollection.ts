@@ -84,6 +84,9 @@ class CollectionList<F extends FilterAttributes = {}> {
 
   /** @deprecated Use getter `CollectionList.empty` instead */
   public isEmpty(): boolean {
+    console.warn(
+      `WfCollection.isEmpty() has been deprecated and will be removed in the next major version. Use WfCollection.empty instead.`,
+    );
     return this.empty;
   }
 
@@ -115,12 +118,16 @@ class CollectionList<F extends FilterAttributes = {}> {
       .forEach((element) => element.remove());
   }
 
+  /** @deprecated Use Renderer class instead. */
   public getAttributeData(): any {
+    console.warn(
+      `WfCollection.getAttributeData() has been deprecated and will be removed in the next major version. Use Renderer class instead.`,
+    );
     let data: any[] = [];
 
     this.items.forEach((item) => {
       const itemData: Map<string, any> = new Map(Object.entries(item.dataset));
-      itemData.forEach((value, key) => {
+      itemData.forEach((_, key) => {
         if (!key.startsWith("wf")) {
           itemData.delete(key);
         }

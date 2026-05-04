@@ -36,6 +36,7 @@ declare class CollectionList<F extends FilterAttributes = {}> {
      * This method removes every element that was hidden by Webflow's conditional visibility.
      */
     removeInvisibleElements(): void;
+    /** @deprecated Use Renderer class instead. */
     getAttributeData(): any;
 }
 declare var wfCollections: GlobalWfCollections;
