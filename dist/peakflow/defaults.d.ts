@@ -7,6 +7,7 @@ import { Slider } from "../swiper/swiper.js";
 import { CMSSelect } from "../form/cms-select.js";
 export type AnyFn = (...args: any[]) => any;
 export type VoidFn = (...args: any[]) => void;
+export type Registry = Record<string, AnyFn>;
 export declare const defaultRegistry: {
     inlinecms: typeof inlineCmsDefault;
     cmsselect: typeof CMSSelect.initializeAll;

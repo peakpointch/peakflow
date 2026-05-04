@@ -1,14 +1,17 @@
-import type { DefaultRegistry, AnyFn } from "./defaults";
+import type { AnyFn, DefaultRegistry, Registry } from "./defaults";
 import type { IANATimeZone } from "../timezones";
 export interface PeakflowConfig {
     language?: string;
     timezone?: IANATimeZone;
     debug?: boolean;
 }
-export declare class Peakflow<R extends Record<string, AnyFn>> {
+export declare class Peakflow<R extends Registry> {
+    private static instance;
     private registry;
     private _config;
-    constructor(registry: R, config?: PeakflowConfig);
+    private constructor();
+    static init<R extends Registry>(registry: R, config?: PeakflowConfig): Peakflow<R>;
+    static getInstance<R extends Registry>(): Peakflow<R>;
     config(config: Partial<PeakflowConfig>): void;
     getConfig(): PeakflowConfig;
     execute<K extends keyof R>(...name: K[]): void;
