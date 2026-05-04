@@ -1,3 +1,5 @@
+/// <reference types="../types/peakflow.d.ts" />
+
 export { peakflow as default } from "./peakflow";
 export * from "./peakflow";
 
