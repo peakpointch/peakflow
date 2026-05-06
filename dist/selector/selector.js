@@ -103,7 +103,7 @@ export class Selector {
      * @returns A typed static member that generates an instance specific selector string.
      */
     static instance(attributeSelector, attr, options) {
-        const { root = "component", scoped = true } = options;
+        const { root = "component", scoped = true } = options ?? {};
         return (element, instance) => {
             const base = attributeSelector(element);
             const instanceSelector = instance ? `[${attr.id}="${instance}"]` : "";

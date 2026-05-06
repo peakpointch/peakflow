@@ -182,7 +182,7 @@ export class Selector {
     attr: BaseAttributes,
     options?: InstanceDefaultOptions<T>,
   ): InstanceSelector<T> {
-    const { root = "component", scoped = true } = options;
+    const { root = "component", scoped = true } = options ?? {};
 
     return (element: T, instance?: string) => {
       const base = attributeSelector(element);
