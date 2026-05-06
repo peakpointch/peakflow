@@ -34,6 +34,10 @@ export interface AttributeOptions {
   exclusions: string[];
 }
 
+export interface SelectOptions {
+  doc: Document | Element;
+}
+
 const attrMatchTypes: AttributeMatchTypeMap = {
   startsWith: "^",
   endsWith: "$",
@@ -185,14 +189,22 @@ export class Selector {
   }
 
   public static select<T extends string>(instanceSelector: InstanceSelector<T>) {
-    return <U extends Element = HTMLElement>(element: T, instance?: string): U => {
-      return document.querySelector<U>(instanceSelector(element, instance));
+    return <U extends Element = HTMLElement>(
+      element: T,
+      instance?: string,
+      options?: SelectOptions,
+    ): U => {
+      return (options?.doc ?? document).querySelector<U>(instanceSelector(element, instance));
     };
   }
 
   public static selectAll<T extends string>(instanceSelector: InstanceSelector<T>) {
-    return <U extends Element = HTMLElement>(element: T, instance?: string): NodeListOf<U> => {
-      return document.querySelectorAll<U>(instanceSelector(element, instance));
+    return <U extends Element = HTMLElement>(
+      element: T,
+      instance?: string,
+      options?: SelectOptions,
+    ): NodeListOf<U> => {
+      return (options?.doc ?? document).querySelectorAll<U>(instanceSelector(element, instance));
     };
   }
 }

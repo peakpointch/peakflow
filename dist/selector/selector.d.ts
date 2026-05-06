@@ -15,6 +15,9 @@ export interface AttributeOptions {
     matchType: AttributeMatchType;
     exclusions: string[];
 }
+export interface SelectOptions {
+    doc: Document | Element;
+}
 /**
  * Excludes a CSS selector from a CSS selector.
  *
@@ -47,7 +50,7 @@ export declare class Selector {
      * @returns A typed static member that generates an instance specific selector string.
      */
     static instance<T extends string>(attributeSelector: AttributeSelector<T>, attr: BaseAttributes): InstanceSelector<T>;
-    static select<T extends string>(instanceSelector: InstanceSelector<T>): <U extends Element = HTMLElement>(element: T, instance?: string) => U;
-    static selectAll<T extends string>(instanceSelector: InstanceSelector<T>): <U extends Element = HTMLElement>(element: T, instance?: string) => NodeListOf<U>;
+    static select<T extends string>(instanceSelector: InstanceSelector<T>): <U extends Element = HTMLElement>(element: T, instance?: string, options?: SelectOptions) => U;
+    static selectAll<T extends string>(instanceSelector: InstanceSelector<T>): <U extends Element = HTMLElement>(element: T, instance?: string, options?: SelectOptions) => NodeListOf<U>;
 }
 export {};

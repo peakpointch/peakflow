@@ -121,13 +121,13 @@ export class Selector {
         };
     }
     static select(instanceSelector) {
-        return (element, instance) => {
-            return document.querySelector(instanceSelector(element, instance));
+        return (element, instance, options) => {
+            return (options?.doc ?? document).querySelector(instanceSelector(element, instance));
         };
     }
     static selectAll(instanceSelector) {
-        return (element, instance) => {
-            return document.querySelectorAll(instanceSelector(element, instance));
+        return (element, instance, options) => {
+            return (options?.doc ?? document).querySelectorAll(instanceSelector(element, instance));
         };
     }
 }
