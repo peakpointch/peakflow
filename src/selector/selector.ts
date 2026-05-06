@@ -34,6 +34,21 @@ export interface AttributeOptions {
   exclusions: string[];
 }
 
+export interface InstanceDefaultOptions<T extends string> {
+  /**
+   * Defines which element string represents the component's root.
+   * @default "component"
+   */
+  root?: T;
+
+  /**
+   * If true, elements are searched for inside the instance container.
+   * If false, all elements must have an instance ID.
+   * @default true
+   */
+  scoped?: boolean;
+}
+
 export interface SelectOptions {
   doc: Document | Element;
 }
@@ -172,7 +187,10 @@ export class Selector {
   public static instance<T extends string>(
     attributeSelector: AttributeSelector<T>,
     attr: BaseAttributes,
+    options?: InstanceDefaultOptions<T>,
   ): InstanceSelector<T> {
+    const { root = "component", scoped = true } = options;
+
     return (element: T, instance?: string) => {
       const base = attributeSelector(element);
       const instanceSelector = instance ? `[${attr.id}="${instance}"]` : "";
@@ -182,7 +200,7 @@ export class Selector {
 
       // Id attribute must be defined on component element directly
       // Allow scoping for normal elements
-      return element === ("component" as T)
+      return element === root || !scoped
         ? `${base}${instanceSelector}`
         : `${base}${instanceSelector}, ${instanceSelector} ${base}`;
     };
