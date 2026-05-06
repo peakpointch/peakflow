@@ -10,6 +10,9 @@ export class Peakflow {
             return Peakflow.instance;
         }
         Peakflow.instance = new Peakflow(registry, config);
+        window.peakflow = {
+            shared: {},
+        };
         return Peakflow.instance;
     }
     static getInstance() {

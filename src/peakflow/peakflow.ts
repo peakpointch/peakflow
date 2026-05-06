@@ -1,7 +1,7 @@
 import { defaultRegistry } from "./defaults";
 import type { AnyFn, DefaultRegistry, Registry } from "./defaults";
 import type { IANATimeZone } from "../timezones";
-import type { PeakflowShared } from "../../types/peakflow.d.ts";
+import type { PeakflowGlobal, PeakflowShared } from "../../types/peakflow.d.ts";
 
 export interface PeakflowConfig {
   language?: string;
@@ -27,6 +27,9 @@ export class Peakflow<R extends Registry> {
       return Peakflow.instance as Peakflow<R>;
     }
     Peakflow.instance = new Peakflow(registry, config);
+    window.peakflow = {
+      shared: {},
+    } as PeakflowGlobal;
     return Peakflow.instance as Peakflow<R>;
   }
 
