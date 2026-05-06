@@ -79,19 +79,12 @@ function getOperator(type: AttributeMatchType): AttributeMatchOperator {
 export function exclude(selector: string, ...exclusions: string[]): string {
   if (exclusions.length === 0) return selector;
 
-  return extend(selector, `:not(${exclusions.join(", ")})`);
+  return `:is(${selector}):not(${exclusions.join(", ")})`;
 }
 
 export function extend(selector: string, ...extensions: string[]): string {
   if (extensions.length === 0) return selector;
-
-  const selectors = split(selector);
-
-  const selectorsWithExtensions = extensions.map((extension) => {
-    return append(selectors, extension);
-  });
-
-  return selectorsWithExtensions.join(", ");
+  return `:is(${selector})${extensions.join("")}`;
 }
 
 export function append(selectorList: string[], suffix: string): string {

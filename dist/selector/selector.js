@@ -22,16 +22,12 @@ function getOperator(type) {
 export function exclude(selector, ...exclusions) {
     if (exclusions.length === 0)
         return selector;
-    return extend(selector, `:not(${exclusions.join(", ")})`);
+    return `:is(${selector}):not(${exclusions.join(", ")})`;
 }
 export function extend(selector, ...extensions) {
     if (extensions.length === 0)
         return selector;
-    const selectors = split(selector);
-    const selectorsWithExtensions = extensions.map((extension) => {
-        return append(selectors, extension);
-    });
-    return selectorsWithExtensions.join(", ");
+    return `:is(${selector})${extensions.join("")}`;
 }
 export function append(selectorList, suffix) {
     return selectorList.reduce((acc, string) => {
