@@ -18,6 +18,6 @@ export declare abstract class BaseComponent<Elements extends string, Settings ex
     selectAll<T extends Element = HTMLElement>(element: Elements, global?: boolean): NodeListOf<T>;
     protected static get attributeSelector(): import("../selector").AttributeSelector<string>;
     static get selector(): import("../selector").InstanceSelector<string>;
-    static get select(): <U extends Element = HTMLElement>(element: string, instance?: string) => U;
-    static get selectAll(): <U extends Element = HTMLElement>(element: string, instance?: string) => NodeListOf<U>;
+    static get select(): <U extends Element = HTMLElement>(element: string, instance?: string, options?: import("../selector").SelectOptions) => U;
+    static get selectAll(): <U extends Element = HTMLElement>(element: string, instance?: string, options?: import("../selector").SelectOptions) => NodeListOf<U>;
 }

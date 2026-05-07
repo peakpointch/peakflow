@@ -30,8 +30,8 @@ export declare class Cursor<T extends string> extends BaseComponent<CursorElemen
     constructor(cursor: HTMLElement, settings?: PartialDeep<CursorSettings<T>>);
     protected static attributeSelector: import("../selector").AttributeSelector<"pointer">;
     static selector: import("../selector").InstanceSelector<"pointer">;
-    static select: <U extends Element = HTMLElement>(element: "pointer", instance?: string) => U;
-    static selectAll: <U extends Element = HTMLElement>(element: "pointer", instance?: string) => NodeListOf<U>;
+    static select: <U extends Element = HTMLElement>(element: "pointer", instance?: string, options?: import("../selector").SelectOptions) => U;
+    static selectAll: <U extends Element = HTMLElement>(element: "pointer", instance?: string, options?: import("../selector").SelectOptions) => NodeListOf<U>;
     static create<T extends string>(settings: PartialDeep<CursorSettings<T>>): Cursor<T>;
     addPointer(pointer: HTMLElement): void;
     addTail(pointer: HTMLElement, vars: gsap.TweenVars): void;
