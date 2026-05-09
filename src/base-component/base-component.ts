@@ -1,3 +1,4 @@
+import Logger from "../logger/";
 import { Selector, type AttributeAccessorMap, type BaseAttributes } from "../selector";
 import { mergeOptions } from "../utils";
 import type { PartialDeep } from "type-fest";
@@ -23,6 +24,7 @@ export abstract class BaseComponent<
 
   public readonly component: HTMLElement;
   public readonly id: string;
+  public logger: Logger;
   public settings: Settings;
 
   constructor(component: HTMLElement, settings?: PartialDeep<Settings>) {
@@ -53,6 +55,14 @@ export abstract class BaseComponent<
     return (
       global ? document.querySelectorAll(selector) : this.component.querySelectorAll(selector)
     ) as NodeListOf<T>;
+  }
+
+  public set debug(val: boolean) {
+    if (val && !this.logger) {
+      const SubClass = this.constructor as typeof BaseComponent;
+      this.logger = new Logger(SubClass.name.replace("_", ""));
+      this.logger.instance = this.id;
+    }
   }
 
   protected static get attributeSelector() {

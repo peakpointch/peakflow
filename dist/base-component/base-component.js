@@ -1,3 +1,4 @@
+import Logger from "../logger/";
 import { Selector } from "../selector";
 import { mergeOptions } from "../utils";
 /**
@@ -23,6 +24,13 @@ export class BaseComponent {
     selectAll(element, global = false) {
         const selector = this.selector(element, global);
         return (global ? document.querySelectorAll(selector) : this.component.querySelectorAll(selector));
+    }
+    set debug(val) {
+        if (val && !this.logger) {
+            const SubClass = this.constructor;
+            this.logger = new Logger(SubClass.name.replace("_", ""));
+            this.logger.instance = this.id;
+        }
     }
     static get attributeSelector() {
         return Selector.attr(this.attr.element);
