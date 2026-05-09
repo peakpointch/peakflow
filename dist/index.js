@@ -11,6 +11,7 @@ export * from "./form/index.js";
 export * from "./hyphenizer/index.js";
 export * from "./inlinecms/index.js";
 export * from "./inputsync/index.js";
+export * from "./logger/index.js";
 export * from "./marquee/index.js";
 export * from "./modal/index.js";
 export * from "./path/index.js";
