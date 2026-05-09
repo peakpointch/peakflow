@@ -7,16 +7,14 @@ import { payload } from "../payload/payload.js";
 export class CollectionList extends BaseComponent {
     constructor(component, settings = {}) {
         super(component, settings);
-        this.dataset = Dataset.define({
-            id: Dataset.String("data-cms-id"),
-            element: Dataset.String("data-cms-element"),
-            key: Dataset.String("key"),
-        });
+        this.dataset = _a.dataset;
         this.attr = this.dataset.attr;
         this.data = [];
+        this.items = [];
         if (!component || !component.classList.contains("w-dyn-list")) {
             throw new Error(`Collection list wrapper can't be undefined.`);
         }
+        this.enableLogging();
         this.initElements();
     }
     initElements() {
@@ -57,10 +55,13 @@ export class CollectionList extends BaseComponent {
      * </div>
      * ```
      */
-    parse() {
+    parse(options = {}) {
+        const opts = {
+            variables: options.variables ?? {},
+        };
+        this.data = [];
         if (this.isEmpty()) {
-            this.items = [];
-            return;
+            return this.data;
         }
         const embedSelector = `${this.selector("json")}[${this.attr.id}="${this.id}"]`;
         const exclusion = `${this.selector("wrapper")} ${this.selector("wrapper")} *`;
@@ -70,8 +71,18 @@ export class CollectionList extends BaseComponent {
             console.warn(`CollectionList "${this.id}": parsing nested collection lists is not supported yet. Only parsing top-level items.`);
         }
         for (const embed of embeds) {
-            const parsed = payload.parse(embed);
-            this.data.push(parsed);
+            try {
+                const parsed = payload.parseRaw(embed);
+                const vars = payload.parseVariables(embed.parentElement);
+                payload.hydrate(parsed, {
+                    ...vars,
+                    ...opts.variables,
+                });
+                this.data.push(parsed);
+            }
+            catch (e) {
+                this.logger.error("Failed to parse item.", e);
+            }
         }
         return this.data;
     }
@@ -139,6 +150,12 @@ CollectionList.defaultOptions = {
     hasNestedList: false,
     selectorMode: "peakflow",
 };
+CollectionList.dataset = Dataset.define({
+    id: Dataset.String("data-cms-id"),
+    element: Dataset.String("data-cms-element"),
+    key: Dataset.String("key"),
+});
+CollectionList.attr = _a.dataset.attr;
 CollectionList.attributeSelector = Selector.attr(_a.attr.element);
 CollectionList.selector = Selector.instance(_a.attributeSelector, _a.attr, { root: "wrapper" });
 CollectionList.select = Selector.select(_a.selector);

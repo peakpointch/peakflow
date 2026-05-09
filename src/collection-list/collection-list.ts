@@ -4,7 +4,7 @@ import type { PartialDeep } from "type-fest";
 import { wf } from "../webflow/webflow.js";
 import { Selector, exclude } from "../selector/selector.js";
 import { BaseComponent } from "../base-component/index.js";
-import { payload } from "../payload/payload.js";
+import { payload, type PayloadVariables } from "../payload/payload.js";
 
 type CollectionListElement = "wrapper" | "list" | "item" | "json" | "empty" | "pagination";
 
@@ -37,19 +37,21 @@ export class CollectionList<
     selectorMode: "peakflow",
   };
 
-  public dataset = Dataset.define<CollectionListAttributes>({
+  public static dataset = Dataset.define<CollectionListAttributes>({
     id: Dataset.String("data-cms-id"),
     element: Dataset.String("data-cms-element"),
     key: Dataset.String("key"),
   });
+  public static attr = CollectionList.dataset.attr;
 
+  public dataset = CollectionList.dataset;
   public attr = this.dataset.attr;
 
   public data: Item[] = [];
   public settings: CollectionListSettings;
   public listElement?: HTMLElement | null;
   public emptyState?: HTMLElement | null;
-  private items: HTMLElement[];
+  private items: HTMLElement[] = [];
 
   constructor(component: HTMLElement | null, settings: PartialDeep<CollectionListSettings> = {}) {
     super(component, settings);
@@ -58,6 +60,7 @@ export class CollectionList<
       throw new Error(`Collection list wrapper can't be undefined.`);
     }
 
+    this.enableLogging();
     this.initElements();
   }
 
@@ -116,10 +119,14 @@ export class CollectionList<
    * </div>
    * ```
    */
-  public parse(): Item[] {
+  public parse(options: Partial<ParseOptions> = {}): Item[] {
+    const opts: ParseOptions = {
+      variables: options.variables ?? {},
+    };
+    this.data = [];
+
     if (this.isEmpty()) {
-      this.items = [];
-      return;
+      return this.data;
     }
 
     const embedSelector = `${this.selector("json")}[${this.attr.id}="${this.id}"]`;
@@ -134,8 +141,17 @@ export class CollectionList<
     }
 
     for (const embed of embeds) {
-      const parsed = payload.parse<Item>(embed);
-      this.data.push(parsed);
+      try {
+        const parsed = payload.parseRaw<Item>(embed);
+        const vars = payload.parseVariables(embed.parentElement);
+        payload.hydrate(parsed, {
+          ...vars,
+          ...opts.variables,
+        });
+        this.data.push(parsed);
+      } catch (e) {
+        this.logger.error("Failed to parse item.", e);
+      }
     }
 
     return this.data;
@@ -216,6 +232,24 @@ export class CollectionList<
 export type FilterFn<T extends CollectionListItem> = (item: T, index: number) => boolean;
 export type CompareFn<T extends CollectionListItem> = (a: T, b: T) => number;
 
+export interface ParseOptions {
+  /**
+   * Custom variables to be used during the hydration process.
+   *
+   * @remarks
+   * These values take precedence over variables parsed directly from the DOM
+   * (i.e. `[data-payload-var]` elements). Use this to programmatically
+   * override CMS data or inject global values.
+   */
+  variables: PayloadVariables;
+}
+
 export interface FilterOptions {
+  /**
+   * Determines whether elements that do not match the filter criteria
+   * should be physically removed from the DOM.
+   *
+   * @defaultValue `false`
+   */
   removeFromDom: boolean;
 }

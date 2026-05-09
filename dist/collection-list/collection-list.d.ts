@@ -2,11 +2,7 @@ import { type Attribute, type Attributes, Dataset } from "../selector/attributes
 import type { CollectionListItem } from "./item.js";
 import type { PartialDeep } from "type-fest";
 import { BaseComponent } from "../base-component/index.js";
-type GlobalWfCollections = {
-    initialized: boolean;
-    [key: string]: GlobalCollection | CollectionList | boolean;
-};
-type GlobalCollection = Array<object>;
+import { type PayloadVariables } from "../payload/payload.js";
 type CollectionListElement = "wrapper" | "list" | "item" | "json" | "empty" | "pagination";
 interface CollectionListAttributes extends Attributes {
     id: Attribute;
@@ -25,8 +21,10 @@ interface CollectionListSettings {
      */
     selectorMode: "peakflow" | "webflow";
 }
-declare class CollectionList<Item extends CollectionListItem = CollectionListItem> extends BaseComponent<CollectionListElement> {
+export declare class CollectionList<Item extends CollectionListItem = CollectionListItem> extends BaseComponent<CollectionListElement> {
     static defaultOptions: CollectionListSettings;
+    static dataset: Dataset<CollectionListAttributes>;
+    static attr: import("../selector/attributes.js").AttributeAccessorMap<CollectionListAttributes>;
     dataset: Dataset<CollectionListAttributes>;
     attr: import("../selector/attributes.js").AttributeAccessorMap<CollectionListAttributes>;
     data: Item[];
@@ -60,7 +58,7 @@ declare class CollectionList<Item extends CollectionListItem = CollectionListIte
      * </div>
      * ```
      */
-    parse(): Item[];
+    parse(options?: Partial<ParseOptions>): Item[];
     /**
      * Only show items that meet the condition specified in the `predicate` function.
      * @returns The filtered array.
@@ -84,10 +82,24 @@ declare class CollectionList<Item extends CollectionListItem = CollectionListIte
 }
 export type FilterFn<T extends CollectionListItem> = (item: T, index: number) => boolean;
 export type CompareFn<T extends CollectionListItem> = (a: T, b: T) => number;
+export interface ParseOptions {
+    /**
+     * Custom variables to be used during the hydration process.
+     *
+     * @remarks
+     * These values take precedence over variables parsed directly from the DOM
+     * (i.e. `[data-payload-var]` elements). Use this to programmatically
+     * override CMS data or inject global values.
+     */
+    variables: PayloadVariables;
+}
 export interface FilterOptions {
+    /**
+     * Determines whether elements that do not match the filter criteria
+     * should be physically removed from the DOM.
+     *
+     * @defaultValue `false`
+     */
     removeFromDom: boolean;
 }
-declare var wfCollections: GlobalWfCollections;
-declare var initWfCollections: (collections: Set<string>) => void;
-export { CollectionList, initWfCollections, wfCollections };
-export type { CollectionListSettings as CollectionListOptions, GlobalCollection, GlobalWfCollections, };
+export {};
