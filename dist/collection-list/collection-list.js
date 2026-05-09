@@ -4,7 +4,7 @@ import { wf } from "../webflow/webflow.js";
 import { Selector, exclude } from "../selector/selector.js";
 import { BaseComponent } from "../base-component/index.js";
 import { payload } from "../payload/payload.js";
-class CollectionList extends BaseComponent {
+export class CollectionList extends BaseComponent {
     constructor(component, settings = {}) {
         super(component, settings);
         this.dataset = Dataset.define({
@@ -143,15 +143,3 @@ CollectionList.attributeSelector = Selector.attr(_a.attr.element);
 CollectionList.selector = Selector.instance(_a.attributeSelector, _a.attr, { root: "wrapper" });
 CollectionList.select = Selector.select(_a.selector);
 CollectionList.selectAll = Selector.selectAll(_a.selector);
-var wfCollections = {
-    initialized: false,
-};
-var initWfCollections = (collections) => {
-    if (wfCollections.initialized)
-        return;
-    wfCollections.initialized = true;
-    collections.forEach((collection) => {
-        wfCollections[collection] = [];
-    });
-};
-export { CollectionList, initWfCollections, wfCollections };

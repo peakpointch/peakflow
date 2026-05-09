@@ -6,13 +6,6 @@ import { Selector, exclude } from "../selector/selector.js";
 import { BaseComponent } from "../base-component/index.js";
 import { payload } from "../payload/payload.js";
 
-type GlobalWfCollections = {
-  initialized: boolean;
-  [key: string]: GlobalCollection | CollectionList | boolean; // Enforces array values for all other keys
-};
-
-type GlobalCollection = Array<object>;
-
 type CollectionListElement = "wrapper" | "list" | "item" | "json" | "empty" | "pagination";
 
 interface CollectionListAttributes extends Attributes {
@@ -35,7 +28,7 @@ interface CollectionListSettings {
   selectorMode: "peakflow" | "webflow";
 }
 
-class CollectionList<
+export class CollectionList<
   Item extends CollectionListItem = CollectionListItem,
 > extends BaseComponent<CollectionListElement> {
   public static defaultOptions: CollectionListSettings = {
@@ -226,24 +219,3 @@ export type CompareFn<T extends CollectionListItem> = (a: T, b: T) => number;
 export interface FilterOptions {
   removeFromDom: boolean;
 }
-
-var wfCollections: GlobalWfCollections = {
-  initialized: false,
-};
-
-var initWfCollections = (collections: Set<string>): void => {
-  if (wfCollections.initialized) return;
-
-  wfCollections.initialized = true;
-
-  collections.forEach((collection) => {
-    wfCollections[collection] = [] as GlobalCollection;
-  });
-};
-
-export { CollectionList, initWfCollections, wfCollections };
-export type {
-  CollectionListSettings as CollectionListOptions,
-  GlobalCollection,
-  GlobalWfCollections,
-};

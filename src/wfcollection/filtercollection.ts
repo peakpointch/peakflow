@@ -1,5 +1,5 @@
-import { CollectionList } from "./wfcollection.js";
-import type { CollectionListOptions } from "./wfcollection.js";
+import { WfCollection } from "./wfcollection.js";
+import type { WfCollectionOptions } from "./wfcollection.js";
 import Renderer from "../renderer/index.js";
 import type { FilterAttributes, RenderData, RenderBlock, RenderField } from "../renderer/index.js";
 
@@ -10,14 +10,14 @@ type Merged<F extends FilterAttributes<keyof F & string>> = F &
 
 export class FilterCollection<
   F extends FilterAttributes<keyof F & string> = {},
-> extends CollectionList<Merged<F>> {
+> extends WfCollection<Merged<F>> {
   public static defaultAttributes = Renderer.defineAttributes({
     date: "date",
     "start-date": "date",
     "end-date": "date",
   });
 
-  constructor(container: HTMLElement | null, options?: Partial<CollectionListOptions<Merged<F>>>) {
+  constructor(container: HTMLElement | null, options?: Partial<WfCollectionOptions<Merged<F>>>) {
     const filterAttributes = options.rendererOptions?.filterAttributes ?? {};
     const mergedFilterAttributes = Renderer.defineAttributes({
       ...FilterCollection.defaultAttributes,
@@ -32,7 +32,7 @@ export class FilterCollection<
       },
     };
 
-    super(container, newOptions as CollectionListOptions<Merged<F>>);
+    super(container, newOptions as WfCollectionOptions<Merged<F>>);
   }
 
   public filterByDate(

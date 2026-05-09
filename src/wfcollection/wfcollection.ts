@@ -7,20 +7,20 @@ import { exclude } from "../selector/selector.js";
 
 type GlobalWfCollections = {
   initialized: boolean;
-  [key: string]: GlobalCollection | CollectionList | boolean; // Enforces array values for all other keys
+  [key: string]: GlobalWfCollection | WfCollection | boolean; // Enforces array values for all other keys
 };
 
-type GlobalCollection = Array<object>;
+type GlobalWfCollection = Array<object>;
 
-interface CollectionListOptions<F extends FilterAttributes> {
+interface WfCollectionOptions<F extends FilterAttributes> {
   name: string;
   debug: boolean;
   hasNestedList: boolean;
   readonly rendererOptions: PartialDeep<RendererOptions<F>>;
 }
 
-class CollectionList<F extends FilterAttributes = {}> {
-  public static defaultOptions: CollectionListOptions<{}> = {
+class WfCollection<F extends FilterAttributes = {}> {
+  public static defaultOptions: WfCollectionOptions<{}> = {
     name: "",
     debug: false,
     hasNestedList: false,
@@ -40,19 +40,19 @@ class CollectionList<F extends FilterAttributes = {}> {
   }
 
   public container: HTMLElement;
-  public options: CollectionListOptions<F>;
+  public options: WfCollectionOptions<F>;
   public renderer: Renderer<F>;
   public collectionData: RenderData<F> = [];
   public listElement?: HTMLElement | null;
   public emptyState?: HTMLElement | null;
   private items: HTMLElement[];
 
-  constructor(container: HTMLElement | null, options?: Partial<CollectionListOptions<F>>) {
+  constructor(container: HTMLElement | null, options?: Partial<WfCollectionOptions<F>>) {
     if (!container || !container.classList.contains("w-dyn-list"))
       throw new Error(`Container can't be undefined.`);
 
     //@ts-expect-error static default options can never match generic instance options
-    this.options = mergeOptions(CollectionList.defaultOptions, options);
+    this.options = mergeOptions(WfCollection.defaultOptions, options);
 
     this.debug = this.options.debug;
     this.container = container;
@@ -74,15 +74,15 @@ class CollectionList<F extends FilterAttributes = {}> {
 
   public log(...args: any[]) {
     if (!this.debug) return;
-    console.log(`CollectionList "${this.options.name}":`, ...args);
+    console.log(`WfCollection "${this.options.name}":`, ...args);
   }
 
   public warn(...args: any[]) {
     if (!this.debug) return;
-    console.warn(`CollectionList "${this.options.name}":`, ...args);
+    console.warn(`WfCollection "${this.options.name}":`, ...args);
   }
 
-  /** @deprecated Use getter `CollectionList.empty` instead */
+  /** @deprecated Use getter `WfCollection.empty` instead */
   public isEmpty(): boolean {
     console.warn(
       `WfCollection.isEmpty() has been deprecated and will be removed in the next major version. Use WfCollection.empty instead.`,
@@ -150,9 +150,9 @@ var initWfCollections = (collections: Set<string>): void => {
   wfCollections.initialized = true;
 
   collections.forEach((collection) => {
-    wfCollections[collection] = [] as GlobalCollection;
+    wfCollections[collection] = [] as GlobalWfCollection;
   });
 };
 
-export { CollectionList, initWfCollections, wfCollections };
-export type { CollectionListOptions, GlobalCollection, GlobalWfCollections };
+export { WfCollection, initWfCollections, wfCollections };
+export type { WfCollectionOptions, GlobalWfCollection, GlobalWfCollections };

@@ -1,6 +1,6 @@
-import { CollectionList } from "./wfcollection.js";
+import { WfCollection } from "./wfcollection.js";
 import Renderer from "../renderer/index.js";
-export class FilterCollection extends CollectionList {
+export class FilterCollection extends WfCollection {
     constructor(container, options) {
         const filterAttributes = options.rendererOptions?.filterAttributes ?? {};
         const mergedFilterAttributes = Renderer.defineAttributes({
