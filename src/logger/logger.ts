@@ -1,20 +1,22 @@
-import log from "loglevel";
-
-export type LogLevel = "trace" | "debug" | "info" | "warn" | "error" | "silent";
+import log, { type LogLevelNames } from "loglevel";
 
 export class Logger {
   private logger: log.Logger;
   public readonly name: string;
   public instance: string;
 
-  constructor(name: string, level: LogLevel = "warn") {
+  constructor(name: string, level: LogLevelNames = "warn") {
     this.name = name;
     this.logger = log.getLogger(name);
     this.logger.setLevel(level);
   }
 
-  public setLevel(level: LogLevel): void {
+  public setLevel(level: LogLevelNames): void {
     this.logger.setLevel(level);
+  }
+
+  public trace(...msg: any[]): void {
+    this.logger.trace(this.prefix, ...msg);
   }
 
   public debug(...msg: any[]): void {
@@ -38,3 +40,5 @@ export class Logger {
     return `${this.name}${instanceStr}:`;
   }
 }
+
+export default Logger;

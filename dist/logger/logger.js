@@ -1,4 +1,4 @@
-import log from "loglevel";
+import log, {} from "loglevel";
 export class Logger {
     constructor(name, level = "warn") {
         this.name = name;
@@ -7,6 +7,9 @@ export class Logger {
     }
     setLevel(level) {
         this.logger.setLevel(level);
+    }
+    trace(...msg) {
+        this.logger.trace(this.prefix, ...msg);
     }
     debug(...msg) {
         this.logger.debug(this.prefix, ...msg);
@@ -25,3 +28,4 @@ export class Logger {
         return `${this.name}${instanceStr}:`;
     }
 }
+export default Logger;

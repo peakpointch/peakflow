@@ -1,3 +1,4 @@
+import type { LogLevelNames } from "loglevel";
 import Logger from "../logger/";
 import { type AttributeAccessorMap, type BaseAttributes } from "../selector";
 import type { PartialDeep } from "type-fest";
@@ -18,7 +19,7 @@ export declare abstract class BaseComponent<Elements extends string, Settings ex
     selector(element: Elements, global?: boolean): string;
     select<T extends Element = HTMLElement>(element: Elements, global?: boolean): T;
     selectAll<T extends Element = HTMLElement>(element: Elements, global?: boolean): NodeListOf<T>;
-    set debug(val: boolean);
+    enableLogging(level?: LogLevelNames): void;
     protected static get attributeSelector(): import("../selector").AttributeSelector<string>;
     static get selector(): import("../selector").InstanceSelector<string>;
     static get select(): <U extends Element = HTMLElement>(element: string, instance?: string, options?: import("../selector").SelectOptions) => U;

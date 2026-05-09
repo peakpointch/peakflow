@@ -1,3 +1,4 @@
+import type { LogLevel, LogLevelNames } from "loglevel";
 import Logger from "../logger/";
 import { Selector, type AttributeAccessorMap, type BaseAttributes } from "../selector";
 import { mergeOptions } from "../utils";
@@ -57,11 +58,13 @@ export abstract class BaseComponent<
     ) as NodeListOf<T>;
   }
 
-  public set debug(val: boolean) {
-    if (val && !this.logger) {
-      const SubClass = this.constructor as typeof BaseComponent;
-      this.logger = new Logger(SubClass.name.replace("_", ""));
+  public enableLogging(level?: LogLevelNames): void {
+    if (!this.logger) {
+      const className = this.constructor.name.replace("_", "");
+      this.logger = new Logger(className, level);
       this.logger.instance = this.id;
+    } else {
+      this.logger.setLevel(level);
     }
   }
 

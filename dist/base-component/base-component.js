@@ -25,11 +25,14 @@ export class BaseComponent {
         const selector = this.selector(element, global);
         return (global ? document.querySelectorAll(selector) : this.component.querySelectorAll(selector));
     }
-    set debug(val) {
-        if (val && !this.logger) {
-            const SubClass = this.constructor;
-            this.logger = new Logger(SubClass.name.replace("_", ""));
+    enableLogging(level) {
+        if (!this.logger) {
+            const className = this.constructor.name.replace("_", "");
+            this.logger = new Logger(className, level);
             this.logger.instance = this.id;
+        }
+        else {
+            this.logger.setLevel(level);
         }
     }
     static get attributeSelector() {
