@@ -15,6 +15,22 @@ export interface AttributeOptions {
     matchType: AttributeMatchType;
     exclusions: string[];
 }
+export interface InstanceDefaultOptions<T extends string> {
+    /**
+     * Defines which element string represents the component's root.
+     * @default "component"
+     */
+    root?: T;
+    /**
+     * If true, elements are searched for inside the instance container.
+     * If false, all elements must have an instance ID.
+     * @default true
+     */
+    scoped?: boolean;
+}
+export interface SelectOptions {
+    doc: Document | Element;
+}
 /**
  * Excludes a CSS selector from a CSS selector.
  *
@@ -46,8 +62,8 @@ export declare class Selector {
      * @param attr - The attr member of component class.
      * @returns A typed static member that generates an instance specific selector string.
      */
-    static instance<T extends string>(attributeSelector: AttributeSelector<T>, attr: BaseAttributes): InstanceSelector<T>;
-    static select<T extends string>(instanceSelector: InstanceSelector<T>): <U extends Element = HTMLElement>(element: T, instance?: string) => U;
-    static selectAll<T extends string>(instanceSelector: InstanceSelector<T>): <U extends Element = HTMLElement>(element: T, instance?: string) => NodeListOf<U>;
+    static instance<T extends string>(attributeSelector: AttributeSelector<T>, attr: BaseAttributes, options?: InstanceDefaultOptions<T>): InstanceSelector<T>;
+    static select<T extends string>(instanceSelector: InstanceSelector<T>): <U extends Element = HTMLElement>(element: T, instance?: string, options?: SelectOptions) => U;
+    static selectAll<T extends string>(instanceSelector: InstanceSelector<T>): <U extends Element = HTMLElement>(element: T, instance?: string, options?: SelectOptions) => NodeListOf<U>;
 }
 export {};

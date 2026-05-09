@@ -34,6 +34,25 @@ export interface AttributeOptions {
   exclusions: string[];
 }
 
+export interface InstanceDefaultOptions<T extends string> {
+  /**
+   * Defines which element string represents the component's root.
+   * @default "component"
+   */
+  root?: T;
+
+  /**
+   * If true, elements are searched for inside the instance container.
+   * If false, all elements must have an instance ID.
+   * @default true
+   */
+  scoped?: boolean;
+}
+
+export interface SelectOptions {
+  doc: Document | Element;
+}
+
 const attrMatchTypes: AttributeMatchTypeMap = {
   startsWith: "^",
   endsWith: "$",
@@ -60,19 +79,12 @@ function getOperator(type: AttributeMatchType): AttributeMatchOperator {
 export function exclude(selector: string, ...exclusions: string[]): string {
   if (exclusions.length === 0) return selector;
 
-  return extend(selector, `:not(${exclusions.join(", ")})`);
+  return `:is(${selector}):not(${exclusions.join(", ")})`;
 }
 
 export function extend(selector: string, ...extensions: string[]): string {
   if (extensions.length === 0) return selector;
-
-  const selectors = split(selector);
-
-  const selectorsWithExtensions = extensions.map((extension) => {
-    return append(selectors, extension);
-  });
-
-  return selectorsWithExtensions.join(", ");
+  return `:is(${selector})${extensions.join("")}`;
 }
 
 export function append(selectorList: string[], suffix: string): string {
@@ -168,7 +180,10 @@ export class Selector {
   public static instance<T extends string>(
     attributeSelector: AttributeSelector<T>,
     attr: BaseAttributes,
+    options?: InstanceDefaultOptions<T>,
   ): InstanceSelector<T> {
+    const { root = "component", scoped = true } = options ?? {};
+
     return (element: T, instance?: string) => {
       const base = attributeSelector(element);
       const instanceSelector = instance ? `[${attr.id}="${instance}"]` : "";
@@ -178,21 +193,29 @@ export class Selector {
 
       // Id attribute must be defined on component element directly
       // Allow scoping for normal elements
-      return element === ("component" as T)
+      return element === root || !scoped
         ? `${base}${instanceSelector}`
         : `${base}${instanceSelector}, ${instanceSelector} ${base}`;
     };
   }
 
   public static select<T extends string>(instanceSelector: InstanceSelector<T>) {
-    return <U extends Element = HTMLElement>(element: T, instance?: string): U => {
-      return document.querySelector<U>(instanceSelector(element, instance));
+    return <U extends Element = HTMLElement>(
+      element: T,
+      instance?: string,
+      options?: SelectOptions,
+    ): U => {
+      return (options?.doc ?? document).querySelector<U>(instanceSelector(element, instance));
     };
   }
 
   public static selectAll<T extends string>(instanceSelector: InstanceSelector<T>) {
-    return <U extends Element = HTMLElement>(element: T, instance?: string): NodeListOf<U> => {
-      return document.querySelectorAll<U>(instanceSelector(element, instance));
+    return <U extends Element = HTMLElement>(
+      element: T,
+      instance?: string,
+      options?: SelectOptions,
+    ): NodeListOf<U> => {
+      return (options?.doc ?? document).querySelectorAll<U>(instanceSelector(element, instance));
     };
   }
 }

@@ -2,7 +2,7 @@ import Renderer from "../renderer/index.js";
 import mergeOptions from "../utils/merge-options.js";
 import { wf } from "../webflow/webflow.js";
 import { exclude } from "../selector/selector.js";
-class CollectionList {
+class WfCollection {
     set debug(val) {
         this.options.debug = val;
     }
@@ -17,7 +17,7 @@ class CollectionList {
         if (!container || !container.classList.contains("w-dyn-list"))
             throw new Error(`Container can't be undefined.`);
         //@ts-expect-error static default options can never match generic instance options
-        this.options = mergeOptions(CollectionList.defaultOptions, options);
+        this.options = mergeOptions(WfCollection.defaultOptions, options);
         this.debug = this.options.debug;
         this.container = container;
         this.listElement = container.querySelector(wf.select.cmsList);
@@ -33,15 +33,16 @@ class CollectionList {
     log(...args) {
         if (!this.debug)
             return;
-        console.log(`CollectionList "${this.options.name}":`, ...args);
+        console.log(`WfCollection "${this.options.name}":`, ...args);
     }
     warn(...args) {
         if (!this.debug)
             return;
-        console.warn(`CollectionList "${this.options.name}":`, ...args);
+        console.warn(`WfCollection "${this.options.name}":`, ...args);
     }
-    /** @deprecated Use getter `CollectionList.empty` instead */
+    /** @deprecated Use getter `WfCollection.empty` instead */
     isEmpty() {
+        console.warn(`WfCollection.isEmpty() has been deprecated and will be removed in the next major version. Use WfCollection.empty instead.`);
         return this.empty;
     }
     readData() {
@@ -68,11 +69,13 @@ class CollectionList {
             .querySelectorAll(`.w-condition-invisible:not([data-render-condition="true"])`)
             .forEach((element) => element.remove());
     }
+    /** @deprecated Use Renderer class instead. */
     getAttributeData() {
+        console.warn(`WfCollection.getAttributeData() has been deprecated and will be removed in the next major version. Use Renderer class instead.`);
         let data = [];
         this.items.forEach((item) => {
             const itemData = new Map(Object.entries(item.dataset));
-            itemData.forEach((value, key) => {
+            itemData.forEach((_, key) => {
                 if (!key.startsWith("wf")) {
                     itemData.delete(key);
                 }
@@ -82,7 +85,7 @@ class CollectionList {
         return data;
     }
 }
-CollectionList.defaultOptions = {
+WfCollection.defaultOptions = {
     name: "",
     debug: false,
     hasNestedList: false,
@@ -99,4 +102,4 @@ var initWfCollections = (collections) => {
         wfCollections[collection] = [];
     });
 };
-export { CollectionList, initWfCollections, wfCollections };
+export { WfCollection, initWfCollections, wfCollections };

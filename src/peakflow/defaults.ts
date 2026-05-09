@@ -9,7 +9,8 @@ import { CMSSelect } from "../form/cms-select.js";
 export type AnyFn = (...args: any[]) => any;
 export type VoidFn = (...args: any[]) => void;
 
-// instead of forcing PeakflowRegistry, let TS infer the literal key
+export type Registry = Record<string, AnyFn>;
+
 export const defaultRegistry = {
   inlinecms: inlineCmsDefault,
   cmsselect: CMSSelect.initializeAll,

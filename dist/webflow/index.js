@@ -1,3 +1,4 @@
+/// <reference types="../../types/webflow.d.ts" />
 export * from "./code-component-types.js";
 export * from "./code-components.js";
 export * from "./webflow.js";

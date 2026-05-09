@@ -1,23 +1,14 @@
 import type { PartialDeep } from "type-fest";
-import {
-  Selector,
-  type AttributeAccessorMap,
-  type BaseAttributes,
-} from "../selector/index.js";
+import { Selector, type AttributeAccessorMap, type BaseAttributes } from "../selector/index.js";
 import { BaseComponent, type BaseSettings } from "../base-component/index.js";
 import { logPrefix } from "../utils/logger.js";
-import { wf } from "../webflow/index.js";
-import type { DashToCamelCase, CamelToPascal } from "../typeutils/index.js";
+import type { DashToCamelCase } from "../typeutils/index.js";
 import Script from "../utils/script.js";
 
 type FileType = "(PDF)" | "(DOCX)" | "(JPEG)" | "(PNG)";
 type PdfEmbedElement = "component" | "preview" | "download" | "error" | "file-config" | "loading";
 
-export interface PdfEmbedGlobal {
-  file: PdfEmbedFile;
-}
-
-interface PdfEmbedFile {
+export interface PdfEmbedFile {
   type: FileType | string;
   name: string;
   url: string;
@@ -25,15 +16,13 @@ interface PdfEmbedFile {
   isExternal: boolean;
 }
 
-type PdfEmbedAttributes = BaseAttributes & {
-  [K in keyof PdfEmbedFile as `file${CamelToPascal<K>}`]: string;
-};
+interface PdfEmbedAttributes extends BaseAttributes {}
 
-interface PdfEmbedSettings extends BaseSettings {
+export interface PdfEmbedSettings extends BaseSettings {
   clientId: string;
 }
 
-interface ClientIds extends BaseSettings {
+export interface ClientIds extends BaseSettings {
   clientIds: Record<string, string>;
 }
 
@@ -41,16 +30,10 @@ export class PdfEmbed extends BaseComponent<PdfEmbedElement, PdfEmbedSettings> {
   public static attr: AttributeAccessorMap<PdfEmbedAttributes> = {
     id: "data-pdf-id",
     element: "data-pdf-element",
-    fileType: "data-type",
-    fileName: "data-name",
-    fileUrl: "data-url",
-    fileExternalUrl: "data-external-url",
-    fileIsExternal: "data-is-external",
   };
 
   public attr: AttributeAccessorMap<PdfEmbedAttributes> = PdfEmbed.attr;
   public elements: Record<DashToCamelCase<PdfEmbedElement>, HTMLElement | null>;
-  public file: PdfEmbedFile;
   public pdfEmbedId: string = "pdf-embed";
   private static lp = logPrefix("PdfEmbed");
   private lp = logPrefix("PdfEmbed", this.settings.id);
@@ -77,29 +60,12 @@ export class PdfEmbed extends BaseComponent<PdfEmbedElement, PdfEmbedSettings> {
       this.settings.clientId = PdfEmbed.getClientIdByUrl((this.settings as any).clientIds);
       delete (this.settings as any).clientIds;
     }
-
-    this.file = window.peakflow?.pdfEmbed?.file || PdfEmbed.getFileConfig(this.elements.fileConfig);
-
-    if (!this.file) {
-      throw new Error(`${this.lp}File config not found. Please provide a file config.`);
-    }
   }
 
   protected static attributeSelector = Selector.attr<PdfEmbedElement>(PdfEmbed.attr.element);
   public static selector = Selector.instance<PdfEmbedElement>(this.attributeSelector, this.attr);
   public static select = Selector.select<PdfEmbedElement>(this.selector);
   public static selectAll = Selector.selectAll<PdfEmbedElement>(this.selector);
-
-  public static getFileConfig(configElement: HTMLElement): PdfEmbedFile {
-    if (!configElement) throw new Error(`${this.lp}Config element not found`);
-    return {
-      type: configElement.getAttribute(this.attr.fileType) ?? "",
-      name: configElement.getAttribute(this.attr.fileName) ?? "",
-      url: configElement.getAttribute(this.attr.fileUrl) ?? "",
-      externalUrl: configElement.getAttribute(this.attr.fileExternalUrl) ?? "",
-      isExternal: wf.hasAttr(configElement, this.attr.fileIsExternal),
-    };
-  }
 
   public static getClientIdByUrl(config: Record<string, string>, fallback?: string): string {
     const href = window.location.href;
@@ -130,20 +96,24 @@ export class PdfEmbed extends BaseComponent<PdfEmbedElement, PdfEmbedSettings> {
     } catch {}
   }
 
-  public async preview(): Promise<void> {
+  public async preview(file: PdfEmbedFile): Promise<void> {
     this.show("loading");
     this.hide("error");
 
-    if (this.file.type === "(PDF)" && !this.file.isExternal) {
-      if (!this.file.url) {
+    if (!file) {
+      throw new Error(`${this.lp}File config is empty. Please provide a file config.`);
+    }
+
+    if (file.type === "(PDF)" && !file.isExternal) {
+      if (!file.url) {
         this.show("error");
-        throw new Error(`${this.lp}Invalid file url "${this.file.url}"`);
+        throw new Error(`${this.lp}Invalid file url "${file.url}"`);
       }
 
-      this.previewAcrobat();
-    } else if (this.file.isExternal) {
+      await this.previewAcrobat(file);
+    } else if (file.isExternal) {
       this.show("error");
-      window.location.href = this.file.externalUrl;
+      window.location.href = file.externalUrl;
     } else {
       this.show("error");
       if (!this.elements.download) return;
@@ -151,7 +121,7 @@ export class PdfEmbed extends BaseComponent<PdfEmbedElement, PdfEmbedSettings> {
     }
   }
 
-  private previewAcrobat(): Promise<void> {
+  private async previewAcrobat(file: PdfEmbedFile): Promise<void> {
     const script = new Script({
       src: "https://acrobatservices.adobe.com/view-sdk/viewer.js",
     });
@@ -168,8 +138,8 @@ export class PdfEmbed extends BaseComponent<PdfEmbedElement, PdfEmbedSettings> {
 
         await adobeDCView.previewFile(
           {
-            content: { location: { url: this.file.url } },
-            metaData: { fileName: this.file.name },
+            content: { location: { url: file.url } },
+            metaData: { fileName: file.name },
           },
           {},
         );

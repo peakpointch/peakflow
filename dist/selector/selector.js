@@ -22,16 +22,12 @@ function getOperator(type) {
 export function exclude(selector, ...exclusions) {
     if (exclusions.length === 0)
         return selector;
-    return extend(selector, `:not(${exclusions.join(", ")})`);
+    return `:is(${selector}):not(${exclusions.join(", ")})`;
 }
 export function extend(selector, ...extensions) {
     if (extensions.length === 0)
         return selector;
-    const selectors = split(selector);
-    const selectorsWithExtensions = extensions.map((extension) => {
-        return append(selectors, extension);
-    });
-    return selectorsWithExtensions.join(", ");
+    return `:is(${selector})${extensions.join("")}`;
 }
 export function append(selectorList, suffix) {
     return selectorList.reduce((acc, string) => {
@@ -106,7 +102,8 @@ export class Selector {
      * @param attr - The attr member of component class.
      * @returns A typed static member that generates an instance specific selector string.
      */
-    static instance(attributeSelector, attr) {
+    static instance(attributeSelector, attr, options) {
+        const { root = "component", scoped = true } = options ?? {};
         return (element, instance) => {
             const base = attributeSelector(element);
             const instanceSelector = instance ? `[${attr.id}="${instance}"]` : "";
@@ -115,19 +112,19 @@ export class Selector {
                 return base;
             // Id attribute must be defined on component element directly
             // Allow scoping for normal elements
-            return element === "component"
+            return element === root || !scoped
                 ? `${base}${instanceSelector}`
                 : `${base}${instanceSelector}, ${instanceSelector} ${base}`;
         };
     }
     static select(instanceSelector) {
-        return (element, instance) => {
-            return document.querySelector(instanceSelector(element, instance));
+        return (element, instance, options) => {
+            return (options?.doc ?? document).querySelector(instanceSelector(element, instance));
         };
     }
     static selectAll(instanceSelector) {
-        return (element, instance) => {
-            return document.querySelectorAll(instanceSelector(element, instance));
+        return (element, instance, options) => {
+            return (options?.doc ?? document).querySelectorAll(instanceSelector(element, instance));
         };
     }
 }

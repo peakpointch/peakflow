@@ -1,3 +1,5 @@
+import type { LogLevel, LogLevelNames } from "loglevel";
+import Logger from "../logger/";
 import { Selector, type AttributeAccessorMap, type BaseAttributes } from "../selector";
 import { mergeOptions } from "../utils";
 import type { PartialDeep } from "type-fest";
@@ -23,6 +25,7 @@ export abstract class BaseComponent<
 
   public readonly component: HTMLElement;
   public readonly id: string;
+  public logger: Logger;
   public settings: Settings;
 
   constructor(component: HTMLElement, settings?: PartialDeep<Settings>) {
@@ -53,6 +56,16 @@ export abstract class BaseComponent<
     return (
       global ? document.querySelectorAll(selector) : this.component.querySelectorAll(selector)
     ) as NodeListOf<T>;
+  }
+
+  public enableLogging(level?: LogLevelNames): void {
+    if (!this.logger) {
+      const className = this.constructor.name.replace("_", "");
+      this.logger = new Logger(className, level);
+      this.logger.instance = this.id;
+    } else {
+      this.logger.setLevel(level);
+    }
   }
 
   protected static get attributeSelector() {

@@ -1,3 +1,5 @@
+/// <reference types="../../types/form.d.ts" />
+
 // Export general form functionality
 export * from "./utility.js";
 

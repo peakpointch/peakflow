@@ -2,11 +2,14 @@ import type { WebflowClassNames, WebflowEnv, WebflowSelectors, WfPageId, WfSiteI
 export declare const wfclass: WebflowClassNames;
 export declare const wfselect: WebflowSelectors;
 export declare class Webflow {
+    private static instance;
     siteId: WfSiteId;
     pageId: WfPageId;
     class: WebflowClassNames;
     select: WebflowSelectors;
-    constructor();
+    private constructor();
+    static getInstance(): Webflow;
+    initGlobal(): void;
     /**
      * Determines whether a given element is visible accordion to Webflow's
      * conditional visibility rules.

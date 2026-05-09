@@ -67,12 +67,24 @@ export const wfselect: WebflowSelectors = {
 };
 
 export class Webflow {
+  private static instance: Webflow;
+
   siteId: WfSiteId = siteId;
   pageId: WfPageId = pageId;
   class: WebflowClassNames = wfclass;
   select: WebflowSelectors = wfselect;
 
-  constructor() {}
+  private constructor() {}
+
+  public static getInstance(): Webflow {
+    if (!Webflow.instance) {
+      Webflow.instance = new Webflow();
+      window.peakflow.webflow = Webflow.instance;
+    }
+    return Webflow.instance;
+  }
+
+  public initGlobal(): void {}
 
   /**
    * Determines whether a given element is visible accordion to Webflow's
@@ -131,4 +143,4 @@ export class Webflow {
   }
 }
 
-export const wf = new Webflow();
+export const wf = Webflow.getInstance();

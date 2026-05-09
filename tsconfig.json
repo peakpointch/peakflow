@@ -27,7 +27,7 @@
   "exclude": [
     "dist",
     "node_modules",
-    "./**/*.test.ts"
+    "*.test.ts"
   ],
   "tsc-alias": {
     "resolveFullPaths": true

@@ -60,6 +60,14 @@ export class Webflow {
         this.class = wfclass;
         this.select = wfselect;
     }
+    static getInstance() {
+        if (!Webflow.instance) {
+            Webflow.instance = new Webflow();
+            window.peakflow.webflow = Webflow.instance;
+        }
+        return Webflow.instance;
+    }
+    initGlobal() { }
     /**
      * Determines whether a given element is visible accordion to Webflow's
      * conditional visibility rules.
@@ -114,4 +122,4 @@ export class Webflow {
         }
     }
 }
-export const wf = new Webflow();
+export const wf = Webflow.getInstance();

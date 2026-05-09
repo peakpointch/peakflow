@@ -1,8 +1,7 @@
 var _a;
-import { Selector, } from "../selector/index.js";
+import { Selector } from "../selector/index.js";
 import { BaseComponent } from "../base-component/index.js";
 import { logPrefix } from "../utils/logger.js";
-import { wf } from "../webflow/index.js";
 import Script from "../utils/script.js";
 export class PdfEmbed extends BaseComponent {
     constructor(component, settings) {
@@ -26,21 +25,6 @@ export class PdfEmbed extends BaseComponent {
             this.settings.clientId = _a.getClientIdByUrl(this.settings.clientIds);
             delete this.settings.clientIds;
         }
-        this.file = window.peakflow?.pdfEmbed?.file || _a.getFileConfig(this.elements.fileConfig);
-        if (!this.file) {
-            throw new Error(`${this.lp}File config not found. Please provide a file config.`);
-        }
-    }
-    static getFileConfig(configElement) {
-        if (!configElement)
-            throw new Error(`${this.lp}Config element not found`);
-        return {
-            type: configElement.getAttribute(this.attr.fileType) ?? "",
-            name: configElement.getAttribute(this.attr.fileName) ?? "",
-            url: configElement.getAttribute(this.attr.fileUrl) ?? "",
-            externalUrl: configElement.getAttribute(this.attr.fileExternalUrl) ?? "",
-            isExternal: wf.hasAttr(configElement, this.attr.fileIsExternal),
-        };
     }
     static getClientIdByUrl(config, fallback) {
         const href = window.location.href;
@@ -71,19 +55,22 @@ export class PdfEmbed extends BaseComponent {
         }
         catch { }
     }
-    async preview() {
+    async preview(file) {
         this.show("loading");
         this.hide("error");
-        if (this.file.type === "(PDF)" && !this.file.isExternal) {
-            if (!this.file.url) {
-                this.show("error");
-                throw new Error(`${this.lp}Invalid file url "${this.file.url}"`);
-            }
-            this.previewAcrobat();
+        if (!file) {
+            throw new Error(`${this.lp}File config is empty. Please provide a file config.`);
         }
-        else if (this.file.isExternal) {
+        if (file.type === "(PDF)" && !file.isExternal) {
+            if (!file.url) {
+                this.show("error");
+                throw new Error(`${this.lp}Invalid file url "${file.url}"`);
+            }
+            await this.previewAcrobat(file);
+        }
+        else if (file.isExternal) {
             this.show("error");
-            window.location.href = this.file.externalUrl;
+            window.location.href = file.externalUrl;
         }
         else {
             this.show("error");
@@ -92,7 +79,7 @@ export class PdfEmbed extends BaseComponent {
             this.elements.download.click();
         }
     }
-    previewAcrobat() {
+    async previewAcrobat(file) {
         const script = new Script({
             src: "https://acrobatservices.adobe.com/view-sdk/viewer.js",
         });
@@ -105,8 +92,8 @@ export class PdfEmbed extends BaseComponent {
                     divId: this.pdfEmbedId,
                 });
                 await adobeDCView.previewFile({
-                    content: { location: { url: this.file.url } },
-                    metaData: { fileName: this.file.name },
+                    content: { location: { url: file.url } },
+                    metaData: { fileName: file.name },
                 }, {});
                 adobeDCView.registerCallback(window.AdobeDC.View.Enum.CallbackType.EVENT_LISTENER, (event) => {
                     if (event.type === "APP_RENDERING_DONE" && event.data.status === "ERROR") {
@@ -129,11 +116,6 @@ _a = PdfEmbed;
 PdfEmbed.attr = {
     id: "data-pdf-id",
     element: "data-pdf-element",
-    fileType: "data-type",
-    fileName: "data-name",
-    fileUrl: "data-url",
-    fileExternalUrl: "data-external-url",
-    fileIsExternal: "data-is-external",
 };
 PdfEmbed.lp = logPrefix("PdfEmbed");
 PdfEmbed.attributeSelector = Selector.attr(_a.attr.element);
