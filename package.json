@@ -75,6 +75,10 @@
       "types": "./dist/path/index.d.ts",
       "default": "./dist/path/index.js"
     },
+    "./payload": {
+      "types": "./dist/payload/index.d.ts",
+      "default": "./dist/payload/index.js"
+    },
     "./pdf": {
       "types": "./dist/pdf/index.d.ts",
       "default": "./dist/pdf/index.js"
@@ -177,6 +181,9 @@
       ],
       "path": [
         "dist/path/index.d.ts"
+      ],
+      "payload": [
+        "dist/payload/index.d.ts"
       ],
       "pdf": [
         "dist/pdf/index.d.ts"

@@ -16,6 +16,7 @@ export * from "./logger/index.js";
 export * from "./marquee/index.js";
 export * from "./modal/index.js";
 export * from "./path/index.js";
+export * from "./payload/index.js";
 export * from "./pdf/index.js";
 export * from "./renderer/index.js";
 export * from "./scroll/index.js";
