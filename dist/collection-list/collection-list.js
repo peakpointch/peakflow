@@ -63,7 +63,7 @@ export class CollectionList extends BaseComponent {
         if (this.isEmpty()) {
             return this.data;
         }
-        const embedSelector = `${this.selector("json")}[${this.attr.id}="${this.id}"]`;
+        const embedSelector = `${payload.selector("embed")}[${this.attr.id}="${this.id}"]`;
         const exclusion = `${this.selector("wrapper")} ${this.selector("wrapper")} *`;
         const selector = exclude(embedSelector, exclusion);
         const embeds = Array.from(this.component.querySelectorAll(selector));

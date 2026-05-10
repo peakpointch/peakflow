@@ -3,7 +3,7 @@ import type { CollectionListItem } from "./item.js";
 import type { PartialDeep } from "type-fest";
 import { BaseComponent } from "../base-component/index.js";
 import { type PayloadVariables } from "../payload/payload.js";
-type CollectionListElement = "wrapper" | "list" | "item" | "json" | "empty" | "pagination";
+type CollectionListElement = "wrapper" | "list" | "item" | "empty" | "pagination";
 interface CollectionListAttributes extends Attributes {
     id: Attribute;
     element: Attribute<string, CollectionListElement>;

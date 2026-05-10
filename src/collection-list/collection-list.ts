@@ -6,7 +6,7 @@ import { Selector, exclude } from "../selector/selector.js";
 import { BaseComponent } from "../base-component/index.js";
 import { payload, type PayloadVariables } from "../payload/payload.js";
 
-type CollectionListElement = "wrapper" | "list" | "item" | "json" | "empty" | "pagination";
+type CollectionListElement = "wrapper" | "list" | "item" | "empty" | "pagination";
 
 interface CollectionListAttributes extends Attributes {
   id: Attribute;
@@ -129,7 +129,7 @@ export class CollectionList<
       return this.data;
     }
 
-    const embedSelector = `${this.selector("json")}[${this.attr.id}="${this.id}"]`;
+    const embedSelector = `${payload.selector("embed")}[${this.attr.id}="${this.id}"]`;
     const exclusion = `${this.selector("wrapper")} ${this.selector("wrapper")} *`;
     const selector = exclude(embedSelector, exclusion);
     const embeds = Array.from(this.component.querySelectorAll<HTMLScriptElement>(selector));
