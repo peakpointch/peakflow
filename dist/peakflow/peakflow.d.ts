@@ -1,7 +1,7 @@
 import type { AnyFn, DefaultRegistry, Registry } from "./defaults";
 import type { IANATimeZone } from "../timezones";
 import type { PeakflowShared } from "../../types/peakflow.d.ts";
-export interface PeakflowConfig {
+export interface PeakflowSettings {
     language?: string;
     timezone?: IANATimeZone;
     debug?: boolean;
@@ -12,10 +12,10 @@ export declare class Peakflow<R extends Registry> {
     private _config;
     readonly shared: PeakflowShared;
     private constructor();
-    static init<R extends Registry>(registry: R, config?: PeakflowConfig): Peakflow<R>;
+    static init<R extends Registry>(registry: R, config?: PeakflowSettings): Peakflow<R>;
     static getInstance<R extends Registry>(): Peakflow<R>;
-    config(config: Partial<PeakflowConfig>): void;
-    getConfig(): PeakflowConfig;
+    config(config: Partial<PeakflowSettings>): void;
+    getConfig(): PeakflowSettings;
     share(key: string, val: any): void;
     unshare(key: string): void;
     execute<K extends keyof R>(...name: K[]): void;

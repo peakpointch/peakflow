@@ -3,7 +3,7 @@ import type { AnyFn, DefaultRegistry, Registry } from "./defaults";
 import type { IANATimeZone } from "../timezones";
 import type { PeakflowGlobal, PeakflowShared } from "../../types/peakflow.d.ts";
 
-export interface PeakflowConfig {
+export interface PeakflowSettings {
   language?: string;
   timezone?: IANATimeZone;
   debug?: boolean;
@@ -12,16 +12,16 @@ export interface PeakflowConfig {
 export class Peakflow<R extends Registry> {
   private static instance: Peakflow<Registry>;
   private registry: R;
-  private _config: PeakflowConfig;
+  private _config: PeakflowSettings;
 
   public readonly shared: PeakflowShared;
 
-  private constructor(registry: R, config: PeakflowConfig = {}) {
+  private constructor(registry: R, config: PeakflowSettings = {}) {
     this.registry = registry;
     this._config = config;
   }
 
-  public static init<R extends Registry>(registry: R, config: PeakflowConfig = {}): Peakflow<R> {
+  public static init<R extends Registry>(registry: R, config: PeakflowSettings = {}): Peakflow<R> {
     if (Peakflow.instance) {
       console.warn(`Peakflow is already initialized. Ignoring new config.`);
       return Peakflow.instance as Peakflow<R>;
@@ -40,11 +40,11 @@ export class Peakflow<R extends Registry> {
     return Peakflow.instance as Peakflow<R>;
   }
 
-  config(config: Partial<PeakflowConfig>) {
+  config(config: Partial<PeakflowSettings>) {
     this._config = { ...this._config, ...config };
   }
 
-  getConfig(): PeakflowConfig {
+  getConfig(): PeakflowSettings {
     return this._config;
   }
 

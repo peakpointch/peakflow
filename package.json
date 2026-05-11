@@ -27,6 +27,10 @@
       "types": "./dist/collection-list/index.d.ts",
       "default": "./dist/collection-list/index.js"
     },
+    "./config": {
+      "types": "./dist/config/index.d.ts",
+      "default": "./dist/config/index.js"
+    },
     "./copy": {
       "types": "./dist/copy/index.d.ts",
       "default": "./dist/copy/index.js"
@@ -145,6 +149,9 @@
       ],
       "collection-list": [
         "dist/collection-list/index.d.ts"
+      ],
+      "config": [
+        "dist/config/index.d.ts"
       ],
       "copy": [
         "dist/copy/index.d.ts"
