@@ -277,5 +277,8 @@
     "zod": "^4.4.3"
   },
   "author": "Lukas Manuel Graf",
-  "license": "MIT"
+  "license": "MIT",
+  "allowScripts": {
+    "core-js@3.39.0": true
+  }
 }

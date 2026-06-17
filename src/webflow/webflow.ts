@@ -1,3 +1,4 @@
+import type { PeakflowGlobal } from "../../types/peakflow.js";
 import type {
   InputSelectorList,
   WebflowClassNames,
@@ -79,6 +80,7 @@ export class Webflow {
   public static getInstance(): Webflow {
     if (!Webflow.instance) {
       Webflow.instance = new Webflow();
+      window.peakflow = window.peakflow || ({} as PeakflowGlobal);
       window.peakflow.webflow = Webflow.instance;
     }
     return Webflow.instance;

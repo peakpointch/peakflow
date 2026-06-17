@@ -63,6 +63,7 @@ export class Webflow {
     static getInstance() {
         if (!Webflow.instance) {
             Webflow.instance = new Webflow();
+            window.peakflow = window.peakflow || {};
             window.peakflow.webflow = Webflow.instance;
         }
         return Webflow.instance;
