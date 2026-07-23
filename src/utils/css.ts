@@ -1,6 +1,6 @@
 import type { PartialDeep } from "type-fest";
-import { mergeOptions } from "../utils";
-import { toDashCase } from "../utils";
+import { mergeOptions } from "../utils/merge-options.js";
+import { toDashCase } from "../utils/parameterize.js";
 
 export interface ObjectToCSSOptions {
   convertCasing: boolean;

@@ -1,5 +1,5 @@
-import { mergeOptions } from "../utils";
-import { toDashCase } from "../utils";
+import { mergeOptions } from "../utils/merge-options.js";
+import { toDashCase } from "../utils/parameterize.js";
 const defaultObjectToCSSOptions = {
     convertCasing: true,
     pretty: false,
