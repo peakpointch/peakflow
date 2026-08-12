@@ -1,31 +1,33 @@
 import { z } from "zod";
 import type { Equal, Expect } from "../typeutils";
 
-const repositorySchema = z
-  .object({
-    owner: z.string().nonempty(),
-    name: z.string().nonempty(),
-  })
+const repositorySchema = z.object({
+  owner: z.string().nonempty(),
+  name: z.string().nonempty(),
+});
 
-const devServerSchema = z
-  .object({
-    webflowSubdomain: z.string({
+const devServerSchema = z.object({
+  webflowSubdomain: z
+    .string({
       error: `Missing required property "devServer.webflowSubdomain".`,
-    }).nonempty(),
-    port: z.number().int().min(1).max(65535).default(3000),
-    livereload: z.boolean().default(true),
-    watchList: z.array(z.string()).default(["./src"]),
-  })
+    })
+    .nonempty(),
+  port: z.number().int().min(1).max(65535).default(3000),
+  livereload: z.boolean().default(true),
+  watchList: z.array(z.string()).default(["./src"]),
+});
 
-const buildSchema = z.object({
-  modules: z.array(z.string()).default([]),
-  outdir: z.string().default("./dist"),
-}).prefault({});
+const buildSchema = z
+  .object({
+    modules: z.array(z.string()).default([]),
+    outdir: z.string().default("./dist"),
+  })
+  .prefault({});
 
 const moduleSchema = z.object({
   file: z.string().nonempty(),
   version: z.string().optional(),
-})
+});
 
 const environmentSchema = z.object({
   name: z.string().nonempty(),
@@ -58,52 +60,38 @@ export type RawPeakflowEnv = z.input<typeof environmentSchema>;
  */
 export type RawPeakflowConfig = {
   /**
-   * The GitHub repository of your project.
-   *
-   * This is used to construct the JSDelivr URLs from which your production
-   * modules are served.
+   * The GitHub repository of your project. This is used to construct the
+   * JSDelivr URLs from which your production modules are served.
    *
    * @property owner The GitHub username or organization that owns the repository.
    * @property name The name of the GitHub repository.
-   *
-   * @example
-   * ```typescript
-   * const repository = {
-   *   owner: "peakpointch",
-   *   name: "peakpoint",
-   * };
-   * ```
    */
   repository: RawPeakflowRepo;
   /**
    * Development server configuration.
    *
-   * Only `webflowSubdomain` is required. All other properties have defaults
-   * applied when the configuration is parsed.
-   *
    * @property webflowSubdomain The Webflow subdomain to proxy during development.
-   * @property port The local development server port. Defaults to `3000`.
-   * @property livereload Whether livereload is enabled. Defaults to `true`.
-   * @property watchList Paths watched for changes. Defaults to `["./src"]`.
+   * @property port The local development server port. Default: `3000`.
+   * @property livereload Whether livereload is enabled. Default: `true`.
+   * @property watchList Paths watched for changes. Default: `["./src"]`.
    */
   devServer: RawPeakflowDevServer;
   /**
-   * Build configuration before defaults are applied.
+   * Build configuration.
    *
-   * @property modules Entry modules to build. Defaults to `["./src/index.ts"]`.
-   * @property outdir Directory where build output is written. Defaults to `"./dist"`.
+   * @property modules Files to build. Default: `[]`.
+   * @property outdir Directory where build output is written. Default: `"./dist"`.
    */
   build?: RawPeakflowBuild;
   /**
    * A Peakflow publishing environment.
    *
-   * Environments describe which modules and pages belong to a particular
-   * versioned deployment.
-   *
    * @property name The name of the environment.
-   * @property modules Modules included in the environment.
-   * @property version The version associated with the environment.
-   * @property pages Page patterns to which the environment applies.
+   * @property modules Modules (files) included in the environment.
+   * @property version The version associated with the environment, used as a
+   *           fallback for all modules.
+   * @property pages Page patterns (literal path, Glob, ExtGlob). The modules will
+   *           be applied to the matched pages.
    */
   environments?: RawPeakflowEnv[];
 };
@@ -129,17 +117,10 @@ export type PeakflowConfig = z.output<typeof configSchema>;
 type _InputMatches = Expect<Equal<RawPeakflowConfig, z.input<typeof configSchema>>>;
 
 /**
- * Define the configuration for a Peakflow project.
+ * Define the configuration for a Peakflow project (type wrapper only).
  *
- * Provides type checking and autocomplete when authoring a
- * `peakflow.config.ts` file.
- *
- * This function does not validate, transform, or apply defaults to the
- * configuration. Runtime validation is performed separately using
- * `configSchema`.
- *
- * Properties with defaults may therefore be omitted here. They become
- * required in the sanitized `PeakflowConfig` after parsing.
+ * - Read the docs at https://github.com/peakpointch/peakflow-cli.
+ * - See JSDoc of config properties for more information.
  *
  * @param config The unsanitized Peakflow configuration.
  * @returns The configuration unchanged.
@@ -166,7 +147,7 @@ type _InputMatches = Expect<Equal<RawPeakflowConfig, z.input<typeof configSchema
  *       name: "production",
  *       version: "1.2.0",
  *       modules: ["./src/index.ts"],
- *       pages: ["/**"],
+ *       pages: ["/", "/**\/*"],
  *     },
  *   ],
  * });

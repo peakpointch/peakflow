@@ -1,22 +1,24 @@
 import { z } from "zod";
-const repositorySchema = z
-    .object({
+const repositorySchema = z.object({
     owner: z.string().nonempty(),
     name: z.string().nonempty(),
 });
-const devServerSchema = z
-    .object({
-    webflowSubdomain: z.string({
+const devServerSchema = z.object({
+    webflowSubdomain: z
+        .string({
         error: `Missing required property "devServer.webflowSubdomain".`,
-    }).nonempty(),
+    })
+        .nonempty(),
     port: z.number().int().min(1).max(65535).default(3000),
     livereload: z.boolean().default(true),
     watchList: z.array(z.string()).default(["./src"]),
 });
-const buildSchema = z.object({
+const buildSchema = z
+    .object({
     modules: z.array(z.string()).default([]),
     outdir: z.string().default("./dist"),
-}).prefault({});
+})
+    .prefault({});
 const moduleSchema = z.object({
     file: z.string().nonempty(),
     version: z.string().optional(),
@@ -38,17 +40,10 @@ export const configSchema = z.object({
     environments: z.array(environmentSchema).default([]).optional(),
 });
 /**
- * Define the configuration for a Peakflow project.
+ * Define the configuration for a Peakflow project (type wrapper only).
  *
- * Provides type checking and autocomplete when authoring a
- * `peakflow.config.ts` file.
- *
- * This function does not validate, transform, or apply defaults to the
- * configuration. Runtime validation is performed separately using
- * `configSchema`.
- *
- * Properties with defaults may therefore be omitted here. They become
- * required in the sanitized `PeakflowConfig` after parsing.
+ * - Read the docs at https://github.com/peakpointch/peakflow-cli.
+ * - See JSDoc of config properties for more information.
  *
  * @param config The unsanitized Peakflow configuration.
  * @returns The configuration unchanged.
@@ -75,7 +70,7 @@ export const configSchema = z.object({
  *       name: "production",
  *       version: "1.2.0",
  *       modules: ["./src/index.ts"],
- *       pages: ["/**"],
+ *       pages: ["/", "/**\/*"],
  *     },
  *   ],
  * });
