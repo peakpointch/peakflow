@@ -24,9 +24,9 @@ interface CollectionListSettings {
 export declare class CollectionList<Item extends CollectionListItem = CollectionListItem> extends BaseComponent<CollectionListElement> {
     static defaultOptions: CollectionListSettings;
     static dataset: Dataset<CollectionListAttributes>;
-    static attr: import("../selector/attributes.js").AttributeAccessorMap<CollectionListAttributes>;
+    static attr: import("../index.js").AttributeAccessorMap<CollectionListAttributes>;
     dataset: Dataset<CollectionListAttributes>;
-    attr: import("../selector/attributes.js").AttributeAccessorMap<CollectionListAttributes>;
+    attr: import("../index.js").AttributeAccessorMap<CollectionListAttributes>;
     data: Item[];
     settings: CollectionListSettings;
     listElement?: HTMLElement | null;
@@ -34,10 +34,10 @@ export declare class CollectionList<Item extends CollectionListItem = Collection
     private items;
     constructor(component: HTMLElement | null, settings?: PartialDeep<CollectionListSettings>);
     private initElements;
-    protected static attributeSelector: import("../selector/selector.js").AttributeSelector<CollectionListElement>;
-    static selector: import("../selector/selector.js").InstanceSelector<CollectionListElement>;
-    static select: <U extends Element = HTMLElement>(element: CollectionListElement, instance?: string, options?: import("../selector/selector.js").SelectOptions) => U;
-    static selectAll: <U extends Element = HTMLElement>(element: CollectionListElement, instance?: string, options?: import("../selector/selector.js").SelectOptions) => NodeListOf<U>;
+    protected static attributeSelector: import("../index.js").AttributeSelector<CollectionListElement>;
+    static selector: import("../index.js").InstanceSelector<CollectionListElement>;
+    static select: <U extends Element = HTMLElement>(element: CollectionListElement, instance?: string, options?: import("../index.js").SelectOptions) => U;
+    static selectAll: <U extends Element = HTMLElement>(element: CollectionListElement, instance?: string, options?: import("../index.js").SelectOptions) => NodeListOf<U>;
     /**
      * @returns True if the collection list has no items, false otherwise.
      */

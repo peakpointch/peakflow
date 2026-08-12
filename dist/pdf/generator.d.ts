@@ -16,7 +16,7 @@ export declare class PdfGenerator {
      * Use this method to select the elements for a new `Pdf` instance.
      * @returns CSS selector string
      */
-    static select: import("../selector/selector.js").AttributeSelector<PdfElement>;
+    static select: import("../index.js").AttributeSelector<PdfElement>;
     private getScaleElement;
     getDefaultScale(): number;
     getPages(container?: HTMLElement): HTMLElement[];

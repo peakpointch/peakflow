@@ -14,7 +14,7 @@ export declare class FilterForm<FieldId extends string = string> {
     private globalChangeActions;
     private defaultDayRange;
     private resizeResetFields;
-    static select: import("../selector/selector.js").AttributeSelector<ActionElement>;
+    static select: import("../index.js").AttributeSelector<ActionElement>;
     constructor(container: HTMLElement | null, fieldIds?: readonly FieldId[]);
     /**
      * Returns the `HTMLElement` of a specific filter input.

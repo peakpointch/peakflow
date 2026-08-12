@@ -18,10 +18,10 @@ export declare class Payload {
     private static instance;
     private constructor();
     static getInstance(): Payload;
-    protected attributeSelector: import("../selector/selector").AttributeSelector<PayloadElement>;
-    selector: import("../selector/selector").InstanceSelector<PayloadElement>;
-    select: <U extends Element = HTMLElement>(element: PayloadElement, instance?: string, options?: import("../selector/selector").SelectOptions) => U;
-    selectAll: <U extends Element = HTMLElement>(element: PayloadElement, instance?: string, options?: import("../selector/selector").SelectOptions) => NodeListOf<U>;
+    protected attributeSelector: import("..").AttributeSelector<PayloadElement>;
+    selector: import("..").InstanceSelector<PayloadElement>;
+    select: <U extends Element = HTMLElement>(element: PayloadElement, instance?: string, options?: import("..").SelectOptions) => U;
+    selectAll: <U extends Element = HTMLElement>(element: PayloadElement, instance?: string, options?: import("..").SelectOptions) => NodeListOf<U>;
     /**
      * Retrieves and parses a JSON Data Island from the DOM by its unique ID.
      *
