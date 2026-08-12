@@ -1,4 +1,7 @@
 import { z } from "zod";
+/* ======================== */
+/* ==== Runtime Schema ==== */
+/* ======================== */
 const repositorySchema = z.object({
     owner: z.string().nonempty(),
     name: z.string().nonempty(),
@@ -21,14 +24,14 @@ const buildSchema = z
     .prefault({});
 const moduleSchema = z.object({
     file: z.string().nonempty(),
-    version: z.string().optional(),
+    version: z.string().default(""),
 });
 const environmentSchema = z
     .object({
     name: z.string().nonempty(),
     skip: z.boolean().default(false),
     modules: z.array(z.union([z.string(), moduleSchema])).default([]),
-    version: z.string(),
+    version: z.string().trim(),
     pages: z.array(z.string()).default([]),
 })
     .transform(({ modules, version, ...environment }) => ({
@@ -36,7 +39,7 @@ const environmentSchema = z
     version,
     modules: modules.map((module) => ({
         file: typeof module === "string" ? module : module.file,
-        version: typeof module === "string" ? version : (module.version ?? version),
+        version: typeof module === "string" ? version : module.version.trim() || version,
     })),
 }));
 /**

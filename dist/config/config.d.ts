@@ -15,14 +15,14 @@ declare const buildSchema: z.ZodPrefault<z.ZodObject<{
 }, z.core.$strip>>;
 declare const moduleSchema: z.ZodObject<{
     file: z.ZodString;
-    version: z.ZodOptional<z.ZodString>;
+    version: z.ZodDefault<z.ZodString>;
 }, z.core.$strip>;
 declare const environmentSchema: z.ZodPipe<z.ZodObject<{
     name: z.ZodString;
     skip: z.ZodDefault<z.ZodBoolean>;
     modules: z.ZodDefault<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodObject<{
         file: z.ZodString;
-        version: z.ZodOptional<z.ZodString>;
+        version: z.ZodDefault<z.ZodString>;
     }, z.core.$strip>]>>>;
     version: z.ZodString;
     pages: z.ZodDefault<z.ZodArray<z.ZodString>>;
@@ -40,7 +40,7 @@ declare const environmentSchema: z.ZodPipe<z.ZodObject<{
     skip: boolean;
     modules: (string | {
         file: string;
-        version?: string;
+        version: string;
     })[];
     version: string;
     pages: string[];
@@ -68,7 +68,7 @@ export declare const configSchema: z.ZodObject<{
         skip: z.ZodDefault<z.ZodBoolean>;
         modules: z.ZodDefault<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodObject<{
             file: z.ZodString;
-            version: z.ZodOptional<z.ZodString>;
+            version: z.ZodDefault<z.ZodString>;
         }, z.core.$strip>]>>>;
         version: z.ZodString;
         pages: z.ZodDefault<z.ZodArray<z.ZodString>>;
@@ -86,12 +86,24 @@ export declare const configSchema: z.ZodObject<{
         skip: boolean;
         modules: (string | {
             file: string;
-            version?: string;
+            version: string;
         })[];
         version: string;
         pages: string[];
     }>>>>;
 }, z.core.$strip>;
+export type PeakflowRepo = z.output<typeof repositorySchema>;
+export type PeakflowDevServer = z.output<typeof devServerSchema>;
+export type PeakflowBuild = z.output<typeof buildSchema>;
+export type PeakflowModule = z.output<typeof moduleSchema>;
+export type PeakflowEnv = z.output<typeof environmentSchema>;
+/**
+ * Sanitized configuration for a Peakflow app.
+ *
+ * Represents the configuration after validation and default values have
+ * been applied by `configSchema`.
+ */
+export type PeakflowConfig = z.output<typeof configSchema>;
 export type RawPeakflowRepo = z.input<typeof repositorySchema>;
 export type RawPeakflowDevServer = z.input<typeof devServerSchema>;
 export type RawPeakflowBuild = z.input<typeof buildSchema>;
@@ -139,18 +151,6 @@ export type RawPeakflowConfig = {
      */
     environments?: RawPeakflowEnv[];
 };
-export type PeakflowRepo = z.output<typeof repositorySchema>;
-export type PeakflowDevServer = z.output<typeof devServerSchema>;
-export type PeakflowBuild = z.output<typeof buildSchema>;
-export type PeakflowModule = z.output<typeof moduleSchema>;
-export type PeakflowEnv = z.output<typeof environmentSchema>;
-/**
- * Sanitized configuration for a Peakflow app.
- *
- * Represents the configuration after validation and default values have
- * been applied by `configSchema`.
- */
-export type PeakflowConfig = z.output<typeof configSchema>;
 /**
  * Define the configuration for a Peakflow project (type wrapper only).
  *

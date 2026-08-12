@@ -1,6 +1,10 @@
 import { z } from "zod";
 import type { Equal, Expect } from "../typeutils";
 
+/* ======================== */
+/* ==== Runtime Schema ==== */
+/* ======================== */
+
 const repositorySchema = z.object({
   owner: z.string().nonempty(),
   name: z.string().nonempty(),
@@ -26,7 +30,7 @@ const buildSchema = z
 
 const moduleSchema = z.object({
   file: z.string().nonempty(),
-  version: z.string().optional(),
+  version: z.string().default(""),
 });
 
 const environmentSchema = z
@@ -34,7 +38,7 @@ const environmentSchema = z
     name: z.string().nonempty(),
     skip: z.boolean().default(false),
     modules: z.array(z.union([z.string(), moduleSchema])).default([]),
-    version: z.string(),
+    version: z.string().trim(),
     pages: z.array(z.string()).default([]),
   })
   .transform(({ modules, version, ...environment }) => ({
@@ -42,7 +46,7 @@ const environmentSchema = z
     version,
     modules: modules.map((module) => ({
       file: typeof module === "string" ? module : module.file,
-      version: typeof module === "string" ? version : (module.version ?? version),
+      version: typeof module === "string" ? version : module.version.trim() || version,
     })),
   }));
 
@@ -55,6 +59,28 @@ export const configSchema = z.object({
   build: buildSchema,
   environments: z.array(environmentSchema).default([]),
 });
+
+/* ====================== */
+/* ==== Output Types ==== */
+/* ====================== */
+
+export type PeakflowRepo = z.output<typeof repositorySchema>;
+export type PeakflowDevServer = z.output<typeof devServerSchema>;
+export type PeakflowBuild = z.output<typeof buildSchema>;
+export type PeakflowModule = z.output<typeof moduleSchema>;
+export type PeakflowEnv = z.output<typeof environmentSchema>;
+
+/**
+ * Sanitized configuration for a Peakflow app.
+ *
+ * Represents the configuration after validation and default values have
+ * been applied by `configSchema`.
+ */
+export type PeakflowConfig = z.output<typeof configSchema>;
+
+/* ===================== */
+/* ==== Input Types ==== */
+/* ===================== */
 
 export type RawPeakflowRepo = z.input<typeof repositorySchema>;
 export type RawPeakflowDevServer = z.input<typeof devServerSchema>;
@@ -104,20 +130,6 @@ export type RawPeakflowConfig = {
    */
   environments?: RawPeakflowEnv[];
 };
-
-export type PeakflowRepo = z.output<typeof repositorySchema>;
-export type PeakflowDevServer = z.output<typeof devServerSchema>;
-export type PeakflowBuild = z.output<typeof buildSchema>;
-export type PeakflowModule = z.output<typeof moduleSchema>;
-export type PeakflowEnv = z.output<typeof environmentSchema>;
-
-/**
- * Sanitized configuration for a Peakflow app.
- *
- * Represents the configuration after validation and default values have
- * been applied by `configSchema`.
- */
-export type PeakflowConfig = z.output<typeof configSchema>;
 
 /**
  * Compile-time assertion ensuring that `RawPeakflowConfig` stays in sync
