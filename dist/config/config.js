@@ -1,36 +1,32 @@
 import { z } from "zod";
 const repositorySchema = z
     .object({
-    owner: z.string(),
-    name: z.string(),
-})
-    .required({
-    owner: true,
-    name: true,
+    owner: z.string().nonempty(),
+    name: z.string().nonempty(),
 });
 const devServerSchema = z
     .object({
     webflowSubdomain: z.string({
-        error: `Missing required property "server.webflowSubdomain".`,
-    }),
-    port: z.number().default(3000),
+        error: `Missing required property "devServer.webflowSubdomain".`,
+    }).nonempty(),
+    port: z.number().int().min(1).max(65535).default(3000),
     livereload: z.boolean().default(true),
     watchList: z.array(z.string()).default(["./src"]),
-})
-    .required({ webflowSubdomain: true });
-const buildSchema = z.object({
-    modules: z.array(z.string()).default(["./src/index.ts"]),
-    outdir: z.string().default("./dist"),
 });
+const buildSchema = z.object({
+    modules: z.array(z.string()).default([]),
+    outdir: z.string().default("./dist"),
+}).prefault({});
 const moduleSchema = z.object({
-    file: z.string(),
-    version: z.string(),
+    file: z.string().nonempty(),
+    version: z.string().optional(),
 });
 const environmentSchema = z.object({
-    name: z.string(),
-    modules: z.array(z.union([z.string(), moduleSchema])),
+    name: z.string().nonempty(),
+    skip: z.boolean().default(false),
+    modules: z.array(z.union([z.string(), moduleSchema])).default([]),
     version: z.string(),
-    pages: z.array(z.string()),
+    pages: z.array(z.string()).default([]),
 });
 /**
  * The `PeakflowConfig` runtime schema used for config validation.
@@ -39,7 +35,7 @@ export const configSchema = z.object({
     repository: repositorySchema,
     devServer: devServerSchema,
     build: buildSchema,
-    environments: z.array(environmentSchema).default([]),
+    environments: z.array(environmentSchema).default([]).optional(),
 });
 /**
  * Define the configuration for a Peakflow project.
@@ -66,7 +62,7 @@ export const configSchema = z.object({
  *   },
  *   devServer: {
  *     webflowSubdomain: "peakpoint",
- *     port: 4000,
+ *     port: 3000,
  *     livereload: true,
  *     watchList: ["./src", "./public"],
  *   },

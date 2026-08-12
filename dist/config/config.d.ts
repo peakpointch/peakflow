@@ -1,58 +1,60 @@
 import { z } from "zod";
 declare const repositorySchema: z.ZodObject<{
-    owner: z.ZodNonOptional<z.ZodString>;
-    name: z.ZodNonOptional<z.ZodString>;
+    owner: z.ZodString;
+    name: z.ZodString;
 }, z.core.$strip>;
 declare const devServerSchema: z.ZodObject<{
-    webflowSubdomain: z.ZodNonOptional<z.ZodString>;
+    webflowSubdomain: z.ZodString;
     port: z.ZodDefault<z.ZodNumber>;
     livereload: z.ZodDefault<z.ZodBoolean>;
     watchList: z.ZodDefault<z.ZodArray<z.ZodString>>;
 }, z.core.$strip>;
-declare const buildSchema: z.ZodObject<{
+declare const buildSchema: z.ZodPrefault<z.ZodObject<{
     modules: z.ZodDefault<z.ZodArray<z.ZodString>>;
     outdir: z.ZodDefault<z.ZodString>;
-}, z.core.$strip>;
+}, z.core.$strip>>;
 declare const moduleSchema: z.ZodObject<{
     file: z.ZodString;
-    version: z.ZodString;
+    version: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 declare const environmentSchema: z.ZodObject<{
     name: z.ZodString;
-    modules: z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodObject<{
+    skip: z.ZodDefault<z.ZodBoolean>;
+    modules: z.ZodDefault<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodObject<{
         file: z.ZodString;
-        version: z.ZodString;
-    }, z.core.$strip>]>>;
+        version: z.ZodOptional<z.ZodString>;
+    }, z.core.$strip>]>>>;
     version: z.ZodString;
-    pages: z.ZodArray<z.ZodString>;
+    pages: z.ZodDefault<z.ZodArray<z.ZodString>>;
 }, z.core.$strip>;
 /**
  * The `PeakflowConfig` runtime schema used for config validation.
  */
 export declare const configSchema: z.ZodObject<{
     repository: z.ZodObject<{
-        owner: z.ZodNonOptional<z.ZodString>;
-        name: z.ZodNonOptional<z.ZodString>;
+        owner: z.ZodString;
+        name: z.ZodString;
     }, z.core.$strip>;
     devServer: z.ZodObject<{
-        webflowSubdomain: z.ZodNonOptional<z.ZodString>;
+        webflowSubdomain: z.ZodString;
         port: z.ZodDefault<z.ZodNumber>;
         livereload: z.ZodDefault<z.ZodBoolean>;
         watchList: z.ZodDefault<z.ZodArray<z.ZodString>>;
     }, z.core.$strip>;
-    build: z.ZodObject<{
+    build: z.ZodPrefault<z.ZodObject<{
         modules: z.ZodDefault<z.ZodArray<z.ZodString>>;
         outdir: z.ZodDefault<z.ZodString>;
-    }, z.core.$strip>;
-    environments: z.ZodDefault<z.ZodArray<z.ZodObject<{
+    }, z.core.$strip>>;
+    environments: z.ZodOptional<z.ZodDefault<z.ZodArray<z.ZodObject<{
         name: z.ZodString;
-        modules: z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodObject<{
+        skip: z.ZodDefault<z.ZodBoolean>;
+        modules: z.ZodDefault<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodObject<{
             file: z.ZodString;
-            version: z.ZodString;
-        }, z.core.$strip>]>>;
+            version: z.ZodOptional<z.ZodString>;
+        }, z.core.$strip>]>>>;
         version: z.ZodString;
-        pages: z.ZodArray<z.ZodString>;
-    }, z.core.$strip>>>;
+        pages: z.ZodDefault<z.ZodArray<z.ZodString>>;
+    }, z.core.$strip>>>>;
 }, z.core.$strip>;
 export type RawPeakflowRepo = z.input<typeof repositorySchema>;
 export type RawPeakflowDevServer = z.input<typeof devServerSchema>;
@@ -101,7 +103,7 @@ export type RawPeakflowConfig = {
      * @property modules Entry modules to build. Defaults to `["./src/index.ts"]`.
      * @property outdir Directory where build output is written. Defaults to `"./dist"`.
      */
-    build: RawPeakflowBuild;
+    build?: RawPeakflowBuild;
     /**
      * A Peakflow publishing environment.
      *
@@ -152,7 +154,7 @@ export type PeakflowConfig = z.output<typeof configSchema>;
  *   },
  *   devServer: {
  *     webflowSubdomain: "peakpoint",
- *     port: 4000,
+ *     port: 3000,
  *     livereload: true,
  *     watchList: ["./src", "./public"],
  *   },
