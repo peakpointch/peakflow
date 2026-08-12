@@ -23,7 +23,7 @@ const buildSchema = z
 })
     .prefault({});
 const moduleSchema = z.object({
-    file: z.string().nonempty(),
+    path: z.string().nonempty(),
     version: z.string().default(""),
 });
 const environmentSchema = z
@@ -38,7 +38,7 @@ const environmentSchema = z
     ...environment,
     version,
     modules: modules.map((module) => ({
-        file: typeof module === "string" ? module : module.file,
+        path: typeof module === "string" ? module : module.path,
         version: typeof module === "string" ? version : module.version.trim() || version,
     })),
 }));

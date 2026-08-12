@@ -14,14 +14,14 @@ declare const buildSchema: z.ZodPrefault<z.ZodObject<{
     outdir: z.ZodDefault<z.ZodString>;
 }, z.core.$strip>>;
 declare const moduleSchema: z.ZodObject<{
-    file: z.ZodString;
+    path: z.ZodString;
     version: z.ZodDefault<z.ZodString>;
 }, z.core.$strip>;
 declare const environmentSchema: z.ZodPipe<z.ZodObject<{
     name: z.ZodString;
     skip: z.ZodDefault<z.ZodBoolean>;
     modules: z.ZodDefault<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodObject<{
-        file: z.ZodString;
+        path: z.ZodString;
         version: z.ZodDefault<z.ZodString>;
     }, z.core.$strip>]>>>;
     version: z.ZodString;
@@ -32,14 +32,14 @@ declare const environmentSchema: z.ZodPipe<z.ZodObject<{
     pages: string[];
     version: string;
     modules: {
-        file: string;
+        path: string;
         version: string;
     }[];
 }, {
     name: string;
     skip: boolean;
     modules: (string | {
-        file: string;
+        path: string;
         version: string;
     })[];
     version: string;
@@ -67,7 +67,7 @@ export declare const configSchema: z.ZodObject<{
         name: z.ZodString;
         skip: z.ZodDefault<z.ZodBoolean>;
         modules: z.ZodDefault<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodObject<{
-            file: z.ZodString;
+            path: z.ZodString;
             version: z.ZodDefault<z.ZodString>;
         }, z.core.$strip>]>>>;
         version: z.ZodString;
@@ -78,14 +78,14 @@ export declare const configSchema: z.ZodObject<{
         pages: string[];
         version: string;
         modules: {
-            file: string;
+            path: string;
             version: string;
         }[];
     }, {
         name: string;
         skip: boolean;
         modules: (string | {
-            file: string;
+            path: string;
             version: string;
         })[];
         version: string;
