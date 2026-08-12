@@ -95,11 +95,11 @@ export type RawPeakflowConfig = {
      * A Peakflow publishing environment.
      *
      * @property name The name of the environment.
-     * @property modules Modules (files) included in the environment.
+     * @property modules The built modules (files) included in the environment.
      * @property version The version associated with the environment, used as a
      *           fallback for all modules.
-     * @property pages Page patterns (literal path, Glob, ExtGlob). The modules will
-     *           be applied to the matched pages.
+     * @property pages Page patterns (literal path, Glob, ExtGlob) that match
+     *           against published pages of your Webflow site.
      */
     environments?: RawPeakflowEnv[];
 };
