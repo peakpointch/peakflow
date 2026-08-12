@@ -165,8 +165,8 @@ interface AdobeViewerAPIs {
 }
 
 interface RegisterCallbackEvent {
-  type: EventType | EnumToUnion<EventType>
-  data: any
+  type: EventType | EnumToUnion<EventType>;
+  data: any;
 }
 
 interface View {
@@ -181,7 +181,7 @@ interface View {
    * @param fileConfig Configuration for the PDF source.
    * @param viewerConfig UI configuration for the viewer.
    */
-  async previewFile(fileConfig: FileConfig, viewerConfig?: ViewerConfig): Promise<AdobeViewerAPIs>;
+  previewFile(fileConfig: FileConfig, viewerConfig?: ViewerConfig): Promise<AdobeViewerAPIs>;
 
   /**
    * Register a callback for SDK events.
@@ -193,15 +193,15 @@ interface View {
   ): void;
 
   Enum: {
-    CallbackType: EnumToInterface<typeof CallbackType>,
-    ApiResponseCode: Record<ApiResponseCode, `${ApiResponseCode}`>,
-    Events: Record<EventType, `${EventType}`>,
-    PDFAnalyticsEvents: Record<PDFAnalyticsEvents, `${PDFAnalyticsEvents}`>,
-    FilePreviewEvents: Record<FilePreviewEvents, `${FilePreviewEvents}`>,
-    AnnotationTypes: Record<AnnotationTypes, `${AnnotationTypes}`>,
-    AnnotationEvents: Record<AnnotationEvents, `${AnnotationEvents}`>,
-    ViewMode: Record<ViewMode, `${ViewMode}`>,
-    EmbedMode: Record<EmbedMode, `${EmbedMode}`>,
+    CallbackType: EnumToInterface<typeof CallbackType>;
+    ApiResponseCode: Record<ApiResponseCode, `${ApiResponseCode}`>;
+    Events: Record<EventType, `${EventType}`>;
+    PDFAnalyticsEvents: Record<PDFAnalyticsEvents, `${PDFAnalyticsEvents}`>;
+    FilePreviewEvents: Record<FilePreviewEvents, `${FilePreviewEvents}`>;
+    AnnotationTypes: Record<AnnotationTypes, `${AnnotationTypes}`>;
+    AnnotationEvents: Record<AnnotationEvents, `${AnnotationEvents}`>;
+    ViewMode: Record<ViewMode, `${ViewMode}`>;
+    EmbedMode: Record<EmbedMode, `${EmbedMode}`>;
   };
 }
 

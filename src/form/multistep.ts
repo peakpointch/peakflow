@@ -64,21 +64,10 @@ type CustomFormComponent = {
 };
 
 type StepsComponentElement =
-  | "component"
-  | "list"
-  | "step"
-  | "navigation"
-  | "pagination"
-  | "custom-component";
+  "component" | "list" | "step" | "navigation" | "pagination" | "custom-component";
 type StepsNavElement = "prev" | "next";
 type MultiStepFormEvents =
-  | "save"
-  | "changeStep"
-  | "submit"
-  | "success"
-  | "error"
-  | "change"
-  | "input";
+  "save" | "changeStep" | "submit" | "success" | "error" | "change" | "input";
 type VirtualFieldFn<F = any, C = any> = (data: { fields: F; customFields: C }) => string;
 
 // Selector functions

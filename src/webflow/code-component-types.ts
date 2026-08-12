@@ -26,7 +26,9 @@ export interface CodeIslandProps {
   [x: string]: unknown;
 }
 
-export interface HTMLCodeIslandElement<T extends CodeIslandProps = CodeIslandProps> extends HTMLElement {
+export interface HTMLCodeIslandElement<
+  T extends CodeIslandProps = CodeIslandProps,
+> extends HTMLElement {
   componentName: string;
 
   /** Webflow internal renderer */

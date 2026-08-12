@@ -42,12 +42,9 @@ export type StringTypeMap = {
   boolean: boolean;
   number: number;
   numberOrAuto: number | "auto";
-}
+};
 
 export type Equal<A, B> =
-  (<T>() => T extends A ? 1 : 2) extends
-  (<T>() => T extends B ? 1 : 2)
-    ? true
-    : false;
+  (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
-export type Expect<T extends true> = T;;
+export type Expect<T extends true> = T;
