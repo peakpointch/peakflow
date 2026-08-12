@@ -3,6 +3,16 @@ declare const repositorySchema: z.ZodObject<{
     owner: z.ZodNonOptional<z.ZodString>;
     name: z.ZodNonOptional<z.ZodString>;
 }, z.core.$strip>;
+declare const devServerSchema: z.ZodObject<{
+    webflowSubdomain: z.ZodNonOptional<z.ZodString>;
+    port: z.ZodDefault<z.ZodNumber>;
+    livereload: z.ZodDefault<z.ZodBoolean>;
+    watchList: z.ZodDefault<z.ZodArray<z.ZodString>>;
+}, z.core.$strip>;
+declare const buildSchema: z.ZodObject<{
+    modules: z.ZodDefault<z.ZodArray<z.ZodString>>;
+    outdir: z.ZodDefault<z.ZodString>;
+}, z.core.$strip>;
 declare const moduleSchema: z.ZodObject<{
     file: z.ZodString;
     version: z.ZodString;
@@ -16,12 +26,6 @@ declare const environmentSchema: z.ZodObject<{
     version: z.ZodString;
     pages: z.ZodArray<z.ZodString>;
 }, z.core.$strip>;
-declare const serverSchema: z.ZodObject<{
-    webflowSubdomain: z.ZodNonOptional<z.ZodString>;
-    port: z.ZodDefault<z.ZodNumber>;
-    livereload: z.ZodDefault<z.ZodBoolean>;
-    watchList: z.ZodDefault<z.ZodArray<z.ZodString>>;
-}, z.core.$strip>;
 /**
  * The `PeakflowConfig` runtime schema used for config validation.
  */
@@ -30,15 +34,15 @@ export declare const configSchema: z.ZodObject<{
         owner: z.ZodNonOptional<z.ZodString>;
         name: z.ZodNonOptional<z.ZodString>;
     }, z.core.$strip>;
-    build: z.ZodObject<{
-        modules: z.ZodDefault<z.ZodArray<z.ZodString>>;
-        outdir: z.ZodDefault<z.ZodString>;
-    }, z.core.$strip>;
-    server: z.ZodObject<{
+    devServer: z.ZodObject<{
         webflowSubdomain: z.ZodNonOptional<z.ZodString>;
         port: z.ZodDefault<z.ZodNumber>;
         livereload: z.ZodDefault<z.ZodBoolean>;
         watchList: z.ZodDefault<z.ZodArray<z.ZodString>>;
+    }, z.core.$strip>;
+    build: z.ZodObject<{
+        modules: z.ZodDefault<z.ZodArray<z.ZodString>>;
+        outdir: z.ZodDefault<z.ZodString>;
     }, z.core.$strip>;
     environments: z.ZodDefault<z.ZodArray<z.ZodObject<{
         name: z.ZodString;
@@ -50,16 +54,138 @@ export declare const configSchema: z.ZodObject<{
         pages: z.ZodArray<z.ZodString>;
     }, z.core.$strip>>>;
 }, z.core.$strip>;
-export type PeakflowRepo = z.infer<typeof repositorySchema>;
-export type PeakflowServer = z.infer<typeof serverSchema>;
-export type PeakflowEnv = z.infer<typeof environmentSchema>;
-export type PeakflowModule = z.infer<typeof moduleSchema>;
 /**
- * Configuration for a peakflow app
+ * The GitHub repository of your project.
+ *
+ * This is used to construct the JSDelivr URLs from which your production
+ * modules are served.
+ *
+ * @property owner The GitHub username or organization that owns the repository.
+ * @property name The name of the GitHub repository.
+ *
+ * @example
+ * ```typescript
+ * const repository = {
+ *   owner: "peakpointch",
+ *   name: "peakpoint",
+ * };
+ * ```
  */
-export type PeakflowConfig = z.infer<typeof configSchema>;
+export type RawPeakflowRepo = z.input<typeof repositorySchema>;
 /**
- * Define the configuration for your peakflow app
+ * Development server configuration.
+ *
+ * Only `webflowSubdomain` is required. All other properties have defaults
+ * applied when the configuration is parsed.
+ *
+ * @property webflowSubdomain The Webflow subdomain to proxy during development.
+ * @property port The local development server port. Defaults to `3000`.
+ * @property livereload Whether livereload is enabled. Defaults to `true`.
+ * @property watchList Paths watched for changes. Defaults to `["./src"]`.
  */
-export declare function defineConfig(config: PeakflowConfig): PeakflowConfig;
+export type RawPeakflowDevServer = z.input<typeof devServerSchema>;
+/**
+ * A Peakflow publishing environment.
+ *
+ * Environments describe which modules and pages belong to a particular
+ * versioned deployment.
+ *
+ * @property name The name of the environment.
+ * @property modules Modules included in the environment.
+ * @property version The version associated with the environment.
+ * @property pages Page patterns to which the environment applies.
+ */
+export type RawPeakflowEnv = z.input<typeof environmentSchema>;
+/**
+ * Build configuration before defaults are applied.
+ *
+ * @property modules Entry modules to build. Defaults to `["./src/index.ts"]`.
+ * @property outdir Directory where build output is written. Defaults to `"./dist"`.
+ */
+export type RawPeakflowBuild = z.input<typeof buildSchema>;
+/**
+ * Unsanitized configuration for a Peakflow app.
+ *
+ * Represents the configuration as authored by the user, before validation
+ * and defaults are applied.
+ */
+export type RawPeakflowConfig = {
+    repository: RawPeakflowRepo;
+    devServer: RawPeakflowDevServer;
+    build: RawPeakflowBuild;
+    environments?: RawPeakflowEnv[];
+};
+export type PeakflowRepo = z.output<typeof repositorySchema>;
+export type PeakflowDevServer = z.output<typeof devServerSchema>;
+export type PeakflowBuild = z.output<typeof buildSchema>;
+export type PeakflowModule = z.output<typeof moduleSchema>;
+export type PeakflowEnv = z.output<typeof environmentSchema>;
+/**
+ * Sanitized configuration for a Peakflow app.
+ *
+ * Represents the configuration after validation and default values have
+ * been applied by `configSchema`.
+ */
+export type PeakflowConfig = z.output<typeof configSchema>;
+/**
+ * Define the configuration for a Peakflow project.
+ *
+ * Provides type checking and autocomplete when authoring a
+ * `peakflow.config.ts` file.
+ *
+ * This function does not validate, transform, or apply defaults to the
+ * configuration. Runtime validation is performed separately using
+ * `configSchema`.
+ *
+ * Properties with defaults may therefore be omitted here. They become
+ * required in the sanitized `PeakflowConfig` after parsing.
+ *
+ * @param config The unsanitized Peakflow configuration.
+ * @returns The configuration unchanged.
+ *
+ * @example
+ * ```typescript
+ * import { defineConfig } from "peakflow/config";
+ *
+ * export default defineConfig({
+ *   repository: {
+ *     owner: "peakpointch",
+ *     name: "peakpoint",
+ *   },
+ *   devServer: {
+ *     webflowSubdomain: "peakpoint",
+ *   },
+ *   build: {},
+ * });
+ * ```
+ *
+ * @example
+ * ```typescript
+ * export default defineConfig({
+ *   repository: {
+ *     owner: "peakpointch",
+ *     name: "peakpoint",
+ *   },
+ *   devServer: {
+ *     webflowSubdomain: "peakpoint",
+ *     port: 4000,
+ *     livereload: true,
+ *     watchList: ["./src", "./public"],
+ *   },
+ *   build: {
+ *     modules: ["./src/index.ts", "./src/marketing.ts"],
+ *     outdir: "./dist",
+ *   },
+ *   environments: [
+ *     {
+ *       name: "production",
+ *       version: "1.2.0",
+ *       modules: ["./src/index.ts"],
+ *       pages: ["/**"],
+ *     },
+ *   ],
+ * });
+ * ```
+ */
+export declare function defineConfig(config: RawPeakflowConfig): RawPeakflowConfig;
 export {};
