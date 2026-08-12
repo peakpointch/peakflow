@@ -23,13 +23,22 @@ const moduleSchema = z.object({
     file: z.string().nonempty(),
     version: z.string().optional(),
 });
-const environmentSchema = z.object({
+const environmentSchema = z
+    .object({
     name: z.string().nonempty(),
     skip: z.boolean().default(false),
     modules: z.array(z.union([z.string(), moduleSchema])).default([]),
     version: z.string(),
     pages: z.array(z.string()).default([]),
-});
+})
+    .transform(({ modules, version, ...environment }) => ({
+    ...environment,
+    version,
+    modules: modules.map((module) => ({
+        file: typeof module === "string" ? module : module.file,
+        version: typeof module === "string" ? version : (module.version ?? version),
+    })),
+}));
 /**
  * The `PeakflowConfig` runtime schema used for config validation.
  */
@@ -37,7 +46,7 @@ export const configSchema = z.object({
     repository: repositorySchema,
     devServer: devServerSchema,
     build: buildSchema,
-    environments: z.array(environmentSchema).default([]).optional(),
+    environments: z.array(environmentSchema).default([]),
 });
 /**
  * Define the configuration for a Peakflow project (type wrapper only).

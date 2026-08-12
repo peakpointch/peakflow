@@ -17,7 +17,7 @@ declare const moduleSchema: z.ZodObject<{
     file: z.ZodString;
     version: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
-declare const environmentSchema: z.ZodObject<{
+declare const environmentSchema: z.ZodPipe<z.ZodObject<{
     name: z.ZodString;
     skip: z.ZodDefault<z.ZodBoolean>;
     modules: z.ZodDefault<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodObject<{
@@ -26,7 +26,25 @@ declare const environmentSchema: z.ZodObject<{
     }, z.core.$strip>]>>>;
     version: z.ZodString;
     pages: z.ZodDefault<z.ZodArray<z.ZodString>>;
-}, z.core.$strip>;
+}, z.core.$strip>, z.ZodTransform<{
+    name: string;
+    skip: boolean;
+    pages: string[];
+    version: string;
+    modules: {
+        file: string;
+        version: string;
+    }[];
+}, {
+    name: string;
+    skip: boolean;
+    modules: (string | {
+        file: string;
+        version?: string;
+    })[];
+    version: string;
+    pages: string[];
+}>>;
 /**
  * The `PeakflowConfig` runtime schema used for config validation.
  */
@@ -45,7 +63,7 @@ export declare const configSchema: z.ZodObject<{
         modules: z.ZodDefault<z.ZodArray<z.ZodString>>;
         outdir: z.ZodDefault<z.ZodString>;
     }, z.core.$strip>>;
-    environments: z.ZodOptional<z.ZodDefault<z.ZodArray<z.ZodObject<{
+    environments: z.ZodDefault<z.ZodArray<z.ZodPipe<z.ZodObject<{
         name: z.ZodString;
         skip: z.ZodDefault<z.ZodBoolean>;
         modules: z.ZodDefault<z.ZodArray<z.ZodUnion<readonly [z.ZodString, z.ZodObject<{
@@ -54,7 +72,25 @@ export declare const configSchema: z.ZodObject<{
         }, z.core.$strip>]>>>;
         version: z.ZodString;
         pages: z.ZodDefault<z.ZodArray<z.ZodString>>;
-    }, z.core.$strip>>>>;
+    }, z.core.$strip>, z.ZodTransform<{
+        name: string;
+        skip: boolean;
+        pages: string[];
+        version: string;
+        modules: {
+            file: string;
+            version: string;
+        }[];
+    }, {
+        name: string;
+        skip: boolean;
+        modules: (string | {
+            file: string;
+            version?: string;
+        })[];
+        version: string;
+        pages: string[];
+    }>>>>;
 }, z.core.$strip>;
 export type RawPeakflowRepo = z.input<typeof repositorySchema>;
 export type RawPeakflowDevServer = z.input<typeof devServerSchema>;
