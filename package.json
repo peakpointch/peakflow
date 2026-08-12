@@ -242,7 +242,7 @@
   ],
   "scripts": {
     "clean": "rimraf ./dist",
-    "build": "npm run clean --silent && tsc",
+    "build": "npm run clean --silent && tsgo",
     "build:time-zones": "npm install -D iana-tz-data && node ./scripts/extract-timezones.js",
     "create-module": "node ./scripts/createModule.js",
     "prettier": "prettier \"./src/**/*.+(js|json|scss|css|less|ts|jsx|mjs)\"",
@@ -255,7 +255,7 @@
     "madge": "^8.0.0",
     "prettier": "^3.8.3",
     "rimraf": "^6.0.1",
-    "typescript": "^5.8.3"
+    "typescript": "^7.0.2"
   },
   "dependencies": {
     "@calcom/embed-core": "^1.5.3",
