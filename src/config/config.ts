@@ -49,58 +49,10 @@ export const configSchema = z.object({
   environments: z.array(environmentSchema).default([]),
 });
 
-/**
- * The GitHub repository of your project.
- *
- * This is used to construct the JSDelivr URLs from which your production
- * modules are served.
- *
- * @property owner The GitHub username or organization that owns the repository.
- * @property name The name of the GitHub repository.
- *
- * @example
- * ```typescript
- * const repository = {
- *   owner: "peakpointch",
- *   name: "peakpoint",
- * };
- * ```
- */
 export type RawPeakflowRepo = z.input<typeof repositorySchema>;
-
-/**
- * Development server configuration.
- *
- * Only `webflowSubdomain` is required. All other properties have defaults
- * applied when the configuration is parsed.
- *
- * @property webflowSubdomain The Webflow subdomain to proxy during development.
- * @property port The local development server port. Defaults to `3000`.
- * @property livereload Whether livereload is enabled. Defaults to `true`.
- * @property watchList Paths watched for changes. Defaults to `["./src"]`.
- */
 export type RawPeakflowDevServer = z.input<typeof devServerSchema>;
-
-/**
- * A Peakflow publishing environment.
- *
- * Environments describe which modules and pages belong to a particular
- * versioned deployment.
- *
- * @property name The name of the environment.
- * @property modules Modules included in the environment.
- * @property version The version associated with the environment.
- * @property pages Page patterns to which the environment applies.
- */
-export type RawPeakflowEnv = z.input<typeof environmentSchema>;
-
-/**
- * Build configuration before defaults are applied.
- *
- * @property modules Entry modules to build. Defaults to `["./src/index.ts"]`.
- * @property outdir Directory where build output is written. Defaults to `"./dist"`.
- */
 export type RawPeakflowBuild = z.input<typeof buildSchema>;
+export type RawPeakflowEnv = z.input<typeof environmentSchema>;
 
 /**
  * Unsanitized configuration for a Peakflow app.
@@ -109,9 +61,54 @@ export type RawPeakflowBuild = z.input<typeof buildSchema>;
  * and defaults are applied.
  */
 export type RawPeakflowConfig = {
+  /**
+   * The GitHub repository of your project.
+   *
+   * This is used to construct the JSDelivr URLs from which your production
+   * modules are served.
+   *
+   * @property owner The GitHub username or organization that owns the repository.
+   * @property name The name of the GitHub repository.
+   *
+   * @example
+   * ```typescript
+   * const repository = {
+   *   owner: "peakpointch",
+   *   name: "peakpoint",
+   * };
+   * ```
+   */
   repository: RawPeakflowRepo;
+  /**
+   * Development server configuration.
+   *
+   * Only `webflowSubdomain` is required. All other properties have defaults
+   * applied when the configuration is parsed.
+   *
+   * @property webflowSubdomain The Webflow subdomain to proxy during development.
+   * @property port The local development server port. Defaults to `3000`.
+   * @property livereload Whether livereload is enabled. Defaults to `true`.
+   * @property watchList Paths watched for changes. Defaults to `["./src"]`.
+   */
   devServer: RawPeakflowDevServer;
+  /**
+   * Build configuration before defaults are applied.
+   *
+   * @property modules Entry modules to build. Defaults to `["./src/index.ts"]`.
+   * @property outdir Directory where build output is written. Defaults to `"./dist"`.
+   */
   build: RawPeakflowBuild;
+  /**
+   * A Peakflow publishing environment.
+   *
+   * Environments describe which modules and pages belong to a particular
+   * versioned deployment.
+   *
+   * @property name The name of the environment.
+   * @property modules Modules included in the environment.
+   * @property version The version associated with the environment.
+   * @property pages Page patterns to which the environment applies.
+   */
   environments?: RawPeakflowEnv[];
 };
 
@@ -133,9 +130,7 @@ export type PeakflowConfig = z.output<typeof configSchema>;
  * Compile-time assertion ensuring that `RawPeakflowConfig` stays in sync
  * with the input accepted by `configSchema`.
  */
-type _InputMatches = Expect<
-  Equal<RawPeakflowConfig, z.input<typeof configSchema>>
->;
+type _InputMatches = Expect<Equal<RawPeakflowConfig, z.input<typeof configSchema>>>;
 
 /**
  * Define the configuration for a Peakflow project.
@@ -152,22 +147,6 @@ type _InputMatches = Expect<
  *
  * @param config The unsanitized Peakflow configuration.
  * @returns The configuration unchanged.
- *
- * @example
- * ```typescript
- * import { defineConfig } from "peakflow/config";
- *
- * export default defineConfig({
- *   repository: {
- *     owner: "peakpointch",
- *     name: "peakpoint",
- *   },
- *   devServer: {
- *     webflowSubdomain: "peakpoint",
- *   },
- *   build: {},
- * });
- * ```
  *
  * @example
  * ```typescript

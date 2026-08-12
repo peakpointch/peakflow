@@ -59,22 +59,6 @@ export const configSchema = z.object({
  *
  * @example
  * ```typescript
- * import { defineConfig } from "peakflow/config";
- *
- * export default defineConfig({
- *   repository: {
- *     owner: "peakpointch",
- *     name: "peakpoint",
- *   },
- *   devServer: {
- *     webflowSubdomain: "peakpoint",
- *   },
- *   build: {},
- * });
- * ```
- *
- * @example
- * ```typescript
  * export default defineConfig({
  *   repository: {
  *     owner: "peakpointch",
