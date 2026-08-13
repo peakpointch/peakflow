@@ -29,7 +29,7 @@ import type { ScrollPosition } from "../../scroll";
 import { pluralize } from "../../pluralize";
 
 import semver from "semver";
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../../typeutils/index.js";
 
 type ArrayElement =
   | "component"
@@ -189,7 +189,7 @@ export class FormArray<Item extends FormArrayItem> extends BaseComponent<ArrayEl
   private editingKey: string | null = null;
   private unsavedItem: Item | null = null;
 
-  constructor(settings: PartialDeep<FormArraySettings<Item>>) {
+  constructor(settings: PartialOptions<FormArraySettings<Item>>) {
     super(FormArray.select("component", settings.id), settings);
 
     if (this.settings.itemClass === undefined) {

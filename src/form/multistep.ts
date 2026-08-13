@@ -21,7 +21,7 @@ import {
 } from "./index.js";
 import wf from "../webflow/index.js";
 import { asSuffix, mergeOptions } from "../utils";
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 import EventEmitter from "eventemitter3";
 
 // Types
@@ -127,7 +127,7 @@ export class MultiStepForm {
   private submitButton: HTMLInputElement | null;
   private lp: string;
 
-  constructor(component: HTMLElement, options: PartialDeep<MultiStepFormOptions>) {
+  constructor(component: HTMLElement, options: PartialOptions<MultiStepFormOptions>) {
     this.component = component;
     this.options = mergeOptions(MultiStepForm.defaultOptions, options);
     this.id = this.options.id;

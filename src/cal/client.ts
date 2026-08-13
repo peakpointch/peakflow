@@ -1,6 +1,6 @@
 import type { GlobalCal } from "@calcom/embed-core";
 import type { BookerLayouts, EmbedThemeConfig } from "@calcom/embed-core/dist/src/types";
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 import { mergeOptions, Script } from "../utils";
 import type {
   EventData as CalEventData,
@@ -179,7 +179,7 @@ export class CalClient<Namespace extends string = string> {
    * @param options Optional partial configuration for the client instance itself.
    * @private
    */
-  private constructor(options?: PartialDeep<CalClientOptions>) {
+  private constructor(options?: PartialOptions<CalClientOptions>) {
     this.options = mergeOptions(CalClient.defaultOptions, options);
   }
 
@@ -193,7 +193,7 @@ export class CalClient<Namespace extends string = string> {
    * @returns A promise that resolves with a fully initialized CalClient instance.
    */
   public static async create<T extends string = string>(
-    options?: PartialDeep<CalClientOptions>,
+    options?: PartialOptions<CalClientOptions>,
   ): Promise<CalClient<T>> {
     const client = new CalClient(options);
     if (client.options.load) await client.loadCal();

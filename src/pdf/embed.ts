@@ -1,4 +1,4 @@
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 import { Selector, type AttributeAccessorMap, type BaseAttributes } from "../selector/index.js";
 import { BaseComponent, type BaseSettings } from "../base-component/index.js";
 import { logPrefix } from "../utils/logger.js";
@@ -38,7 +38,7 @@ export class PdfEmbed extends BaseComponent<PdfEmbedElement, PdfEmbedSettings> {
   private static lp = logPrefix("PdfEmbed");
   private lp = logPrefix("PdfEmbed", this.settings.id);
 
-  constructor(component: HTMLElement, settings?: PartialDeep<PdfEmbedSettings | ClientIds>) {
+  constructor(component: HTMLElement, settings?: PartialOptions<PdfEmbedSettings | ClientIds>) {
     super(component, settings);
     this.elements = {
       component: this.component,

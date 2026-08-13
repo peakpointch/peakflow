@@ -1,7 +1,7 @@
 import gsap from "gsap";
 import Selector from "../selector";
 import { BaseComponent, type BaseSettings } from "../base-component";
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 import { objectToCSS, breakpointsToMediaQueries } from "../utils/css";
 
 export type CursorElement = "pointer";
@@ -54,8 +54,8 @@ export class Cursor<T extends string> extends BaseComponent<CursorElement, Curso
   public cursors: HTMLElement[] = [];
   public settings: CursorSettings<T>;
 
-  constructor(cursor: HTMLElement, settings?: PartialDeep<CursorSettings<T>>) {
-    super(cursor, settings as PartialDeep<CursorSettings>);
+  constructor(cursor: HTMLElement, settings?: PartialOptions<CursorSettings<T>>) {
+    super(cursor, settings as PartialOptions<CursorSettings>);
 
     this.currentTheme = this.settings.defaultTheme;
 
@@ -70,7 +70,7 @@ export class Cursor<T extends string> extends BaseComponent<CursorElement, Curso
   public static select = Selector.select<CursorElement>(this.selector);
   public static selectAll = Selector.selectAll<CursorElement>(this.selector);
 
-  public static create<T extends string>(settings: PartialDeep<CursorSettings<T>>): Cursor<T> {
+  public static create<T extends string>(settings: PartialOptions<CursorSettings<T>>): Cursor<T> {
     const el = document.createElement("div");
     document.body.appendChild(el);
 

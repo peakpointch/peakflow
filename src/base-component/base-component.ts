@@ -2,7 +2,7 @@ import type { LogLevel, LogLevelNames } from "loglevel";
 import Logger from "../logger/";
 import { Selector, type AttributeAccessorMap, type BaseAttributes } from "../selector";
 import { mergeOptions } from "../utils";
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 
 export interface BaseSettings {
   id: string;
@@ -28,7 +28,7 @@ export abstract class BaseComponent<
   public logger: Logger;
   public settings: Settings;
 
-  constructor(component: HTMLElement, settings?: PartialDeep<Settings>) {
+  constructor(component: HTMLElement, settings?: PartialOptions<Settings>) {
     if (!component) throw new Error(`Component element cannot be null`);
     const SubClass = this.constructor as typeof BaseComponent;
     this.component = component;

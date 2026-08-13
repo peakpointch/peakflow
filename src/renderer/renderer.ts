@@ -1,7 +1,7 @@
 import { format, parse } from "date-fns";
 import { fromZonedTime } from "date-fns-tz";
 import { de } from "date-fns/locale";
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 
 import Path from "../path/index.js";
 import wf from "../webflow/index.js";
@@ -61,7 +61,7 @@ export class Renderer<F extends FilterAttributes<keyof F & string> = {}> {
     missingFields: [],
   };
 
-  constructor(canvas: HTMLElement | null, options?: PartialDeep<RendererOptions<F>>) {
+  constructor(canvas: HTMLElement | null, options?: PartialOptions<RendererOptions<F>>) {
     if (!canvas) throw new Error(`${this.lp}Canvas can't be undefined.`);
     this.canvas = canvas;
     this.options = mergeOptions(Renderer.defaultOptions as RendererOptions<F>, options);

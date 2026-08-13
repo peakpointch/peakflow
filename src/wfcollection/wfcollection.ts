@@ -1,4 +1,4 @@
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 import Renderer from "../renderer/index.js";
 import type { FilterAttributes, RenderData, RendererOptions } from "../renderer/index.js";
 import mergeOptions from "../utils/merge-options.js";
@@ -16,7 +16,7 @@ interface WfCollectionOptions<F extends FilterAttributes> {
   name: string;
   debug: boolean;
   hasNestedList: boolean;
-  readonly rendererOptions: PartialDeep<RendererOptions<F>>;
+  readonly rendererOptions: PartialOptions<RendererOptions<F>>;
 }
 
 class WfCollection<F extends FilterAttributes = {}> {

@@ -1,4 +1,4 @@
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 import { mergeOptions } from "../utils/merge-options.js";
 import { toDashCase } from "../utils/parameterize.js";
 
@@ -22,7 +22,7 @@ export type CSSMediaQuery = Record<string, CSSRule>;
 
 export function objectToCSS(
   obj: CSSRule | CSSMediaQuery,
-  options: PartialDeep<ObjectToCSSOptions> = {},
+  options: PartialOptions<ObjectToCSSOptions> = {},
 ): string {
   const opts = { ...defaultObjectToCSSOptions, ...options };
   const c = {
@@ -66,7 +66,7 @@ const defaultCSSBreakpointOptions: CSSBreakpointOptions = {
 export function breakpointsToMediaQueries(
   breakpoints: CSSBreakpoint,
   callback: (styles: any) => CSSRule = (styles) => styles,
-  options: PartialDeep<CSSBreakpointOptions> = {},
+  options: PartialOptions<CSSBreakpointOptions> = {},
 ): CSSMediaQuery {
   const opts = mergeOptions(defaultCSSBreakpointOptions, options);
   const mediaType = opts.mobileFirst ? "min-width" : "max-width";

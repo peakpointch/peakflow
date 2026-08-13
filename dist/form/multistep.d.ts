@@ -1,6 +1,6 @@
 import { type FormProgressComponent, FieldGroup } from "./index.js";
 import { type HTMLFormInput, type CustomValidator, FormProgressManager } from "./index.js";
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 import EventEmitter from "eventemitter3";
 interface FormOptions {
     id: string;
@@ -64,7 +64,7 @@ export declare class MultiStepForm {
     private errorElement;
     private submitButton;
     private lp;
-    constructor(component: HTMLElement, options: PartialDeep<MultiStepFormOptions>);
+    constructor(component: HTMLElement, options: PartialOptions<MultiStepFormOptions>);
     private validateComponent;
     private validateOptions;
     private cacheDomElements;

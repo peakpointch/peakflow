@@ -1,6 +1,6 @@
 import { type Attribute, type Attributes, Dataset } from "../selector/attributes.js";
 import type { CollectionListItem } from "./item.js";
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 import { BaseComponent } from "../base-component/index.js";
 import { type PayloadVariables } from "../payload/payload.js";
 type CollectionListElement = "wrapper" | "list" | "item" | "empty" | "pagination";
@@ -32,7 +32,7 @@ export declare class CollectionList<Item extends CollectionListItem = Collection
     listElement?: HTMLElement | null;
     emptyState?: HTMLElement | null;
     private items;
-    constructor(component: HTMLElement | null, settings?: PartialDeep<CollectionListSettings>);
+    constructor(component: HTMLElement | null, settings?: PartialOptions<CollectionListSettings>);
     private initElements;
     protected static attributeSelector: import("../index.js").AttributeSelector<CollectionListElement>;
     static selector: import("../index.js").InstanceSelector<CollectionListElement>;

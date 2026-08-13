@@ -1,4 +1,4 @@
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 import Path from "../path/index.js";
 import { HTMLRenderNode, HTMLRenderField, HTMLRenderBlock } from "./dom/index.js";
 import type { RenderData, RendererOptions, RendererWarnings, RenderAttributes, FilterAttributes } from "./types.js";
@@ -18,7 +18,7 @@ export declare class Renderer<F extends FilterAttributes<keyof F & string> = {}>
     private lp;
     private attributeName;
     private warnings;
-    constructor(canvas: HTMLElement | null, options?: PartialDeep<RendererOptions<F>>);
+    constructor(canvas: HTMLElement | null, options?: PartialOptions<RendererOptions<F>>);
     static defineAttributes<T extends FilterAttributes>(obj: T): T;
     static getAttributes(attributeName?: string): RenderAttributes;
     logWarnings(...keys: (keyof RendererWarnings)[]): Partial<RendererWarnings>;

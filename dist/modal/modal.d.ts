@@ -1,4 +1,4 @@
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 import { type AttributeAccessorMap, type BaseAttributes } from "../selector/index.js";
 import { ScrollHandler } from "../scroll/index.js";
 import { BaseComponent, type BaseSettings } from "../base-component/index.js";
@@ -34,7 +34,7 @@ export declare class Modal extends BaseComponent<ModalElement> {
     scrollHandler: ScrollHandler;
     scrollTo: ScrollHandler["scrollTo"];
     clearScrollTimeout: ScrollHandler["clearScrollTimeout"];
-    constructor(component: HTMLElement | null, settings?: PartialDeep<ModalSettings>);
+    constructor(component: HTMLElement | null, settings?: PartialOptions<ModalSettings>);
     protected static attributeSelector: import("../index.js").AttributeSelector<ModalElement>;
     static selector: import("../index.js").InstanceSelector<ModalElement>;
     static select: <U extends Element = HTMLElement>(element: ModalElement, instance?: string, options?: import("../index.js").SelectOptions) => U;

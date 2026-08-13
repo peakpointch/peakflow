@@ -1,4 +1,4 @@
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 import Selector, { type AttributeAccessorMap, type BaseAttributes } from "../selector/index.js";
 import {
   ScrollHandler,
@@ -73,7 +73,7 @@ export class Modal extends BaseComponent<ModalElement> {
   public scrollTo: ScrollHandler["scrollTo"];
   public clearScrollTimeout: ScrollHandler["clearScrollTimeout"];
 
-  constructor(component: HTMLElement | null, settings: PartialDeep<ModalSettings> = {}) {
+  constructor(component: HTMLElement | null, settings: PartialOptions<ModalSettings> = {}) {
     super(component, settings);
     this.modal = this.getModalElement();
     component.setAttribute(Modal.attr.id, this.id);

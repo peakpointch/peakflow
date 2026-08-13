@@ -1,7 +1,7 @@
 import gsap from "gsap";
 import { BaseComponent, type BaseSettings } from "../base-component";
 import Selector from "../selector";
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 
 export type ToggleElement = "component" | "checkbox" | "toggle";
 
@@ -33,7 +33,7 @@ export class Toggle extends BaseComponent<ToggleElement, ToggleSettings> {
   public checkbox: HTMLInputElement;
   public toggle: HTMLElement;
 
-  constructor(checkbox: HTMLInputElement, options?: PartialDeep<ToggleSettings>) {
+  constructor(checkbox: HTMLInputElement, options?: PartialOptions<ToggleSettings>) {
     super(checkbox, options);
     // 1. Define the elements relative to the specific checkbox
     // The wrapper is the parent <label>
@@ -96,7 +96,7 @@ export class Toggle extends BaseComponent<ToggleElement, ToggleSettings> {
 
   public static initAll(
     container: HTMLElement | Document = document.body,
-    settings?: PartialDeep<Omit<ToggleSettings, "id">>,
+    settings?: PartialOptions<Omit<ToggleSettings, "id">>,
   ): void {
     const components = container.querySelectorAll<HTMLInputElement>(Toggle.selector("component"));
     components.forEach((element) => {

@@ -1,7 +1,7 @@
 import type { LogLevelNames } from "loglevel";
 import Logger from "../logger/";
 import { type AttributeAccessorMap, type BaseAttributes } from "../selector";
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 export interface BaseSettings {
     id: string;
 }
@@ -15,7 +15,7 @@ export declare abstract class BaseComponent<Elements extends string, Settings ex
     readonly id: string;
     logger: Logger;
     settings: Settings;
-    constructor(component: HTMLElement, settings?: PartialDeep<Settings>);
+    constructor(component: HTMLElement, settings?: PartialOptions<Settings>);
     selector(element: Elements, global?: boolean): string;
     select<T extends Element = HTMLElement>(element: Elements, global?: boolean): T;
     selectAll<T extends Element = HTMLElement>(element: Elements, global?: boolean): NodeListOf<T>;

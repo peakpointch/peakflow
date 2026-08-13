@@ -1,5 +1,5 @@
 import { BaseComponent, type BaseSettings } from "../base-component";
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 export type CursorElement = "pointer";
 export type CursorState = "base" | "hover";
 export type CursorTheme = Record<CursorState, gsap.TweenVars>;
@@ -27,12 +27,12 @@ export declare class Cursor<T extends string> extends BaseComponent<CursorElemen
     currentTheme: T;
     cursors: HTMLElement[];
     settings: CursorSettings<T>;
-    constructor(cursor: HTMLElement, settings?: PartialDeep<CursorSettings<T>>);
+    constructor(cursor: HTMLElement, settings?: PartialOptions<CursorSettings<T>>);
     protected static attributeSelector: import("..").AttributeSelector<"pointer">;
     static selector: import("..").InstanceSelector<"pointer">;
     static select: <U extends Element = HTMLElement>(element: "pointer", instance?: string, options?: import("..").SelectOptions) => U;
     static selectAll: <U extends Element = HTMLElement>(element: "pointer", instance?: string, options?: import("..").SelectOptions) => NodeListOf<U>;
-    static create<T extends string>(settings: PartialDeep<CursorSettings<T>>): Cursor<T>;
+    static create<T extends string>(settings: PartialOptions<CursorSettings<T>>): Cursor<T>;
     addPointer(pointer: HTMLElement): void;
     addTail(pointer: HTMLElement, vars: gsap.TweenVars): void;
     applyState(state: CursorState, override?: gsap.TweenVars): void;

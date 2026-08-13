@@ -1,4 +1,4 @@
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 import { type AttributeAccessorMap, type BaseAttributes } from "../selector/index.js";
 import { BaseComponent, type BaseSettings } from "../base-component/index.js";
 import type { DashToCamelCase } from "../typeutils/index.js";
@@ -26,7 +26,7 @@ export declare class PdfEmbed extends BaseComponent<PdfEmbedElement, PdfEmbedSet
     pdfEmbedId: string;
     private static lp;
     private lp;
-    constructor(component: HTMLElement, settings?: PartialDeep<PdfEmbedSettings | ClientIds>);
+    constructor(component: HTMLElement, settings?: PartialOptions<PdfEmbedSettings | ClientIds>);
     protected static attributeSelector: import("../index.js").AttributeSelector<PdfEmbedElement>;
     static selector: import("../index.js").InstanceSelector<PdfEmbedElement>;
     static select: <U extends Element = HTMLElement>(element: PdfEmbedElement, instance?: string, options?: import("../index.js").SelectOptions) => U;

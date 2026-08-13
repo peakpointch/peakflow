@@ -1,5 +1,5 @@
 import { BaseComponent, type BaseSettings } from "../base-component";
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 export type ToggleElement = "component" | "checkbox" | "toggle";
 export interface ToggleSettings extends BaseSettings {
     colors: {
@@ -17,12 +17,12 @@ export declare class Toggle extends BaseComponent<ToggleElement, ToggleSettings>
     };
     checkbox: HTMLInputElement;
     toggle: HTMLElement;
-    constructor(checkbox: HTMLInputElement, options?: PartialDeep<ToggleSettings>);
+    constructor(checkbox: HTMLInputElement, options?: PartialOptions<ToggleSettings>);
     protected static attributeSelector: import("..").AttributeSelector<ToggleElement>;
     static selector: import("..").InstanceSelector<ToggleElement>;
     static select: <U extends Element = HTMLElement>(element: ToggleElement, instance?: string, options?: import("..").SelectOptions) => U;
     static selectAll: <U extends Element = HTMLElement>(element: ToggleElement, instance?: string, options?: import("..").SelectOptions) => NodeListOf<U>;
     private initEventListeners;
     private updateToggleState;
-    static initAll(container?: HTMLElement | Document, settings?: PartialDeep<Omit<ToggleSettings, "id">>): void;
+    static initAll(container?: HTMLElement | Document, settings?: PartialOptions<Omit<ToggleSettings, "id">>): void;
 }

@@ -1,6 +1,6 @@
 import type { GlobalCal } from "@calcom/embed-core";
 import type { BookerLayouts, EmbedThemeConfig } from "@calcom/embed-core/dist/src/types";
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 import type { EventData as CalEventData, EventDataMap as CalEventDataMap } from "@calcom/embed-core/dist/src/sdk-action-manager";
 /** The string literal of all available Cal.com embed event names. */
 type CalEventName = keyof CalEventDataMap;
@@ -156,7 +156,7 @@ export declare class CalClient<Namespace extends string = string> {
      * @param initialNamespaceOptions Optional configuration to immediately initialize the first namespace/embed.
      * @returns A promise that resolves with a fully initialized CalClient instance.
      */
-    static create<T extends string = string>(options?: PartialDeep<CalClientOptions>): Promise<CalClient<T>>;
+    static create<T extends string = string>(options?: PartialOptions<CalClientOptions>): Promise<CalClient<T>>;
     /**
      * Loads Cal into the window scope using the Cal.com snippet logic.
      *

@@ -1,4 +1,4 @@
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 export interface ObjectToCSSOptions {
     convertCasing: boolean;
     pretty: boolean;
@@ -8,10 +8,10 @@ export interface ObjectToCSSOptions {
 export type CSSRule = Record<string, gsap.CSSVars>;
 export type CSSBreakpoint = Record<number, CSSRule>;
 export type CSSMediaQuery = Record<string, CSSRule>;
-export declare function objectToCSS(obj: CSSRule | CSSMediaQuery, options?: PartialDeep<ObjectToCSSOptions>): string;
+export declare function objectToCSS(obj: CSSRule | CSSMediaQuery, options?: PartialOptions<ObjectToCSSOptions>): string;
 export type CSSUnit = "px" | "em" | "rem" | "%" | "vw" | "svw" | "vh" | "svh";
 export interface CSSBreakpointOptions {
     unit: CSSUnit;
     mobileFirst: boolean;
 }
-export declare function breakpointsToMediaQueries(breakpoints: CSSBreakpoint, callback?: (styles: any) => CSSRule, options?: PartialDeep<CSSBreakpointOptions>): CSSMediaQuery;
+export declare function breakpointsToMediaQueries(breakpoints: CSSBreakpoint, callback?: (styles: any) => CSSRule, options?: PartialOptions<CSSBreakpointOptions>): CSSMediaQuery;

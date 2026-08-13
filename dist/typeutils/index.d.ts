@@ -24,3 +24,14 @@ export type StringTypeMap = {
 };
 export type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => (T extends B ? 1 : 2) ? true : false;
 export type Expect<T extends true> = T;
+/**
+ * Recursively makes properties of option objects optional.
+ *
+ * Functions, arrays, DOM nodes, and class instances are treated as atomic
+ * values and are not recursively made partial.
+ */
+export type PartialOptions<T> = T extends (...args: any[]) => any ? T : T extends readonly unknown[] ? T : T extends Node ? T : T extends {
+    constructor: new (...args: any[]) => any;
+} ? T : T extends object ? {
+    [K in keyof T]?: PartialOptions<T[K]>;
+} : T;

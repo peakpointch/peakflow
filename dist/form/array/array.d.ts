@@ -5,7 +5,7 @@ import type { FormArrayDialogs, FormMessages, GrammarOptions } from "./messages"
 import { FormProgressManager, type FormProgressComponent, type FieldGroupValidation } from "../index.js";
 import SplitButton from "../../split-button";
 import { Modal, AlertDialog } from "../../modal";
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../../typeutils/index.js";
 type ArrayElement = "component" | "list" | "template" | "add" | "edit" | "delete" | "save" | "draft" | "draft-badge" | "cancel" | "circle";
 type SerializedFormArray = SerializedItem[];
 type OnOpenCallback = (item?: FormArrayItem) => void;
@@ -79,7 +79,7 @@ export declare class FormArray<Item extends FormArrayItem> extends BaseComponent
     private onSaveCallbacks;
     private editingKey;
     private unsavedItem;
-    constructor(settings: PartialDeep<FormArraySettings<Item>>);
+    constructor(settings: PartialOptions<FormArraySettings<Item>>);
     protected static attributeSelector: import("../..").AttributeSelector<ArrayElement>;
     /**
      * Static selector

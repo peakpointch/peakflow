@@ -1,6 +1,6 @@
 import { type Attribute, type Attributes, Dataset } from "../selector/attributes.js";
 import type { CollectionListItem } from "./item.js";
-import type { PartialDeep } from "type-fest";
+import type { PartialOptions } from "../typeutils/index.js";
 import { wf } from "../webflow/webflow.js";
 import { Selector, exclude } from "../selector/selector.js";
 import { BaseComponent } from "../base-component/index.js";
@@ -53,7 +53,7 @@ export class CollectionList<
   public emptyState?: HTMLElement | null;
   private items: HTMLElement[] = [];
 
-  constructor(component: HTMLElement | null, settings: PartialDeep<CollectionListSettings> = {}) {
+  constructor(component: HTMLElement | null, settings: PartialOptions<CollectionListSettings> = {}) {
     super(component, settings);
 
     if (!component || !component.classList.contains("w-dyn-list")) {
