@@ -47,13 +47,28 @@ export class CollectionList<
   public dataset = CollectionList.dataset;
   public attr = this.dataset.attr;
 
-  public data: Item[] = [];
   public settings: CollectionListSettings;
   public listElement?: HTMLElement | null;
   public emptyState?: HTMLElement | null;
-  private items: HTMLElement[] = [];
 
-  constructor(component: HTMLElement | null, settings: PartialOptions<CollectionListSettings> = {}) {
+  /**
+   * Array of the parsed `Item`s
+   * - The `filter` method never deletes `Item`s from this array.
+   * - The `sort` method mutates this array in place.
+   */
+  public items: Item[] = [];
+
+  /**
+   * Array of the live DOM elements
+   * - The `filter` method never deletes `HTMLElement`s from this array.
+   * - The `sort` method mutates this array in place.
+   */
+  public elements: HTMLElement[] = [];
+
+  constructor(
+    component: HTMLElement | null,
+    settings: PartialOptions<CollectionListSettings> = {},
+  ) {
     super(component, settings);
 
     if (!component || !component.classList.contains("w-dyn-list")) {
@@ -77,7 +92,7 @@ export class CollectionList<
       : itemQuery;
 
     this.listElement = this.component.querySelector(listQuery);
-    this.items = Array.from(this.listElement?.querySelectorAll(selector) ?? []);
+    this.elements = Array.from(this.listElement?.querySelectorAll(selector) ?? []);
     this.emptyState = this.component.querySelector(emptyQuery);
 
     if (this.isEmpty()) {
@@ -104,7 +119,10 @@ export class CollectionList<
   }
 
   /**
-   * Parses the JSON Data Island of each list item and stores them in `collection.data`.
+   * Iterates over the `CollectionList`'s items, parses their JSON data (using
+   * the `payload` module) and stores the parsed `Item`s in `items` property.
+   *
+   * @returns The array of the parsed `Item`s
    *
    * @example HTML structure
    * ```html
@@ -123,10 +141,11 @@ export class CollectionList<
     const opts: ParseOptions = {
       variables: options.variables ?? {},
     };
-    this.data = [];
+
+    this.items = [];
 
     if (this.isEmpty()) {
-      return this.data;
+      return this.items;
     }
 
     const embedSelector = `${payload.selector("embed")}[${this.attr.id}="${this.id}"]`;
@@ -148,22 +167,29 @@ export class CollectionList<
           ...vars,
           ...opts.variables,
         });
-        this.data.push(parsed);
+        this.items.push(parsed);
       } catch (e) {
         this.logger.error("Failed to parse item.", e);
       }
     }
 
-    return this.data;
+    return this.items;
   }
 
   /**
-   * Only show items that meet the condition specified in the `predicate` function.
-   * @returns The filtered array.
-   * @param predicate A function that accepts up to three arguments. The filter method calls the predicate function one time for each element in the array.
+   * Only show items that meet the condition specified in the `predicate`
+   * function.
+   *
+   * @param predicate A function that accepts up to three arguments. The filter
+   *        method calls the predicate function one time for each element in the
+   *        array.
    * @param options Additional options that define how the filtering is conducted.
+   * @returns The filtered array.
    */
-  public filter(predicate: FilterFn<Item>, options: Partial<FilterOptions> = {}): Item[] {
+  public filter(
+    predicate: FilterFn<Item>,
+    options: Partial<FilterOptions> = {},
+  ): FilteredResponse<Item> {
     const opts: FilterOptions = {
       removeFromDom: options.removeFromDom ?? false,
     };
@@ -174,31 +200,36 @@ export class CollectionList<
       );
     }
 
-    if (this.isEmpty()) return;
+    const items: Item[] = [];
+    const visibleElements: HTMLElement[] = [];
 
-    const filtered: Item[] = [];
+    if (this.isEmpty()) return { items, visibleElements };
 
-    for (let i = 0; i < this.data.length; i++) {
-      const item = this.data[i];
-      const element = this.items[i];
+    for (let i = 0; i < this.items.length; i++) {
+      const item = this.items[i];
+      const element = this.elements[i];
 
       if (predicate(item, i)) {
         element.hidden = false;
-        filtered.push(item);
+        items.push(item);
+        visibleElements.push(element);
       } else {
         element.hidden = true;
       }
     }
 
-    return filtered;
+    return { items, visibleElements };
   }
 
   /**
-   * Sorts the `data` array property of this collection list in place, then renders the new order into the `listElement`.
+   * Sorts the `data` array property of this collection list in place, then
+   * renders the new order into the `listElement`.
    *
-   * @param compareFn Function used to determine the order of the elements. It is expected to return
-   * a negative value if the first argument is less than the second argument, zero if they're equal, and a positive
-   * value otherwise. If omitted, the elements are sorted in ascending, UTF-16 code unit order.
+   * @param compareFn Function used to determine the order of the elements. It
+   *        is expected to return a negative value if the first argument is
+   *        less than the second argument, zero if they're equal, and a positive
+   *        value otherwise. If omitted, the elements are sorted in ascending,
+   *        UTF-16 code unit order.
    *
    * @example Sort by `item.price` in descending order
    * ```ts
@@ -210,22 +241,22 @@ export class CollectionList<
 
     const elementMap = new Map<Item, HTMLElement>();
 
-    for (let i = 0; i < this.data.length; i++) {
-      elementMap.set(this.data[i], this.items[i]);
+    for (let i = 0; i < this.items.length; i++) {
+      elementMap.set(this.items[i], this.elements[i]);
     }
 
-    this.data.sort(compareFn);
+    this.items.sort(compareFn);
 
     const sortedFragment = document.createDocumentFragment();
 
-    for (let i = 0; i < this.data.length; i++) {
-      this.items[i] = elementMap.get(this.data[i]);
-      sortedFragment.appendChild(this.items[i]);
+    for (let i = 0; i < this.items.length; i++) {
+      this.elements[i] = elementMap.get(this.items[i]);
+      sortedFragment.appendChild(this.elements[i]);
     }
 
     this.listElement.appendChild(sortedFragment);
 
-    return this.data;
+    return this.items;
   }
 }
 
@@ -252,4 +283,15 @@ export interface FilterOptions {
    * @defaultValue `false`
    */
   removeFromDom: boolean;
+}
+
+export interface FilteredResponse<Item extends CollectionListItem> {
+  /**
+   * An array of the filtered `Item`s
+   */
+  items: Item[];
+  /**
+   * An array of the filtered `HTMLElement`s
+   */
+  visibleElements: HTMLElement[];
 }

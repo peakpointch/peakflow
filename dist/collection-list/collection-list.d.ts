@@ -27,11 +27,21 @@ export declare class CollectionList<Item extends CollectionListItem = Collection
     static attr: import("../index.js").AttributeAccessorMap<CollectionListAttributes>;
     dataset: Dataset<CollectionListAttributes>;
     attr: import("../index.js").AttributeAccessorMap<CollectionListAttributes>;
-    data: Item[];
     settings: CollectionListSettings;
     listElement?: HTMLElement | null;
     emptyState?: HTMLElement | null;
-    private items;
+    /**
+     * Array of the parsed `Item`s
+     * - The `filter` method never deletes `Item`s from this array.
+     * - The `sort` method mutates this array in place.
+     */
+    items: Item[];
+    /**
+     * Array of the live DOM elements
+     * - The `filter` method never deletes `HTMLElement`s from this array.
+     * - The `sort` method mutates this array in place.
+     */
+    elements: HTMLElement[];
     constructor(component: HTMLElement | null, settings?: PartialOptions<CollectionListSettings>);
     private initElements;
     protected static attributeSelector: import("../index.js").AttributeSelector<CollectionListElement>;
@@ -43,7 +53,10 @@ export declare class CollectionList<Item extends CollectionListItem = Collection
      */
     isEmpty(): boolean;
     /**
-     * Parses the JSON Data Island of each list item and stores them in `collection.data`.
+     * Iterates over the `CollectionList`'s items, parses their JSON data (using
+     * the `payload` module) and stores the parsed `Item`s in `items` property.
+     *
+     * @returns The array of the parsed `Item`s
      *
      * @example HTML structure
      * ```html
@@ -60,18 +73,25 @@ export declare class CollectionList<Item extends CollectionListItem = Collection
      */
     parse(options?: Partial<ParseOptions>): Item[];
     /**
-     * Only show items that meet the condition specified in the `predicate` function.
-     * @returns The filtered array.
-     * @param predicate A function that accepts up to three arguments. The filter method calls the predicate function one time for each element in the array.
-     * @param options Additional options that define how the filtering is conducted.
-     */
-    filter(predicate: FilterFn<Item>, options?: Partial<FilterOptions>): Item[];
-    /**
-     * Sorts the `data` array property of this collection list in place, then renders the new order into the `listElement`.
+     * Only show items that meet the condition specified in the `predicate`
+     * function.
      *
-     * @param compareFn Function used to determine the order of the elements. It is expected to return
-     * a negative value if the first argument is less than the second argument, zero if they're equal, and a positive
-     * value otherwise. If omitted, the elements are sorted in ascending, UTF-16 code unit order.
+     * @param predicate A function that accepts up to three arguments. The filter
+     *        method calls the predicate function one time for each element in the
+     *        array.
+     * @param options Additional options that define how the filtering is conducted.
+     * @returns The filtered array.
+     */
+    filter(predicate: FilterFn<Item>, options?: Partial<FilterOptions>): FilteredResponse<Item>;
+    /**
+     * Sorts the `data` array property of this collection list in place, then
+     * renders the new order into the `listElement`.
+     *
+     * @param compareFn Function used to determine the order of the elements. It
+     *        is expected to return a negative value if the first argument is
+     *        less than the second argument, zero if they're equal, and a positive
+     *        value otherwise. If omitted, the elements are sorted in ascending,
+     *        UTF-16 code unit order.
      *
      * @example Sort by `item.price` in descending order
      * ```ts
@@ -101,5 +121,15 @@ export interface FilterOptions {
      * @defaultValue `false`
      */
     removeFromDom: boolean;
+}
+export interface FilteredResponse<Item extends CollectionListItem> {
+    /**
+     * An array of the filtered `Item`s
+     */
+    items: Item[];
+    /**
+     * An array of the filtered `HTMLElement`s
+     */
+    visibleElements: HTMLElement[];
 }
 export {};
