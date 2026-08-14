@@ -113,23 +113,40 @@ export class CollectionList extends BaseComponent {
         const opts = {
             removeFromDom: options.removeFromDom ?? false,
         };
-        if (opts.removeFromDom) {
-            console.warn(`CollectionList "${this.settings.id}": The "removeFromDom" option is not supported yet. Hiding elements instead.`);
-        }
         const items = [];
         const visibleElements = [];
         if (this.isEmpty())
             return { items, visibleElements };
+        let lastVisibleElement = null;
+        const reinsertElement = (element) => {
+            if (lastVisibleElement) {
+                lastVisibleElement.insertAdjacentElement("afterend", element);
+            }
+            else {
+                this.listElement.prepend(element);
+            }
+            lastVisibleElement = element;
+        };
         for (let i = 0; i < this.items.length; i++) {
             const item = this.items[i];
             const element = this.elements[i];
             if (predicate(item, i)) {
-                element.hidden = false;
+                if (opts.removeFromDom) {
+                    reinsertElement(element);
+                }
+                else {
+                    element.hidden = false;
+                }
                 items.push(item);
                 visibleElements.push(element);
             }
             else {
-                element.hidden = true;
+                if (opts.removeFromDom) {
+                    element.remove();
+                }
+                else {
+                    element.hidden = true;
+                }
             }
         }
         return { items, visibleElements };
