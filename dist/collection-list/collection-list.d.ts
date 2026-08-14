@@ -52,6 +52,7 @@ export declare class CollectionList<Item extends CollectionListItem = Collection
      * @returns True if the collection list has no items, false otherwise.
      */
     isEmpty(): boolean;
+    private assertItemsMatchElements;
     /**
      * Iterates over the `CollectionList`'s items, parses their JSON data (using
      * the `payload` module) and stores the parsed `Item`s in `items` property.

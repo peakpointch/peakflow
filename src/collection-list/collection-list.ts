@@ -118,6 +118,14 @@ export class CollectionList<
     return !this.listElement && this.component.querySelector(".w-dyn-empty") !== null;
   }
 
+  private assertItemsMatchElements(): void {
+    if (this.items.length !== this.elements.length) {
+      throw new Error(
+        "Items and elements are out of sync. Use the parse() method before performing this action.",
+      );
+    }
+  }
+
   /**
    * Iterates over the `CollectionList`'s items, parses their JSON data (using
    * the `payload` module) and stores the parsed `Item`s in `items` property.
@@ -199,6 +207,8 @@ export class CollectionList<
 
     if (this.isEmpty()) return { items, visibleElements };
 
+    this.assertItemsMatchElements()
+
     let lastVisibleElement: HTMLElement | null = null;
 
     const reinsertElement = (element: HTMLElement): void => {
@@ -252,6 +262,8 @@ export class CollectionList<
    */
   public sort(compareFn: CompareFn<Item>): Item[] {
     if (this.isEmpty()) return [];
+
+    this.assertItemsMatchElements()
 
     const elementMap = new Map<Item, HTMLElement>();
 

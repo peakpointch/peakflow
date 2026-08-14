@@ -49,6 +49,11 @@ export class CollectionList extends BaseComponent {
     isEmpty() {
         return !this.listElement && this.component.querySelector(".w-dyn-empty") !== null;
     }
+    assertItemsMatchElements() {
+        if (this.items.length !== this.elements.length) {
+            throw new Error("Items and elements are out of sync. Use the parse() method before performing this action.");
+        }
+    }
     /**
      * Iterates over the `CollectionList`'s items, parses their JSON data (using
      * the `payload` module) and stores the parsed `Item`s in `items` property.
@@ -117,6 +122,7 @@ export class CollectionList extends BaseComponent {
         const visibleElements = [];
         if (this.isEmpty())
             return { items, visibleElements };
+        this.assertItemsMatchElements();
         let lastVisibleElement = null;
         const reinsertElement = (element) => {
             if (lastVisibleElement) {
@@ -169,6 +175,7 @@ export class CollectionList extends BaseComponent {
     sort(compareFn) {
         if (this.isEmpty())
             return [];
+        this.assertItemsMatchElements();
         const elementMap = new Map();
         for (let i = 0; i < this.items.length; i++) {
             elementMap.set(this.items[i], this.elements[i]);
