@@ -1,4 +1,5 @@
 import type { PartialExcept } from "../typeutils/index.js";
+import * as UC from "@uploadcare/file-uploader";
 export declare const UCLocaleMap: {
     readonly ar: {
         'locale-id': string;
@@ -8,6 +9,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -55,7 +57,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -72,7 +73,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -128,9 +128,22 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly az: {
         'locale-id': string;
@@ -140,6 +153,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -179,7 +193,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -196,7 +209,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -252,9 +264,22 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly ca: {
         'locale-id': string;
@@ -264,6 +289,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -305,7 +331,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -322,7 +347,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -378,9 +402,22 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly cs: {
         'locale-id': string;
@@ -390,6 +427,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -433,7 +471,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -450,7 +487,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -506,9 +542,22 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly da: {
         'locale-id': string;
@@ -518,6 +567,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -557,7 +607,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -574,7 +623,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -630,9 +678,22 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly de: {
         'locale-id': string;
@@ -642,6 +703,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -681,7 +743,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -698,7 +759,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -754,9 +814,22 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly el: {
         'locale-id': string;
@@ -766,6 +839,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -805,7 +879,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -822,7 +895,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -878,9 +950,22 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly en: {
         'locale-id': string;
@@ -890,6 +975,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -931,7 +1017,6 @@ export declare const UCLocaleMap: {
         'src-type-camera': string;
         'src-type-mobile-video-camera': string;
         'src-type-mobile-photo-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -946,7 +1031,6 @@ export declare const UCLocaleMap: {
         'src-type-other': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -998,13 +1082,26 @@ export declare const UCLocaleMap: {
         'a11y-cloud-editor-apply-filter': string;
         'a11y-cloud-editor-apply-crop': string;
         'a11y-cloud-editor-apply-tuning': string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
         finished: string;
         failed: string;
         uploading: string;
         idle: string;
         'a11y-file-item-status': string;
         'waiting-for': string;
-        queued: string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly es: {
         'locale-id': string;
@@ -1014,6 +1111,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -1055,7 +1153,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -1072,7 +1169,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -1128,9 +1224,22 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly et: {
         'locale-id': string;
@@ -1140,6 +1249,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -1179,7 +1289,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -1196,7 +1305,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -1252,9 +1360,22 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly fi: {
         'locale-id': string;
@@ -1264,6 +1385,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -1301,7 +1423,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -1318,7 +1439,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -1374,11 +1494,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly fr: {
         'locale-id': string;
@@ -1388,6 +1521,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -1427,7 +1561,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -1444,7 +1577,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -1500,11 +1632,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly he: {
         'locale-id': string;
@@ -1514,6 +1659,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -1553,7 +1699,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -1570,7 +1715,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -1626,11 +1770,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly hy: {
         'locale-id': string;
@@ -1640,6 +1797,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -1677,7 +1835,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -1694,7 +1851,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -1750,11 +1906,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly is: {
         'locale-id': string;
@@ -1764,6 +1933,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -1801,7 +1971,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -1818,7 +1987,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -1874,11 +2042,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly it: {
         'locale-id': string;
@@ -1888,6 +2069,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -1927,7 +2109,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -1944,7 +2125,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -2000,11 +2180,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly ja: {
         'locale-id': string;
@@ -2014,6 +2207,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -2051,7 +2245,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -2068,7 +2261,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -2124,11 +2316,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly ka: {
         'locale-id': string;
@@ -2138,6 +2343,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -2175,7 +2381,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -2192,7 +2397,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -2248,11 +2452,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly kk: {
         'locale-id': string;
@@ -2262,6 +2479,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -2299,7 +2517,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -2316,7 +2533,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -2372,11 +2588,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly ko: {
         'locale-id': string;
@@ -2386,6 +2615,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -2423,7 +2653,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -2440,7 +2669,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -2496,11 +2724,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly lv: {
         'locale-id': string;
@@ -2510,6 +2751,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -2549,7 +2791,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -2566,7 +2807,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -2626,7 +2866,20 @@ export declare const UCLocaleMap: {
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
-        queued: string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly nb: {
         'locale-id': string;
@@ -2636,6 +2889,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -2673,7 +2927,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -2690,7 +2943,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -2746,11 +2998,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly nl: {
         'locale-id': string;
@@ -2760,6 +3025,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -2797,7 +3063,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -2814,7 +3079,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -2870,11 +3134,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly pl: {
         'locale-id': string;
@@ -2884,6 +3161,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -2925,7 +3203,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -2942,7 +3219,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -2998,11 +3274,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly pt: {
         'locale-id': string;
@@ -3012,6 +3301,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -3051,7 +3341,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -3068,7 +3357,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -3124,11 +3412,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly ro: {
         'locale-id': string;
@@ -3138,6 +3439,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -3177,7 +3479,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -3194,7 +3495,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -3250,11 +3550,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly ru: {
         'locale-id': string;
@@ -3264,6 +3577,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -3305,7 +3619,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -3322,7 +3635,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -3378,11 +3690,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly sk: {
         'locale-id': string;
@@ -3392,6 +3717,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -3433,7 +3759,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -3450,7 +3775,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -3510,7 +3834,20 @@ export declare const UCLocaleMap: {
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
-        queued: string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly sr: {
         'locale-id': string;
@@ -3520,6 +3857,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -3559,7 +3897,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -3576,7 +3913,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -3636,7 +3972,20 @@ export declare const UCLocaleMap: {
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
-        queued: string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly sv: {
         'locale-id': string;
@@ -3646,6 +3995,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -3683,7 +4033,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -3700,7 +4049,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -3756,11 +4104,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly tr: {
         'locale-id': string;
@@ -3770,6 +4131,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -3807,7 +4169,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -3824,7 +4185,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -3880,11 +4240,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly uk: {
         'locale-id': string;
@@ -3894,6 +4267,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -3935,7 +4309,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -3952,7 +4325,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -4008,11 +4380,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly vi: {
         'locale-id': string;
@@ -4022,6 +4407,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -4059,7 +4445,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -4076,7 +4461,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -4132,11 +4516,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
     readonly zh: {
         'locale-id': string;
@@ -4146,6 +4543,7 @@ export declare const UCLocaleMap: {
         'choose-file': string;
         'choose-files': string;
         'drop-files-here': string;
+        'drop-file-here': string;
         'select-file-source': string;
         selected: string;
         upload: string;
@@ -4183,7 +4581,6 @@ export declare const UCLocaleMap: {
         'src-type-local': string;
         'src-type-from-url': string;
         'src-type-camera': string;
-        'src-type-draw': string;
         'src-type-facebook': string;
         'src-type-dropbox': string;
         'src-type-gdrive': string;
@@ -4200,7 +4597,6 @@ export declare const UCLocaleMap: {
         'src-type-mobile-photo-camera': string;
         'caption-from-url': string;
         'caption-camera': string;
-        'caption-draw': string;
         'caption-edit-file': string;
         'file-no-name': string;
         'toggle-fullscreen': string;
@@ -4256,11 +4652,24 @@ export declare const UCLocaleMap: {
         failed: string;
         uploading: string;
         idle: string;
-        queued: string;
         'a11y-file-item-status': string;
         'select-all': string;
         'deselect-all': string;
         'waiting-for': string;
+        'queued-uploading': string;
+        'queued-validation': string;
+        validation: string;
+        'a11y-cloud-editor-apply-aspect-ratio': string;
+        'crop-to-shape': string;
+        custom: string;
+        'freeform-crop': string;
+        'upload-from': string;
+        'get-from': string;
+        'capture-with': string;
+        take: string;
+        record: string;
+        retake: string;
+        accept: string;
     };
 };
 export type UCLocale = keyof typeof UCLocaleMap;
@@ -4306,9 +4715,9 @@ type PartialUCFileUploaderConfig = PartialExcept<UCFileUploaderConfig, "pubkey" 
  * @returns References to the created elements, esp. ctxProvider.
  */
 export declare function mountUCFileUploader(config: UCFileUploaderConfig): {
-    configEl: HTMLElement;
-    uploaderEl: HTMLElement;
-    ctxProvider: HTMLElement;
+    configEl: UC.Config;
+    uploaderEl: UC.FileUploaderMinimal;
+    ctxProvider: UC.UploadCtxProvider;
 };
 /**
  * Initialize Uploadcare file-uploader instance and attach the files to a form field.
