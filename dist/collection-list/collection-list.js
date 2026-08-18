@@ -34,7 +34,6 @@ import { PayloadValueError } from "../payload/schema.js";
  *   CollectionList.select("wrapper", "products"),
  *   {
  *     id: "products",
- *     selectorMode: "peakflow",
  *     schema: productSchema,
  *   },
  * );
@@ -84,35 +83,86 @@ export class CollectionList extends BaseComponent {
          * Filtering may hide or detach elements but never removes them from this array.
          */
         this.elements = [];
-        // TODO: Make this compatible with peakflow selector mode
-        // - ALSO: we need to verify tagged elements in peakflow selector mode
-        // - MORE IMPORTANTLY: decide wether to keep peakflow selector mode. If yes, implement it everywhere.
-        //     Argument for keeping: it is a library standard to use attributes to tag component elements
-        if (!component || !component.classList.contains("w-dyn-list")) {
-            throw new Error(`Collection list wrapper can't be undefined.`);
-        }
+        this.assertComponent();
         this.enableLogging();
         this.initElements();
     }
+    /**
+     * Validates the collection root's required Peakflow tags.
+     *
+     * Collection lists follow the same attribute-based selector contract as other
+     * `BaseComponent` implementations. The resolved collection ID must match the
+     * root's `data-cms-id` so selectors, payload embeds, and nested configuration
+     * cannot refer to different collection instances.
+     */
+    assertComponent() {
+        const wrapperSelector = this.selector("wrapper");
+        const attributeId = this.component.getAttribute(this.attr.id);
+        if (!this.component.matches(wrapperSelector)) {
+            throw new Error(`CollectionList must match the required root tag ${wrapperSelector}.`);
+        }
+        if (!attributeId) {
+            throw new Error(`CollectionList must define the required "${this.attr.id}" attribute.`);
+        }
+        if (this.id !== attributeId) {
+            throw new Error(`CollectionList id "${this.id}" must match the root's "${this.attr.id}" value "${attributeId}".`);
+        }
+    }
     initElements() {
-        const webflowMode = this.settings.selectorMode === "webflow";
-        const listQuery = webflowMode ? wf.select.cmsList : this.selector("list");
-        const itemQuery = webflowMode ? wf.select.cmsItem : this.selector("item");
-        const emptyQuery = webflowMode ? wf.select.cmsEmpty : this.selector("empty");
+        const listQuery = this.selector("list");
+        const itemQuery = this.selector("item");
+        const emptyQuery = this.selector("empty");
+        const wrapperOwnershipSelector = this.selector("wrapper");
         // TODO: Select pagination elements
-        this.listElement =
-            Array.from(this.component.querySelectorAll(listQuery)).find((element) => element.closest(wf.select.cmsWrapper) === this.component) ?? null;
-        this.elements = Array.from(this.listElement?.querySelectorAll(itemQuery) ?? []).filter((element) => element.closest(wf.select.cmsWrapper) === this.component);
-        this.emptyState =
-            Array.from(this.component.querySelectorAll(emptyQuery)).find((element) => element.closest(wf.select.cmsWrapper) === this.component) ?? null;
-        // TODO: verify elements:
-        // - If emptyState is present, listElement must be absent.
-        // - If listElement is absent, emptyState must be present.
-        // - If listElement is present, emptyState must be absent.
-        // - If elements has length 0, the list should be considered empty, emptyState should be present, etc.
-        // - etc.
+        this.assertWebflowElementTags();
+        const listElements = Array.from(this.component.querySelectorAll(listQuery)).filter((element) => element.closest(wrapperOwnershipSelector) === this.component);
+        const emptyStates = Array.from(this.component.querySelectorAll(emptyQuery)).filter((element) => element.closest(wrapperOwnershipSelector) === this.component);
+        this.listElement = listElements[0] ?? null;
+        this.emptyState = emptyStates[0] ?? null;
+        this.elements = Array.from(this.listElement?.querySelectorAll(itemQuery) ?? []).filter((element) => element.closest(wrapperOwnershipSelector) === this.component);
+        this.assertElementStructure(listElements, emptyStates);
         if (this.isEmpty()) {
-            console.warn(`CollectionList "${this.settings.id}": Collection is empty.`);
+            console.warn(`CollectionList "${this.id}": Collection is empty.`);
+        }
+    }
+    /**
+     * Validates Peakflow tags on direct Webflow collection elements.
+     *
+     * Partially tagged Webflow DOM would otherwise exclude only the missing roles
+     * and leave the collection in a misleading state. Attribute-only DOM remains
+     * supported because this check only applies to elements carrying Webflow's
+     * generated collection classes.
+     */
+    assertWebflowElementTags() {
+        const roles = [
+            ["list", wf.select.cmsList],
+            ["item", wf.select.cmsItem],
+            ["empty", wf.select.cmsEmpty],
+        ];
+        for (const [role, webflowSelector] of roles) {
+            const peakflowSelector = this.selector(role);
+            const untaggedElements = Array.from(this.component.querySelectorAll(webflowSelector)).filter((element) => element.closest(wf.select.cmsWrapper) === this.component &&
+                !element.matches(peakflowSelector));
+            if (untaggedElements.length > 0) {
+                throw new Error(`CollectionList "${this.id}" found ${untaggedElements.length} direct Webflow ${role} element${untaggedElements.length === 1 ? "" : "s"} without the required ${peakflowSelector} tag.`);
+            }
+        }
+    }
+    /**
+     * Validates the mutually exclusive populated and empty collection states.
+     *
+     * A populated collection must have one direct list with at least one direct
+     * item. An empty collection must have one direct empty-state element and no
+     * list. These checks expose missing or duplicate `data-cms-element` tags instead
+     * of silently treating mistagged DOM as empty.
+     */
+    assertElementStructure(listElements, emptyStates) {
+        if (listElements.length + emptyStates.length !== 1) {
+            throw new Error(`CollectionList "${this.id}" requires exactly one direct list or empty-state element; found ${listElements.length} lists and ${emptyStates.length} empty states. Verify the "${this.attr.element}" tags.`);
+        }
+        if (listElements.length === 1 && this.elements.length === 0) {
+            const itemSelector = this.selector("item");
+            throw new Error(`CollectionList "${this.id}" has a list element but no direct items matching "${itemSelector}".`);
         }
     }
     isEmpty() {
@@ -209,7 +259,6 @@ export class CollectionList extends BaseComponent {
             const wrapper = this.getNestedWrapper(itemElement, id);
             const nestedList = new _a(wrapper, {
                 id,
-                selectorMode: settings.selectorMode ?? this.settings.selectorMode,
                 nestedLists: settings.nestedLists ?? {},
             });
             collections[id] = nestedList.materialize(options);
@@ -225,7 +274,8 @@ export class CollectionList extends BaseComponent {
      */
     getItemEmbed(itemElement) {
         const selector = `${Payload.selector("embed")}[${this.attr.id}="${CSS.escape(this.id)}"]`;
-        const embeds = Array.from(itemElement.querySelectorAll(selector)).filter((embed) => embed.closest(".w-dyn-item") === itemElement);
+        const itemOwnershipSelector = this.selector("item");
+        const embeds = Array.from(itemElement.querySelectorAll(selector)).filter((embed) => embed.closest(itemOwnershipSelector) === itemElement);
         if (embeds.length === 0) {
             throw new Error(`CollectionList "${this.id}": No payload embed found for item.`);
         }
@@ -242,8 +292,9 @@ export class CollectionList extends BaseComponent {
      * errors.
      */
     getNestedWrapper(itemElement, id) {
-        const selector = `${wf.select.cmsWrapper}[${this.attr.id}="${CSS.escape(id)}"]`;
-        const wrappers = Array.from(itemElement.querySelectorAll(selector)).filter((wrapper) => wrapper.closest(wf.select.cmsItem) === itemElement);
+        const selector = _a.selector("wrapper", id);
+        const itemOwnershipSelector = this.selector("item");
+        const wrappers = Array.from(itemElement.querySelectorAll(selector)).filter((wrapper) => wrapper.closest(itemOwnershipSelector) === itemElement);
         if (wrappers.length === 0) {
             throw new Error(`CollectionList "${this.id}": Nested collection "${id}" is configured but no matching wrapper was found in the current item.`);
         }
@@ -409,7 +460,6 @@ export class CollectionList extends BaseComponent {
 _a = CollectionList;
 CollectionList.defaultSettings = {
     id: null,
-    selectorMode: "peakflow",
     nestedLists: {},
 };
 CollectionList.dataset = Dataset.define({

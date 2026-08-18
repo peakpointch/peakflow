@@ -3,8 +3,7 @@ import type { CollectionListItem } from "./item.js";
 import type { PartialOptions } from "../typeutils/index.js";
 import { BaseComponent } from "../base-component/index.js";
 import type { PayloadVariables } from "../payload/types.js";
-type CollectionListElement = "wrapper" | "list" | "item" | "empty" | "pagination";
-type CollectionListSelectorMode = "peakflow" | "webflow";
+export type CollectionListElement = "wrapper" | "list" | "item" | "empty" | "pagination";
 interface CollectionListAttributes extends Attributes {
     id: Attribute;
     element: Attribute<string, CollectionListElement>;
@@ -21,11 +20,6 @@ export interface CollectionListPayloadSchema<Item extends CollectionListItem> {
 }
 export interface NestedCollectionListSettings {
     /**
-     * Overrides the parent list's selector mode when its DOM uses a different
-     * tagging strategy.
-     */
-    selectorMode?: CollectionListSelectorMode;
-    /**
      * Describes collection lists nested directly inside this list.
      *
      * This configuration only describes how to find nested list wrappers. Their
@@ -36,13 +30,6 @@ export interface NestedCollectionListSettings {
 export type NestedCollectionLists = Record<string, NestedCollectionListSettings>;
 export interface CollectionListSettings<Item extends CollectionListItem> {
     id: string;
-    /**
-     * Selects list elements through Peakflow's `data-cms-element` attributes or
-     * Webflow's generated collection classes.
-     *
-     * @defaultValue `"peakflow"`
-     */
-    selectorMode: CollectionListSelectorMode;
     /**
      * Validates each item after its variables and nested collections are resolved.
      *
@@ -91,7 +78,6 @@ export interface CollectionListSettings<Item extends CollectionListItem> {
  *   CollectionList.select("wrapper", "products"),
  *   {
  *     id: "products",
- *     selectorMode: "peakflow",
  *     schema: productSchema,
  *   },
  * );
@@ -146,7 +132,34 @@ export declare class CollectionList<Item extends CollectionListItem = Collection
      */
     elements: HTMLElement[];
     constructor(component: HTMLElement | null, settings?: PartialOptions<CollectionListSettings<Item>>);
+    /**
+     * Validates the collection root's required Peakflow tags.
+     *
+     * Collection lists follow the same attribute-based selector contract as other
+     * `BaseComponent` implementations. The resolved collection ID must match the
+     * root's `data-cms-id` so selectors, payload embeds, and nested configuration
+     * cannot refer to different collection instances.
+     */
+    private assertComponent;
     private initElements;
+    /**
+     * Validates Peakflow tags on direct Webflow collection elements.
+     *
+     * Partially tagged Webflow DOM would otherwise exclude only the missing roles
+     * and leave the collection in a misleading state. Attribute-only DOM remains
+     * supported because this check only applies to elements carrying Webflow's
+     * generated collection classes.
+     */
+    private assertWebflowElementTags;
+    /**
+     * Validates the mutually exclusive populated and empty collection states.
+     *
+     * A populated collection must have one direct list with at least one direct
+     * item. An empty collection must have one direct empty-state element and no
+     * list. These checks expose missing or duplicate `data-cms-element` tags instead
+     * of silently treating mistagged DOM as empty.
+     */
+    private assertElementStructure;
     protected static attributeSelector: import("../index.js").AttributeSelector<CollectionListElement>;
     static selector: import("../index.js").InstanceSelector<CollectionListElement>;
     static select: <U extends Element = HTMLElement>(element: CollectionListElement, instance?: string, options?: import("../index.js").SelectOptions) => U;
