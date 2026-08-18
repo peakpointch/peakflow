@@ -40,11 +40,9 @@ export class Path {
   }
 
   public peekSibling(segment: string): string {
-    let result = "";
-    this.withSnapshot((path) => {
-      result = path.up().down(segment).toString();
+    return this.withSnapshot((path) => {
+      return path.up().down(segment).toString();
     });
-    return result;
   }
 
   public restore(path: string): Path {
@@ -87,26 +85,26 @@ export class Path {
     }
   }
 
-  public withSegment(
+  public withSegment<T>(
     segment: string,
-    callback: (path: Path) => void,
+    callback: (path: Path) => T,
     options: { keepSegment: boolean } = { keepSegment: false },
-  ) {
+  ): T {
     this.validate(segment);
     const snapshot = this.snapshot();
     this.down(segment);
     const segmentSnapshot = this.snapshot();
     try {
-      callback(this);
+      return callback(this);
     } finally {
       this.restore(options.keepSegment ? segmentSnapshot : snapshot);
     }
   }
 
-  public withSnapshot(callback: (path: Path) => void) {
+  public withSnapshot<T>(callback: (path: Path) => T): T {
     const snapshot = this.snapshot();
     try {
-      callback(this);
+      return callback(this);
     } finally {
       this.restore(snapshot);
     }

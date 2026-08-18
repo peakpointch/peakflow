@@ -17,10 +17,10 @@ export declare class Path {
     withPath<T>(path: string, callback: (path: Path) => T, options?: {
         keepPath: boolean;
     }): T;
-    withSegment(segment: string, callback: (path: Path) => void, options?: {
+    withSegment<T>(segment: string, callback: (path: Path) => T, options?: {
         keepSegment: boolean;
-    }): void;
-    withSnapshot(callback: (path: Path) => void): void;
+    }): T;
+    withSnapshot<T>(callback: (path: Path) => T): T;
     s(): string;
     toString(): string;
     private validate;

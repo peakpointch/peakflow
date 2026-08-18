@@ -32,11 +32,9 @@ export class Path {
         return this.up().down(segment);
     }
     peekSibling(segment) {
-        let result = "";
-        this.withSnapshot((path) => {
-            result = path.up().down(segment).toString();
+        return this.withSnapshot((path) => {
+            return path.up().down(segment).toString();
         });
-        return result;
     }
     restore(path) {
         this._path = path;
@@ -76,7 +74,7 @@ export class Path {
         this.down(segment);
         const segmentSnapshot = this.snapshot();
         try {
-            callback(this);
+            return callback(this);
         }
         finally {
             this.restore(options.keepSegment ? segmentSnapshot : snapshot);
@@ -85,7 +83,7 @@ export class Path {
     withSnapshot(callback) {
         const snapshot = this.snapshot();
         try {
-            callback(this);
+            return callback(this);
         }
         finally {
             this.restore(snapshot);
