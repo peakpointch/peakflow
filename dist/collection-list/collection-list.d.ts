@@ -123,7 +123,7 @@ export interface CollectionListSettings<Item extends CollectionListItem> {
  * ```
  */
 export declare class CollectionList<Item extends CollectionListItem = CollectionListItem> extends BaseComponent<CollectionListElement> {
-    static defaultOptions: CollectionListSettings<CollectionListItem>;
+    static defaultSettings: CollectionListSettings<CollectionListItem>;
     static dataset: Dataset<CollectionListAttributes>;
     static attr: import("../index.js").AttributeAccessorMap<CollectionListAttributes>;
     dataset: Dataset<CollectionListAttributes>;

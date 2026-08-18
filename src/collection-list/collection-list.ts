@@ -147,7 +147,7 @@ type MaterializedCollections = Record<string, MaterializedItem[]>;
 export class CollectionList<
   Item extends CollectionListItem = CollectionListItem,
 > extends BaseComponent<CollectionListElement> {
-  public static defaultOptions: CollectionListSettings<CollectionListItem> = {
+  public static defaultSettings: CollectionListSettings<CollectionListItem> = {
     id: null,
     selectorMode: "peakflow",
     nestedLists: {},

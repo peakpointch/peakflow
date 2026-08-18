@@ -407,7 +407,7 @@ export class CollectionList extends BaseComponent {
     }
 }
 _a = CollectionList;
-CollectionList.defaultOptions = {
+CollectionList.defaultSettings = {
     id: null,
     selectorMode: "peakflow",
     nestedLists: {},
