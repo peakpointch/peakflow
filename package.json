@@ -242,12 +242,12 @@
   ],
   "scripts": {
     "clean": "rimraf ./dist",
-    "build": "npm run clean --silent && tsgo",
-    "build:time-zones": "npm install -D iana-tz-data && node ./scripts/extract-timezones.js",
+    "build": "pnpm run clean && tsc",
+    "build:time-zones": "pnpm add -D iana-tz-data && node ./scripts/extract-timezones.js",
     "create-module": "node ./scripts/createModule.js",
-    "prettier": "prettier \"./src/**/*.+(js|json|scss|css|less|ts|jsx|mjs)\"",
-    "format": "npm run prettier --silent -- --write",
-    "check-format": "npm run prettier --silent -- --list-different"
+    "format": "prettier . --write",
+    "check-format": "prettier . --check",
+    "check-types": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/html2canvas": "^0.5.35",
