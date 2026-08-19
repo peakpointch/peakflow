@@ -1,6 +1,6 @@
 import Renderer from "../renderer/index.js";
 import type { RenderData } from "../renderer/index.js";
-import html2canvas from "html2canvas";
+import html2canvasModule from "html2canvas";
 import jsPDF from "jspdf";
 import type { Html2CanvasOptions } from "jspdf";
 import Selector from "../selector/index.js";
@@ -8,6 +8,13 @@ import { softHyphenizer, solidHyphens } from "../hyphenizer/index.js";
 import german from "hyphenation.de";
 import { freezeElement, unFreezeElement } from "../utils/dom-freeze.js";
 import { asPrefix, asSuffix } from "../utils/logger.js";
+
+type Html2CanvasFunction = (
+  element: HTMLElement,
+  options?: Html2CanvasOptions,
+) => Promise<HTMLCanvasElement>;
+
+const html2canvas = html2canvasModule as unknown as Html2CanvasFunction;
 
 // Types
 export type PdfElement = "container" | "scale" | "page" | "page-wrapper" | "weekday" | "dish";

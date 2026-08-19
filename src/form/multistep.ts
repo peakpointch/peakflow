@@ -22,7 +22,7 @@ import {
 import wf from "../webflow/index.js";
 import { asSuffix, mergeOptions } from "../utils/index.js";
 import type { PartialOptions } from "../typeutils/index.js";
-import EventEmitter from "eventemitter3";
+import { EventEmitter } from "eventemitter3";
 
 // Types
 interface FormOptions {

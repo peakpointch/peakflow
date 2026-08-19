@@ -1,11 +1,11 @@
 import type { GlobalCal } from "@calcom/embed-core";
-import type { BookerLayouts, EmbedThemeConfig } from "@calcom/embed-core/dist/src/types";
+import type { BookerLayouts, EmbedThemeConfig } from "@calcom/embed-core/dist/src/types.js";
 import type { PartialOptions } from "../typeutils/index.js";
 import { mergeOptions, Script } from "../utils/index.js";
 import type {
   EventData as CalEventData,
   EventDataMap as CalEventDataMap,
-} from "@calcom/embed-core/dist/src/sdk-action-manager";
+} from "@calcom/embed-core/dist/src/sdk-action-manager.js";
 
 /** The string literal of all available Cal.com embed event names. */
 type CalEventName = keyof CalEventDataMap;
