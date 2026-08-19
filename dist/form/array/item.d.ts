@@ -1,4 +1,4 @@
-import type { FieldGroup } from "../fieldgroup";
+import type { FieldGroup } from "../fieldgroup.js";
 export interface SerializedItem {
     [x: string]: string | number | any;
 }

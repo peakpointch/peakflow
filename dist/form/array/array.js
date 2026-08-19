@@ -1,14 +1,14 @@
 var _a;
-import { asSuffix, capitalize } from "../../utils";
+import { asSuffix, capitalize } from "../../utils/index.js";
 import wf from "../../webflow/index.js";
-import { Selector, exclude } from "../../selector";
+import { Selector, exclude } from "../../selector/index.js";
 import { BaseComponent } from "../../base-component/index.js";
-import { FormArrayItem } from "./item";
+import { FormArrayItem } from "./item.js";
 import { FormDecision, FormMessage, FormProgressManager, isCheckboxInput, isRadioInput, validateFields, removeErrorClasses, isFormInput, findFormInput, reportValidity, getRadioGroups, setChecked, fieldFromInput, } from "../index.js";
-import Accordion from "../../accordion";
-import SplitButton from "../../split-button";
-import { Modal, AlertDialog } from "../../modal";
-import { pluralize } from "../../pluralize";
+import Accordion from "../../accordion/index.js";
+import SplitButton from "../../split-button/index.js";
+import { Modal, AlertDialog } from "../../modal/index.js";
+import { pluralize } from "../../pluralize/index.js";
 import semver from "semver";
 const ARRAY_STORAGE_VERSION = "1.0.0";
 export class FormArray extends BaseComponent {

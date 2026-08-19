@@ -9,7 +9,7 @@ export declare class CopyComponent {
         data: string;
     };
     constructor(trigger: HTMLButtonElement, data: string | number);
-    static selector: import("..").AttributeSelector<CopyComponentElement>;
+    static selector: import("../selector/selector.js").AttributeSelector<CopyComponentElement>;
     static create(component: HTMLElement): CopyComponent;
     private initEventListener;
 }

@@ -1,11 +1,12 @@
 import Renderer from "../renderer/index.js";
-import html2canvas from "html2canvas";
+import html2canvasModule from "html2canvas";
 import jsPDF from "jspdf";
 import Selector from "../selector/index.js";
 import { softHyphenizer, solidHyphens } from "../hyphenizer/index.js";
 import german from "hyphenation.de";
 import { freezeElement, unFreezeElement } from "../utils/dom-freeze.js";
 import { asPrefix, asSuffix } from "../utils/logger.js";
+const html2canvas = html2canvasModule;
 // Variables
 export class PdfGenerator {
     constructor(container) {

@@ -1,6 +1,6 @@
 import { type Attribute, type Attributes } from "../selector/index.js";
-import { Stylesheet } from "../utils";
-import type { CamelToDash } from "../typeutils";
+import { Stylesheet } from "../utils/index.js";
+import type { CamelToDash } from "../typeutils/index.js";
 import Swiper from "swiper";
 import type { AutoplayOptions, NavigationOptions, SwiperOptions } from "swiper/types";
 import { BaseComponent, type BaseSettings } from "../base-component/index.js";
@@ -63,12 +63,12 @@ export interface SliderSettings extends BaseSettings {
 export declare class Slider extends BaseComponent<SliderElement> {
     swiper: Swiper;
     stylesheet: Stylesheet;
-    static attr: import("../index.js").AttributeAccessorMap<SwiperAttributes>;
+    static attr: import("../selector/attributes.js").AttributeAccessorMap<SwiperAttributes>;
     constructor(component: HTMLElement, settings: BaseSettings);
-    protected static readonly attributeSelector: import("../index.js").AttributeSelector<string>;
-    static readonly selector: import("../index.js").InstanceSelector<SliderElement>;
-    static readonly select: <U extends Element = HTMLElement>(this: unknown, element: SliderElement, instance?: string, options?: import("../index.js").SelectOptions) => U;
-    static readonly selectAll: <U extends Element = HTMLElement>(this: unknown, element: SliderElement, instance?: string, options?: import("../index.js").SelectOptions) => NodeListOf<U>;
+    protected static readonly attributeSelector: import("../selector/selector.js").AttributeSelector<string>;
+    static readonly selector: import("../selector/selector.js").InstanceSelector<SliderElement>;
+    static readonly select: <U extends Element = HTMLElement>(this: unknown, element: SliderElement, instance?: string, options?: import("../selector/selector.js").SelectOptions) => U;
+    static readonly selectAll: <U extends Element = HTMLElement>(this: unknown, element: SliderElement, instance?: string, options?: import("../selector/selector.js").SelectOptions) => NodeListOf<U>;
     private static create;
     static initAll(container?: HTMLElement, options?: SwiperOptions): void;
     static readOptions(swiperElement: HTMLElement, override?: SwiperOptions): SwiperOptions;

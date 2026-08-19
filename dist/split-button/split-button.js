@@ -1,5 +1,5 @@
-import Selector from "../selector";
-import { mergeOptions } from "../utils";
+import Selector from "../selector/index.js";
+import { mergeOptions } from "../utils/index.js";
 export class SplitButton {
     static get attr() {
         return {

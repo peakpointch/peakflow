@@ -1,7 +1,7 @@
 import { type FormProgressComponent, FieldGroup } from "./index.js";
 import { type HTMLFormInput, type CustomValidator, FormProgressManager } from "./index.js";
 import type { PartialOptions } from "../typeutils/index.js";
-import EventEmitter from "eventemitter3";
+import { EventEmitter } from "eventemitter3";
 interface FormOptions {
     id: string;
     version: string;

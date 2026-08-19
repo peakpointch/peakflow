@@ -1,7 +1,7 @@
 var _a;
-import Logger from "../logger/";
-import { Selector, } from "../selector";
-import { mergeOptions } from "../utils";
+import Logger from "../logger/index.js";
+import { Selector, } from "../selector/index.js";
+import { mergeOptions } from "../utils/index.js";
 /**
  * Base class for components with attribute-based selectors
  */

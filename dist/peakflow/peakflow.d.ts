@@ -1,5 +1,5 @@
-import type { AnyFn, DefaultRegistry, Registry } from "./defaults";
-import type { IANATimeZone } from "../timezones";
+import type { AnyFn, DefaultRegistry, Registry } from "./defaults.js";
+import type { IANATimeZone } from "../timezones/index.js";
 import type { PeakflowShared } from "../../types/peakflow.d.ts";
 export interface PeakflowSettings {
     language?: string;

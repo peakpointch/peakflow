@@ -1,6 +1,6 @@
-import { FormArrayItem } from "./item";
-import { type FormArraySettings } from "./array";
-import { type Pluralized } from "../../pluralize";
+import { FormArrayItem } from "./item.js";
+import { type FormArraySettings } from "./array.js";
+import { type Pluralized } from "../../pluralize/index.js";
 export type MessageFn<Item extends FormArrayItem> = (ctx: {
     item?: Item;
     grammar: GrammarOptions;

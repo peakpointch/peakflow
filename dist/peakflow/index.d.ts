@@ -1,2 +1,2 @@
-export * from "./peakflow";
-export * from "./defaults";
+export * from "./peakflow.js";
+export * from "./defaults.js";

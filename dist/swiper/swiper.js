@@ -1,6 +1,6 @@
 var _a;
 import { Selector, Dataset } from "../selector/index.js";
-import { Stylesheet } from "../utils";
+import { Stylesheet } from "../utils/index.js";
 import Swiper from "swiper";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { BaseComponent } from "../base-component/index.js";

@@ -1,4 +1,4 @@
-import { BaseComponent, type BaseSettings } from "../base-component";
+import { BaseComponent, type BaseSettings } from "../base-component/index.js";
 import type { PartialOptions } from "../typeutils/index.js";
 export type CursorElement = "pointer";
 export type CursorState = "base" | "hover";
@@ -28,10 +28,10 @@ export declare class Cursor<T extends string> extends BaseComponent<CursorElemen
     cursors: HTMLElement[];
     settings: CursorSettings<T>;
     constructor(cursor: HTMLElement, settings?: PartialOptions<CursorSettings<T>>);
-    protected static readonly attributeSelector: import("..").AttributeSelector<"pointer">;
-    static readonly selector: import("..").InstanceSelector<"pointer">;
-    static readonly select: <U extends Element = HTMLElement>(this: unknown, element: "pointer", instance?: string, options?: import("..").SelectOptions) => U;
-    static readonly selectAll: <U extends Element = HTMLElement>(this: unknown, element: "pointer", instance?: string, options?: import("..").SelectOptions) => NodeListOf<U>;
+    protected static readonly attributeSelector: import("../selector/selector.js").AttributeSelector<"pointer">;
+    static readonly selector: import("../selector/selector.js").InstanceSelector<"pointer">;
+    static readonly select: <U extends Element = HTMLElement>(this: unknown, element: "pointer", instance?: string, options?: import("../selector/selector.js").SelectOptions) => U;
+    static readonly selectAll: <U extends Element = HTMLElement>(this: unknown, element: "pointer", instance?: string, options?: import("../selector/selector.js").SelectOptions) => NodeListOf<U>;
     static create<T extends string>(settings: PartialOptions<CursorSettings<T>>): Cursor<T>;
     addPointer(pointer: HTMLElement): void;
     addTail(pointer: HTMLElement, vars: gsap.TweenVars): void;

@@ -1,5 +1,5 @@
 var _a;
-import Selector from "../selector";
+import Selector from "../selector/index.js";
 export class CopyComponent {
     constructor(trigger, data) {
         this.config = {

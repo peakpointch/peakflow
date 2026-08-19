@@ -1,4 +1,4 @@
-import { getAllElements } from "../utils";
+import { getAllElements } from "../utils/index.js";
 /**
  * Attaches a load listener to one or multiple widget containers.
  */

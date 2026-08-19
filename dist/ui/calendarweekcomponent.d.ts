@@ -18,7 +18,7 @@ export declare class CalendarweekComponent {
     private mode;
     private onChangeActions;
     constructor(container: HTMLElement, mode?: UXMode);
-    static select: import("../index.js").AttributeSelector<CalendarweekElements>;
+    static select: import("../selector/selector.js").AttributeSelector<CalendarweekElements>;
     setDate(date: Date, silent?: boolean): void;
     setMode(mode: UXMode): void;
     setMinMaxDates(newMinDate: Date | null, newMaxDate: Date | null): void;

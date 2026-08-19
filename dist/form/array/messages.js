@@ -1,3 +1,3 @@
-import { FormArrayItem } from "./item";
-import {} from "./array";
-import {} from "../../pluralize";
+import { FormArrayItem } from "./item.js";
+import {} from "./array.js";
+import {} from "../../pluralize/index.js";

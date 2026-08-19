@@ -1,1 +1,1 @@
-export * from "./fscc";
+export * from "./fscc.js";

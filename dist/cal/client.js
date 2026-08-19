@@ -1,4 +1,4 @@
-import { mergeOptions, Script } from "../utils";
+import { mergeOptions, Script } from "../utils/index.js";
 /**
  * Client class responsible for loading the Cal.com embed script and managing
  * calendar instances (namespaces) with specific configurations. This class acts

@@ -1,6 +1,6 @@
 import type { LogLevelNames } from "loglevel";
-import Logger from "../logger/";
-import { type AttributeAccessorMap, type AttributeSelector, type BaseAttributes, type InstanceSelector, type SelectOptions } from "../selector";
+import Logger from "../logger/index.js";
+import { type AttributeAccessorMap, type AttributeSelector, type BaseAttributes, type InstanceSelector, type SelectOptions } from "../selector/index.js";
 import type { PartialOptions } from "../typeutils/index.js";
 export interface BaseSettings {
     id: string;

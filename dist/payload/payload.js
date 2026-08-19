@@ -1,5 +1,5 @@
 var _a;
-import { Selector, Dataset } from "../selector/";
+import { Selector, Dataset } from "../selector/index.js";
 import { PayloadSchema } from "./schema.js";
 /**
  * Entry point for defining payload schemas and value descriptors.

@@ -1,4 +1,4 @@
-import { type ElementGetter } from "../utils";
+import { type ElementGetter } from "../utils/index.js";
 export interface ElfsightLoadOptions {
     /** Callback delay in ms */
     delay?: number;

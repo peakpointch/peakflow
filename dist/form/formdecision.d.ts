@@ -50,8 +50,8 @@ export declare class FormDecision<PathId extends string = string> {
      * @param id Unique identifier for the specific instance.
      */
     constructor(component: HTMLElement | null, options: Partial<FormDecisionOptions<PathId>>);
-    static selector: import("../index.js").AttributeSelector<FormDecisionElement>;
-    selector: import("../index.js").AttributeSelector<FormDecisionElement>;
+    static selector: import("../selector/selector.js").AttributeSelector<FormDecisionElement>;
+    selector: import("../selector/selector.js").AttributeSelector<FormDecisionElement>;
     /**
      * Initializes the FormDecision instance by setting up decision inputs & paths as well as their event listeners.
      */

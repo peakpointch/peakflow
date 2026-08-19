@@ -1,4 +1,4 @@
-import type { Attributes, Attribute } from "./attributes";
+import type { Attributes, Attribute } from "./attributes.js";
 type AttributeMatchType = "startsWith" | "endsWith" | "includes" | "whitespace" | "hyphen" | "exact";
 export type AttributeSelector<T = string> = (name?: T, options?: Partial<AttributeOptions>) => string;
 export type InstanceSelector<T = string> = (element: T, instance?: string) => string;

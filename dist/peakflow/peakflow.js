@@ -1,4 +1,4 @@
-import { defaultRegistry } from "./defaults";
+import { defaultRegistry } from "./defaults.js";
 export class Peakflow {
     constructor(registry, config = {}) {
         this.registry = registry;

@@ -3,8 +3,8 @@ import Selector, { exclude, extend } from "../selector/index.js";
 import { initWfInputs, sendFormData, validateFields, formElementSelector, fieldFromInput, enforceButtonTypes, FieldGroup, isCheckboxInput, setChecked, getRadioGroups, } from "./index.js";
 import { FormProgressManager, } from "./index.js";
 import wf from "../webflow/index.js";
-import { asSuffix, mergeOptions } from "../utils";
-import EventEmitter from "eventemitter3";
+import { asSuffix, mergeOptions } from "../utils/index.js";
+import { EventEmitter } from "eventemitter3";
 // Selector functions
 const stepsElementSelector = Selector.attr("data-steps-element", {
     defaultExclusions: ['[data-steps-element="component"] [data-steps-element="component"] *'],

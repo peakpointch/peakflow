@@ -1,4 +1,4 @@
-import { Dataset } from "../selector/";
+import { Dataset } from "../selector/index.js";
 import { PayloadSchema } from "./schema.js";
 import type { InferRawDefinition, InferParsedDefinition, PayloadArrayDescriptor, PayloadBooleanDescriptor, PayloadData, PayloadDefinition, PayloadElement, PayloadNumberDescriptor, PayloadObjectDefinition, PayloadObjectDescriptor, PayloadSchemaOptions, PayloadStringDescriptor, PayloadValueDefinition, PayloadValueOptions, PayloadVariableReference, PayloadVariableResolver, PayloadVariableResolvers } from "./types.js";
 export declare namespace Payload {
@@ -23,9 +23,9 @@ export declare namespace Payload {
  */
 export declare class Payload {
     static dataset: Dataset<{
-        id: import("..").DatasetAttribute<"data-payload-id", any>;
-        element: import("..").DatasetAttribute<string, PayloadElement>;
-        var: import("..").DatasetAttribute<"data-payload-var", any>;
+        id: import("../selector/attributes.js").DatasetAttribute<"data-payload-id", any>;
+        element: import("../selector/attributes.js").DatasetAttribute<string, PayloadElement>;
+        var: import("../selector/attributes.js").DatasetAttribute<"data-payload-var", any>;
     }>;
     static readonly resolvers: {
         /**
@@ -69,10 +69,10 @@ export declare class Payload {
     static Boolean<const Required extends boolean = true, Default extends boolean | null | undefined = undefined>(options?: PayloadValueOptions<Required, Default>): PayloadBooleanDescriptor<Required, Default>;
     static Object<const Definition extends PayloadObjectDefinition, const Required extends boolean = true, Default = undefined>(definition: Definition, options?: PayloadValueOptions<Required, Default>): PayloadObjectDescriptor<Definition, Required, Default>;
     static Array<const Item extends PayloadValueDefinition, const Required extends boolean = true, Default = undefined>(item: Item, options?: PayloadValueOptions<Required, Default>): PayloadArrayDescriptor<Item, Required, Default>;
-    protected static attributeSelector: import("..").AttributeSelector<PayloadElement>;
-    static selector: import("..").InstanceSelector<PayloadElement>;
-    static select: <U extends Element = HTMLElement>(this: unknown, element: PayloadElement, instance?: string, options?: import("..").SelectOptions) => U;
-    static selectAll: <U extends Element = HTMLElement>(this: unknown, element: PayloadElement, instance?: string, options?: import("..").SelectOptions) => NodeListOf<U>;
+    protected static attributeSelector: import("../selector/selector.js").AttributeSelector<PayloadElement>;
+    static selector: import("../selector/selector.js").InstanceSelector<PayloadElement>;
+    static select: <U extends Element = HTMLElement>(this: unknown, element: PayloadElement, instance?: string, options?: import("../selector/selector.js").SelectOptions) => U;
+    static selectAll: <U extends Element = HTMLElement>(this: unknown, element: PayloadElement, instance?: string, options?: import("../selector/selector.js").SelectOptions) => NodeListOf<U>;
     /**
      * Reads JSON from an `application/json` script without applying variables or a
      * schema.

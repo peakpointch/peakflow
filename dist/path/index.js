@@ -1,2 +1,2 @@
-export { Path as default } from "./path";
-export * from "./path";
+export { Path as default } from "./path.js";
+export * from "./path.js";

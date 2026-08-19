@@ -1,4 +1,4 @@
-import { BaseComponent, type BaseSettings } from "../base-component";
+import { BaseComponent, type BaseSettings } from "../base-component/index.js";
 import type { PartialOptions } from "../typeutils/index.js";
 export type ToggleElement = "component" | "checkbox" | "toggle";
 export interface ToggleSettings extends BaseSettings {
@@ -18,10 +18,10 @@ export declare class Toggle extends BaseComponent<ToggleElement, ToggleSettings>
     checkbox: HTMLInputElement;
     toggle: HTMLElement;
     constructor(checkbox: HTMLInputElement, options?: PartialOptions<ToggleSettings>);
-    protected static readonly attributeSelector: import("..").AttributeSelector<ToggleElement>;
-    static readonly selector: import("..").InstanceSelector<ToggleElement>;
-    static readonly select: <U extends Element = HTMLElement>(this: unknown, element: ToggleElement, instance?: string, options?: import("..").SelectOptions) => U;
-    static readonly selectAll: <U extends Element = HTMLElement>(this: unknown, element: ToggleElement, instance?: string, options?: import("..").SelectOptions) => NodeListOf<U>;
+    protected static readonly attributeSelector: import("../selector/selector.js").AttributeSelector<ToggleElement>;
+    static readonly selector: import("../selector/selector.js").InstanceSelector<ToggleElement>;
+    static readonly select: <U extends Element = HTMLElement>(this: unknown, element: ToggleElement, instance?: string, options?: import("../selector/selector.js").SelectOptions) => U;
+    static readonly selectAll: <U extends Element = HTMLElement>(this: unknown, element: ToggleElement, instance?: string, options?: import("../selector/selector.js").SelectOptions) => NodeListOf<U>;
     private initEventListeners;
     private updateToggleState;
     static initAll(container?: HTMLElement | Document, settings?: PartialOptions<Omit<ToggleSettings, "id">>): void;

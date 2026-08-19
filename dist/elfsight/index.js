@@ -1,1 +1,1 @@
-export * from "./elfsight";
+export * from "./elfsight.js";

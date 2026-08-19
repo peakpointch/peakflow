@@ -111,9 +111,9 @@ export interface CollectionListSettings<Item extends CollectionListItem> {
 export declare class CollectionList<Item extends CollectionListItem = CollectionListItem> extends BaseComponent<CollectionListElement> {
     static defaultSettings: CollectionListSettings<CollectionListItem>;
     static dataset: Dataset<CollectionListAttributes>;
-    static attr: import("../index.js").AttributeAccessorMap<CollectionListAttributes>;
+    static attr: import("../selector/attributes.js").AttributeAccessorMap<CollectionListAttributes>;
     dataset: Dataset<CollectionListAttributes>;
-    attr: import("../index.js").AttributeAccessorMap<CollectionListAttributes>;
+    attr: import("../selector/attributes.js").AttributeAccessorMap<CollectionListAttributes>;
     settings: CollectionListSettings<Item>;
     listElement?: HTMLElement | null;
     emptyState?: HTMLElement | null;
@@ -132,10 +132,10 @@ export declare class CollectionList<Item extends CollectionListItem = Collection
      */
     elements: HTMLElement[];
     constructor(component: HTMLElement | null, settings?: PartialOptions<CollectionListSettings<Item>>);
-    protected static readonly attributeSelector: import("../index.js").AttributeSelector<CollectionListElement>;
-    static readonly selector: import("../index.js").InstanceSelector<CollectionListElement>;
-    static readonly select: <U extends Element = HTMLElement>(this: unknown, element: CollectionListElement, instance?: string, options?: import("../index.js").SelectOptions) => U;
-    static selectAll: <U extends Element = HTMLElement>(this: unknown, element: CollectionListElement, instance?: string, options?: import("../index.js").SelectOptions) => NodeListOf<U>;
+    protected static readonly attributeSelector: import("../selector/selector.js").AttributeSelector<CollectionListElement>;
+    static readonly selector: import("../selector/selector.js").InstanceSelector<CollectionListElement>;
+    static readonly select: <U extends Element = HTMLElement>(this: unknown, element: CollectionListElement, instance?: string, options?: import("../selector/selector.js").SelectOptions) => U;
+    static selectAll: <U extends Element = HTMLElement>(this: unknown, element: CollectionListElement, instance?: string, options?: import("../selector/selector.js").SelectOptions) => NodeListOf<U>;
     /**
      * Validates the collection root's required Peakflow tags.
      *
