@@ -81,16 +81,17 @@ export class Selector {
             defaultValue: defaultOptions?.defaultValue ?? undefined,
             defaultExclusions: defaultOptions?.defaultExclusions ?? [],
         };
-        return (name = mergedDefaultOptions.defaultValue, options) => {
+        return function (name = mergedDefaultOptions.defaultValue, options) {
+            const resolved = typeof attrName === "function" ? attrName.call(this) : attrName;
             const mergedOptions = {
                 matchType: options?.matchType ?? mergedDefaultOptions.defaultMatchType,
                 exclusions: options?.exclusions ?? mergedDefaultOptions.defaultExclusions,
             };
             if (!name) {
-                return exclude(`[${attrName}]`, ...mergedOptions.exclusions);
+                return exclude(`[${resolved}]`, ...mergedOptions.exclusions);
             }
             const value = String(name); // Ensure it's a string for selector use
-            const selector = `[${attrName}${getOperator(mergedOptions.matchType)}="${value}"]`;
+            const selector = `[${resolved}${getOperator(mergedOptions.matchType)}="${value}"]`;
             return exclude(selector, ...(mergedOptions.exclusions ?? []));
         };
     }
@@ -104,9 +105,10 @@ export class Selector {
      */
     static instance(attributeSelector, attr, options) {
         const { root = "component", scoped = true } = options ?? {};
-        return (element, instance) => {
-            const base = attributeSelector(element);
-            const instanceSelector = instance ? `[${attr.id}="${instance}"]` : "";
+        return function (element, instance) {
+            const resolved = typeof attr === "function" ? attr.call(this) : attr;
+            const base = attributeSelector.call(this, element);
+            const instanceSelector = instance ? `[${resolved.id}="${instance}"]` : "";
             // Avoid duplicate selectors when no instance selector was given
             if (!instanceSelector)
                 return base;
@@ -118,13 +120,13 @@ export class Selector {
         };
     }
     static select(instanceSelector) {
-        return (element, instance, options) => {
-            return (options?.doc ?? document).querySelector(instanceSelector(element, instance));
+        return function (element, instance, options) {
+            return (options?.doc ?? document).querySelector(instanceSelector.call(this, element, instance));
         };
     }
     static selectAll(instanceSelector) {
-        return (element, instance, options) => {
-            return (options?.doc ?? document).querySelectorAll(instanceSelector(element, instance));
+        return function (element, instance, options) {
+            return (options?.doc ?? document).querySelectorAll(instanceSelector.call(this, element, instance));
         };
     }
 }

@@ -131,10 +131,13 @@ export class Slider extends BaseComponent<SliderElement> {
     Slider.create(this.component);
   }
 
-  protected static readonly attributeSelector = Selector.attr(Slider.attr.element);
-  public static selector = Selector.instance<SliderElement>(this.attributeSelector, this.attr);
-  public static select = Selector.select<SliderElement>(this.selector);
-  public static selectAll = Selector.selectAll<SliderElement>(this.selector);
+  protected static readonly attributeSelector = Selector.attr(this.attr.element);
+  public static readonly selector = Selector.instance<SliderElement>(
+    this.attributeSelector,
+    this.attr,
+  );
+  public static readonly select = Selector.select<SliderElement>(this.selector);
+  public static readonly selectAll = Selector.selectAll<SliderElement>(this.selector);
 
   private static create(swiperElement: HTMLElement, options?: SwiperOptions): Swiper {
     Slider.initSlides(swiperElement.querySelector(Slider.selector("wrapper")));

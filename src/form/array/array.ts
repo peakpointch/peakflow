@@ -31,7 +31,7 @@ import { pluralize } from "../../pluralize";
 import semver from "semver";
 import type { PartialOptions } from "../../typeutils/index.js";
 
-type ArrayElement =
+type FormArrayElement =
   | "component"
   | "list"
   | "template"
@@ -103,7 +103,7 @@ export interface FormArraySettings<Item extends FormArrayItem> extends BaseSetti
 
 const ARRAY_STORAGE_VERSION = "1.0.0";
 
-export class FormArray<Item extends FormArrayItem> extends BaseComponent<ArrayElement> {
+export class FormArray<Item extends FormArrayItem> extends BaseComponent<FormArrayElement> {
   public static readonly attr: AttributeAccessorMap<ArrayAttributes> = {
     id: "data-form-array-id",
     element: "data-form-array-element",
@@ -242,58 +242,13 @@ export class FormArray<Item extends FormArrayItem> extends BaseComponent<ArrayEl
     this.initialize();
   }
 
-  protected static attributeSelector = Selector.attr<ArrayElement>(FormArray.attr.element);
-
-  /**
-   * Static selector
-   */
-  public static selector(element: ArrayElement, instance?: string): string {
-    const base = FormArray.attributeSelector(element);
-    const instanceSelector = instance ? `[${FormArray.attr.id}="${instance}"]` : "";
-
-    return element === "component"
-      ? `${base}${instanceSelector}`
-      : `${base}${instanceSelector}, ${instanceSelector} ${base}`;
-  }
-
-  /**
-   * Instance selector
-   */
-  public selector(element: ArrayElement, global = false): string {
-    return global ? FormArray.selector(element, this.id) : FormArray.selector(element);
-  }
-
-  public static select<T extends Element = HTMLElement>(
-    element: ArrayElement,
-    instance?: string,
-  ): T {
-    return document.querySelector<T>(FormArray.selector(element, instance));
-  }
-
-  public static selectAll<T extends Element = HTMLElement>(
-    element: ArrayElement,
-    instance?: string,
-  ): NodeListOf<T> {
-    return document.querySelectorAll<T>(FormArray.selector(element, instance));
-  }
-
-  public select<T extends Element = HTMLElement>(
-    element: ArrayElement,
-    global: boolean = false,
-  ): T {
-    return global
-      ? document.querySelector<T>(FormArray.selector(element, this.id))
-      : this.component.querySelector<T>(FormArray.selector(element));
-  }
-
-  public selectAll<T extends Element = HTMLElement>(
-    element: ArrayElement,
-    global: boolean = false,
-  ): NodeListOf<T> {
-    return global
-      ? document.querySelectorAll<T>(FormArray.selector(element, this.id))
-      : this.component.querySelectorAll<T>(FormArray.selector(element));
-  }
+  protected static readonly attributeSelector = Selector.attr<FormArrayElement>(this.attr.element);
+  public static readonly selector = Selector.instance<FormArrayElement>(
+    this.attributeSelector,
+    this.attr,
+  );
+  public static readonly select = Selector.select<FormArrayElement>(this.selector);
+  public static selectAll = Selector.selectAll<FormArrayElement>(this.selector);
 
   public registerSelects(suffix?: string): void {
     // Get all select inputs

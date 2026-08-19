@@ -1,6 +1,6 @@
 import type { LogLevelNames } from "loglevel";
 import Logger from "../logger/";
-import { type AttributeAccessorMap, type BaseAttributes } from "../selector";
+import { type AttributeAccessorMap, type AttributeSelector, type BaseAttributes, type InstanceSelector, type SelectOptions } from "../selector";
 import type { PartialOptions } from "../typeutils/index.js";
 export interface BaseSettings {
     id: string;
@@ -20,8 +20,8 @@ export declare abstract class BaseComponent<Elements extends string, Settings ex
     select<T extends Element = HTMLElement>(element: Elements, global?: boolean): T;
     selectAll<T extends Element = HTMLElement>(element: Elements, global?: boolean): NodeListOf<T>;
     enableLogging(level?: LogLevelNames): void;
-    protected static get attributeSelector(): import("..").AttributeSelector<string>;
-    static get selector(): import("..").InstanceSelector<string>;
-    static get select(): <U extends Element = HTMLElement>(element: string, instance?: string, options?: import("..").SelectOptions) => U;
-    static get selectAll(): <U extends Element = HTMLElement>(element: string, instance?: string, options?: import("..").SelectOptions) => NodeListOf<U>;
+    protected static attributeSelector: AttributeSelector<any>;
+    static selector: InstanceSelector<any>;
+    static select: <U extends Element = HTMLElement>(this: unknown, element: any, instance?: string, options?: SelectOptions) => U;
+    static selectAll: <U extends Element = HTMLElement>(this: unknown, element: any, instance?: string, options?: SelectOptions) => NodeListOf<U>;
 }

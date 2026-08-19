@@ -71,8 +71,8 @@ export declare class Payload {
     static Array<const Item extends PayloadValueDefinition, const Required extends boolean = true, Default = undefined>(item: Item, options?: PayloadValueOptions<Required, Default>): PayloadArrayDescriptor<Item, Required, Default>;
     protected static attributeSelector: import("..").AttributeSelector<PayloadElement>;
     static selector: import("..").InstanceSelector<PayloadElement>;
-    static select: <U extends Element = HTMLElement>(element: PayloadElement, instance?: string, options?: import("..").SelectOptions) => U;
-    static selectAll: <U extends Element = HTMLElement>(element: PayloadElement, instance?: string, options?: import("..").SelectOptions) => NodeListOf<U>;
+    static select: <U extends Element = HTMLElement>(this: unknown, element: PayloadElement, instance?: string, options?: import("..").SelectOptions) => U;
+    static selectAll: <U extends Element = HTMLElement>(this: unknown, element: PayloadElement, instance?: string, options?: import("..").SelectOptions) => NodeListOf<U>;
     /**
      * Reads JSON from an `application/json` script without applying variables or a
      * schema.

@@ -62,10 +62,13 @@ export class PdfEmbed extends BaseComponent<PdfEmbedElement, PdfEmbedSettings> {
     }
   }
 
-  protected static attributeSelector = Selector.attr<PdfEmbedElement>(PdfEmbed.attr.element);
-  public static selector = Selector.instance<PdfEmbedElement>(this.attributeSelector, this.attr);
-  public static select = Selector.select<PdfEmbedElement>(this.selector);
-  public static selectAll = Selector.selectAll<PdfEmbedElement>(this.selector);
+  protected static readonly attributeSelector = Selector.attr<PdfEmbedElement>(this.attr.element);
+  public static readonly selector = Selector.instance<PdfEmbedElement>(
+    this.attributeSelector,
+    this.attr,
+  );
+  public static readonly select = Selector.select<PdfEmbedElement>(this.selector);
+  public static readonly selectAll = Selector.selectAll<PdfEmbedElement>(this.selector);
 
   public static getClientIdByUrl(config: Record<string, string>, fallback?: string): string {
     const href = window.location.href;

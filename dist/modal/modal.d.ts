@@ -35,10 +35,10 @@ export declare class Modal extends BaseComponent<ModalElement> {
     scrollTo: ScrollHandler["scrollTo"];
     clearScrollTimeout: ScrollHandler["clearScrollTimeout"];
     constructor(component: HTMLElement | null, settings?: PartialOptions<ModalSettings>);
-    protected static attributeSelector: import("../index.js").AttributeSelector<ModalElement>;
-    static selector: import("../index.js").InstanceSelector<ModalElement>;
-    static select: <U extends Element = HTMLElement>(element: ModalElement, instance?: string, options?: import("../index.js").SelectOptions) => U;
-    static selectAll: <U extends Element = HTMLElement>(element: ModalElement, instance?: string, options?: import("../index.js").SelectOptions) => NodeListOf<U>;
+    protected static readonly attributeSelector: import("../index.js").AttributeSelector<ModalElement>;
+    static readonly selector: import("../index.js").InstanceSelector<ModalElement>;
+    static readonly select: <U extends Element = HTMLElement>(this: unknown, element: ModalElement, instance?: string, options?: import("../index.js").SelectOptions) => U;
+    static readonly selectAll: <U extends Element = HTMLElement>(this: unknown, element: ModalElement, instance?: string, options?: import("../index.js").SelectOptions) => NodeListOf<U>;
     private getModalElement;
     setupScrollTo(): void;
     private setupStickyFooter;

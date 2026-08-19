@@ -1,8 +1,21 @@
 import type { LogLevel, LogLevelNames } from "loglevel";
 import Logger from "../logger/";
-import { Selector, type AttributeAccessorMap, type BaseAttributes } from "../selector";
+import {
+  Selector,
+  type AttributeAccessorMap,
+  type AttributeSelector,
+  type BaseAttributes,
+  type InstanceDefaultOptions,
+  type InstanceSelector,
+  type SelectOptions,
+} from "../selector";
 import { mergeOptions } from "../utils";
 import type { PartialOptions } from "../typeutils/index.js";
+
+type ComponentConstructor = abstract new (...args: any[]) => BaseComponent<any, any>;
+
+type ElementsOf<T extends ComponentConstructor> =
+  InstanceType<T> extends BaseComponent<infer Elements, any> ? Elements : never;
 
 export interface BaseSettings {
   id: string;
@@ -68,16 +81,19 @@ export abstract class BaseComponent<
     }
   }
 
-  protected static get attributeSelector() {
-    return Selector.attr(this.attr.element);
-  }
-  public static get selector() {
-    return Selector.instance(this.attributeSelector, this.attr);
-  }
-  public static get select() {
-    return Selector.select(this.selector);
-  }
-  public static get selectAll() {
-    return Selector.selectAll(this.selector);
-  }
+  protected static attributeSelector: AttributeSelector<any> = Selector.attr(function (
+    this: typeof BaseComponent,
+  ) {
+    return this.attr.element;
+  });
+
+  public static selector: InstanceSelector<any> = Selector.instance(
+    this.attributeSelector,
+    function (this: typeof BaseComponent) {
+      return this.attr;
+    },
+  );
+
+  public static select = Selector.select<any>(this.selector);
+  public static selectAll = Selector.selectAll<any>(this.selector);
 }

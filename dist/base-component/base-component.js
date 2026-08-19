@@ -1,5 +1,6 @@
+var _a;
 import Logger from "../logger/";
-import { Selector } from "../selector";
+import { Selector, } from "../selector";
 import { mergeOptions } from "../utils";
 /**
  * Base class for components with attribute-based selectors
@@ -35,19 +36,8 @@ export class BaseComponent {
             this.logger.setLevel(level);
         }
     }
-    static get attributeSelector() {
-        return Selector.attr(this.attr.element);
-    }
-    static get selector() {
-        return Selector.instance(this.attributeSelector, this.attr);
-    }
-    static get select() {
-        return Selector.select(this.selector);
-    }
-    static get selectAll() {
-        return Selector.selectAll(this.selector);
-    }
 }
+_a = BaseComponent;
 BaseComponent.defaultSettings = {
     id: undefined,
 };
@@ -55,3 +45,11 @@ BaseComponent.attr = {
     id: "data-id",
     element: "data-element",
 };
+BaseComponent.attributeSelector = Selector.attr(function () {
+    return this.attr.element;
+});
+BaseComponent.selector = Selector.instance(_a.attributeSelector, function () {
+    return this.attr;
+});
+BaseComponent.select = Selector.select(_a.selector);
+BaseComponent.selectAll = Selector.selectAll(_a.selector);

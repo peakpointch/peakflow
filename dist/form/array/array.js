@@ -1,3 +1,4 @@
+var _a;
 import { asSuffix, capitalize } from "../../utils";
 import wf from "../../webflow/index.js";
 import { Selector, exclude } from "../../selector";
@@ -12,8 +13,8 @@ import semver from "semver";
 const ARRAY_STORAGE_VERSION = "1.0.0";
 export class FormArray extends BaseComponent {
     constructor(settings) {
-        super(FormArray.select("component", settings.id), settings);
-        this.attr = FormArray.attr;
+        super(_a.select("component", settings.id), settings);
+        this.attr = _a.attr;
         this.groups = [];
         this.initialized = false;
         this.accordionList = [];
@@ -28,7 +29,7 @@ export class FormArray extends BaseComponent {
         this.Item = this.settings.itemClass;
         this.items = new Map();
         this.form = this.settings.container;
-        this.component = FormArray.select("component", this.id);
+        this.component = _a.select("component", this.id);
         this.list = this.select("list");
         this.template = this.list.querySelector(this.selector("template"));
         this.addButton = this.select("add");
@@ -63,38 +64,6 @@ export class FormArray extends BaseComponent {
             });
         });
         this.initialize();
-    }
-    /**
-     * Static selector
-     */
-    static selector(element, instance) {
-        const base = FormArray.attributeSelector(element);
-        const instanceSelector = instance ? `[${FormArray.attr.id}="${instance}"]` : "";
-        return element === "component"
-            ? `${base}${instanceSelector}`
-            : `${base}${instanceSelector}, ${instanceSelector} ${base}`;
-    }
-    /**
-     * Instance selector
-     */
-    selector(element, global = false) {
-        return global ? FormArray.selector(element, this.id) : FormArray.selector(element);
-    }
-    static select(element, instance) {
-        return document.querySelector(FormArray.selector(element, instance));
-    }
-    static selectAll(element, instance) {
-        return document.querySelectorAll(FormArray.selector(element, instance));
-    }
-    select(element, global = false) {
-        return global
-            ? document.querySelector(FormArray.selector(element, this.id))
-            : this.component.querySelector(FormArray.selector(element));
-    }
-    selectAll(element, global = false) {
-        return global
-            ? document.querySelectorAll(FormArray.selector(element, this.id))
-            : this.component.querySelectorAll(FormArray.selector(element));
     }
     registerSelects(suffix) {
         // Get all select inputs
@@ -908,6 +877,7 @@ export class FormArray extends BaseComponent {
         };
     }
 }
+_a = FormArray;
 FormArray.attr = {
     id: "data-form-array-id",
     element: "data-form-array-element",
@@ -953,4 +923,7 @@ FormArray.defaultSettings = {
         },
     },
 };
-FormArray.attributeSelector = Selector.attr(FormArray.attr.element);
+FormArray.attributeSelector = Selector.attr(_a.attr.element);
+FormArray.selector = Selector.instance(_a.attributeSelector, _a.attr);
+FormArray.select = Selector.select(_a.selector);
+FormArray.selectAll = Selector.selectAll(_a.selector);

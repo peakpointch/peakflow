@@ -66,9 +66,9 @@ export declare class Slider extends BaseComponent<SliderElement> {
     static attr: import("../index.js").AttributeAccessorMap<SwiperAttributes>;
     constructor(component: HTMLElement, settings: BaseSettings);
     protected static readonly attributeSelector: import("../index.js").AttributeSelector<string>;
-    static selector: import("../index.js").InstanceSelector<SliderElement>;
-    static select: <U extends Element = HTMLElement>(element: SliderElement, instance?: string, options?: import("../index.js").SelectOptions) => U;
-    static selectAll: <U extends Element = HTMLElement>(element: SliderElement, instance?: string, options?: import("../index.js").SelectOptions) => NodeListOf<U>;
+    static readonly selector: import("../index.js").InstanceSelector<SliderElement>;
+    static readonly select: <U extends Element = HTMLElement>(this: unknown, element: SliderElement, instance?: string, options?: import("../index.js").SelectOptions) => U;
+    static readonly selectAll: <U extends Element = HTMLElement>(this: unknown, element: SliderElement, instance?: string, options?: import("../index.js").SelectOptions) => NodeListOf<U>;
     private static create;
     static initAll(container?: HTMLElement, options?: SwiperOptions): void;
     static readOptions(swiperElement: HTMLElement, override?: SwiperOptions): SwiperOptions;

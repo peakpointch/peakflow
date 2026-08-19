@@ -128,6 +128,8 @@ export function split(selector: string): string[] {
   return result;
 }
 
+type Getter<T> = (this: any) => T;
+
 export class Selector {
   /**
    * Creates a selector function based on the provided attribute name.
@@ -140,7 +142,7 @@ export class Selector {
    * @returns A function that generates the selector string based on the provided name and match type.
    */
   public static attr<T extends string = string>(
-    attrName: string,
+    attrName: string | Getter<string>,
     defaultOptions?: Partial<AttributeDefaultOptions<T>>,
   ): AttributeSelector<T> {
     const mergedDefaultOptions: AttributeDefaultOptions<T> = {
@@ -149,21 +151,23 @@ export class Selector {
       defaultExclusions: defaultOptions?.defaultExclusions ?? [],
     };
 
-    return (
+    return function (
+      this: unknown,
       name: T | undefined = mergedDefaultOptions.defaultValue,
       options?: Partial<AttributeOptions>,
-    ): string => {
+    ): string {
+      const resolved = typeof attrName === "function" ? attrName.call(this) : attrName;
       const mergedOptions: AttributeOptions = {
         matchType: options?.matchType ?? mergedDefaultOptions.defaultMatchType,
         exclusions: options?.exclusions ?? mergedDefaultOptions.defaultExclusions,
       };
 
       if (!name) {
-        return exclude(`[${attrName}]`, ...mergedOptions.exclusions);
+        return exclude(`[${resolved}]`, ...mergedOptions.exclusions);
       }
 
       const value = String(name); // Ensure it's a string for selector use
-      const selector = `[${attrName}${getOperator(mergedOptions.matchType)}="${value}"]`;
+      const selector = `[${resolved}${getOperator(mergedOptions.matchType)}="${value}"]`;
 
       return exclude(selector, ...(mergedOptions.exclusions ?? []));
     };
@@ -179,14 +183,15 @@ export class Selector {
    */
   public static instance<T extends string>(
     attributeSelector: AttributeSelector<T>,
-    attr: BaseAttributes,
+    attr: BaseAttributes | Getter<BaseAttributes>,
     options?: InstanceDefaultOptions<T>,
   ): InstanceSelector<T> {
     const { root = "component", scoped = true } = options ?? {};
 
-    return (element: T, instance?: string) => {
-      const base = attributeSelector(element);
-      const instanceSelector = instance ? `[${attr.id}="${instance}"]` : "";
+    return function (this: unknown, element: T, instance?: string) {
+      const resolved = typeof attr === "function" ? attr.call(this) : attr;
+      const base = attributeSelector.call(this, element);
+      const instanceSelector = instance ? `[${resolved.id}="${instance}"]` : "";
 
       // Avoid duplicate selectors when no instance selector was given
       if (!instanceSelector) return base;
@@ -200,22 +205,28 @@ export class Selector {
   }
 
   public static select<T extends string>(instanceSelector: InstanceSelector<T>) {
-    return <U extends Element = HTMLElement>(
+    return function <U extends Element = HTMLElement>(
+      this: unknown,
       element: T,
       instance?: string,
       options?: SelectOptions,
-    ): U => {
-      return (options?.doc ?? document).querySelector<U>(instanceSelector(element, instance));
+    ): U | null {
+      return (options?.doc ?? document).querySelector<U>(
+        instanceSelector.call(this, element, instance),
+      );
     };
   }
 
   public static selectAll<T extends string>(instanceSelector: InstanceSelector<T>) {
-    return <U extends Element = HTMLElement>(
+    return function <U extends Element = HTMLElement>(
+      this: unknown,
       element: T,
       instance?: string,
       options?: SelectOptions,
-    ): NodeListOf<U> => {
-      return (options?.doc ?? document).querySelectorAll<U>(instanceSelector(element, instance));
+    ): NodeListOf<U> {
+      return (options?.doc ?? document).querySelectorAll<U>(
+        instanceSelector.call(this, element, instance),
+      );
     };
   }
 }

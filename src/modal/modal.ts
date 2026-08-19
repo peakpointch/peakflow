@@ -95,10 +95,13 @@ export class Modal extends BaseComponent<ModalElement> {
     this.initialized = true;
   }
 
-  protected static attributeSelector = Selector.attr<ModalElement>(Modal.attr.element);
-  public static selector = Selector.instance<ModalElement>(this.attributeSelector, this.attr);
-  public static select = Selector.select<ModalElement>(this.selector);
-  public static selectAll = Selector.selectAll<ModalElement>(this.selector);
+  protected static readonly attributeSelector = Selector.attr<ModalElement>(this.attr.element);
+  public static readonly selector = Selector.instance<ModalElement>(
+    this.attributeSelector,
+    this.attr,
+  );
+  public static readonly select = Selector.select<ModalElement>(this.selector);
+  public static readonly selectAll = Selector.selectAll<ModalElement>(this.selector);
 
   private getModalElement(): HTMLElement {
     if (this.component.matches(Modal.selector("modal"))) {

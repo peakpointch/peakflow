@@ -177,6 +177,17 @@ export class CollectionList<
     this.initElements();
   }
 
+  protected static readonly attributeSelector = Selector.attr<CollectionListElement>(
+    this.attr.element,
+  );
+  public static readonly selector = Selector.instance<CollectionListElement>(
+    this.attributeSelector,
+    this.attr,
+    { root: "wrapper" },
+  );
+  public static readonly select = Selector.select<CollectionListElement>(this.selector);
+  public static selectAll = Selector.selectAll<CollectionListElement>(this.selector);
+
   /**
    * Validates the collection root's required Peakflow tags.
    *
@@ -290,17 +301,6 @@ export class CollectionList<
       );
     }
   }
-
-  protected static attributeSelector = Selector.attr<CollectionListElement>(
-    CollectionList.attr.element,
-  );
-  public static selector = Selector.instance<CollectionListElement>(
-    this.attributeSelector,
-    this.attr,
-    { root: "wrapper" },
-  );
-  public static select = Selector.select<CollectionListElement>(this.selector);
-  public static selectAll = Selector.selectAll<CollectionListElement>(this.selector);
 
   public isEmpty(): boolean {
     return !this.listElement && this.emptyState !== null;

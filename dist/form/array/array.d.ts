@@ -6,7 +6,7 @@ import { FormProgressManager, type FormProgressComponent, type FieldGroupValidat
 import SplitButton from "../../split-button";
 import { Modal, AlertDialog } from "../../modal";
 import type { PartialOptions } from "../../typeutils/index.js";
-type ArrayElement = "component" | "list" | "template" | "add" | "edit" | "delete" | "save" | "draft" | "draft-badge" | "cancel" | "circle";
+type FormArrayElement = "component" | "list" | "template" | "add" | "edit" | "delete" | "save" | "draft" | "draft-badge" | "cancel" | "circle";
 type SerializedFormArray = SerializedItem[];
 type OnOpenCallback = (item?: FormArrayItem) => void;
 type OnCloseCallback = () => void;
@@ -51,7 +51,7 @@ export interface FormArraySettings<Item extends FormArrayItem> extends BaseSetti
      */
     dialogs?: FormArrayDialogs<Item>;
 }
-export declare class FormArray<Item extends FormArrayItem> extends BaseComponent<ArrayElement> {
+export declare class FormArray<Item extends FormArrayItem> extends BaseComponent<FormArrayElement> {
     static readonly attr: AttributeAccessorMap<ArrayAttributes>;
     static readonly defaultSettings: FormArraySettings<FormArrayItem>;
     readonly attr: ArrayAttributes;
@@ -80,19 +80,10 @@ export declare class FormArray<Item extends FormArrayItem> extends BaseComponent
     private editingKey;
     private unsavedItem;
     constructor(settings: PartialOptions<FormArraySettings<Item>>);
-    protected static attributeSelector: import("../..").AttributeSelector<ArrayElement>;
-    /**
-     * Static selector
-     */
-    static selector(element: ArrayElement, instance?: string): string;
-    /**
-     * Instance selector
-     */
-    selector(element: ArrayElement, global?: boolean): string;
-    static select<T extends Element = HTMLElement>(element: ArrayElement, instance?: string): T;
-    static selectAll<T extends Element = HTMLElement>(element: ArrayElement, instance?: string): NodeListOf<T>;
-    select<T extends Element = HTMLElement>(element: ArrayElement, global?: boolean): T;
-    selectAll<T extends Element = HTMLElement>(element: ArrayElement, global?: boolean): NodeListOf<T>;
+    protected static readonly attributeSelector: import("../..").AttributeSelector<FormArrayElement>;
+    static readonly selector: import("../..").InstanceSelector<FormArrayElement>;
+    static readonly select: <U extends Element = HTMLElement>(this: unknown, element: FormArrayElement, instance?: string, options?: import("../..").SelectOptions) => U;
+    static selectAll: <U extends Element = HTMLElement>(this: unknown, element: FormArrayElement, instance?: string, options?: import("../..").SelectOptions) => NodeListOf<U>;
     registerSelects(suffix?: string): void;
     private initialize;
     private initializeLinkedFields;

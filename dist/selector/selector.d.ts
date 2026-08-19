@@ -42,6 +42,7 @@ export declare function exclude(selector: string, ...exclusions: string[]): stri
 export declare function extend(selector: string, ...extensions: string[]): string;
 export declare function append(selectorList: string[], suffix: string): string;
 export declare function split(selector: string): string[];
+type Getter<T> = (this: any) => T;
 export declare class Selector {
     /**
      * Creates a selector function based on the provided attribute name.
@@ -53,7 +54,7 @@ export declare class Selector {
      * @param defaultOptions - Options to configure selector generation.
      * @returns A function that generates the selector string based on the provided name and match type.
      */
-    static attr<T extends string = string>(attrName: string, defaultOptions?: Partial<AttributeDefaultOptions<T>>): AttributeSelector<T>;
+    static attr<T extends string = string>(attrName: string | Getter<string>, defaultOptions?: Partial<AttributeDefaultOptions<T>>): AttributeSelector<T>;
     /**
      * Creates an instance specific selector function for a `BaseComponent` class.
      *
@@ -62,8 +63,8 @@ export declare class Selector {
      * @param attr - The attr member of component class.
      * @returns A typed static member that generates an instance specific selector string.
      */
-    static instance<T extends string>(attributeSelector: AttributeSelector<T>, attr: BaseAttributes, options?: InstanceDefaultOptions<T>): InstanceSelector<T>;
-    static select<T extends string>(instanceSelector: InstanceSelector<T>): <U extends Element = HTMLElement>(element: T, instance?: string, options?: SelectOptions) => U;
-    static selectAll<T extends string>(instanceSelector: InstanceSelector<T>): <U extends Element = HTMLElement>(element: T, instance?: string, options?: SelectOptions) => NodeListOf<U>;
+    static instance<T extends string>(attributeSelector: AttributeSelector<T>, attr: BaseAttributes | Getter<BaseAttributes>, options?: InstanceDefaultOptions<T>): InstanceSelector<T>;
+    static select<T extends string>(instanceSelector: InstanceSelector<T>): <U extends Element = HTMLElement>(this: unknown, element: T, instance?: string, options?: SelectOptions) => U | null;
+    static selectAll<T extends string>(instanceSelector: InstanceSelector<T>): <U extends Element = HTMLElement>(this: unknown, element: T, instance?: string, options?: SelectOptions) => NodeListOf<U>;
 }
 export {};

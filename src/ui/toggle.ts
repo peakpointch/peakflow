@@ -51,10 +51,13 @@ export class Toggle extends BaseComponent<ToggleElement, ToggleSettings> {
     this.updateToggleState();
   }
 
-  protected static attributeSelector = Selector.attr<ToggleElement>(Toggle.attr.element);
-  public static selector = Selector.instance<ToggleElement>(this.attributeSelector, this.attr);
-  public static select = Selector.select<ToggleElement>(this.selector);
-  public static selectAll = Selector.selectAll<ToggleElement>(this.selector);
+  protected static readonly attributeSelector = Selector.attr<ToggleElement>(this.attr.element);
+  public static readonly selector = Selector.instance<ToggleElement>(
+    this.attributeSelector,
+    this.attr,
+  );
+  public static readonly select = Selector.select<ToggleElement>(this.selector);
+  public static readonly selectAll = Selector.selectAll<ToggleElement>(this.selector);
 
   private initEventListeners(): void {
     this.checkbox.addEventListener("change", () => this.updateToggleState());

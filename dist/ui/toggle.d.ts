@@ -18,10 +18,10 @@ export declare class Toggle extends BaseComponent<ToggleElement, ToggleSettings>
     checkbox: HTMLInputElement;
     toggle: HTMLElement;
     constructor(checkbox: HTMLInputElement, options?: PartialOptions<ToggleSettings>);
-    protected static attributeSelector: import("..").AttributeSelector<ToggleElement>;
-    static selector: import("..").InstanceSelector<ToggleElement>;
-    static select: <U extends Element = HTMLElement>(element: ToggleElement, instance?: string, options?: import("..").SelectOptions) => U;
-    static selectAll: <U extends Element = HTMLElement>(element: ToggleElement, instance?: string, options?: import("..").SelectOptions) => NodeListOf<U>;
+    protected static readonly attributeSelector: import("..").AttributeSelector<ToggleElement>;
+    static readonly selector: import("..").InstanceSelector<ToggleElement>;
+    static readonly select: <U extends Element = HTMLElement>(this: unknown, element: ToggleElement, instance?: string, options?: import("..").SelectOptions) => U;
+    static readonly selectAll: <U extends Element = HTMLElement>(this: unknown, element: ToggleElement, instance?: string, options?: import("..").SelectOptions) => NodeListOf<U>;
     private initEventListeners;
     private updateToggleState;
     static initAll(container?: HTMLElement | Document, settings?: PartialOptions<Omit<ToggleSettings, "id">>): void;

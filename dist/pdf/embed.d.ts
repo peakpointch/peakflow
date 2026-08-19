@@ -27,10 +27,10 @@ export declare class PdfEmbed extends BaseComponent<PdfEmbedElement, PdfEmbedSet
     private static lp;
     private lp;
     constructor(component: HTMLElement, settings?: PartialOptions<PdfEmbedSettings | ClientIds>);
-    protected static attributeSelector: import("../index.js").AttributeSelector<PdfEmbedElement>;
-    static selector: import("../index.js").InstanceSelector<PdfEmbedElement>;
-    static select: <U extends Element = HTMLElement>(element: PdfEmbedElement, instance?: string, options?: import("../index.js").SelectOptions) => U;
-    static selectAll: <U extends Element = HTMLElement>(element: PdfEmbedElement, instance?: string, options?: import("../index.js").SelectOptions) => NodeListOf<U>;
+    protected static readonly attributeSelector: import("../index.js").AttributeSelector<PdfEmbedElement>;
+    static readonly selector: import("../index.js").InstanceSelector<PdfEmbedElement>;
+    static readonly select: <U extends Element = HTMLElement>(this: unknown, element: PdfEmbedElement, instance?: string, options?: import("../index.js").SelectOptions) => U;
+    static readonly selectAll: <U extends Element = HTMLElement>(this: unknown, element: PdfEmbedElement, instance?: string, options?: import("../index.js").SelectOptions) => NodeListOf<U>;
     static getClientIdByUrl(config: Record<string, string>, fallback?: string): string;
     hide(element: DashToCamelCase<PdfEmbedElement>): void;
     show(element: DashToCamelCase<PdfEmbedElement>): void;

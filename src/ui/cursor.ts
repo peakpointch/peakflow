@@ -65,10 +65,13 @@ export class Cursor<T extends string> extends BaseComponent<CursorElement, Curso
     this.injectStyles();
   }
 
-  protected static attributeSelector = Selector.attr<CursorElement>(this.attr.element);
-  public static selector = Selector.instance<CursorElement>(this.attributeSelector, this.attr);
-  public static select = Selector.select<CursorElement>(this.selector);
-  public static selectAll = Selector.selectAll<CursorElement>(this.selector);
+  protected static readonly attributeSelector = Selector.attr<CursorElement>(this.attr.element);
+  public static readonly selector = Selector.instance<CursorElement>(
+    this.attributeSelector,
+    this.attr,
+  );
+  public static readonly select = Selector.select<CursorElement>(this.selector);
+  public static readonly selectAll = Selector.selectAll<CursorElement>(this.selector);
 
   public static create<T extends string>(settings: PartialOptions<CursorSettings<T>>): Cursor<T> {
     const el = document.createElement("div");

@@ -132,6 +132,10 @@ export declare class CollectionList<Item extends CollectionListItem = Collection
      */
     elements: HTMLElement[];
     constructor(component: HTMLElement | null, settings?: PartialOptions<CollectionListSettings<Item>>);
+    protected static readonly attributeSelector: import("../index.js").AttributeSelector<CollectionListElement>;
+    static readonly selector: import("../index.js").InstanceSelector<CollectionListElement>;
+    static readonly select: <U extends Element = HTMLElement>(this: unknown, element: CollectionListElement, instance?: string, options?: import("../index.js").SelectOptions) => U;
+    static selectAll: <U extends Element = HTMLElement>(this: unknown, element: CollectionListElement, instance?: string, options?: import("../index.js").SelectOptions) => NodeListOf<U>;
     /**
      * Validates the collection root's required Peakflow tags.
      *
@@ -160,10 +164,6 @@ export declare class CollectionList<Item extends CollectionListItem = Collection
      * of silently treating mistagged DOM as empty.
      */
     private assertElementStructure;
-    protected static attributeSelector: import("../index.js").AttributeSelector<CollectionListElement>;
-    static selector: import("../index.js").InstanceSelector<CollectionListElement>;
-    static select: <U extends Element = HTMLElement>(element: CollectionListElement, instance?: string, options?: import("../index.js").SelectOptions) => U;
-    static selectAll: <U extends Element = HTMLElement>(element: CollectionListElement, instance?: string, options?: import("../index.js").SelectOptions) => NodeListOf<U>;
     isEmpty(): boolean;
     private assertSchema;
     private assertItemsMatchElements;
