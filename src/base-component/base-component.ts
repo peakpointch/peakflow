@@ -1,5 +1,5 @@
 import type { LogLevel, LogLevelNames } from "loglevel";
-import Logger from "../logger/";
+import Logger from "../logger/index.js";
 import {
   Selector,
   type AttributeAccessorMap,
@@ -8,8 +8,8 @@ import {
   type InstanceDefaultOptions,
   type InstanceSelector,
   type SelectOptions,
-} from "../selector";
-import { mergeOptions } from "../utils";
+} from "../selector/index.js";
+import { mergeOptions } from "../utils/index.js";
 import type { PartialOptions } from "../typeutils/index.js";
 
 type ComponentConstructor = abstract new (...args: any[]) => BaseComponent<any, any>;

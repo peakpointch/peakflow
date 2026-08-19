@@ -1,6 +1,6 @@
 import { Selector, Dataset, type Attribute, type Attributes } from "../selector/index.js";
-import { Stylesheet } from "../utils";
-import type { CamelToDash, DashToCamelCase } from "../typeutils";
+import { Stylesheet } from "../utils/index.js";
+import type { CamelToDash, DashToCamelCase } from "../typeutils/index.js";
 
 import Swiper from "swiper";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";

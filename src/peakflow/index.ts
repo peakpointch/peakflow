@@ -1,4 +1,4 @@
 /// <reference types="../../types/peakflow.d.ts" />
 
-export * from "./peakflow";
-export * from "./defaults";
+export * from "./peakflow.js";
+export * from "./defaults.js";

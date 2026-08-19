@@ -1,4 +1,4 @@
-import type { Attributes, Attribute } from "./attributes";
+import type { Attributes, Attribute } from "./attributes.js";
 
 type AttributeMatchType =
   | "startsWith" // ^=

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { Equal, Expect } from "../typeutils";
+import type { Equal, Expect } from "../typeutils/index.js";
 
 /* ======================== */
 /* ==== Runtime Schema ==== */

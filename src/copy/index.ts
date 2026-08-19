@@ -1,4 +1,4 @@
-import Selector from "../selector";
+import Selector from "../selector/index.js";
 
 type CopyComponentElement = "component" | "button";
 

@@ -1,3 +1,3 @@
-export * from "./calendarweekcomponent";
-export * from "./toggle";
-export * from "./cursor";
+export * from "./calendarweekcomponent.js";
+export * from "./toggle.js";
+export * from "./cursor.js";

@@ -1,7 +1,7 @@
 import type { GlobalCal } from "@calcom/embed-core";
 import type { BookerLayouts, EmbedThemeConfig } from "@calcom/embed-core/dist/src/types";
 import type { PartialOptions } from "../typeutils/index.js";
-import { mergeOptions, Script } from "../utils";
+import { mergeOptions, Script } from "../utils/index.js";
 import type {
   EventData as CalEventData,
   EventDataMap as CalEventDataMap,

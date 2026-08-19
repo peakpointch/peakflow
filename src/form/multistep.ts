@@ -20,7 +20,7 @@ import {
   FormProgressManager,
 } from "./index.js";
 import wf from "../webflow/index.js";
-import { asSuffix, mergeOptions } from "../utils";
+import { asSuffix, mergeOptions } from "../utils/index.js";
 import type { PartialOptions } from "../typeutils/index.js";
 import EventEmitter from "eventemitter3";
 

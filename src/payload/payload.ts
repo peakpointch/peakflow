@@ -1,4 +1,4 @@
-import { Selector, Dataset } from "../selector/";
+import { Selector, Dataset } from "../selector/index.js";
 import { PayloadSchema } from "./schema.js";
 import type {
   InferRawDefinition,

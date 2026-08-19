@@ -1,4 +1,4 @@
-import { inlineCms } from "./index";
+import { inlineCms } from "./index.js";
 
 export default function inlineCmsDefault(): void {
   inlineCms({

@@ -1,3 +1,3 @@
-export * from "./payload";
-export * from "./schema";
-export * from "./types";
+export * from "./payload.js";
+export * from "./schema.js";
+export * from "./types.js";

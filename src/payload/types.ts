@@ -1,4 +1,4 @@
-import type { Attribute, Attributes } from "../selector";
+import type { Attribute, Attributes } from "../selector/index.js";
 import type { PayloadSchema } from "./schema.js";
 
 export type PayloadElement = "embed" | "var";

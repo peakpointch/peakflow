@@ -1,8 +1,8 @@
 import gsap from "gsap";
-import Selector from "../selector";
-import { BaseComponent, type BaseSettings } from "../base-component";
+import Selector from "../selector/index.js";
+import { BaseComponent, type BaseSettings } from "../base-component/index.js";
 import type { PartialOptions } from "../typeutils/index.js";
-import { objectToCSS, breakpointsToMediaQueries } from "../utils/css";
+import { objectToCSS, breakpointsToMediaQueries } from "../utils/css.js";
 
 export type CursorElement = "pointer";
 export type CursorState = "base" | "hover";

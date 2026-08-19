@@ -1,5 +1,5 @@
-export { peakflow as default } from "./peakflow";
-export * from "./peakflow";
+export { peakflow as default } from "./peakflow/index.js";
+export * from "./peakflow/index.js";
 
 export * from "./accordion/index.js";
 export * from "./selector/index.js";

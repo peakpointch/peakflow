@@ -1,5 +1,5 @@
-import Script from "../utils/script";
-import Stylesheet from "../utils/stylesheet";
+import Script from "../utils/script.js";
+import Stylesheet from "../utils/stylesheet.js";
 
 interface VimeConfig {
   container: HTMLElement;

@@ -1,9 +1,9 @@
-import { asSuffix, capitalize } from "../../utils";
+import { asSuffix, capitalize } from "../../utils/index.js";
 import wf from "../../webflow/index.js";
-import { Selector, exclude, type AttributeAccessorMap, type BaseAttributes } from "../../selector";
+import { Selector, exclude, type AttributeAccessorMap, type BaseAttributes } from "../../selector/index.js";
 import { BaseComponent, type BaseSettings } from "../../base-component/index.js";
-import { FormArrayItem, type ItemConstructor, type SerializedItem } from "./item";
-import type { FormArrayDialogs, FormMessages, GrammarOptions, MessageFn } from "./messages";
+import { FormArrayItem, type ItemConstructor, type SerializedItem } from "./item.js";
+import type { FormArrayDialogs, FormMessages, GrammarOptions, MessageFn } from "./messages.js";
 import {
   FormDecision,
   FormMessage,
@@ -22,11 +22,11 @@ import {
   type HTMLFormInput,
   type FieldGroupValidation,
 } from "../index.js";
-import Accordion from "../../accordion";
-import SplitButton from "../../split-button";
-import { Modal, AlertDialog, type AlertDialogMessage } from "../../modal";
-import type { ScrollPosition } from "../../scroll";
-import { pluralize } from "../../pluralize";
+import Accordion from "../../accordion/index.js";
+import SplitButton from "../../split-button/index.js";
+import { Modal, AlertDialog, type AlertDialogMessage } from "../../modal/index.js";
+import type { ScrollPosition } from "../../scroll/index.js";
+import { pluralize } from "../../pluralize/index.js";
 
 import semver from "semver";
 import type { PartialOptions } from "../../typeutils/index.js";

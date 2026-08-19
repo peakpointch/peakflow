@@ -1,6 +1,6 @@
 import gsap from "gsap";
-import { BaseComponent, type BaseSettings } from "../base-component";
-import Selector from "../selector";
+import { BaseComponent, type BaseSettings } from "../base-component/index.js";
+import Selector from "../selector/index.js";
 import type { PartialOptions } from "../typeutils/index.js";
 
 export type ToggleElement = "component" | "checkbox" | "toggle";
