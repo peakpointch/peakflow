@@ -28,8 +28,8 @@ export function scrollToSection(
     const selector = selectorType === "id" ? `#${id}` : id;
     if (!selector || selector === "#") {
       console.warn(`Scroll: "${selector}" is not a valid CSS selector.`);
-      return
-    };
+      return;
+    }
     const section = document.querySelector(selector);
     if (section) {
       const elementPosition = section.getBoundingClientRect().top;

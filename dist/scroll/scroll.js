@@ -14,7 +14,6 @@ export function scrollToSection(id, selectorType = "id", options = {}) {
             console.warn(`Scroll: "${selector}" is not a valid CSS selector.`);
             return;
         }
-        ;
         const section = document.querySelector(selector);
         if (section) {
             const elementPosition = section.getBoundingClientRect().top;
