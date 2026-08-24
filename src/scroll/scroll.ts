@@ -26,6 +26,10 @@ export function scrollToSection(
   };
   setTimeout(() => {
     const selector = selectorType === "id" ? `#${id}` : id;
+    if (!selector || selector === "#") {
+      console.warn(`Scroll: "${selector}" is not a valid CSS selector.`);
+      return
+    };
     const section = document.querySelector(selector);
     if (section) {
       const elementPosition = section.getBoundingClientRect().top;
@@ -52,7 +56,8 @@ export function onScroll(
     defaultBehaviour: options.defaultBehaviour ?? defaultScrollOptions.defaultBehaviour,
   };
   if (!link) throw new Error(`Event target is undefined. Cannot scroll from an undefined link.`);
-  const scrollId = link.getAttribute("href")?.slice(1) || link.getAttribute("scroll-to") || "";
+  const scrollId = link.getAttribute("href")?.slice(1) || link.getAttribute("scroll-to");
+  if (!scrollId) return;
 
   const offset = parseInt(link.getAttribute("scroll-offset") || `${opts.defaultOffset}`, 10);
   const behaviour =
