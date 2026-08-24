@@ -4674,6 +4674,8 @@ export declare const UCLocaleMap: {
 };
 export type UCLocale = keyof typeof UCLocaleMap;
 type UCTheme = "light" | "dark" | "auto";
+type UCSource = "local" | "camera" | "dropbox" | "gdrive" | "gphotos" | "onedrive" | "link";
+type UCCameraMode = "photo" | "video";
 declare const UCSelector: {
     readonly id: "[data-uploadcare-id]";
     readonly fields: {
@@ -4706,6 +4708,10 @@ interface UCFileUploaderConfig {
      * - false: the file uploader will be appended as a child to the target element
      */
     replaceTarget: boolean;
+    /** An array of allowed file sources */
+    sourceList: UCSource[];
+    /** An array of allowed camera modes */
+    cameraModes: UCCameraMode[];
 }
 type PartialUCFileUploaderConfig = PartialExcept<UCFileUploaderConfig, "pubkey" | "component">;
 /**

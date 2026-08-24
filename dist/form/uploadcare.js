@@ -76,6 +76,8 @@ const UCAttr = {
     element: "data-uploadcare-element",
     field: "data-uploadcare-field",
     pubkey: "data-uploadcare-pubkey",
+    sourceList: "data-uploadcare-source-list",
+    cameraModes: "data-uploadcare-camera-modes",
 };
 const UCSelector = {
     id: `[${UCAttr.id}]`,
@@ -138,6 +140,10 @@ function initUCConfig(config) {
         pubkey: config.pubkey,
         target: config.target,
         replaceTarget: config.replaceTarget ?? false,
+        sourceList: config.sourceList.length
+            ? config.sourceList
+            : ["local", "camera", "dropbox", "gdrive"],
+        cameraModes: config.cameraModes.length ? config.cameraModes : ["photo", "video"],
     };
     cfg.target = getTarget(cfg, prefix);
     if (!cfg.component) {
@@ -178,30 +184,33 @@ function initUCEvents(ctxProvider, prefix, cfg) {
 export function mountUCFileUploader(config) {
     // 1. Ensure stylesheet is present
     new Stylesheet({
-        href: "https://cdn.jsdelivr.net/npm/@uploadcare/file-uploader@v1/web/uc-file-uploader-regular.min.css",
+        href: "https://cdn.jsdelivr.net/npm/@uploadcare/file-uploader@v1/web/uc-file-uploader-minimal.min.css",
     }).load();
-    const { pubkey, name, locale, theme, className, target, replaceTarget } = config;
     // 2. Create <uc-config>
     const configEl = document.createElement("uc-config");
-    configEl.setAttribute("locale-name", locale);
-    configEl.setAttribute("ctx-name", name);
-    configEl.setAttribute("pubkey", pubkey);
+    configEl.setAttribute("locale-name", config.locale);
+    configEl.setAttribute("ctx-name", config.name);
+    configEl.setAttribute("pubkey", config.pubkey);
     configEl.setAttribute("group-output", "");
+    configEl.setAttribute("source-list", config.sourceList.join(", "));
+    if (config.sourceList.includes("camera")) {
+        configEl.setAttribute("camera-modes", config.cameraModes.join(", "));
+    }
     // 3. Create <uc-file-uploader-minimal>
     const uploaderEl = document.createElement("uc-file-uploader-minimal");
-    uploaderEl.setAttribute("ctx-name", name);
-    uploaderEl.className = getUploaderClass(theme, className, name);
+    uploaderEl.setAttribute("ctx-name", config.name);
+    uploaderEl.className = getUploaderClass(config.theme, config.className, config.name);
     // 4. Create <uc-upload-ctx-provider>
     const ctxProvider = document.createElement("uc-upload-ctx-provider");
-    ctxProvider.setAttribute("ctx-name", name);
+    ctxProvider.setAttribute("ctx-name", config.name);
     // Insert them into DOM (order matters: config + uploader + provider)
-    if (replaceTarget) {
-        target.replaceWith(configEl, uploaderEl, ctxProvider);
+    if (config.replaceTarget) {
+        config.target.replaceWith(configEl, uploaderEl, ctxProvider);
     }
     else {
-        target.appendChild(configEl);
-        target.appendChild(uploaderEl);
-        target.appendChild(ctxProvider);
+        config.target.appendChild(configEl);
+        config.target.appendChild(uploaderEl);
+        config.target.appendChild(ctxProvider);
     }
     return { configEl, uploaderEl, ctxProvider };
 }
@@ -216,6 +225,15 @@ export function initUCFileUploader(config) {
     const { ctxProvider } = mountUCFileUploader(cfg);
     initUCEvents(ctxProvider, prefix, cfg);
 }
+function parseStringList(stringList) {
+    if (!stringList)
+        return [];
+    const items = stringList
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+    return Array.from(new Set(items));
+}
 export function initUploadcare(container, config) {
     const prefix = logPrefix("Uploadcare");
     const components = container.querySelectorAll(UCSelector.id);
@@ -228,6 +246,8 @@ export function initUploadcare(container, config) {
             name: component.getAttribute(UCAttr.id) ?? undefined,
             component: component,
             pubkey: component.getAttribute(UCAttr.pubkey),
+            sourceList: parseStringList(component.getAttribute(UCAttr.sourceList)),
+            cameraModes: parseStringList(component.getAttribute(UCAttr.cameraModes)),
         };
         initUCFileUploader(newConfig);
     });
