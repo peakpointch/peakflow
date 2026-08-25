@@ -70,12 +70,18 @@ export class Dataset {
             name,
             default: defaultValue,
             type: (val, attr) => {
-                if (val === null)
-                    return attr.default;
-                if (val !== "true" && val !== "false") {
-                    throw new Error(`Attribute "${attr.name}" is not boolean`);
+                if (val === null) {
+                    return attr.default ?? false;
                 }
-                return val === "true";
+                val = val.trim();
+                if (val === "") {
+                    return attr.default ?? true;
+                }
+                if (val === "true")
+                    return true;
+                if (val === "false")
+                    return false;
+                throw new TypeError(`Attribute "${attr.name}" is not boolean`);
             },
         };
     }
