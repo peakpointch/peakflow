@@ -52,6 +52,10 @@ export type AttributeAccessorMap<T extends Attributes = Attributes> = {
   [K in keyof T]: T[K] extends Attribute<infer N, infer _> ? N : never;
 };
 
+type IsAny<T> = boolean extends (T extends never ? true : false) ? true : false;
+
+type ResolveString<T> = IsAny<T> extends true ? string : [T] extends [never] ? string : T;
+
 // =============================
 // ====== Implementations ======
 // =============================
@@ -138,14 +142,14 @@ export class Dataset<T extends Attributes> {
   // ====== Attribute Types ======
   // =============================
 
-  static String<T extends string, N extends string = string>(
+  static String<T extends string = never, N extends string = string>(
     name: N,
     defaultValue?: T,
-  ): DatasetAttribute<N, T> {
+  ): DatasetAttribute<N, ResolveString<T>> {
     return {
       name,
-      default: defaultValue,
-      type: (val, attr) => (val ?? attr.default ?? "") as T,
+      default: defaultValue as unknown as ResolveString<T>,
+      type: (val, attr) => (val ?? attr.default ?? "") as unknown as ResolveString<T>,
     };
   }
 

@@ -23,9 +23,9 @@ export declare namespace Payload {
  */
 export declare class Payload {
     static dataset: Dataset<{
-        id: import("../selector/attributes.js").DatasetAttribute<"data-payload-id", any>;
+        id: import("../selector/attributes.js").DatasetAttribute<"data-payload-id", string>;
         element: import("../selector/attributes.js").DatasetAttribute<string, PayloadElement>;
-        var: import("../selector/attributes.js").DatasetAttribute<"data-payload-var", any>;
+        var: import("../selector/attributes.js").DatasetAttribute<"data-payload-var", string>;
     }>;
     static readonly resolvers: {
         /**
