@@ -1,18 +1,28 @@
-import Selector from "../selector/index.js";
+import { Selector, Dataset } from "../selector/index.js";
 
 export interface DefaultScrollOptions {
   defaultOffset: number;
-  defaultBehaviour: ScrollBehavior;
+  defaultBehavior: ScrollBehavior;
 }
 
 export interface OverrideScrollOptions {
   offset: number;
-  behaviour: ScrollBehavior;
+  behavior: ScrollBehavior;
 }
+
+export const scrollDataset = Dataset.define({
+  behavior: Dataset.String<ScrollBehavior, "data-scroll-behavior">("data-scroll-behavior"),
+  prefix: Dataset.String("data-scroll-prefix"),
+  href: Dataset.String("data-scroll-href"),
+  to: Dataset.String("data-scroll-to"),
+  offset: Dataset.Number("data-scroll-offset"),
+  ignore: Dataset.Boolean("data-scroll-ignore"),
+  global: Dataset.Boolean("data-scroll-global"),
+});
 
 export const defaultScrollOptions: DefaultScrollOptions = {
   defaultOffset: 0,
-  defaultBehaviour: "smooth",
+  defaultBehavior: "smooth",
 };
 
 export function scrollToSection(
@@ -22,9 +32,10 @@ export function scrollToSection(
 ): void {
   const opts: OverrideScrollOptions = {
     offset: options.offset ?? defaultScrollOptions.defaultOffset,
-    behaviour: options.behaviour ?? defaultScrollOptions.defaultBehaviour,
+    behavior: options.behavior ?? defaultScrollOptions.defaultBehavior,
   };
   setTimeout(() => {
+    id = id.trim();
     const selector = selectorType === "id" ? `#${id}` : id;
     if (!selector || selector === "#") {
       console.warn(`Scroll: "${selector}" is not a valid CSS selector.`);
@@ -37,7 +48,7 @@ export function scrollToSection(
 
       window.scrollTo({
         top: offsetPosition,
-        behavior: opts.behaviour,
+        behavior: opts.behavior,
       });
     } else {
       console.error(`Section with id '${id}' not found.`);
@@ -45,43 +56,48 @@ export function scrollToSection(
   }, 10);
 }
 
-export function onScroll(
+export function onScrollClick(
   link: HTMLAnchorElement,
-  event: Event,
   options: Partial<DefaultScrollOptions> = {},
 ): void {
   const opts: DefaultScrollOptions = {
     defaultOffset: options.defaultOffset ?? defaultScrollOptions.defaultOffset,
-    defaultBehaviour: options.defaultBehaviour ?? defaultScrollOptions.defaultBehaviour,
+    defaultBehavior: options.defaultBehavior ?? defaultScrollOptions.defaultBehavior,
   };
   if (!link) throw new Error(`Event target is undefined. Cannot scroll from an undefined link.`);
-  const scrollId =
-    link.getAttribute("href")?.trim().slice(1) || link.getAttribute("scroll-to").trim();
+
+  const { behavior, href, offset } = Dataset.parse<typeof scrollDataset.definition>(link, {
+    ...scrollDataset.definition,
+    behavior: Dataset.String(scrollDataset.attr.behavior, opts.defaultBehavior),
+    offset: Dataset.Number(scrollDataset.attr.offset, opts.defaultOffset),
+  });
+
+  const scrollId = link.getAttribute("href")?.trim().slice(1) || href.trim();
   if (!scrollId) return;
 
-  const offset = parseInt(link.getAttribute("scroll-offset") || `${opts.defaultOffset}`, 10);
-  const behaviour =
-    (link.getAttribute("scroll-behaviour") as ScrollBehavior) || opts.defaultBehaviour;
-  scrollToSection(scrollId, "id", { offset, behaviour });
+  scrollToSection(scrollId, "id", { offset, behavior });
 }
 
 export function initCMSScrollLinks(): void {
-  const cmsScrollLinks = document.querySelectorAll<HTMLAnchorElement>("a[data-href-scroll]");
+  const cmsScrollLinks = document.querySelectorAll<HTMLAnchorElement>(
+    `a[${scrollDataset.attr.href}]`,
+  );
   cmsScrollLinks.forEach((link) => {
-    const hrefPrefix = link.dataset.hrefPrefix || "";
-    const hrefScroll = link.dataset.hrefScroll || "";
-    link.href = `${hrefPrefix}#${hrefScroll}`;
+    const { prefix, href } = scrollDataset.parse(link);
+    link.href = `${prefix}#${href}`;
   });
 }
 
 export function initGlobalScrollLinks(): void {
   const globalScrollLinks = document.querySelectorAll<HTMLAnchorElement>(
-    'a[data-global-scroll="true"]',
+    `a[${scrollDataset.attr.global}]`,
   );
 
   const globalFiltered = Array.from(globalScrollLinks).filter((link) => {
+    const { global } = scrollDataset.parse(link);
     const url = new URL(link.href);
-    return url.pathname === location.pathname;
+    const isSamePage = url.pathname === window.location.pathname;
+    return global && isSamePage;
   });
 
   globalFiltered.forEach((link) => {
@@ -105,14 +121,18 @@ export function overrideDefaultScroll(options: Partial<DefaultScrollOptions> = {
   initGlobalScrollLinks();
 
   const href = Selector.attr("href");
+  const scrollTo = Selector.attr(scrollDataset.attr.to);
   const allScrollLinks = document.querySelectorAll<HTMLAnchorElement>(
-    `${href("#", { matchType: "startsWith" })}, [scroll-to]`,
+    [href("#", { matchType: "startsWith" }), scrollTo()].join(", "),
   );
 
   allScrollLinks.forEach((link) => {
+    const { ignore } = scrollDataset.parse(link);
+    if (ignore) return;
+
     link.addEventListener("click", (event) => {
       event.preventDefault();
-      onScroll(link, event, options);
+      onScrollClick(link, options);
     });
   });
 }
