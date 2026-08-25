@@ -50,13 +50,13 @@ export function onScroll(
   event: Event,
   options: Partial<DefaultScrollOptions> = {},
 ): void {
-  event.preventDefault();
   const opts: DefaultScrollOptions = {
     defaultOffset: options.defaultOffset ?? defaultScrollOptions.defaultOffset,
     defaultBehaviour: options.defaultBehaviour ?? defaultScrollOptions.defaultBehaviour,
   };
   if (!link) throw new Error(`Event target is undefined. Cannot scroll from an undefined link.`);
-  const scrollId = link.getAttribute("href")?.slice(1) || link.getAttribute("scroll-to");
+  const scrollId =
+    link.getAttribute("href")?.trim().slice(1) || link.getAttribute("scroll-to").trim();
   if (!scrollId) return;
 
   const offset = parseInt(link.getAttribute("scroll-offset") || `${opts.defaultOffset}`, 10);
@@ -93,7 +93,10 @@ export function initGlobalScrollLinks(): void {
 export function disableWebflowScroll(): void {
   const Webflow = (window as any).Webflow || [];
   Webflow.push(() => {
-    document.removeEventListener("click", (window as any).Webflow?.scroll, true);
+    const $ = (window as any).$;
+    if ($) {
+      $(document).off("click");
+    }
   });
 }
 
@@ -107,7 +110,10 @@ export function overrideDefaultScroll(options: Partial<DefaultScrollOptions> = {
   );
 
   allScrollLinks.forEach((link) => {
-    link.addEventListener("click", (event) => onScroll(link, event, options));
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      onScroll(link, event, options);
+    });
   });
 }
 

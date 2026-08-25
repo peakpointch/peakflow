@@ -29,14 +29,13 @@ export function scrollToSection(id, selectorType = "id", options = {}) {
     }, 10);
 }
 export function onScroll(link, event, options = {}) {
-    event.preventDefault();
     const opts = {
         defaultOffset: options.defaultOffset ?? defaultScrollOptions.defaultOffset,
         defaultBehaviour: options.defaultBehaviour ?? defaultScrollOptions.defaultBehaviour,
     };
     if (!link)
         throw new Error(`Event target is undefined. Cannot scroll from an undefined link.`);
-    const scrollId = link.getAttribute("href")?.slice(1) || link.getAttribute("scroll-to");
+    const scrollId = link.getAttribute("href")?.trim().slice(1) || link.getAttribute("scroll-to").trim();
     if (!scrollId)
         return;
     const offset = parseInt(link.getAttribute("scroll-offset") || `${opts.defaultOffset}`, 10);
@@ -65,7 +64,10 @@ export function initGlobalScrollLinks() {
 export function disableWebflowScroll() {
     const Webflow = window.Webflow || [];
     Webflow.push(() => {
-        document.removeEventListener("click", window.Webflow?.scroll, true);
+        const $ = window.$;
+        if ($) {
+            $(document).off("click");
+        }
     });
 }
 export function overrideDefaultScroll(options = {}) {
@@ -74,7 +76,10 @@ export function overrideDefaultScroll(options = {}) {
     const href = Selector.attr("href");
     const allScrollLinks = document.querySelectorAll(`${href("#", { matchType: "startsWith" })}, [scroll-to]`);
     allScrollLinks.forEach((link) => {
-        link.addEventListener("click", (event) => onScroll(link, event, options));
+        link.addEventListener("click", (event) => {
+            event.preventDefault();
+            onScroll(link, event, options);
+        });
     });
 }
 export function overrideWebflowScroll(options = {}) {
